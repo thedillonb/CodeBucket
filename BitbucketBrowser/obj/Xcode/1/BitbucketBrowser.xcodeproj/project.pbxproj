@@ -1,0 +1,271 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8409C0000000000000000000 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2FD22000000000000000000 /* UIKit.framework */; };
+		15165E000000000000000000 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 684CE7800000000000000000 /* Foundation.framework */; };
+		A622FC000000000000000000 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1DFD4800000000000000000 /* CoreGraphics.framework */; };
+		679379800000000000000000 /* BitbucketBrowserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 835052000000000000000000 /* BitbucketBrowserViewController.xib */; };
+		145CF0000000000000000000 /* RepositoryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3019C8800000000000000000 /* RepositoryViewController.xib */; };
+		C12666800000000000000000 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCE33F000000000000000000 /* LoginViewController.xib */; };
+		523304800000000000000000 /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5698E000000000000000000 /* ProfileViewController.xib */; };
+		1AB953800000000000000000 /* NewsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36762C000000000000000000 /* NewsViewController.xib */; };
+		900919000000000000000000 /* AppDelegate.h in Sources */ = {isa = PBXBuildFile; fileRef = FEFC7B000000000000000000 /* AppDelegate.h */; };
+		2115B7000000000000000000 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD28F800000000000000000 /* AppDelegate.m */; };
+		9CC1E0000000000000000000 /* BitbucketBrowserViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = B87EB8800000000000000000 /* BitbucketBrowserViewController.h */; };
+		1ECA6C800000000000000000 /* BitbucketBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7200F6000000000000000000 /* BitbucketBrowserViewController.m */; };
+		CB93E3000000000000000000 /* RepositoryViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = E750BB800000000000000000 /* RepositoryViewController.h */; };
+		D1F046800000000000000000 /* RepositoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 969F78000000000000000000 /* RepositoryViewController.m */; };
+		7EB9BD000000000000000000 /* LoginViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 9A7695800000000000000000 /* LoginViewController.h */; };
+		FC65B0000000000000000000 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47400C000000000000000000 /* LoginViewController.m */; };
+		D84CAA000000000000000000 /* ProfileViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = F40982800000000000000000 /* ProfileViewController.h */; };
+		695948000000000000000000 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 851620800000000000000000 /* ProfileViewController.m */; };
+		FA65E6000000000000000000 /* NewsViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 1622BE800000000000000000 /* NewsViewController.h */; };
+		8B7284000000000000000000 /* NewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2EC35000000000000000000 /* NewsViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		ECA0BE800000000000000000 /* BitbucketBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "BitbucketBrowser.app"; path = "BitbucketBrowser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2FD22000000000000000000 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; name = "UIKit.framework"; path = "System/Library/Frameworks/UIKit.framework"; sourceTree = SDKROOT; };
+		684CE7800000000000000000 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; name = "Foundation.framework"; path = "System/Library/Frameworks/Foundation.framework"; sourceTree = SDKROOT; };
+		C1DFD4800000000000000000 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; name = "CoreGraphics.framework"; path = "System/Library/Frameworks/CoreGraphics.framework"; sourceTree = SDKROOT; };
+		835052000000000000000000 /* BitbucketBrowserViewController.xib */ = {isa = PBXFileReference; name = "BitbucketBrowserViewController.xib"; path = "BitbucketBrowserViewController.xib"; sourceTree = "<group>"; };
+		3019C8800000000000000000 /* RepositoryViewController.xib */ = {isa = PBXFileReference; name = "RepositoryViewController.xib"; path = "Screens/RepositoryViewController.xib"; sourceTree = "<group>"; };
+		DCE33F000000000000000000 /* LoginViewController.xib */ = {isa = PBXFileReference; name = "LoginViewController.xib"; path = "Screens/LoginViewController.xib"; sourceTree = "<group>"; };
+		A5698E000000000000000000 /* ProfileViewController.xib */ = {isa = PBXFileReference; name = "ProfileViewController.xib"; path = "Screens/ProfileViewController.xib"; sourceTree = "<group>"; };
+		36762C000000000000000000 /* NewsViewController.xib */ = {isa = PBXFileReference; name = "NewsViewController.xib"; path = "Screens/NewsViewController.xib"; sourceTree = "<group>"; };
+		FEFC7B000000000000000000 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "AppDelegate.h"; path = "AppDelegate.h"; sourceTree = "<group>"; };
+		3CD28F800000000000000000 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate.m"; path = "AppDelegate.m"; sourceTree = "<group>"; };
+		B87EB8800000000000000000 /* BitbucketBrowserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "BitbucketBrowserViewController.h"; path = "BitbucketBrowserViewController.h"; sourceTree = "<group>"; };
+		7200F6000000000000000000 /* BitbucketBrowserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "BitbucketBrowserViewController.m"; path = "BitbucketBrowserViewController.m"; sourceTree = "<group>"; };
+		E750BB800000000000000000 /* RepositoryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "RepositoryViewController.h"; path = "RepositoryViewController.h"; sourceTree = "<group>"; };
+		969F78000000000000000000 /* RepositoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "RepositoryViewController.m"; path = "RepositoryViewController.m"; sourceTree = "<group>"; };
+		9A7695800000000000000000 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LoginViewController.h"; path = "LoginViewController.h"; sourceTree = "<group>"; };
+		47400C000000000000000000 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "LoginViewController.m"; path = "LoginViewController.m"; sourceTree = "<group>"; };
+		F40982800000000000000000 /* ProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ProfileViewController.h"; path = "ProfileViewController.h"; sourceTree = "<group>"; };
+		851620800000000000000000 /* ProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ProfileViewController.m"; path = "ProfileViewController.m"; sourceTree = "<group>"; };
+		1622BE800000000000000000 /* NewsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NewsViewController.h"; path = "NewsViewController.h"; sourceTree = "<group>"; };
+		C2EC35000000000000000000 /* NewsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NewsViewController.m"; path = "NewsViewController.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CA8782800000000000000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8409C0000000000000000000 /* UIKit.framework in Frameworks */,
+				15165E000000000000000000 /* Foundation.framework in Frameworks */,
+				A622FC000000000000000000 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A97D79C00000000000000000 = {
+			isa = PBXGroup;
+			children = (
+				31066C000000000000000000 /* BitbucketBrowser */,
+				A64F48000000000000000000 /* Frameworks */,
+				5646F0400000000000000000 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5646F0400000000000000000 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ECA0BE800000000000000000 /* BitbucketBrowser.app */,
+			);
+			name = "Products";
+			sourceTree = "<group>";
+		};
+		A64F48000000000000000000 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F2FD22000000000000000000 /* UIKit.framework */,
+				684CE7800000000000000000 /* Foundation.framework */,
+				C1DFD4800000000000000000 /* CoreGraphics.framework */,
+			);
+			name = "Frameworks";
+			sourceTree = "<group>";
+		};
+		31066C000000000000000000 /* BitbucketBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				FEFC7B000000000000000000 /* AppDelegate.h */,
+				B87EB8800000000000000000 /* BitbucketBrowserViewController.h */,
+				835052000000000000000000 /* BitbucketBrowserViewController.xib */,
+				9A7695800000000000000000 /* LoginViewController.h */,
+				1622BE800000000000000000 /* NewsViewController.h */,
+				F40982800000000000000000 /* ProfileViewController.h */,
+				E750BB800000000000000000 /* RepositoryViewController.h */,
+				2D7419000000000000000000 /* Screens */,
+				DD6BC1400000000000000000 /* Supporting Files */,
+			);
+			name = "BitbucketBrowser";
+			sourceTree = "<group>";
+		};
+		2D7419000000000000000000 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				DCE33F000000000000000000 /* LoginViewController.xib */,
+				36762C000000000000000000 /* NewsViewController.xib */,
+				A5698E000000000000000000 /* ProfileViewController.xib */,
+				3019C8800000000000000000 /* RepositoryViewController.xib */,
+			);
+			name = "Screens";
+			sourceTree = "<group>";
+		};
+		DD6BC1400000000000000000 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3CD28F800000000000000000 /* AppDelegate.m */,
+				7200F6000000000000000000 /* BitbucketBrowserViewController.m */,
+				47400C000000000000000000 /* LoginViewController.m */,
+				C2EC35000000000000000000 /* NewsViewController.m */,
+				851620800000000000000000 /* ProfileViewController.m */,
+				969F78000000000000000000 /* RepositoryViewController.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D93264000000000000000000 /* BitbucketBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 260C8A000000000000000000 /* Build configuration list for PBXNativeTarget "BitbucketBrowser" */;
+			buildPhases = (
+				930DD1800000000000000000 /* Sources */,
+				CA8782800000000000000000 /* Frameworks */,
+				AECAAA000000000000000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "BitbucketBrowser";
+			productName = "BitbucketBrowser";
+			productReference = ECA0BE800000000000000000 /* BitbucketBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3B445F000000000000000000 /* Project object */ = {
+			isa = PBXProject;
+			attributes = { };
+			buildConfigurationList = D2D600800000000000000000 /* Build configuration list for PBXProject "BitbucketBrowser" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A97D79C00000000000000000;
+			productRefGroup = 5646F0400000000000000000 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D93264000000000000000000 /* BitbucketBrowser */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AECAAA000000000000000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				679379800000000000000000 /* BitbucketBrowserViewController.xib in Resources */,
+				145CF0000000000000000000 /* RepositoryViewController.xib in Resources */,
+				C12666800000000000000000 /* LoginViewController.xib in Resources */,
+				523304800000000000000000 /* ProfileViewController.xib in Resources */,
+				1AB953800000000000000000 /* NewsViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		930DD1800000000000000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				900919000000000000000000 /* AppDelegate.h in Sources */,
+				2115B7000000000000000000 /* AppDelegate.m in Sources */,
+				9CC1E0000000000000000000 /* BitbucketBrowserViewController.h in Sources */,
+				1ECA6C800000000000000000 /* BitbucketBrowserViewController.m in Sources */,
+				CB93E3000000000000000000 /* RepositoryViewController.h in Sources */,
+				D1F046800000000000000000 /* RepositoryViewController.m in Sources */,
+				7EB9BD000000000000000000 /* LoginViewController.h in Sources */,
+				FC65B0000000000000000000 /* LoginViewController.m in Sources */,
+				D84CAA000000000000000000 /* ProfileViewController.h in Sources */,
+				695948000000000000000000 /* ProfileViewController.m in Sources */,
+				FA65E6000000000000000000 /* NewsViewController.h in Sources */,
+				8B7284000000000000000000 /* NewsViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EB9FA8000000000000000000 /* MonoTouch */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				SDKROOT = iphoneos;
+			};
+			name = MonoTouch;
+		};
+		B5270D800000000000000000 /* MonoTouch */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				PRODUCT_NAME = "BitbucketBrowser";
+				WRAPPER_EXTENSION = app;
+			};
+			name = MonoTouch;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D2D600800000000000000000 /* Build configuration list for PBXProject "BitbucketBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB9FA8000000000000000000 /* MonoTouch */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = MonoTouch;
+		};
+		260C8A000000000000000000 /* Build configuration list for PBXNativeTarget "BitbucketBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5270D800000000000000000 /* MonoTouch */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = MonoTouch;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3B445F000000000000000000 /* Project object */;
+}

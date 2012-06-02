@@ -1,0 +1,32 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/RepositoryInfoController.cs">
+    <Files>
+      <File FileName="BitbucketBrowser/UI/RepositoryController.cs" Line="15" Column="17" />
+      <File FileName="BitbucketBrowser/UI/RepositoryInfoController.cs" Line="34" Column="51" />
+      <File FileName="BitbucketBrowser/UI/NewsFeedElement.cs" Line="10" Column="50" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="BitbucketBrowser" expanded="True">
+            <Node name="References" expanded="True">
+              <Node name="System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" selected="True" />
+            </Node>
+            <Node name="Images" expanded="True" />
+            <Node name="Screens" expanded="True" />
+            <Node name="UI" expanded="True" />
+            <Node name="Utils" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
