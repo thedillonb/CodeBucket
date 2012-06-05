@@ -89,15 +89,16 @@
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs" />
-    <Compile Include="UI\NewsFeedController.cs" />
-    <Compile Include="UI\NewsFeedElement.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
-    <Compile Include="UI\RepositoryController.cs" />
-    <Compile Include="UI\RepositoryInfoController.cs" />
-    <Compile Include="UI\KeyValueElement.cs" />
-    <Compile Include="UI\GroupController.cs" />
-    <Compile Include="UI\ProfileController.cs" />
-    <Compile Include="UI\HeaderView.cs" />
+    <Compile Include="UI\Controllers\Controller.cs" />
+    <Compile Include="UI\Controllers\FollowersController.cs" />
+    <Compile Include="UI\Controllers\GroupController.cs" />
+    <Compile Include="UI\Controllers\ProfileController.cs" />
+    <Compile Include="UI\Controllers\RepositoryController.cs" />
+    <Compile Include="UI\Controllers\RepositoryInfoController.cs" />
+    <Compile Include="UI\Views\HeaderView.cs" />
+    <Compile Include="UI\Views\NewsFeedElement.cs" />
+    <Compile Include="UI\Controllers\EventsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -108,14 +109,17 @@
     <Folder Include="Images\" />
     <Folder Include="UI\" />
     <Folder Include="Utils\" />
+    <Folder Include="Images\Tabs\" />
+    <Folder Include="UI\Controllers\" />
+    <Folder Include="UI\Views\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
-      <Project>{14162FFA-441D-4A5C-91BD-DB5835A6ED15}</Project>
+    <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
+      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
@@ -124,9 +128,13 @@
     <Content Include="Images\heart.png" />
     <Content Include="Images\unknown.png" />
     <Content Include="Images\pencil.png" />
-    <Content Include="Images\111-user.png" />
-    <Content Include="Images\database.png" />
-    <Content Include="Images\newspaper.png" />
-    <Content Include="Images\people_family.png" />
+    <Content Include="Images\flag.png" />
+    <Content Include="Images\repoevents.png" />
+    <Content Include="Images\followers.png" />
+    <Content Include="Images\Tabs\database.png" />
+    <Content Include="Images\Tabs\111-user.png" />
+    <Content Include="Images\Tabs\people_family.png" />
+    <Content Include="Images\Tabs\newspaper.png" />
+    <Content Include="Images\repo.png" />
   </ItemGroup>
 </Project>

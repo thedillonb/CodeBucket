@@ -18,9 +18,8 @@ namespace BitbucketBrowser
 	{
 		// class-level declarations
 		UIWindow window;
-		LoginViewController _loginController;
-		RepositoryController _repoController;
-		NewsFeedController _newsController;
+		AccountRepositoryController _repoController;
+		EventsController _newsController;
 		GroupController _groupController;
 		ProfileController _profileController;
 		UITabBarController _tabs;
@@ -43,18 +42,17 @@ namespace BitbucketBrowser
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
-			_loginController = new LoginViewController();
-			_repoController = new RepositoryController();
-			_newsController = new NewsFeedController();
-			_groupController = new GroupController();
-			_profileController = new ProfileController();
+            _repoController = new AccountRepositoryController("thedillonb") { Title = "Repositories" };
+            _newsController = new EventsController("thedillonb", false) { Title = "Events" };
+            _groupController = new GroupController("thedillonb", false) { Title = "Groups" };
+            _profileController = new ProfileController("thedillonb", false) { Title = "Profile" };
 			_tabs = new UITabBarController();
 			
 			_tabs.ViewControllers = new UIViewController[] {
-				new UINavigationController(_newsController) { TabBarItem = new UITabBarItem("News", UIImage.FromBundle("Images/newspaper.png"), 1) },
-				new UINavigationController(_repoController) { TabBarItem = new UITabBarItem("Repositories", UIImage.FromBundle("Images/database.png"), 2) },
-				new UINavigationController(_groupController) { TabBarItem = new UITabBarItem("Groups", UIImage.FromBundle("Images/people_family.png"), 3) },
-				new UINavigationController(_profileController) { TabBarItem = new UITabBarItem("Profile", UIImage.FromBundle("Images/111-user.png"), 4) }
+				new UINavigationController(_newsController) { TabBarItem = new UITabBarItem(_newsController.Title, UIImage.FromBundle("Images/Tabs/newspaper.png"), 1) },
+				new UINavigationController(_repoController) { TabBarItem = new UITabBarItem(_repoController.Title, UIImage.FromBundle("Images/Tabs/database.png"), 2) },
+				new UINavigationController(_groupController) { TabBarItem = new UITabBarItem(_groupController.Title, UIImage.FromBundle("Images/Tabs/people_family.png"), 3) },
+				new UINavigationController(_profileController) { TabBarItem = new UITabBarItem(_profileController.Title, UIImage.FromBundle("Images/Tabs/111-user.png"), 4) }
 			};
 			
 			window.RootViewController = _tabs;

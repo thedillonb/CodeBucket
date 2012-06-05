@@ -1,10 +1,8 @@
-using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-
-namespace BitbucketBrowser
+namespace BitbucketBrowser.Utils
 {
 	public static class StringExtensions
 	{
@@ -13,7 +11,7 @@ namespace BitbucketBrowser
 			if (string.IsNullOrEmpty(s))
 				return 0f;
 				
-			using (NSString str = new NSString (s))
+			using (var str = new NSString (s))
 			{
 				return str.StringSize(font).Width;
 			}
@@ -24,7 +22,7 @@ namespace BitbucketBrowser
 			if (string.IsNullOrEmpty(s))
 				return 0f;
 			
-			using (NSString str = new NSString (s))
+			using (var str = new NSString (s))
 			{
 				return str.StringSize(font, new SizeF(maxWidth, 1000), UILineBreakMode.WordWrap).Height;
 			}
