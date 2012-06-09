@@ -9,6 +9,23 @@ using System.Collections.Generic;
 
 namespace BitbucketBrowser.UI
 {
+    public class RepoEventsController : EventsController
+    {
+        public string Slug { get; private set; }
+
+        public RepoEventsController(string username, string slug)
+            : base(username)
+        {
+            Slug = slug;
+        }
+
+        protected override EventsModel OnGetData()
+        {
+            var client = new Client("thedillonb", "djames");
+            return client.Users[Username].Repositories[Slug].GetEvents();
+        }
+    }
+
     public class EventsController : Controller<List<EventModel>>
     {
         private DateTime _lastUpdate = DateTime.MinValue;
@@ -25,10 +42,15 @@ namespace BitbucketBrowser.UI
             Root.Add(new Section());
         }
 
-        protected override List<EventModel> OnUpdate()
+        protected virtual EventsModel OnGetData()
         {
             var client = new Client("thedillonb", "djames");
-            EventsModel events = client.Users[Username].GetEvents();
+            return client.Users[Username].GetEvents();
+        }
+
+        protected override List<EventModel> OnUpdate()
+        {
+            var events = OnGetData();
 
              var newEvents =
                  (from s in events.Events
@@ -43,7 +65,15 @@ namespace BitbucketBrowser.UI
         protected override void OnRefresh()
         {
             InvokeOnMainThread(delegate {
-                Model.ForEach(e => Root[0].Insert(0, UITableViewRowAnimation.Top, new NewsFeedElement(e)));
+                Model.ForEach(e => {
+                    var newsEl = new NewsFeedElement(e);
+                    newsEl.Tapped += () => {
+                        if (e.Event == "commit") {
+                            NavigationController.PushViewController(new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node), true);
+                        }
+                    };
+                    Root[0].Insert(0, UITableViewRowAnimation.Top, newsEl);
+                });
             });
         }
     }

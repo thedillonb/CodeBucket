@@ -22,7 +22,12 @@ namespace BitbucketBrowser
 		EventsController _newsController;
 		GroupController _groupController;
 		ProfileController _profileController;
+        ExploreController _exploreController;
 		UITabBarController _tabs;
+
+        public ExploreController ExplorerController { get { return _exploreController; } }
+
+        public UITabBarController TabController { get { return _tabs; } }
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -46,13 +51,15 @@ namespace BitbucketBrowser
             _newsController = new EventsController("thedillonb", false) { Title = "Events" };
             _groupController = new GroupController("thedillonb", false) { Title = "Groups" };
             _profileController = new ProfileController("thedillonb", false) { Title = "Profile" };
+            _exploreController = new ExploreController() { Title = "Explore" };
 			_tabs = new UITabBarController();
 			
 			_tabs.ViewControllers = new UIViewController[] {
 				new UINavigationController(_newsController) { TabBarItem = new UITabBarItem(_newsController.Title, UIImage.FromBundle("Images/Tabs/newspaper.png"), 1) },
 				new UINavigationController(_repoController) { TabBarItem = new UITabBarItem(_repoController.Title, UIImage.FromBundle("Images/Tabs/database.png"), 2) },
-				new UINavigationController(_groupController) { TabBarItem = new UITabBarItem(_groupController.Title, UIImage.FromBundle("Images/Tabs/people_family.png"), 3) },
-				new UINavigationController(_profileController) { TabBarItem = new UITabBarItem(_profileController.Title, UIImage.FromBundle("Images/Tabs/111-user.png"), 4) }
+				new UINavigationController(_groupController) { TabBarItem = new UITabBarItem(_groupController.Title, UIImage.FromBundle("Images/Tabs/group.png"), 3) },
+				new UINavigationController(_profileController) { TabBarItem = new UITabBarItem(_profileController.Title, UIImage.FromBundle("Images/Tabs/111-user.png"), 4) },
+                new UINavigationController(_exploreController) { TabBarItem = new UITabBarItem(_exploreController.Title, UIImage.FromBundle("Images/Tabs/compass.png"), 5) }
 			};
 			
 			window.RootViewController = _tabs;

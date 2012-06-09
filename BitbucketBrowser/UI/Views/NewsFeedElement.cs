@@ -5,14 +5,15 @@ using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 
 namespace BitbucketBrowser.UI
 {
     public class NewsFeedElement : OwnerDrawnElement
     {
-        private static readonly UIFont DateFont = UIFont.SystemFontOfSize(13);
+        private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.SystemFontOfSize(15);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(12);
+        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
         private static readonly UIImage PlusImage = UIImage.FromBundle("Images/plus.png");
         private static readonly UIImage HeartImage = UIImage.FromBundle("Images/heart.png");
         private static readonly UIImage PencilImage = UIImage.FromBundle("Images/pencil.png");
@@ -28,63 +29,82 @@ namespace BitbucketBrowser.UI
 
         public EventModel Item { get; set; }
 
+        public event NSAction Tapped;
+
+        private void CreateDescription(out string desc, out UIImage img)
+        {
+            desc = string.IsNullOrEmpty(Item.Description) ? "" : Item.Description.Replace("\n", " ");
+
+            //Drop the image
+            if (Item.Event == "commit")
+            {
+                img = PlusImage;
+            }
+            else if (Item.Event == "wiki_updated")
+            {
+                img = PencilImage;
+                desc = "Updated the wiki page: " + desc;
+            }
+            else if (Item.Event == "start_follow_user")
+            {
+                img = HeartImage;
+                desc = "Started following a user";
+            }
+            else if (Item.Event == "wiki_created")
+            {
+                img = PencilImage;
+                desc = "Created the wiki page: " + desc;
+            }
+            else
+                img = UnknownImage;
+        }
+
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
             UIColor.White.SetFill();
             context.FillRect(bounds);
 
-            int days = DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days;
-            string daysAgo = days > 0
-                                 ? DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days + " days ago"
-                                 : "Today";
-            UIColor.FromRGB(36, 112, 216).SetColor();
-            float daysAgoWidth = daysAgo.MonoStringLength(DateFont) + LeftRightPadding + 5;
-            view.DrawString(
-                daysAgo,
-                new RectangleF(bounds.Width - daysAgoWidth, TopBottomPadding + 1f, daysAgoWidth, DateFont.LineHeight),
-                DateFont,
-                UILineBreakMode.TailTruncation
-                );
+            var imageRect = new RectangleF(LeftRightPadding, bounds.Height / 2 - 8f, 16f, 16f);
+            var leftContent = LeftRightPadding * 2 + imageRect.Width;
+            var contentWidth = bounds.Width - leftContent - LeftRightPadding;
 
-            var imageRect = new RectangleF(LeftRightPadding, TopBottomPadding + 1, 16f, 16f);
+            string desc = null;
+            UIImage img = null;
+            CreateDescription(out desc, out img);
 
-            //Drop the image
-            if (Item.Event == "commit")
-                PlusImage.Draw(imageRect);
-            else if (Item.Event == "wiki_updated")
-                PencilImage.Draw(imageRect);
-            else if (Item.Event == "start_follow_user")
-                HeartImage.Draw(imageRect);
-            else
-                UnknownImage.Draw(imageRect);
+            img.Draw(imageRect);
 
             string userStr;
             if (!EventModel.EventToString.TryGetValue(Item.Event, out userStr))
                 userStr = "Unknown";
             UIColor.Black.SetColor();
+            view.DrawString(userStr,
+                new RectangleF(leftContent, TopBottomPadding, contentWidth, UserFont.LineHeight),
+                UserFont, UILineBreakMode.TailTruncation
+                );
+
+            int days = DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days;
+            string daysAgo = days > 0 ? DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days + " days ago" : "Today";
+            UIColor.FromRGB(36, 112, 216).SetColor();
+            float daysAgoTop = TopBottomPadding + UserFont.LineHeight + 2;
             view.DrawString(
-                userStr,
-                new RectangleF(LeftRightPadding + 16f + 6f, TopBottomPadding, bounds.Width - daysAgoWidth - 24f,
-                               UserFont.LineHeight),
-                UserFont,
+                daysAgo,
+                new RectangleF(leftContent,  daysAgoTop, contentWidth, DateFont.LineHeight),
+                DateFont,
                 UILineBreakMode.TailTruncation
                 );
 
-            if (!string.IsNullOrEmpty(Item.Description))
+
+            if (!string.IsNullOrEmpty(desc))
             {
-                string descStr = Item.Description.Replace("\n", "");
                 UIColor.Black.SetColor();
-                float descWidth = bounds.Width - LeftRightPadding*2;
-                float descStrHeight = descStr.MonoStringHeight(DescFont, descWidth);
+                float descStrHeight = desc.MonoStringHeight(DescFont, contentWidth);
                 if (descStrHeight > 34)
                     descStrHeight = 34;
-                view.DrawString(
-                    descStr,
-                    new RectangleF(LeftRightPadding, TopBottomPadding + UserFont.LineHeight + 6f, descWidth,
-                                   descStrHeight),
-                    DescFont,
-                    UILineBreakMode.TailTruncation
-                    );
+                view.DrawString(desc,
+                    new RectangleF(leftContent, daysAgoTop + DateFont.LineHeight + TopBottomPadding, contentWidth,
+                                   descStrHeight), DescFont, UILineBreakMode.TailTruncation
+                );
             }
         }
 
@@ -92,15 +112,39 @@ namespace BitbucketBrowser.UI
         {
             float descHeight = 0f;
             float descWidth = bounds.Width - LeftRightPadding*2;
-            if (!string.IsNullOrEmpty(Item.Description))
-            {
-                descHeight = Item.Description.Replace("\n", "").MonoStringHeight(DescFont, descWidth);
-                if (descHeight > 34)
-                    descHeight = 34;
-                descHeight += 6f;
-            }
+            string desc = null;
+            UIImage img = null;
+            CreateDescription(out desc, out img);
 
-            return TopBottomPadding*2 + UserFont.LineHeight + descHeight;
+            descHeight = desc.MonoStringHeight(DescFont, descWidth);
+            if (descHeight > 34)
+                descHeight = 34;
+
+            return TopBottomPadding*3 + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell =  base.GetCell(tv);
+
+            if (Tapped != null) {
+                cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+                cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
+            } 
+            else 
+            {
+                cell.Accessory = UITableViewCellAccessory.None;
+                cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+            }
+            return cell;
+        }
+
+        public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+        {
+            base.Selected(dvc, tableView, path);
+            if (Tapped != null)
+                Tapped();
+            tableView.DeselectRow (path, true);
         }
     }
 }

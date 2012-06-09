@@ -7,16 +7,19 @@ using MonoTouch.UIKit;
 
 namespace BitbucketBrowser.UI
 {
-	public class GroupController : Controller<IList<GroupModel>>
+	public class BranchController : Controller<List<BranchModel>>
 	{
         public string Username { get; private set; }
 
-		public GroupController(string username, bool push = true) 
-            : base(push)
+        public string Slug { get; private set; }
+
+		public BranchController(string username, string slug) 
+            : base(true, true)
 		{
 			Style = UITableViewStyle.Plain;
             Username = username;
-            Title = "Groups";
+            Slug = slug;
+            Title = "Branches";
 		}
 		
         protected override void OnRefresh()
@@ -24,9 +27,9 @@ namespace BitbucketBrowser.UI
 
         }
 
-        protected override IList<GroupModel> OnUpdate()
+        protected override List<BranchModel> OnUpdate()
         {
-            return new List<GroupModel>();
+            return new List<BranchModel>();
         }
 	}
 }

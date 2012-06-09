@@ -13,6 +13,8 @@ namespace BitbucketBrowser.UI
         public string Title { get; set; }
 
         public string Subtitle { get; set; }
+
+        public UIImage Image { get; set; }
         
         public HeaderView(float width)
             : base(new RectangleF(0, 0, width, 60f))
@@ -21,17 +23,27 @@ namespace BitbucketBrowser.UI
             Layer.ShadowColor = UIColor.DarkGray.CGColor;
             Layer.ShadowOpacity = 1.0f;
             Layer.ShadowOffset = new SizeF(0, 3f);
-            BackgroundColor = UIColor.FromRGB(0.94f, 0.94f, 0.94f);
+            BackgroundColor = UIColor.FromRGB(0.96f, 0.96f, 0.96f);
         }
 
         public override void Draw(RectangleF rect)
         {
             base.Draw(rect);
             float titleY = string.IsNullOrWhiteSpace(Subtitle) ? rect.Height / 2 - TitleFont.LineHeight / 2 : YPad;
+            float contentWidth = rect.Width - XPad * 2;
+
+            if (Image != null)
+            {
+                var height = Image.Size.Height > 36 ? 36 : Image.Size.Height;
+                var width = Image.Size.Width > 36 ? 36 : Image.Size.Width;
+                Image.Draw(new RectangleF(rect.Width - XPad * 2 - width, rect.Height / 2 - height / 2, width, height));
+                contentWidth -= (width + 4f); 
+            }
+
 
             DrawString(
                     Title,
-                    new RectangleF(XPad, titleY, rect.Width - XPad * 2, TitleFont.LineHeight),
+                    new RectangleF(XPad, titleY, contentWidth, TitleFont.LineHeight),
                     TitleFont,
                     UILineBreakMode.TailTruncation
             );
@@ -42,11 +54,13 @@ namespace BitbucketBrowser.UI
 
                 DrawString(
                     Subtitle,
-                    new RectangleF(XPad, YPad + TitleFont.LineHeight + 2f, rect.Width - XPad * 2, SubtitleFont.LineHeight),
+                    new RectangleF(XPad, YPad + TitleFont.LineHeight + 2f, contentWidth, SubtitleFont.LineHeight),
                     SubtitleFont,
                     UILineBreakMode.TailTruncation
                 );
             }
+
+
         }
     }
 }

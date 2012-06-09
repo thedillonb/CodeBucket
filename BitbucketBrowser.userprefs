@@ -1,16 +1,31 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controller.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/NewsFeedElement.cs">
     <Files>
-      <File FileName="BitbucketBrowser/UI/GroupController.cs" Line="1" Column="1" />
-      <File FileName="BitbucketBrowser/UI/Controller.cs" Line="1" Column="1" />
+      <File FileName="BitbucketBrowser/UI/Controllers/ExploreController.cs" Line="36" Column="65" />
+      <File FileName="BitbucketBrowser/Main.cs" Line="30" Column="74" />
+      <File FileName="BitbucketBrowser/UI/Views/HeaderView.cs" Line="52" Column="14" />
+      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="63" Column="25" />
+      <File FileName="../BitbucketSharp/BitbucketSharp.MonoTouch/Controllers/BranchController.cs" Line="31" Column="32" />
+      <File FileName="../BitbucketSharp/BitbucketSharp/Controllers/Controller.cs" Line="17" Column="9" />
+      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="42" Column="37" />
+      <File FileName="BitbucketBrowser/UI/Views/NewsFeedElement.cs" Line="125" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
+        <State expanded="True">
           <Node name="BitbucketBrowser" expanded="True">
             <Node name="Images" expanded="True" />
-            <Node name="UI" expanded="True" />
+            <Node name="UI" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="NewsFeedElement.cs" selected="True" />
+              </Node>
+            </Node>
+            <Node name="Utils" expanded="True" />
+          </Node>
+          <Node name="BitbucketSharp.MonoTouch" expanded="True">
+            <Node name="Controllers" expanded="True" />
           </Node>
         </State>
       </Pad>

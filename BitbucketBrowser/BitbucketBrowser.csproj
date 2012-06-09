@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="monotouch" />
     <Reference Include="System.Core" />
+    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -99,6 +100,11 @@
     <Compile Include="UI\Views\HeaderView.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\EventsController.cs" />
+    <Compile Include="Utils\MbProgressHud.cs" />
+    <Compile Include="UI\Controllers\ExploreController.cs" />
+    <Compile Include="UI\Controllers\BranchController.cs" />
+    <Compile Include="UI\Controllers\TagController.cs" />
+    <Compile Include="UI\Controllers\ChangesetController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -114,10 +120,6 @@
     <Folder Include="UI\Views\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>MonoTouch.Dialog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
@@ -136,5 +138,9 @@
     <Content Include="Images\Tabs\people_family.png" />
     <Content Include="Images\Tabs\newspaper.png" />
     <Content Include="Images\repo.png" />
+    <Content Include="Images\Tabs\compass.png" />
+    <Content Include="Images\Tabs\group.png" />
+    <Content Include="Images\branch.png" />
+    <Content Include="Images\tag.png" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,8 @@ using System;
 using MonoTouch.Dialog;
 using System.Threading;
 using MonoTouch.UIKit;
-
+using RedPlum;
+using System.Linq;
 
 namespace BitbucketBrowser.UI
 {
@@ -11,6 +12,8 @@ namespace BitbucketBrowser.UI
         public T Model { get; set; }
 
         private bool _loaded = false;
+
+        public bool Loaded { get { return _loaded; } }
 
         public Controller(bool push = false, bool refresh = false)
             : base(new RootElement(""), push)
@@ -35,13 +38,31 @@ namespace BitbucketBrowser.UI
             if (Model != null && !force)
             {
                 OnRefresh();
-                InvokeOnMainThread(delegate { ReloadComplete(); });
+                InvokeOnMainThread(delegate { 
+                    ReloadComplete(); 
+                });
+                _loaded = true;
                 return;
             }
 
+            MBProgressHUD hud = null;
+            if (!force) {
+                hud = new MBProgressHUD(this.View.Superview); 
+                hud.Mode = MBProgressHUDMode.Indeterminate;
+                hud.TitleText = "Loading...";
+                this.View.Superview.AddSubview(hud);
+                hud.Show(true);
+            }
             ThreadPool.QueueUserWorkItem(delegate {
                 Model = OnUpdate();
                 Refresh();
+                if (hud != null)
+                {
+                    InvokeOnMainThread(delegate {
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+                    });
+                }
             });
         }
 

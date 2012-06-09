@@ -33,9 +33,25 @@ namespace BitbucketBrowser.UI
             _segment.SelectedSegment = 0;
             _segment.ValueChanged += (sender, e) => ChangeSegment();
             NavigationItem.TitleView = _segment;
-            ChangeSegment();
-            _owned.Refresh(true);
-            _followed.Refresh(true);
+
+            var cur = _segment.SelectedSegment;
+            _owned.View.Hidden = cur == 0;
+            _followed.View.Hidden = !_owned.View.Hidden;
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            if (_segment.SelectedSegment == 0)
+            {
+                if (!_followed.Loaded)
+                    _followed.Refresh();
+            }
+            else if (_segment.SelectedSegment == 1)
+            {
+                if (!_owned.Loaded)
+                    _owned.Refresh();
+            }
         }
 
         private void ChangeSegment()
@@ -43,6 +59,16 @@ namespace BitbucketBrowser.UI
             var cur = _segment.SelectedSegment;
             _owned.View.Hidden = cur == 0;
             _followed.View.Hidden = !_owned.View.Hidden;
+            if (_segment.SelectedSegment == 0)
+            {
+                if (!_followed.Loaded)
+                    _followed.Refresh();
+            }
+            else if (_segment.SelectedSegment == 1)
+            {
+                if (!_owned.Loaded)
+                    _owned.Refresh();
+            }
         }
 
         private class MyRepo : RepositoryController
@@ -68,7 +94,7 @@ namespace BitbucketBrowser.UI
         public UINavigationController Nav { get; set; }
 
         public RepositoryController(string username, bool push = true) 
-            : base(push, false)
+            : base(push, true)
         {
             Title = "Repositories";
             Style = UITableViewStyle.Plain;
@@ -82,8 +108,7 @@ namespace BitbucketBrowser.UI
                 sse = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle);
             else
                 sse = new StyledStringElement(r.Name);
-            var cpy = r;
-            sse.Tapped += () => v.PushViewController(new RepositoryInfoController(cpy), true);
+            sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);
             sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             sec.Add(sse);
         }
@@ -92,7 +117,6 @@ namespace BitbucketBrowser.UI
         {
             var sec = new Section();
             Model.ForEach(x => CreateEntry(sec, x, Nav ?? NavigationController));
-
             InvokeOnMainThread(delegate {
                 Root.Clear();
                 Root.Add(sec);
