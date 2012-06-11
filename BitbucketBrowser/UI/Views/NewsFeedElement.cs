@@ -9,7 +9,7 @@ using MonoTouch.Foundation;
 
 namespace BitbucketBrowser.UI
 {
-    public class NewsFeedElement : OwnerDrawnElement
+    public class NewsFeedElement : CustomElement
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.SystemFontOfSize(15);
@@ -25,20 +25,22 @@ namespace BitbucketBrowser.UI
         public NewsFeedElement(EventModel eventModel) : base(UITableViewCellStyle.Default, "newsfeedelement")
         {
             Item = eventModel;
+            ReportUser = true;
         }
 
         public EventModel Item { get; set; }
 
-        public event NSAction Tapped;
+        public bool ReportUser { get; set; }
 
         private void CreateDescription(out string desc, out UIImage img)
         {
-            desc = string.IsNullOrEmpty(Item.Description) ? "" : Item.Description.Replace("\n", " ");
+            desc = string.IsNullOrEmpty(Item.Description) ? "" : Item.Description.Replace("\n", " ").Trim();
 
             //Drop the image
             if (Item.Event == "commit")
             {
                 img = PlusImage;
+                desc = "Commited: " + desc;
             }
             else if (Item.Event == "wiki_updated")
             {
@@ -61,12 +63,13 @@ namespace BitbucketBrowser.UI
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
-            UIColor.White.SetFill();
+            UIColor.Clear.SetFill();
             context.FillRect(bounds);
 
             var imageRect = new RectangleF(LeftRightPadding, bounds.Height / 2 - 8f, 16f, 16f);
             var leftContent = LeftRightPadding * 2 + imageRect.Width;
             var contentWidth = bounds.Width - leftContent - LeftRightPadding;
+            var userHeight = UserFont.LineHeight;
 
             string desc = null;
             UIImage img = null;
@@ -74,19 +77,25 @@ namespace BitbucketBrowser.UI
 
             img.Draw(imageRect);
 
-            string userStr;
-            if (!EventModel.EventToString.TryGetValue(Item.Event, out userStr))
-                userStr = "Unknown";
-            UIColor.Black.SetColor();
-            view.DrawString(userStr,
-                new RectangleF(leftContent, TopBottomPadding, contentWidth, UserFont.LineHeight),
-                UserFont, UILineBreakMode.TailTruncation
-                );
+            if (ReportUser && Item.User != null)
+            {
+                string userStr = Item.User.Username;
+                UIColor.FromRGB(0, 0x44, 0x66).SetColor();
+                view.DrawString(userStr,
+                    new RectangleF(leftContent, TopBottomPadding, contentWidth, UserFont.LineHeight),
+                    UserFont, UILineBreakMode.TailTruncation
+                    );
+            }
+            else
+            {
+                userHeight = -2;
+            }
 
             int days = DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days;
             string daysAgo = days > 0 ? DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days + " days ago" : "Today";
-            UIColor.FromRGB(36, 112, 216).SetColor();
-            float daysAgoTop = TopBottomPadding + UserFont.LineHeight + 2;
+            //UIColor.FromRGB(36, 112, 216).SetColor();
+            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
+            float daysAgoTop = TopBottomPadding + userHeight + 2;
             view.DrawString(
                 daysAgo,
                 new RectangleF(leftContent,  daysAgoTop, contentWidth, DateFont.LineHeight),
@@ -98,12 +107,10 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(desc))
             {
                 UIColor.Black.SetColor();
-                float descStrHeight = desc.MonoStringHeight(DescFont, contentWidth);
-                if (descStrHeight > 34)
-                    descStrHeight = 34;
+                var top = daysAgoTop + DateFont.LineHeight + TopBottomPadding;
+                var height = bounds.Height - top - TopBottomPadding;
                 view.DrawString(desc,
-                    new RectangleF(leftContent, daysAgoTop + DateFont.LineHeight + TopBottomPadding, contentWidth,
-                                   descStrHeight), DescFont, UILineBreakMode.TailTruncation
+                    new RectangleF(leftContent, top, contentWidth, height), DescFont, UILineBreakMode.TailTruncation
                 );
             }
         }
@@ -111,40 +118,19 @@ namespace BitbucketBrowser.UI
         public override float Height(RectangleF bounds)
         {
             float descHeight = 0f;
-            float descWidth = bounds.Width - LeftRightPadding*2;
+            var leftContent = LeftRightPadding * 2 + 16f;
+            var contentWidth = bounds.Width - 20f - leftContent - LeftRightPadding; //Account for the Accessory
             string desc = null;
             UIImage img = null;
             CreateDescription(out desc, out img);
 
-            descHeight = desc.MonoStringHeight(DescFont, descWidth);
-            if (descHeight > 34)
-                descHeight = 34;
+            descHeight = desc.MonoStringHeight(DescFont, contentWidth);
+            if (descHeight > 54)
+                descHeight = 54;
 
-            return TopBottomPadding*3 + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
-        }
+            var userHeight = (ReportUser && Item.User != null) ? UserFont.LineHeight : 0f;
 
-        public override UITableViewCell GetCell(UITableView tv)
-        {
-            var cell =  base.GetCell(tv);
-
-            if (Tapped != null) {
-                cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-                cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
-            } 
-            else 
-            {
-                cell.Accessory = UITableViewCellAccessory.None;
-                cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-            }
-            return cell;
-        }
-
-        public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-        {
-            base.Selected(dvc, tableView, path);
-            if (Tapped != null)
-                Tapped();
-            tableView.DeselectRow (path, true);
+            return TopBottomPadding*3 + userHeight + DateFont.LineHeight + 2f + descHeight;
         }
     }
 }

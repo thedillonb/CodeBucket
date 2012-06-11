@@ -33,7 +33,7 @@ namespace BitbucketBrowser.UI
 
             _followers = new ImageStringElement("Followers", () => NavigationController.PushViewController(new UserFollowersController(Model.User.Username), true),
                                                 UIImage.FromBundle("Images/heart.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            _events = new ImageStringElement("Events", () => NavigationController.PushViewController(new EventsController(Model.User.Username), true), 
+            _events = new ImageStringElement("Events", () => NavigationController.PushViewController(new EventsController(Model.User.Username) { ReportUser = false }, true), 
                                              UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             _groups = new ImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController(Model.User.Username), true), 
                                              UIImage.FromBundle("Images/followers.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };

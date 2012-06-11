@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace BitbucketBrowser.UI
 {
-	public abstract class FollowersController : Controller<IList<FollowerModel>>
+	public abstract class FollowersController : Controller<List<FollowerModel>>
     {
 		protected FollowersController()
 			: base(true)
@@ -22,7 +22,7 @@ namespace BitbucketBrowser.UI
         {
             BeginInvokeOnMainThread(delegate {
                 var sec = new Section();
-                foreach (var s in Model) 
+                Model.ForEach(s =>
                 {
                     var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
                     StyledStringElement sse;
@@ -33,7 +33,7 @@ namespace BitbucketBrowser.UI
                     sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                     sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                     sec.Add(sse);
-                }
+                });
                 Root.Add(sec);
             });
         }
@@ -48,7 +48,7 @@ namespace BitbucketBrowser.UI
 			_name = name;
 		}
 
-        protected override IList<FollowerModel> OnUpdate()
+        protected override List<FollowerModel> OnUpdate()
         {
             var client = new Client("thedillonb", "djames");
             return client.Users[_name].GetFollowers().Followers;
@@ -66,7 +66,7 @@ namespace BitbucketBrowser.UI
 			_owner = owner;
 		}
 
-        protected override IList<FollowerModel> OnUpdate()
+        protected override List<FollowerModel> OnUpdate()
         {
             var client = new Client("thedillonb", "djames");
             return client.Users[_owner].Repositories[_name].GetFollowers().Followers;

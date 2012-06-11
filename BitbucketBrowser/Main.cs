@@ -48,7 +48,7 @@ namespace BitbucketBrowser
 		{
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
             _repoController = new AccountRepositoryController("thedillonb") { Title = "Repositories" };
-            _newsController = new EventsController("thedillonb", false) { Title = "Events" };
+            _newsController = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
             _groupController = new GroupController("thedillonb", false) { Title = "Groups" };
             _profileController = new ProfileController("thedillonb", false) { Title = "Profile" };
             _exploreController = new ExploreController() { Title = "Explore" };

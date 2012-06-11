@@ -32,6 +32,8 @@ namespace BitbucketBrowser.UI
 
         public string Username { get; private set; }
 
+        public bool ReportUser { get; set; }
+
         public EventsController(string username, bool push = true) 
             : base(push, true)
         {
@@ -40,6 +42,7 @@ namespace BitbucketBrowser.UI
             Username = username;
             Root.UnevenRows = true;
             Root.Add(new Section());
+            ReportUser = true;
         }
 
         protected virtual EventsModel OnGetData()
@@ -66,7 +69,7 @@ namespace BitbucketBrowser.UI
         {
             InvokeOnMainThread(delegate {
                 Model.ForEach(e => {
-                    var newsEl = new NewsFeedElement(e);
+                    var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser };
                     newsEl.Tapped += () => {
                         if (e.Event == "commit") {
                             NavigationController.PushViewController(new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node), true);
@@ -75,6 +78,7 @@ namespace BitbucketBrowser.UI
                     Root[0].Insert(0, UITableViewRowAnimation.Top, newsEl);
                 });
             });
+
         }
     }
 }

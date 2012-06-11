@@ -105,6 +105,8 @@
     <Compile Include="UI\Controllers\BranchController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="UI\Controllers\ChangesetController.cs" />
+    <Compile Include="UI\Views\CustomElement.cs" />
+    <Compile Include="UI\Controllers\SourceController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -142,5 +144,7 @@
     <Content Include="Images\Tabs\group.png" />
     <Content Include="Images\branch.png" />
     <Content Include="Images\tag.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\file.png" />
   </ItemGroup>
 </Project>

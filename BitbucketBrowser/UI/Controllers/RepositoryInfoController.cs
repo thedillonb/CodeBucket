@@ -81,7 +81,7 @@ namespace BitbucketBrowser.UI
                          { Accessory = UITableViewCellAccessory.DisclosureIndicator });
 
             var sec3 = new Section() {
-                new ImageStringElement("Branches", () => ad.ExplorerController.Explore(new RepoEventsController(Model.Owner, Model.Slug)),
+                new ImageStringElement("Branches", () => ad.ExplorerController.Explore(new BranchController(Model.Owner, Model.Slug)),
                                        UIImage.FromBundle("Images/branch.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
                 new ImageStringElement("Tags", () => ad.ExplorerController.Explore(new RepoEventsController(Model.Owner, Model.Slug)),
                                         UIImage.FromBundle("Images/tag.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
