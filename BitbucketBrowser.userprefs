@@ -1,20 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/NewsFeedElement.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/SourceController.cs">
     <Files>
-      <File FileName="BitbucketBrowser/Main.cs" Line="30" Column="74" />
-      <File FileName="BitbucketBrowser/UI/Views/HeaderView.cs" Line="52" Column="14" />
-      <File FileName="BitbucketBrowser/UI/Views/NewsFeedElement.cs" Line="87" Column="32" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryInfoController.cs" Line="41" Column="43" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="22" Column="110" />
+      <File FileName="BitbucketBrowser/UI/Controllers/ChangesetController.cs" Line="79" Column="133" />
+      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="104" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="BitbucketBrowser" expanded="True">
             <Node name="UI" expanded="True">
-              <Node name="Controllers" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="NewsFeedElement.cs" selected="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="SourceController.cs" selected="True" />
               </Node>
+              <Node name="Views" expanded="True" />
             </Node>
             <Node name="Utils" expanded="True" />
           </Node>
@@ -32,4 +33,7 @@
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.BitbucketBrowser>
+    <ProfileHeapShotSettings_27CDebug Output="/var/folders/p2/jqtkyxbd1bq921f2y3t_x6w80000gn/T/profiler-output.mlpd" Zip="True" HeapshotMode="ondemand" HeapshotGCInterval="1" HeapshotTimeInterval="1000" Calls="False" Alloc="False" CallDepth="100" StatisticalSampling="True" SampingFrequency="1000" MaxFrames="8" Mode="Performance" />
+  </MonoDevelop.Ide.ItemProperties.BitbucketBrowser>
 </Properties>

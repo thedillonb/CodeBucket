@@ -4,6 +4,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BitbucketBrowser.UI
 {
@@ -18,6 +19,7 @@ namespace BitbucketBrowser.UI
         public AccountRepositoryController(string username)
         {
             Username = username;
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
         }
 
         public override void ViewDidLoad()
@@ -81,7 +83,7 @@ namespace BitbucketBrowser.UI
             protected override List<RepositoryDetailedModel> OnUpdate()
             {
                 var client = new Client("thedillonb", "djames");
-                return client.Account.GetRepositories();
+                return client.Account.GetRepositories().OrderBy(x => x.Name).ToList();
             }
         }
 
@@ -118,15 +120,14 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             Model.ForEach(x => CreateEntry(sec, x, Nav ?? NavigationController));
             InvokeOnMainThread(delegate {
-                Root.Clear();
-                Root.Add(sec);
+                Root = new RootElement(Title) { sec };
             });
         }
 
         protected override List<RepositoryDetailedModel> OnUpdate()
         {
             var client = new Client("thedillonb", "djames");
-            return client.Users[Username].GetInfo().Repositories;
+            return client.Users[Username].GetInfo().Repositories.OrderBy(x => x.Name).ToList();
         }
     }
 }

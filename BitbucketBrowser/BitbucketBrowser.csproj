@@ -23,6 +23,7 @@
     <MtouchDebug>true</MtouchDebug>
     <MtouchProfiling>true</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -107,6 +108,7 @@
     <Compile Include="UI\Controllers\ChangesetController.cs" />
     <Compile Include="UI\Views\CustomElement.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -126,6 +128,10 @@
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\plus.png" />
@@ -135,16 +141,20 @@
     <Content Include="Images\flag.png" />
     <Content Include="Images\repoevents.png" />
     <Content Include="Images\followers.png" />
-    <Content Include="Images\Tabs\database.png" />
-    <Content Include="Images\Tabs\111-user.png" />
-    <Content Include="Images\Tabs\people_family.png" />
-    <Content Include="Images\Tabs\newspaper.png" />
     <Content Include="Images\repo.png" />
-    <Content Include="Images\Tabs\compass.png" />
-    <Content Include="Images\Tabs\group.png" />
     <Content Include="Images\branch.png" />
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
+    <Content Include="Images\commit.png" />
+    <Content Include="Images\Tabs\events.png" />
+    <Content Include="Images\Tabs\user.png" />
+    <Content Include="Images\Tabs\groups.png" />
+    <Content Include="Images\Tabs\database.png" />
+    <Content Include="Images\Tabs\search.png" />
+    <Content Include="Images\bitbucketlogo.png" />
+    <Content Include="Images\Tabs\cog.png" />
+    <Content Include="Images\Tabs\logout.png" />
+    <Content Include="Images\Tabs\help.png" />
   </ItemGroup>
 </Project>

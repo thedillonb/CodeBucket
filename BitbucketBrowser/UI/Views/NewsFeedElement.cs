@@ -12,7 +12,7 @@ namespace BitbucketBrowser.UI
     public class NewsFeedElement : CustomElement
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.SystemFontOfSize(15);
+        private static readonly UIFont UserFont = UIFont.SystemFontOfSize(13);
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
         private static readonly UIImage PlusImage = UIImage.FromBundle("Images/plus.png");
         private static readonly UIImage HeartImage = UIImage.FromBundle("Images/heart.png");
@@ -91,9 +91,7 @@ namespace BitbucketBrowser.UI
                 userHeight = -2;
             }
 
-            int days = DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days;
-            string daysAgo = days > 0 ? DateTime.Now.Subtract(DateTime.Parse(Item.CreatedOn)).Days + " days ago" : "Today";
-            //UIColor.FromRGB(36, 112, 216).SetColor();
+            string daysAgo = DateTime.Parse(Item.UtcCreatedOn).ToDaysAgo();
             UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
             float daysAgoTop = TopBottomPadding + userHeight + 2;
             view.DrawString(
@@ -107,7 +105,7 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(desc))
             {
                 UIColor.Black.SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + TopBottomPadding;
+                var top = daysAgoTop + DateFont.LineHeight + 3f;
                 var height = bounds.Height - top - TopBottomPadding;
                 view.DrawString(desc,
                     new RectangleF(leftContent, top, contentWidth, height), DescFont, UILineBreakMode.TailTruncation
@@ -130,7 +128,7 @@ namespace BitbucketBrowser.UI
 
             var userHeight = (ReportUser && Item.User != null) ? UserFont.LineHeight : 0f;
 
-            return TopBottomPadding*3 + userHeight + DateFont.LineHeight + 2f + descHeight;
+            return TopBottomPadding*2 + 3f + userHeight + DateFont.LineHeight + 2f + descHeight;
         }
     }
 }

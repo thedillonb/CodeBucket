@@ -4,6 +4,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System;
 using MonoTouch.Foundation;
+using BitbucketBrowser.Utils;
 
 namespace BitbucketBrowser.UI
 {
@@ -25,16 +26,7 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
-            var dt = DateTime.Now - DateTime.Parse(Model.LastUpdated);
-            var lastUpdated = "Last updated: ";
-            if (dt.TotalDays > 1)
-                lastUpdated += Convert.ToInt32(dt.TotalDays) + " days ago";
-            else if (dt.TotalHours > 1)
-                lastUpdated += Convert.ToInt32(dt.TotalHours) + " hours ago";
-            else if (dt.TotalMinutes > 1)
-                lastUpdated += Convert.ToInt32(dt.TotalMinutes) + " hours ago";
-            else
-                lastUpdated += "moments ago";
+            var lastUpdated = "Last updated: " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
 
             var header = new HeaderView(View.Bounds.Width) { 
                 Title = Model.Name, Subtitle = lastUpdated
@@ -59,17 +51,16 @@ namespace BitbucketBrowser.UI
                 );
             }
 
-            var ad = (AppDelegate)UIApplication.SharedApplication.Delegate;
-            
+
             var owner = new StyledStringElement("Owner", Model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            owner.Tapped += () => ad.ExplorerController.Explore(new ProfileController(Model.Owner));
+            owner.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Owner), true);
             sec1.Add(owner);
             var followers = new StyledStringElement ("Followers", "" + Model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            followers.Tapped += () => ad.ExplorerController.Explore(new RepoFollowersController(Model.Owner, Model.Slug));
+            followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(Model.Owner, Model.Slug), true);
             sec1.Add(followers);
             
             var sec2 = new Section() {
-                new ImageStringElement("Events", () => ad.ExplorerController.Explore(new RepoEventsController(Model.Owner, Model.Slug)),
+                new ImageStringElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true),
                                        UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
             };
             
@@ -81,9 +72,11 @@ namespace BitbucketBrowser.UI
                          { Accessory = UITableViewCellAccessory.DisclosureIndicator });
 
             var sec3 = new Section() {
-                new ImageStringElement("Branches", () => ad.ExplorerController.Explore(new BranchController(Model.Owner, Model.Slug)),
+                new ImageStringElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 
+                                       UIImage.FromBundle("Images/commit.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
+                new ImageStringElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true),
                                        UIImage.FromBundle("Images/branch.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
-                new ImageStringElement("Tags", () => ad.ExplorerController.Explore(new RepoEventsController(Model.Owner, Model.Slug)),
+                new ImageStringElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true),
                                         UIImage.FromBundle("Images/tag.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
             };
             

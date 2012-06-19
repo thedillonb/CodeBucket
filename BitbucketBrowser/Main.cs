@@ -6,6 +6,9 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
 using BitbucketBrowser.UI;
+using MonoTouch.Dialog;
+using MonoTouch.SlideoutNavigation;
+using System.Drawing;
 
 namespace BitbucketBrowser
 {
@@ -18,16 +21,7 @@ namespace BitbucketBrowser
 	{
 		// class-level declarations
 		UIWindow window;
-		AccountRepositoryController _repoController;
-		EventsController _newsController;
-		GroupController _groupController;
-		ProfileController _profileController;
-        ExploreController _exploreController;
-		UITabBarController _tabs;
-
-        public ExploreController ExplorerController { get { return _exploreController; } }
-
-        public UITabBarController TabController { get { return _tabs; } }
+        SlideoutNavigationController _nav;
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -47,26 +41,63 @@ namespace BitbucketBrowser
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
-            _repoController = new AccountRepositoryController("thedillonb") { Title = "Repositories" };
-            _newsController = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
-            _groupController = new GroupController("thedillonb", false) { Title = "Groups" };
-            _profileController = new ProfileController("thedillonb", false) { Title = "Profile" };
-            _exploreController = new ExploreController() { Title = "Explore" };
-			_tabs = new UITabBarController();
+            _nav = new SlideoutNavigationController();
+
+            _nav.MenuView = new MenuController();
+            _nav.TopView = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
 			
-			_tabs.ViewControllers = new UIViewController[] {
-				new UINavigationController(_newsController) { TabBarItem = new UITabBarItem(_newsController.Title, UIImage.FromBundle("Images/Tabs/newspaper.png"), 1) },
-				new UINavigationController(_repoController) { TabBarItem = new UITabBarItem(_repoController.Title, UIImage.FromBundle("Images/Tabs/database.png"), 2) },
-				new UINavigationController(_groupController) { TabBarItem = new UITabBarItem(_groupController.Title, UIImage.FromBundle("Images/Tabs/group.png"), 3) },
-				new UINavigationController(_profileController) { TabBarItem = new UITabBarItem(_profileController.Title, UIImage.FromBundle("Images/Tabs/111-user.png"), 4) },
-                new UINavigationController(_exploreController) { TabBarItem = new UITabBarItem(_exploreController.Title, UIImage.FromBundle("Images/Tabs/compass.png"), 5) }
-			};
-			
-			window.RootViewController = _tabs;
+			window.RootViewController = _nav;
 			window.MakeKeyAndVisible();
 			
 			return true;
 		}
 	}
+
+    public class MenuController : DialogViewController
+    {
+        public MenuController()
+            : base(UITableViewStyle.Plain, new RootElement(""))
+        {
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            Root.Add(new Section() {
+                new ImageStringElement("Profile", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/user.png")),
+                new ImageStringElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false }, false), UIImage.FromBundle("/Images/Tabs/events.png")),
+                new ImageStringElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/Tabs/database.png")),
+                new ImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/groups.png")),
+                new ImageStringElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search.png")),
+            });
+            Root.Add(new Section("Preferences") {
+                new ImageStringElement("Help", UIImage.FromBundle("/Images/Tabs/help.png")),
+                new ImageStringElement("Settings", UIImage.FromBundle("/Images/Tabs/cog.png")),
+                new ImageStringElement("Logout", UIImage.FromBundle("/Images/Tabs/logout.png")),
+            });
+
+            NavigationItem.TitleView = new LogoView();
+        }
+
+        private class LogoView : UIView
+        {
+            private static UIImage Logo = UIImage.FromBundle("/Images/bitbucketlogo.png");
+
+            public LogoView()
+                : base(new RectangleF(0f, 0f, 40f, 40f))
+            {
+                BackgroundColor = UIColor.Clear;
+            }
+
+            public override void Draw(System.Drawing.RectangleF rect)
+            {
+                base.Draw(rect);
+
+                //Draw the logo
+                Logo.Draw(new RectangleF(0, 0, Logo.Size.Width, Logo.Size.Height));
+            }
+        }
+    }
 }
 

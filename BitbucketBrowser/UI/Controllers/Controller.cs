@@ -21,6 +21,8 @@ namespace BitbucketBrowser.UI
             //View.BackgroundColor = UIColor.FromRGB(0.85f, 0.85f, 0.85f);
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
+
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
         }
 
         protected abstract void OnRefresh();

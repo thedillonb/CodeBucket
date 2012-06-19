@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Drawing;
+using System.Threading;
+using RedPlum;
 
 
 namespace BitbucketBrowser.UI
@@ -52,7 +54,9 @@ namespace BitbucketBrowser.UI
             {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
-                items.Add(new ItemElement(p,() => NavigationController.PushViewController(new SourceView() { Title = p}, true) ,UIImage.FromBundle("/Images/file.png")));
+                items.Add(new ItemElement(p,() => NavigationController.PushViewController(
+                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p}, true), 
+                                          UIImage.FromBundle("/Images/file.png")));
             });
 
 
@@ -84,21 +88,67 @@ namespace BitbucketBrowser.UI
         }
     }
 
-    public class SourceView : UIViewController
+    public class SourceInfoController : UIViewController
     {
-        UIWebView _web;
+        private UIWebView _web;
 
-        public SourceView()
+        private string _user, _slug, _branch, _path;
+
+
+        public SourceInfoController(string user, string slug, string branch, string path)
             : base()
         {
+            _user = user;
+            _slug = slug;
+            _branch = branch;
+            _path = path;
 
+            _web = new UIWebView();
+            _web.DataDetectorTypes = UIDataDetectorType.None;
+            this.Add(_web);
+
+            Title = path.Substring(path.LastIndexOf('/') + 1);
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            _web = new UIWebView(this.View.Frame);
-            this.Add(_web);
+            Request();
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            _web.Frame = this.View.Bounds;
+        }
+
+        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+        {
+            base.DidRotate(fromInterfaceOrientation);
+
+            var bounds = View.Bounds;
+            _web.Frame = bounds;
+        }
+
+        private void Request()
+        {
+            var hud = new MBProgressHUD(this.View); 
+            hud.Mode = MBProgressHUDMode.Indeterminate;
+            hud.TitleText = "Loading...";
+            this.View.AddSubview(hud);
+            hud.Show(true);
+
+            ThreadPool.QueueUserWorkItem(delegate {
+                var c = new BitbucketSharp.Client("thedillonb", "djames");
+                var d = c.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
+                var data = System.Security.SecurityElement.Escape(d.Data);
+
+                InvokeOnMainThread(delegate {
+                    _web.LoadHtmlString("<pre>" + data + "</pre>", null);
+                    hud.Hide(true);
+                    hud.RemoveFromSuperview();
+                });
+            });
         }
 
 
