@@ -6,18 +6,21 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using System.Collections.Generic;
 
 namespace BitbucketBrowser.UI
 {
     public class NewsFeedElement : CustomElement
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.SystemFontOfSize(13);
+        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
         private static readonly UIImage PlusImage = UIImage.FromBundle("Images/plus.png");
         private static readonly UIImage HeartImage = UIImage.FromBundle("Images/heart.png");
         private static readonly UIImage PencilImage = UIImage.FromBundle("Images/pencil.png");
         private static readonly UIImage UnknownImage = UIImage.FromBundle("Images/unknown.png");
+        private static readonly UIImage HeartBrokenImage = UIImage.FromBundle("Images/heart_break.png");
+        private static readonly UIImage CreateImage = UIImage.FromBundle("Images/create.png");
 
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;
@@ -32,30 +35,49 @@ namespace BitbucketBrowser.UI
 
         public bool ReportUser { get; set; }
 
+
+        public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
+                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo };
+
         private void CreateDescription(out string desc, out UIImage img)
         {
             desc = string.IsNullOrEmpty(Item.Description) ? "" : Item.Description.Replace("\n", " ").Trim();
 
             //Drop the image
-            if (Item.Event == "commit")
+            if (Item.Event == EventModel.Type.Commit)
             {
                 img = PlusImage;
                 desc = "Commited: " + desc;
             }
-            else if (Item.Event == "wiki_updated")
+            else if (Item.Event == EventModel.Type.CreateRepo)
+            {
+                img = CreateImage;
+                desc = "Created Repo: " + Item.Repository.Name;
+            }
+            else if (Item.Event == EventModel.Type.WikiUpdated)
             {
                 img = PencilImage;
                 desc = "Updated the wiki page: " + desc;
             }
-            else if (Item.Event == "start_follow_user")
+                else if (Item.Event == EventModel.Type.WikiCreated)
+            {
+                img = PencilImage;
+                desc = "Created the wiki page: " + desc;
+            }
+            else if (Item.Event == EventModel.Type.StartFollowUser)
             {
                 img = HeartImage;
                 desc = "Started following a user";
             }
-            else if (Item.Event == "wiki_created")
+            else if (Item.Event == EventModel.Type.StartFollowRepo)
             {
-                img = PencilImage;
-                desc = "Created the wiki page: " + desc;
+                img = HeartImage;
+                desc = "Started following: " + Item.Repository.Name;
+            }
+            else if (Item.Event == EventModel.Type.StopFollowRepo)
+            {
+                img = HeartBrokenImage;
+                desc = "Stopped following: " + Item.Repository.Name;
             }
             else
                 img = UnknownImage;
@@ -77,11 +99,11 @@ namespace BitbucketBrowser.UI
 
             img.Draw(imageRect);
 
-            if (ReportUser && Item.User != null)
+            if (ReportUser)
             {
-                string userStr = Item.User.Username;
+                var user = Item.User != null ? Item.User.Username : Item.Repository.Owner;
                 UIColor.FromRGB(0, 0x44, 0x66).SetColor();
-                view.DrawString(userStr,
+                view.DrawString(user,
                     new RectangleF(leftContent, TopBottomPadding, contentWidth, UserFont.LineHeight),
                     UserFont, UILineBreakMode.TailTruncation
                     );
@@ -126,7 +148,7 @@ namespace BitbucketBrowser.UI
             if (descHeight > 54)
                 descHeight = 54;
 
-            var userHeight = (ReportUser && Item.User != null) ? UserFont.LineHeight : 0f;
+            var userHeight = (ReportUser) ? UserFont.LineHeight : 0f;
 
             return TopBottomPadding*2 + 3f + userHeight + DateFont.LineHeight + 2f + descHeight;
         }

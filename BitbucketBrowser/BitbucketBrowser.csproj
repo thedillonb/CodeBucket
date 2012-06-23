@@ -109,6 +109,9 @@
     <Compile Include="UI\Views\CustomElement.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
+    <Compile Include="UI\Views\ErrorView.cs" />
+    <Compile Include="UI\Controllers\WikiController.cs" />
+    <Compile Include="UI\Views\ChangeElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -156,5 +159,8 @@
     <Content Include="Images\Tabs\cog.png" />
     <Content Include="Images\Tabs\logout.png" />
     <Content Include="Images\Tabs\help.png" />
+    <Content Include="Images\warning.png" />
+    <Content Include="Images\heart_break.png" />
+    <Content Include="Images\create.png" />
   </ItemGroup>
 </Project>

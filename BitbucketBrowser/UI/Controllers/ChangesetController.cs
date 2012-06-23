@@ -4,15 +4,18 @@ using MonoTouch.Dialog;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Utils;
+using System.Linq;
 
 
 namespace BitbucketBrowser.UI
 {
-    public class ChangesetController : Controller<ChangesetsModel>
+    public class ChangesetController : Controller<List<ChangesetModel>>
     {
         public string User { get; private set; }
 
         public string Slug { get; private set; }
+
+        private DateTime _lastUpdate = DateTime.MinValue;
 
         public ChangesetController(string user, string slug)
             : base(true, true)
@@ -21,29 +24,37 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Title = "Changes";
-            Root.Add(new Section());
             Root.UnevenRows = true;
+            Root.Add(new Section());
         }
 
 
         protected override void OnRefresh ()
         {
             var items = new List<Element>();
-            Model.Changesets.ForEach(x => {
-                var el = new MessageElement() { Sender = x.Author, Body = (x.Message ?? "").Replace("\n", " ").Trim(), Date = DateTime.Parse(x.Timestamp), Subject = "" };
+            Model.ForEach(x => {
+                var el = new ChangeElement(x);
+                el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(User, Slug, x.Node), true);
                 items.Add(el);
             });
 
             InvokeOnMainThread(delegate {
-                Root[0].Clear();
-                Root[0].AddAll(items);
+                Root[0].Insert(0, UITableViewRowAnimation.Top, items);
             });
         }
 
-        protected override ChangesetsModel OnUpdate ()
+        protected override List<ChangesetModel> OnUpdate ()
         {
-            var client = new BitbucketSharp.Client("thedillonb", "djames");
-            return client.Users[User].Repositories[Slug].Changesets.GetChangesets();
+            var changes = Application.Client.Users[User].Repositories[Slug].Changesets.GetChangesets();
+
+            var newChanges =
+                         (from s in changes.Changesets
+                          where DateTime.Parse(s.Utctimestamp) > _lastUpdate
+                          orderby DateTime.Parse(s.Utctimestamp) descending
+                          select s).ToList();
+            if (newChanges.Count > 0)
+                 _lastUpdate = (from r in newChanges select DateTime.Parse(r.Utctimestamp)).Max();
+            return newChanges;
         }
 
     }
@@ -101,8 +112,7 @@ namespace BitbucketBrowser.UI
 
         protected override ChangesetModel OnUpdate()
         {
-            var client = new BitbucketSharp.Client("thedillonb", "djames");
-            return client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
+            return Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
         }
     }
 }

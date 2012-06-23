@@ -38,8 +38,7 @@ namespace BitbucketBrowser.UI
 
         protected override List<GroupModel> OnUpdate()
         {
-            var client = new BitbucketSharp.Client("thedillonb", "djames");
-            var g = client.Account.Groups.GetGroups();
+            var g = Application.Client.Users[Username].Groups.GetGroups();
             return g.OrderBy(x => x.Name).ToList();
         }
 	}
@@ -82,8 +81,7 @@ namespace BitbucketBrowser.UI
 
         protected override GroupModel OnUpdate ()
         {
-            var client = new BitbucketSharp.Client("thedillonb", "djames");
-            return client.Users[User].Groups[Model.Slug].GetInfo();
+            return Application.Client.Users[User].Groups[Model.Slug].GetInfo();
         }
     }
 }

@@ -68,8 +68,8 @@ namespace BitbucketBrowser.UI
                 sec2.Add(new ImageStringElement("Issues", UIImage.FromBundle("Images/flag.png")) 
                          { Accessory = UITableViewCellAccessory.DisclosureIndicator });
             if (Model.HasWiki)
-                sec2.Add(new ImageStringElement("Wiki", UIImage.FromBundle("Images/pencil.png"))
-                         { Accessory = UITableViewCellAccessory.DisclosureIndicator });
+                sec2.Add(new ImageStringElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
+                                                UIImage.FromBundle("Images/pencil.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator });
 
             var sec3 = new Section() {
                 new ImageStringElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 

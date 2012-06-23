@@ -51,8 +51,7 @@ namespace BitbucketBrowser.UI
 
         protected override List<FollowerModel> OnUpdate()
         {
-            var client = new Client("thedillonb", "djames");
-            var f = client.Users[_name].GetFollowers().Followers;
+            var f = Application.Client.Users[_name].GetFollowers().Followers;
             return f.OrderBy(x => x.Username).ToList();
         }
 	}
@@ -70,8 +69,7 @@ namespace BitbucketBrowser.UI
 
         protected override List<FollowerModel> OnUpdate()
         {
-            var client = new Client("thedillonb", "djames");
-            var f = client.Users[_owner].Repositories[_name].GetFollowers().Followers;
+            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers().Followers;
             return f.OrderBy(x => x.Username).ToList();
         }
 	}

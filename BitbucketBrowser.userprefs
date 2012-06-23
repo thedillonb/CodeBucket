@@ -1,23 +1,29 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/SourceController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/NewsFeedElement.cs">
     <Files>
       <File FileName="BitbucketBrowser/UI/Controllers/RepositoryInfoController.cs" Line="41" Column="43" />
       <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="22" Column="110" />
-      <File FileName="BitbucketBrowser/UI/Controllers/ChangesetController.cs" Line="79" Column="133" />
-      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="104" Column="26" />
+      <File FileName="BitbucketBrowser/UI/Controllers/ChangesetController.cs" Line="51" Column="27" />
+      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="59" Column="42" />
+      <File FileName="../BitbucketSharp/BitbucketSharp/Models/EventModel.cs" Line="31" Column="56" />
+      <File FileName="BitbucketBrowser/UI/Views/NewsFeedElement.cs" Line="140" Column="18" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="BitbucketBrowser" expanded="True">
+            <Node name="Images" expanded="True" />
             <Node name="UI" expanded="True">
-              <Node name="Controllers" expanded="True">
-                <Node name="SourceController.cs" selected="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="NewsFeedElement.cs" selected="True" />
               </Node>
-              <Node name="Views" expanded="True" />
             </Node>
             <Node name="Utils" expanded="True" />
+          </Node>
+          <Node name="BitbucketSharp.MonoTouch" expanded="True">
+            <Node name="Models" expanded="True" />
           </Node>
         </State>
       </Pad>

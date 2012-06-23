@@ -82,8 +82,7 @@ namespace BitbucketBrowser.UI
 
             protected override List<RepositoryDetailedModel> OnUpdate()
             {
-                var client = new Client("thedillonb", "djames");
-                return client.Account.GetRepositories().OrderBy(x => x.Name).ToList();
+                return Application.Client.Account.GetRepositories().OrderBy(x => x.Name).ToList();
             }
         }
 
@@ -126,8 +125,7 @@ namespace BitbucketBrowser.UI
 
         protected override List<RepositoryDetailedModel> OnUpdate()
         {
-            var client = new Client("thedillonb", "djames");
-            return client.Users[Username].GetInfo().Repositories.OrderBy(x => x.Name).ToList();
+            return Application.Client.Users[Username].GetInfo().Repositories.OrderBy(x => x.Name).ToList();
         }
     }
 }

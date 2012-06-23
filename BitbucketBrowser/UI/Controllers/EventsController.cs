@@ -21,8 +21,7 @@ namespace BitbucketBrowser.UI
 
         protected override EventsModel OnGetData()
         {
-            var client = new Client("thedillonb", "djames");
-            return client.Users[Username].Repositories[Slug].GetEvents();
+            return Application.Client.Users[Username].Repositories[Slug].GetEvents();
         }
     }
 
@@ -47,8 +46,7 @@ namespace BitbucketBrowser.UI
 
         protected virtual EventsModel OnGetData()
         {
-            var client = new Client("thedillonb", "djames");
-            return client.Users[Username].GetEvents();
+            return Application.Client.Users[Username].GetEvents();
         }
 
         protected override List<EventModel> OnUpdate()
@@ -57,8 +55,8 @@ namespace BitbucketBrowser.UI
 
              var newEvents =
                  (from s in events.Events
-                  where DateTime.Parse(s.CreatedOn) > _lastUpdate
-                  orderby DateTime.Parse(s.CreatedOn)
+                  where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
+                  orderby DateTime.Parse(s.UtcCreatedOn)
                   select s).ToList();
              if (newEvents.Count > 0)
                  _lastUpdate = (from r in newEvents select DateTime.Parse(r.CreatedOn)).Max();
@@ -67,16 +65,34 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
+            var elements = new List<Element>();
+            Model.ForEach(e => {
+                if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
+                    return;
+
+                var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser };
+                if (e.Event == EventModel.Type.Commit) 
+                {
+                    newsEl.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node), true);
+                } 
+                else if (e.Event == EventModel.Type.WikiCreated) 
+                {
+                    newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
+                } 
+                else if (e.Event == EventModel.Type.WikiUpdated) 
+                {
+                    newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
+                }
+                else if (e.Event == EventModel.Type.CreateRepo)
+                {
+                    newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+                }
+
+                elements.Insert(0, newsEl);
+            });
+
             InvokeOnMainThread(delegate {
-                Model.ForEach(e => {
-                    var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser };
-                    newsEl.Tapped += () => {
-                        if (e.Event == "commit") {
-                            NavigationController.PushViewController(new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node), true);
-                        }
-                    };
-                    Root[0].Insert(0, UITableViewRowAnimation.Top, newsEl);
-                });
+                Root[0].Insert(0, UITableViewRowAnimation.Top, elements);
             });
 
         }

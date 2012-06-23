@@ -11,7 +11,7 @@ namespace BitbucketBrowser.Utils
             else if (dt.TotalHours > 1)
                 return Convert.ToInt32(dt.TotalHours) + " hours ago";
             else if (dt.TotalMinutes > 1)
-                return Convert.ToInt32(dt.TotalMinutes) + " hours ago";
+                return Convert.ToInt32(dt.TotalMinutes) + " minutes ago";
             else
                 return "moments ago";
         }

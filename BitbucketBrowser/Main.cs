@@ -40,6 +40,9 @@ namespace BitbucketBrowser
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
+            Application.Client = new BitbucketSharp.Client("thedillonb", "djames");
+
+
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
             _nav = new SlideoutNavigationController();
 
@@ -52,6 +55,14 @@ namespace BitbucketBrowser
 			return true;
 		}
 	}
+
+    /// <summary>
+    /// Application.
+    /// </summary>
+    public static class Application
+    {
+        public static BitbucketSharp.Client Client { get; set; }
+    }
 
     public class MenuController : DialogViewController
     {

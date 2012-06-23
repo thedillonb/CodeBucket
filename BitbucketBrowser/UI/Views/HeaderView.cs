@@ -20,10 +20,10 @@ namespace BitbucketBrowser.UI
             : base(new RectangleF(0, 0, width, 60f))
         {
             Layer.MasksToBounds = false;
-            Layer.ShadowColor = UIColor.DarkGray.CGColor;
+            Layer.ShadowColor = UIColor.Gray.CGColor;
             Layer.ShadowOpacity = 1.0f;
-            Layer.ShadowOffset = new SizeF(0, 3f);
-            BackgroundColor = UIColor.FromRGB(0.96f, 0.96f, 0.96f);
+            Layer.ShadowOffset = new SizeF(0, 2f);
+            BackgroundColor = UIColor.FromRGB(0.98f, 0.98f, 0.98f);
         }
 
         public override void Draw(RectangleF rect)

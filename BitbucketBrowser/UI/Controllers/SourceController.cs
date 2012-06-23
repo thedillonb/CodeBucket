@@ -68,8 +68,7 @@ namespace BitbucketBrowser.UI
 
         protected override SourceModel OnUpdate ()
         {
-            var client = new BitbucketSharp.Client("thedillonb", "djames");
-            return client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo();
+            return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo();
         }
 
         public class ItemElement : ImageStringElement
@@ -110,16 +109,11 @@ namespace BitbucketBrowser.UI
             Title = path.Substring(path.LastIndexOf('/') + 1);
         }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            Request();
-        }
-
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             _web.Frame = this.View.Bounds;
+            Request();
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -132,23 +126,35 @@ namespace BitbucketBrowser.UI
 
         private void Request()
         {
-            var hud = new MBProgressHUD(this.View); 
+            var hud = new MBProgressHUD(this.View.Superview); 
             hud.Mode = MBProgressHUDMode.Indeterminate;
             hud.TitleText = "Loading...";
-            this.View.AddSubview(hud);
+            this.View.Superview.AddSubview(hud);
             hud.Show(true);
 
-            ThreadPool.QueueUserWorkItem(delegate {
-                var c = new BitbucketSharp.Client("thedillonb", "djames");
-                var d = c.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
-                var data = System.Security.SecurityElement.Escape(d.Data);
 
-                InvokeOnMainThread(delegate {
-                    _web.LoadHtmlString("<pre>" + data + "</pre>", null);
-                    hud.Hide(true);
-                    hud.RemoveFromSuperview();
-                });
+            ThreadPool.QueueUserWorkItem(delegate {
+                try
+                {
+                    var d = Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
+                    var data = System.Security.SecurityElement.Escape(d.Data);
+
+                    InvokeOnMainThread(delegate {
+                        _web.LoadHtmlString("<pre>" + data + "</pre>", null);
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+                    });
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(delegate {
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+                        ErrorView.Show(this.View, e.Message);
+                    });
+                }
             });
+
         }
 
 

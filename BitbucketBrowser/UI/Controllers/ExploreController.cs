@@ -21,8 +21,7 @@ namespace BitbucketBrowser.UI
         public override void SearchButtonClicked(string text)
         {
             ThreadPool.QueueUserWorkItem(delegate {
-                var client = new BitbucketSharp.Client("thedillonb", "djames");
-                var l = client.Repositories.Search(text);
+                var l = Application.Client.Repositories.Search(text);
                 var elements = new List<Element>(l.Repositories.Count);
                 l.Repositories.ForEach(r => 
                 {

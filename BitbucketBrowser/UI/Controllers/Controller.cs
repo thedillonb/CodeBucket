@@ -39,7 +39,15 @@ namespace BitbucketBrowser.UI
         {
             if (Model != null && !force)
             {
-                OnRefresh();
+                try
+                {
+                    OnRefresh();
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(() => ErrorView.Show(this.View, e.Message));
+                }
+
                 InvokeOnMainThread(delegate { 
                     ReloadComplete(); 
                 });
@@ -55,9 +63,19 @@ namespace BitbucketBrowser.UI
                 this.View.Superview.AddSubview(hud);
                 hud.Show(true);
             }
+
             ThreadPool.QueueUserWorkItem(delegate {
-                Model = OnUpdate();
-                Refresh();
+                try
+                {
+                    Model = OnUpdate();
+                    Refresh();
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(() => ErrorView.Show(this.View, e.Message));
+                }
+
+
                 if (hud != null)
                 {
                     InvokeOnMainThread(delegate {

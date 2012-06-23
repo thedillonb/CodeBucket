@@ -54,8 +54,7 @@ namespace BitbucketBrowser.UI
 
         protected override UsersModel OnUpdate()
         {
-            var client = new Client("thedillonb", "djames");
-            return client.Users[Username].GetInfo();
+            return Application.Client.Users[Username].GetInfo();
         }
 	}
 }
