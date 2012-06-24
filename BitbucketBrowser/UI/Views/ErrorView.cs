@@ -21,7 +21,7 @@ namespace BitbucketBrowser.UI
 
         public static ErrorView Show(UIView parent, string title, string error = "")
         {
-            var ror = new ErrorView() { Title = title, Detail = error, Frame = parent.Frame, BackgroundColor = UIColor.White };
+            var ror = new ErrorView() { Title = title, Detail = error, Frame = parent.Bounds, BackgroundColor = UIColor.White };
             parent.AddSubview(ror);
             ror.SetNeedsDisplay();
             return ror;

@@ -37,7 +37,8 @@ namespace BitbucketBrowser.UI
                                              UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             _groups = new ImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController(Model.User.Username), true), 
                                              UIImage.FromBundle("Images/followers.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            _repos = new ImageStringElement("Repositories", () => NavigationController.PushViewController(new RepositoryController(Model.User.Username), true), 
+
+            _repos = new ImageStringElement("Repositories", () => NavigationController.PushViewController(new RepositoryController(Model.User.Username) { Model = Model.Repositories }, true), 
                                             UIImage.FromBundle("Images/repo.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             Root.Add(new [] { new Section { _followers, _events, _groups }, new Section { _repos } });
         }

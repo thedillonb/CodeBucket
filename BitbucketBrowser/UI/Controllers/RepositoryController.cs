@@ -106,7 +106,7 @@ namespace BitbucketBrowser.UI
         {
             StyledStringElement sse;
             if (!string.IsNullOrEmpty(r.Description))
-                sse = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle);
+                sse = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle) { Lines = 1 };
             else
                 sse = new StyledStringElement(r.Name);
             sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);

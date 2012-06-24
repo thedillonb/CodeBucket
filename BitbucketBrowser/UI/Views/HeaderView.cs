@@ -1,5 +1,6 @@
 using MonoTouch.UIKit;
 using System.Drawing;
+using MonoTouch.Dialog;
 
 namespace BitbucketBrowser.UI
 {
@@ -29,6 +30,8 @@ namespace BitbucketBrowser.UI
         public override void Draw(RectangleF rect)
         {
             base.Draw(rect);
+
+            var context = UIGraphics.GetCurrentContext();
             float titleY = string.IsNullOrWhiteSpace(Subtitle) ? rect.Height / 2 - TitleFont.LineHeight / 2 : YPad;
             float contentWidth = rect.Width - XPad * 2;
 
@@ -36,7 +39,19 @@ namespace BitbucketBrowser.UI
             {
                 var height = Image.Size.Height > 36 ? 36 : Image.Size.Height;
                 var width = Image.Size.Width > 36 ? 36 : Image.Size.Width;
-                Image.Draw(new RectangleF(rect.Width - XPad * 2 - width, rect.Height / 2 - height / 2, width, height));
+                var top = rect.Height / 2 - height / 2;
+                var left = rect.Width - XPad * 2 - width;
+
+                context.SaveState();
+                context.TranslateCTM(left, top);
+                context.SetLineWidth(1.0f);
+                context.SetShadowWithColor(new SizeF(0, 0), 5, UIColor.DarkGray.CGColor);
+                context.AddPath(GraphicsUtil.MakeRoundedPath(width, 4));
+                context.FillPath();
+                context.RestoreState();
+
+
+                Image.Draw(new RectangleF(left, top, width, height));
                 contentWidth -= (width + 4f); 
             }
 

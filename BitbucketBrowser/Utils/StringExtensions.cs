@@ -27,6 +27,13 @@ namespace BitbucketBrowser.Utils
 				return str.StringSize(font, new SizeF(maxWidth, 1000), UILineBreakMode.WordWrap).Height;
 			}
 		}
+
+        public static string OneLine(this string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return "";
+            return s.Replace("\n", " ").Replace("\r","");
+        }
 	}
 }
 

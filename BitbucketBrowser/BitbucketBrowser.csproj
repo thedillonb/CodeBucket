@@ -112,6 +112,8 @@
     <Compile Include="UI\Views\ErrorView.cs" />
     <Compile Include="UI\Controllers\WikiController.cs" />
     <Compile Include="UI\Views\ChangeElement.cs" />
+    <Compile Include="UI\Controllers\IssueController.cs" />
+    <Compile Include="UI\Views\IssueElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -125,6 +127,10 @@
     <Folder Include="Images\Tabs\" />
     <Folder Include="UI\Controllers\" />
     <Folder Include="UI\Views\" />
+    <Folder Include="SourceBrowser\" />
+    <Folder Include="SourceBrowser\scripts\" />
+    <Folder Include="SourceBrowser\styles\" />
+    <Folder Include="Images\Issues\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -162,5 +168,42 @@
     <Content Include="Images\warning.png" />
     <Content Include="Images\heart_break.png" />
     <Content Include="Images\create.png" />
+    <Content Include="SourceBrowser\index.html" />
+    <Content Include="SourceBrowser\styles\shCore.css" />
+    <Content Include="SourceBrowser\scripts\shAutoloader.js" />
+    <Content Include="SourceBrowser\scripts\shBrushAppleScript.js" />
+    <Content Include="SourceBrowser\scripts\shBrushAS3.js" />
+    <Content Include="SourceBrowser\scripts\shBrushBash.js" />
+    <Content Include="SourceBrowser\scripts\shBrushColdFusion.js" />
+    <Content Include="SourceBrowser\scripts\shBrushCpp.js" />
+    <Content Include="SourceBrowser\scripts\shBrushCSharp.js" />
+    <Content Include="SourceBrowser\scripts\shBrushCss.js" />
+    <Content Include="SourceBrowser\scripts\shBrushDelphi.js" />
+    <Content Include="SourceBrowser\scripts\shBrushDiff.js" />
+    <Content Include="SourceBrowser\scripts\shBrushErlang.js" />
+    <Content Include="SourceBrowser\scripts\shBrushGroovy.js" />
+    <Content Include="SourceBrowser\scripts\shBrushJava.js" />
+    <Content Include="SourceBrowser\scripts\shBrushJavaFX.js" />
+    <Content Include="SourceBrowser\scripts\shBrushJScript.js" />
+    <Content Include="SourceBrowser\scripts\shBrushPerl.js" />
+    <Content Include="SourceBrowser\scripts\shBrushPhp.js" />
+    <Content Include="SourceBrowser\scripts\shBrushPlain.js" />
+    <Content Include="SourceBrowser\scripts\shBrushPowerShell.js" />
+    <Content Include="SourceBrowser\scripts\shBrushPython.js" />
+    <Content Include="SourceBrowser\scripts\shBrushRuby.js" />
+    <Content Include="SourceBrowser\scripts\shBrushSass.js" />
+    <Content Include="SourceBrowser\scripts\shBrushScala.js" />
+    <Content Include="SourceBrowser\scripts\shBrushSql.js" />
+    <Content Include="SourceBrowser\scripts\shBrushVb.js" />
+    <Content Include="SourceBrowser\scripts\shBrushXml.js" />
+    <Content Include="SourceBrowser\scripts\shCore.js" />
+    <Content Include="SourceBrowser\scripts\shLegacy.js" />
+    <Content Include="SourceBrowser\styles\shCoreDefault.css" />
+    <Content Include="Images\Issues\bug.png" />
+    <Content Include="Images\Issues\high.png" />
+    <Content Include="Images\Issues\low.png" />
+    <Content Include="Images\Issues\task.png" />
+    <Content Include="Images\Issues\proposal.png" />
+    <Content Include="Images\Issues\enhancement.png" />
   </ItemGroup>
 </Project>

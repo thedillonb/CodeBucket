@@ -22,9 +22,9 @@ namespace BitbucketBrowser.UI
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
 
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);        
         }
-
+            
         protected abstract void OnRefresh();
 
         protected abstract T OnUpdate();
@@ -45,7 +45,7 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => ErrorView.Show(this.View, e.Message));
+                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
                 }
 
                 InvokeOnMainThread(delegate { 
@@ -72,7 +72,7 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => ErrorView.Show(this.View, e.Message));
+                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
                 }
 
 

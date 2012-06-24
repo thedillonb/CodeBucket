@@ -104,6 +104,7 @@ namespace BitbucketBrowser.UI
 
             _web = new UIWebView();
             _web.DataDetectorTypes = UIDataDetectorType.None;
+            _web.ScalesPageToFit = false;
             this.Add(_web);
 
             Title = path.Substring(path.LastIndexOf('/') + 1);
@@ -139,8 +140,21 @@ namespace BitbucketBrowser.UI
                     var d = Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
                     var data = System.Security.SecurityElement.Escape(d.Data);
 
+                    var extension = _path.LastIndexOf('.') > 0 ? _path.Substring(_path.LastIndexOf('.') + 1) : "";
+
                     InvokeOnMainThread(delegate {
-                        _web.LoadHtmlString("<pre>" + data + "</pre>", null);
+                        var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
+                        var filled = html.Replace("{BRUSH}", "brush: " + extension).Replace("{DATA}", data);
+
+                        var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
+                        url = url.Replace("/", "//").Replace(" ", "%20");
+
+
+
+                        //var url = NSBundle.PathForResourceAbsolute("SourceBrowser", 
+                        _web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
+
+                        //_web.LoadHtmlString("<pre>" + data + "</pre>", null);
                         hud.Hide(true);
                         hud.RemoveFromSuperview();
                     });

@@ -67,13 +67,15 @@ namespace BitbucketBrowser.UI
 
         public string Slug { get; private set; }
 
+        public RepositoryDetailedModel Repo { get; set; }
+
         public ChangesetInfoController(string user, string slug, string node)
             : base(true, false)
         {
             Node = node;
             User = user;
             Slug = slug;
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+            Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
             Title = "Commit";
         }
 
@@ -91,15 +93,28 @@ namespace BitbucketBrowser.UI
                 sec.Add(sse);
             });
 
-            var auth = new StyledStringElement("Author", Model.Author, UITableViewCellStyle.Value1)
-            { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
-            auth.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
+            var detailsSection = new Section("Details");
 
             var desc = new StyledMultilineElement(DateTime.Parse(Model.Utctimestamp).ToDaysAgo(), Model.Message, MonoTouch.UIKit.UITableViewCellStyle.Subtitle)
             { Font = UIFont.SystemFontOfSize(12f), SubtitleFont = UIFont.SystemFontOfSize(14f), DetailColor = UIColor.Black, TextColor = UIColor.LightGray };
+            detailsSection.Add(desc);
+
+            var auth = new StyledStringElement("Author", Model.Author, UITableViewCellStyle.Value1)
+            { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
+            auth.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
+            detailsSection.Add(auth);
+
+            if (Repo != null)
+            {
+                var repo = new StyledStringElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
+                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
+                repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
+                detailsSection.Add(repo);
+            }
+
 
             RootElement root = new RootElement(Title) { 
-                new Section("Details") { auth, desc },
+                detailsSection,
                 new Section("Changes") { Elements = sec },
             };
 

@@ -26,7 +26,7 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
-            var lastUpdated = "Last updated: " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
+            var lastUpdated = "Updated " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
 
             var header = new HeaderView(View.Bounds.Width) { 
                 Title = Model.Name, Subtitle = lastUpdated
@@ -65,8 +65,9 @@ namespace BitbucketBrowser.UI
             };
             
             if (Model.HasIssues) 
-                sec2.Add(new ImageStringElement("Issues", UIImage.FromBundle("Images/flag.png")) 
-                         { Accessory = UITableViewCellAccessory.DisclosureIndicator });
+                sec2.Add(new ImageStringElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true),
+                                                UIImage.FromBundle("Images/flag.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator });
+
             if (Model.HasWiki)
                 sec2.Add(new ImageStringElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
                                                 UIImage.FromBundle("Images/pencil.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator });

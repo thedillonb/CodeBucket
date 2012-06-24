@@ -46,7 +46,7 @@ namespace BitbucketBrowser.UI
 
         protected virtual EventsModel OnGetData()
         {
-            return Application.Client.Users[Username].GetEvents();
+            return Application.Client.Users[Username].GetEvents(0, 40);
         }
 
         protected override List<EventModel> OnUpdate()
@@ -73,7 +73,11 @@ namespace BitbucketBrowser.UI
                 var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser };
                 if (e.Event == EventModel.Type.Commit) 
                 {
-                    newsEl.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node), true);
+                    newsEl.Tapped += () => { 
+                        NavigationController.PushViewController(
+                            new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node)
+                            { Repo = e.Repository }, true);
+                    };
                 } 
                 else if (e.Event == EventModel.Type.WikiCreated) 
                 {
