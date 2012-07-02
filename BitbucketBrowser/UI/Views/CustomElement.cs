@@ -58,6 +58,7 @@ namespace BitbucketBrowser.UI
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
             }
 
+            cell.BackgroundColor = UIColor.White;
             cell.Update();
             return cell;
         }   

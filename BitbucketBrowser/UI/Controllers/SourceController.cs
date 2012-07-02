@@ -140,16 +140,12 @@ namespace BitbucketBrowser.UI
                     var d = Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
                     var data = System.Security.SecurityElement.Escape(d.Data);
 
-                    var extension = _path.LastIndexOf('.') > 0 ? _path.Substring(_path.LastIndexOf('.') + 1) : "";
-
                     InvokeOnMainThread(delegate {
                         var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
-                        var filled = html.Replace("{BRUSH}", "brush: " + extension).Replace("{DATA}", data);
+                        var filled = html.Replace("{DATA}", data);
 
                         var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
                         url = url.Replace("/", "//").Replace(" ", "%20");
-
-
 
                         //var url = NSBundle.PathForResourceAbsolute("SourceBrowser", 
                         _web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));

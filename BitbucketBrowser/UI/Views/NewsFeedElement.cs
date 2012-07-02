@@ -115,7 +115,7 @@ namespace BitbucketBrowser.UI
 
             string daysAgo = DateTime.Parse(Item.UtcCreatedOn).ToDaysAgo();
             UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
-            float daysAgoTop = TopBottomPadding + userHeight + 2;
+            float daysAgoTop = TopBottomPadding + userHeight;
             view.DrawString(
                 daysAgo,
                 new RectangleF(leftContent,  daysAgoTop, contentWidth, DateFont.LineHeight),
@@ -127,7 +127,7 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(desc))
             {
                 UIColor.Black.SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + 3f;
+                var top = daysAgoTop + DateFont.LineHeight + 2f;
                 var height = bounds.Height - top - TopBottomPadding;
                 view.DrawString(desc,
                     new RectangleF(leftContent, top, contentWidth, height), DescFont, UILineBreakMode.TailTruncation
@@ -150,7 +150,7 @@ namespace BitbucketBrowser.UI
 
             var userHeight = (ReportUser) ? UserFont.LineHeight : 0f;
 
-            return TopBottomPadding*2 + 3f + userHeight + DateFont.LineHeight + 2f + descHeight;
+            return TopBottomPadding*2 + userHeight + DateFont.LineHeight + 2f + descHeight;
         }
     }
 }

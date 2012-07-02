@@ -43,7 +43,7 @@ namespace BitbucketBrowser.UI
                 var height = Image.Size.Height > 36 ? 36 : Image.Size.Height;
                 var width = Image.Size.Width > 36 ? 36 : Image.Size.Width;
                 var top = rect.Height / 2 - height / 2;
-                var left = rect.Width - XPad * 2 - width;
+                var left = rect.Width - XPad - width;
 
                 if (ShadowImage)
                 {
@@ -59,7 +59,7 @@ namespace BitbucketBrowser.UI
 
 
                 Image.Draw(new RectangleF(left, top, width, height));
-                contentWidth -= (width + 4f); 
+                contentWidth -= (width + XPad * 2); 
             }
 
 

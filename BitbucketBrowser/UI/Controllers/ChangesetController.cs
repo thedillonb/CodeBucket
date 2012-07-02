@@ -69,6 +69,8 @@ namespace BitbucketBrowser.UI
 
         public RepositoryDetailedModel Repo { get; set; }
 
+        private HeaderView _header;
+
         public ChangesetInfoController(string user, string slug, string node)
             : base(true, false)
         {
@@ -77,6 +79,11 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
             Title = "Commit";
+
+            Root.UnevenRows = true;
+            _header = new HeaderView(View.Bounds.Width) { Title = "Change: " + node };
+            Root.Add(new Section(_header));
+
         }
 
         protected override void OnRefresh()
@@ -93,35 +100,34 @@ namespace BitbucketBrowser.UI
                 sec.Add(sse);
             });
 
-            var detailsSection = new Section("Details");
+            var details = new Section();
 
-            var desc = new StyledMultilineElement(DateTime.Parse(Model.Utctimestamp).ToDaysAgo(), Model.Message, MonoTouch.UIKit.UITableViewCellStyle.Subtitle)
-            { Font = UIFont.SystemFontOfSize(12f), SubtitleFont = UIFont.SystemFontOfSize(14f), DetailColor = UIColor.Black, TextColor = UIColor.LightGray };
-            detailsSection.Add(desc);
+            if (!string.IsNullOrEmpty(Model.Message))
+            {
+                var desc = new MultilineElement(Model.Message);
+                details.Insert(0, desc);
+            }
 
-            var auth = new StyledStringElement("Author", Model.Author, UITableViewCellStyle.Value1)
+            var author = new StyledStringElement("Author", Model.Author, UITableViewCellStyle.Value1)
             { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
-            auth.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
-            detailsSection.Add(auth);
+            author.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
+            details.Add(author);
 
             if (Repo != null)
             {
                 var repo = new StyledStringElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
                 { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
                 repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
-                detailsSection.Add(repo);
+                details.Add(repo);
             }
 
+            _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
 
-            RootElement root = new RootElement(Title) { 
-                detailsSection,
-                new Section("Changes") { Elements = sec },
-            };
-
-            root.UnevenRows = true;
+            var changes = new Section("Changes") { Elements = sec };
 
             BeginInvokeOnMainThread(delegate {
-                Root = root;
+                _header.SetNeedsDisplay();
+                Root.Insert(1, UITableViewRowAnimation.Fade, new [] { details, changes });
             });
         }
 

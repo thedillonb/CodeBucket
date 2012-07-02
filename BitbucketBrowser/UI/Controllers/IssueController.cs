@@ -80,7 +80,7 @@ namespace BitbucketBrowser.UI
         };
 
         private readonly HeaderView _header;
-        private readonly Section _comments;
+        private readonly Section _comments, _details;
         private readonly MultilineElement _desc;
         private readonly StyledStringElement _status, _type, _priority;
 
@@ -104,8 +104,9 @@ namespace BitbucketBrowser.UI
             _priority = new StyledStringElement("Priority", "", UITableViewCellStyle.Value1);
 
             _comments = new Section("Comments");
+            _details = new Section() { _status, _type, _priority };
 
-            Root.Add(new Section() { _desc, _status, _type, _priority });
+            Root.Add(_details);
         }
 
 
@@ -130,6 +131,14 @@ namespace BitbucketBrowser.UI
             _priority.Value = Model.Issue.Priority;
             _desc.Caption = Model.Issue.Content;
 
+            var descValid = false;
+            if (!string.IsNullOrEmpty(_desc.Caption))
+            {
+                _desc.Caption = _desc.Caption.Trim();
+                _details.Insert(0, _desc);
+                descValid = true;
+            }
+
             var comments = new List<Element>(Model.Comments.Count);
             Model.Comments.ForEach(x => {
                 if (!string.IsNullOrEmpty(x.Content))
@@ -140,7 +149,9 @@ namespace BitbucketBrowser.UI
             InvokeOnMainThread(delegate { 
                 _header.SetNeedsDisplay(); 
 
-                Root.Reload(_desc, UITableViewRowAnimation.None);
+                if (descValid)
+                    Root.Reload(_desc, UITableViewRowAnimation.None);
+
                 Root.Reload(_type, UITableViewRowAnimation.None);
                 Root.Reload(_status, UITableViewRowAnimation.None);
                 Root.Reload(_priority, UITableViewRowAnimation.None);
@@ -195,7 +206,12 @@ namespace BitbucketBrowser.UI
             var contentWidth = bounds.Width - LeftRightPadding * 2;
 
             var desc = Item.Content;
-            var user = Item.AuthorInfo.Username;
+
+            string user;
+            if (Item.AuthorInfo == null)
+                user = "Unknown";
+            else
+                user = Item.AuthorInfo.Username;
 
             UIColor.FromRGB(0, 0x44, 0x66).SetColor();
             view.DrawString(user,

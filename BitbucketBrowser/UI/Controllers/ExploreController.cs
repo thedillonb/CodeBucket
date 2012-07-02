@@ -103,30 +103,46 @@ namespace BitbucketBrowser.UI
             });
 
             ThreadPool.QueueUserWorkItem(delegate {
-                var l = Application.Client.Repositories.Search(text);
-                var elements = new List<Element>(l.Repositories.Count);
-                l.Repositories.ForEach(r => 
+
+                List<Element> elements;
+                try
                 {
-                    var el = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle)
-                    { Accessory = UITableViewCellAccessory.DisclosureIndicator, Lines = 1, LineBreakMode = UILineBreakMode.TailTruncation };
-                    el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
-                    elements.Add(el);
-                });
+                    var l = Application.Client.Repositories.Search(text);
+                    elements = new List<Element>(l.Repositories.Count);
 
-
-                InvokeOnMainThread(delegate {
-                    Root.Clear();
-                    Root.Add(new Section() { Elements = elements });
-                    if (hud != null)
+                    l.Repositories.ForEach(r => 
                     {
+                        var el = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle)
+                        { Accessory = UITableViewCellAccessory.DisclosureIndicator, Lines = 1, LineBreakMode = UILineBreakMode.TailTruncation };
+                        el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
+                        elements.Add(el);
+                    });
+
+                    InvokeOnMainThread(delegate {
+                        Root.Clear();
+                        Root.Add(new Section() { Elements = elements });
+                        if (hud != null)
+                        {
+                            hud.Hide(true);
+                            hud.RemoveFromSuperview();
+                        }
+
+                        ShowSearch(elements.Count == 0);
+                    });
+
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
+                }
+
+                if (hud != null)
+                {
+                    InvokeOnMainThread(delegate {
                         hud.Hide(true);
                         hud.RemoveFromSuperview();
-                    }
-
-                    ShowSearch(elements.Count == 0);
-                });
-
-               
+                    });
+                }
             });
         }
     }

@@ -76,16 +76,11 @@ namespace BitbucketBrowser
             base.ViewDidLoad();
 
             Root.Add(new Section() {
-                new ImageStringElement("Profile", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/user.png")),
-                new ImageStringElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false }, false), UIImage.FromBundle("/Images/Tabs/events.png")),
-                new ImageStringElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/Tabs/database.png")),
-                new ImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/groups.png")),
-                new ImageStringElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search.png")),
-            });
-            Root.Add(new Section("Preferences") {
-                new ImageStringElement("Help", UIImage.FromBundle("/Images/Tabs/help.png")),
-                new ImageStringElement("Settings", UIImage.FromBundle("/Images/Tabs/cog.png")),
-                new ImageStringElement("Logout", UIImage.FromBundle("/Images/Tabs/logout.png")),
+                new CustomImageStringElement("Profile", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/person")),
+                new CustomImageStringElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false }, false), UIImage.FromBundle("/Images/Tabs/events")),
+                new CustomImageStringElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/repo")),
+                new CustomImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/group")),
+                new CustomImageStringElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
             NavigationItem.TitleView = new LogoView();
