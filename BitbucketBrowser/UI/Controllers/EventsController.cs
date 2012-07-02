@@ -56,7 +56,7 @@ namespace BitbucketBrowser.UI
              var newEvents =
                  (from s in events.Events
                   where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
-                  orderby DateTime.Parse(s.UtcCreatedOn)
+                  //orderby DateTime.Parse(s.UtcCreatedOn)
                   select s).ToList();
              if (newEvents.Count > 0)
                  _lastUpdate = (from r in newEvents select DateTime.Parse(r.CreatedOn)).Max();
@@ -65,7 +65,7 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
-            var elements = new List<Element>();
+            var elements = new List<Element>(Model.Count);
             Model.ForEach(e => {
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
                     return;
@@ -92,7 +92,7 @@ namespace BitbucketBrowser.UI
                     newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
                 }
 
-                elements.Insert(0, newsEl);
+                elements.Add(newsEl);
             });
 
             InvokeOnMainThread(delegate {

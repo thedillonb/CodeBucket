@@ -16,10 +16,13 @@ namespace BitbucketBrowser.UI
         public string Subtitle { get; set; }
 
         public UIImage Image { get; set; }
+
+        public bool ShadowImage { get; set; }
         
         public HeaderView(float width)
             : base(new RectangleF(0, 0, width, 60f))
         {
+            ShadowImage = true;
             Layer.MasksToBounds = false;
             Layer.ShadowColor = UIColor.Gray.CGColor;
             Layer.ShadowOpacity = 1.0f;
@@ -42,13 +45,17 @@ namespace BitbucketBrowser.UI
                 var top = rect.Height / 2 - height / 2;
                 var left = rect.Width - XPad * 2 - width;
 
-                context.SaveState();
-                context.TranslateCTM(left, top);
-                context.SetLineWidth(1.0f);
-                context.SetShadowWithColor(new SizeF(0, 0), 5, UIColor.DarkGray.CGColor);
-                context.AddPath(GraphicsUtil.MakeRoundedPath(width, 4));
-                context.FillPath();
-                context.RestoreState();
+                if (ShadowImage)
+                {
+                    context.SaveState();
+                    context.SetFillColor(UIColor.White.CGColor);
+                    context.TranslateCTM(left, top);
+                    context.SetLineWidth(1.0f);
+                    context.SetShadowWithColor(new SizeF(0, 0), 5, UIColor.DarkGray.CGColor);
+                    context.AddPath(GraphicsUtil.MakeRoundedPath(width, 4));
+                    context.FillPath();
+                    context.RestoreState();
+                }
 
 
                 Image.Draw(new RectangleF(left, top, width, height));
@@ -56,12 +63,15 @@ namespace BitbucketBrowser.UI
             }
 
 
-            DrawString(
-                    Title,
-                    new RectangleF(XPad, titleY, contentWidth, TitleFont.LineHeight),
-                    TitleFont,
-                    UILineBreakMode.TailTruncation
-            );
+            if (!string.IsNullOrEmpty(Title))
+            {
+                DrawString(
+                        Title,
+                        new RectangleF(XPad, titleY, contentWidth, TitleFont.LineHeight),
+                        TitleFont,
+                        UILineBreakMode.TailTruncation
+                );
+            }
 
             if (!string.IsNullOrWhiteSpace(Subtitle))
             {

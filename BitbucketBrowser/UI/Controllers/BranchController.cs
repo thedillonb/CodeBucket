@@ -36,13 +36,7 @@ namespace BitbucketBrowser.UI
 
         protected override List<BranchModel> OnUpdate()
         {
-            var b = new List<BranchModel>(Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches().Values);
-            b.Sort((x,y) => {
-                if (x.Branch == "master")
-                    return 1;
-                return x.Branch.CompareTo(y.Branch); 
-            });
-            return b;
+            return new List<BranchModel>(Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches().Values);
         }
 	}
 }

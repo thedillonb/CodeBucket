@@ -15,14 +15,14 @@ namespace BitbucketBrowser.UI
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
 
-        private static UIImage BugImage = UIImage.FromBundle("Images/Issues/bug.png");
-        private static UIImage TaskImage = UIImage.FromBundle("Images/Issues/task.png");
-        private static UIImage EnhancementImage = UIImage.FromBundle("Images/Issues/enhancement.png");
-        private static UIImage ProposalImage = UIImage.FromBundle("Images/Issues/proposal.png");
+        public static UIImage BugImage = UIImage.FromBundle("Images/Issues/bug.png");
+        public static UIImage TaskImage = UIImage.FromBundle("Images/Issues/task.png");
+        public static UIImage EnhancementImage = UIImage.FromBundle("Images/Issues/enhancement.png");
+        public static UIImage ProposalImage = UIImage.FromBundle("Images/Issues/proposal.png");
 
-        private static UIImage BlockImage = UIImage.FromBundle("Images/unknown.png");
-        private static UIImage TrivialImage = UIImage.FromBundle("Images/Issues/low.png");
-        private static UIImage MajorImage = UIImage.FromBundle("Images/Issues/high.png");
+//        private static UIImage BlockImage = UIImage.FromBundle("Images/unknown.png");
+//        private static UIImage TrivialImage = UIImage.FromBundle("Images/Issues/low.png");
+//        private static UIImage MajorImage = UIImage.FromBundle("Images/Issues/high.png");
 
 
 
@@ -40,7 +40,8 @@ namespace BitbucketBrowser.UI
 
         public override bool Matches(string text)
         {
-            return Item.Title.ToLower().Contains(text.ToLower());
+            var lowerText = text.ToLower();
+            return Item.LocalId.ToString().ToLower().Equals(lowerText) || Item.Title.ToLower().Contains(lowerText);
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
@@ -90,7 +91,7 @@ namespace BitbucketBrowser.UI
             UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
 
             var daysAgo = DateTime.Parse(Item.UtcCreatedOn).ToDaysAgo();
-            var daysAgoTop = TopBottomPadding + UserFont.LineHeight + 2;
+            var daysAgoTop = TopBottomPadding + UserFont.LineHeight;
 
             //Draw the status
 
@@ -109,7 +110,7 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(Message))
             {
                 UIColor.Black.SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + 3f;
+                var top = daysAgoTop + DateFont.LineHeight + 2f;
                 view.DrawString(Message,
                     new RectangleF(leftOffset, top, contentWidth, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );
@@ -128,7 +129,7 @@ namespace BitbucketBrowser.UI
                     descHeight = (DescFont.LineHeight + 2) * 2;
             }
 
-            return TopBottomPadding*2 + 3f + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
+            return TopBottomPadding*2 + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
         }
     }
 }

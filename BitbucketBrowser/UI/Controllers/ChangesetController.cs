@@ -127,7 +127,9 @@ namespace BitbucketBrowser.UI
 
         protected override ChangesetModel OnUpdate()
         {
-            return Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
+            var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
+            x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();
+            return x;
         }
     }
 }

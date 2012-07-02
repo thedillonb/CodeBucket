@@ -114,6 +114,9 @@
     <Compile Include="UI\Views\ChangeElement.cs" />
     <Compile Include="UI\Controllers\IssueController.cs" />
     <Compile Include="UI\Views\IssueElement.cs" />
+    <Compile Include="Utils\MySearchDelegate.cs" />
+    <Compile Include="UI\Views\StyledElement.cs" />
+    <Compile Include="UI\Views\CustomSection.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />

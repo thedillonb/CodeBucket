@@ -47,7 +47,7 @@ namespace BitbucketBrowser
             _nav = new SlideoutNavigationController();
 
             _nav.MenuView = new MenuController();
-            _nav.TopView = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+            _nav.TopView = new RepositoryController("thedillonb", false); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
 			
 			window.RootViewController = _nav;
 			window.MakeKeyAndVisible();

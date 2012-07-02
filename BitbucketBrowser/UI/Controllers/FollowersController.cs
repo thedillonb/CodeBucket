@@ -13,7 +13,7 @@ namespace BitbucketBrowser.UI
 	public abstract class FollowersController : Controller<List<FollowerModel>>
     {
 		protected FollowersController()
-			: base(true)
+			: base(true, true)
 		{
             Style = UITableViewStyle.Plain;
             Title = "Followers";

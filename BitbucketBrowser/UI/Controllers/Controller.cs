@@ -18,7 +18,6 @@ namespace BitbucketBrowser.UI
         public Controller(bool push = false, bool refresh = false)
             : base(new RootElement(""), push)
         {
-            //View.BackgroundColor = UIColor.FromRGB(0.85f, 0.85f, 0.85f);
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
 
@@ -32,6 +31,8 @@ namespace BitbucketBrowser.UI
         public override void ViewDidLoad()
         {
             Root.Caption = this.Title;
+            if (Style == UITableViewStyle.Grouped)
+                View.BackgroundColor = UIColor.FromRGB(0.9f, 0.9f, 0.9f);
             base.ViewDidLoad();
         }
 
