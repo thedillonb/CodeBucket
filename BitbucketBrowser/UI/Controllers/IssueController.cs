@@ -115,16 +115,6 @@ namespace BitbucketBrowser.UI
             _header.Title = "#" + Model.Issue.LocalId + ": " + Model.Issue.Title;
             _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcCreatedOn).ToDaysAgo();
 
-            //Shall we show a picture?
-            var type = Model.Issue.Metadata.Kind;
-            if (type == "bug")
-                _header.Image = IssueElement.BugImage;
-            else if (type == "enhancement")
-                _header.Image = IssueElement.EnhancementImage;
-            else if (type == "proposal")
-                _header.Image = IssueElement.ProposalImage;
-            else if (type == "task")
-                _header.Image = IssueElement.TaskImage;
 
             _type.Value = Model.Issue.Metadata.Kind;
             _status.Value = Model.Issue.Status;

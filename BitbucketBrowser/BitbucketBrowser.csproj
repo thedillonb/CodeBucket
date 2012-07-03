@@ -84,6 +84,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
+    <None Include="IssueBrowser\index.html" />
+    <None Include="IssueBrowser\style.css" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Screens\LoginViewController.cs" />
@@ -136,6 +138,8 @@
     <Folder Include="SourceBrowser\styles\" />
     <Folder Include="Images\Issues\" />
     <Folder Include="Markdown\" />
+    <Folder Include="IssueBrowser\" />
+    <Folder Include="Images\Cells\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -204,5 +208,8 @@
     <Content Include="SourceBrowser\lang-yaml.js" />
     <Content Include="SourceBrowser\prettify.js" />
     <Content Include="SourceBrowser\prettify.css" />
+    <Content Include="Images\card.png" />
+    <Content Include="Images\Cells\gradient.png" />
+    <Content Include="Images\Cells\Background.png" />
   </ItemGroup>
 </Project>

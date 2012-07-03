@@ -127,7 +127,7 @@ namespace BitbucketBrowser.UI
 
             BeginInvokeOnMainThread(delegate {
                 _header.SetNeedsDisplay();
-                Root.Insert(1, UITableViewRowAnimation.Fade, new [] { details, changes });
+                Root.Add(new [] { details, changes });
             });
         }
 

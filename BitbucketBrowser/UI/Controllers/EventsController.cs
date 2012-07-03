@@ -33,6 +33,8 @@ namespace BitbucketBrowser.UI
 
         public bool ReportUser { get; set; }
 
+        public bool ReportRepository { get; set; }
+
         public EventsController(string username, bool push = true) 
             : base(push, true)
         {
@@ -42,6 +44,7 @@ namespace BitbucketBrowser.UI
             Root.UnevenRows = true;
             Root.Add(new Section());
             ReportUser = true;
+            ReportRepository = false;
         }
 
         protected virtual EventsModel OnGetData()
@@ -70,7 +73,7 @@ namespace BitbucketBrowser.UI
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
                     return;
 
-                var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser };
+                var newsEl = new NewsFeedElement(e) { ReportUser = ReportUser, ReportRepository = ReportRepository };
                 if (e.Event == EventModel.Type.Commit) 
                 {
                     newsEl.Tapped += () => { 

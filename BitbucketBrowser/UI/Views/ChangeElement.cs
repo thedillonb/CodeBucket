@@ -12,9 +12,8 @@ namespace BitbucketBrowser.UI
     public class ChangeElement : CustomElement
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
-
+        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(14);
+        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(13);
 
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;
@@ -39,31 +38,31 @@ namespace BitbucketBrowser.UI
 
             var contentWidth = bounds.Width - LeftRightPadding * 2;
 
+            var daysAgo = DateTime.Parse(Item.Utctimestamp).ToString("MM/dd/yy");
+            UIColor.FromRGB(104, 155, 208).SetColor();
+            var daysWidth = daysAgo.MonoStringLength(DateFont);
+            view.DrawString(
+                daysAgo,
+                new RectangleF(bounds.Width - daysWidth - LeftRightPadding,  TopBottomPadding + 1f, daysWidth, DateFont.LineHeight),
+                DateFont,
+                UILineBreakMode.TailTruncation
+                );
+
             var desc = Message;
             var user = Item.Author;
 
-            UIColor.FromRGB(0, 0x44, 0x66).SetColor();
+            UIColor.FromRGB(14, 14, 25).SetColor();
             view.DrawString(user,
-                new RectangleF(LeftRightPadding, TopBottomPadding, contentWidth, UserFont.LineHeight),
+                new RectangleF(LeftRightPadding, TopBottomPadding, bounds.Width - daysWidth - LeftRightPadding * 2, UserFont.LineHeight),
                 UserFont, UILineBreakMode.TailTruncation
-                );
-
-
-            string daysAgo = DateTime.Parse(Item.Utctimestamp).ToDaysAgo();
-            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
-            float daysAgoTop = TopBottomPadding + UserFont.LineHeight;
-            view.DrawString(
-                daysAgo,
-                new RectangleF(LeftRightPadding,  daysAgoTop, contentWidth, DateFont.LineHeight),
-                DateFont,
-                UILineBreakMode.TailTruncation
                 );
 
 
             if (!string.IsNullOrEmpty(desc))
             {
                 UIColor.Black.SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + 2f;
+                var top = TopBottomPadding + UserFont.LineHeight + 2f;
+                UIColor.FromRGB(71,71,71).SetColor();
                 view.DrawString(desc,
                     new RectangleF(LeftRightPadding, top, contentWidth, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );
@@ -75,10 +74,17 @@ namespace BitbucketBrowser.UI
             var contentWidth = bounds.Width - LeftRightPadding * 2; //Account for the Accessory
             var desc = Message;
             var descHeight = desc.MonoStringHeight(DescFont, contentWidth);
-            if (descHeight > (UserFont.LineHeight + 2) * 2)
-                descHeight = (UserFont.LineHeight + 2) * 2;
+            if (descHeight > (DescFont.LineHeight) * 3)
+                descHeight = (DescFont.LineHeight) * 3;
 
-            return TopBottomPadding*2 + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
+            return TopBottomPadding*2 + UserFont.LineHeight + 2f + descHeight;
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = base.GetCell(tv);
+            //cell.BackgroundView = new UIImageView(UIImage.FromBundle("/Images/Cells/gradient"));
+            return cell;
         }
     }
 }

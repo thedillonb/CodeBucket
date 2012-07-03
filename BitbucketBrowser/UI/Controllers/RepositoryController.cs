@@ -105,7 +105,7 @@ namespace BitbucketBrowser.UI
 
         public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
         {
-            StyledStringElement sse;
+            SubcaptionElement sse;
             if (!string.IsNullOrEmpty(r.Description))
                 sse = new SubcaptionElement(r.Name, r.Description) { Lines = 1, LineBreakMode = UILineBreakMode.CharacterWrap };
             else
@@ -120,7 +120,10 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             Model.ForEach(x => CreateEntry(sec, x, Nav ?? NavigationController));
             InvokeOnMainThread(delegate {
-                Root = new RootElement(Title) { sec };
+                var root = new RootElement(Title);
+                root.UnevenRows = true;
+                root.Add(sec);
+                Root = root;
             });
         }
 

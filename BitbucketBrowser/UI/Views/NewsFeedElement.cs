@@ -14,7 +14,7 @@ namespace BitbucketBrowser.UI
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
+        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(13);
         private static readonly UIImage PlusImage = UIImage.FromBundle("Images/plus.png");
         private static readonly UIImage HeartImage = UIImage.FromBundle("Images/heart.png");
         private static readonly UIImage PencilImage = UIImage.FromBundle("Images/pencil.png");
@@ -29,11 +29,14 @@ namespace BitbucketBrowser.UI
         {
             Item = eventModel;
             ReportUser = true;
+            ReportRepository = false;
         }
 
         public EventModel Item { get; set; }
 
         public bool ReportUser { get; set; }
+
+        public bool ReportRepository { get; set; }
 
 
         public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
@@ -47,12 +50,18 @@ namespace BitbucketBrowser.UI
             if (Item.Event == EventModel.Type.Commit)
             {
                 img = PlusImage;
-                desc = "Commited: " + desc;
+                if (ReportRepository)
+                    desc = "Commit to " + Item.Repository.Name + ": " + desc;
+                else
+                    desc = "Commited: " + desc;
             }
             else if (Item.Event == EventModel.Type.CreateRepo)
             {
                 img = CreateImage;
-                desc = "Created Repo: " + Item.Repository.Name;
+                if (ReportRepository)
+                    desc = "Created Repo: " + Item.Repository.Name;
+                else
+                    desc = "Repository Created";
             }
             else if (Item.Event == EventModel.Type.WikiUpdated)
             {
@@ -145,8 +154,8 @@ namespace BitbucketBrowser.UI
             CreateDescription(out desc, out img);
 
             descHeight = desc.MonoStringHeight(DescFont, contentWidth);
-            if (descHeight > 54)
-                descHeight = 54;
+            if (descHeight > (DescFont.LineHeight + 1) * 4)
+                descHeight = (DescFont.LineHeight + 1) * 4;
 
             var userHeight = (ReportUser) ? UserFont.LineHeight : 0f;
 

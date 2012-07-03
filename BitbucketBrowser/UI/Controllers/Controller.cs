@@ -21,6 +21,8 @@ namespace BitbucketBrowser.UI
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
 
+           
+
             NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null); 
 
             Autorotate = true;
@@ -34,9 +36,22 @@ namespace BitbucketBrowser.UI
         {
             Root.Caption = this.Title;
             if (Style == UITableViewStyle.Grouped)
-                View.BackgroundColor = UIColor.FromRGB(0.94f, 0.94f, 0.94f);
+                View.BackgroundColor = UIColor.FromRGB(217, 221, 224);
             base.ViewDidLoad();
         }
+
+        /*
+        public override void LoadView()
+        {
+            base.LoadView();
+            if (Style == UITableViewStyle.Grouped)
+            {
+                TableView.BackgroundColor = UIColor.Clear;
+                UIImage background = UIImage.FromBundle("/Images/Cells/background");
+                ParentViewController.View.BackgroundColor = UIColor.FromPatternImage(background);
+            }
+        }
+        */
 
         public void Refresh(bool force = false)
         {

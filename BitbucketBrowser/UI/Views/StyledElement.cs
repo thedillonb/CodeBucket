@@ -65,6 +65,20 @@ namespace BitbucketBrowser.UI
             Font = TitleFont;
             SubtitleFont = SubFont;
         }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = base.GetCell(tv);
+            //if (GetContainerTableView().Style == UITableViewStyle.Grouped)
+            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
+            /*else
+            {
+                cell.TextLabel.BackgroundColor = UIColor.Clear;
+                cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
+                cell.BackgroundView = new UIImageView(UIImage.FromBundle("/Images/Cells/gradient"));
+            }*/
+            return cell;
+        }
     }
 
     public class SubcaptionElement : MonoTouch.Dialog.StyledStringElement
@@ -82,6 +96,22 @@ namespace BitbucketBrowser.UI
         public SubcaptionElement(string title)
             : this(title, null)
         {
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = base.GetCell(tv);
+            //if (GetContainerTableView().Style == UITableViewStyle.Grouped)
+            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
+            /*else
+            {
+                cell.TextLabel.BackgroundColor = UIColor.Clear;
+                cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
+                cell.BackgroundView = new UIImageView(UIImage.FromBundle("/Images/Cells/gradient"));
+                cell.ClipsToBounds = true;
+            }*/
+
+            return cell;
         }
     }
 
@@ -106,7 +136,7 @@ namespace BitbucketBrowser.UI
         {
             var cell = base.GetCell(tv);
             cell.TextLabel.Font = Font;
-            cell.BackgroundColor = UIColor.White;
+            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
             return cell;
         }
     }

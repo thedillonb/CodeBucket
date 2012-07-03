@@ -15,17 +15,6 @@ namespace BitbucketBrowser.UI
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
 
-        public static UIImage BugImage = UIImage.FromBundle("Images/Issues/bug.png");
-        public static UIImage TaskImage = UIImage.FromBundle("Images/Issues/task.png");
-        public static UIImage EnhancementImage = UIImage.FromBundle("Images/Issues/enhancement.png");
-        public static UIImage ProposalImage = UIImage.FromBundle("Images/Issues/proposal.png");
-
-//        private static UIImage BlockImage = UIImage.FromBundle("Images/unknown.png");
-//        private static UIImage TrivialImage = UIImage.FromBundle("Images/Issues/low.png");
-//        private static UIImage MajorImage = UIImage.FromBundle("Images/Issues/high.png");
-
-
-
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;
 
@@ -49,22 +38,7 @@ namespace BitbucketBrowser.UI
             UIColor.Clear.SetFill();
             context.FillRect(bounds);
 
-            var leftOffset = LeftRightPadding * 2 + BugImage.Size.Width;
-            var contentWidth = bounds.Width - leftOffset - LeftRightPadding;
-            var img2left = bounds.Width - LeftRightPadding - BugImage.Size.Width;
-
-            UIImage img1 = null;
-            if (Item.Metadata.Kind == "bug")
-                img1 = BugImage;
-            else if (Item.Metadata.Kind == "enhancement")
-                img1 = EnhancementImage;
-            else if (Item.Metadata.Kind == "task")
-                img1 = TaskImage;
-            else if (Item.Metadata.Kind == "proposal")
-                img1 = ProposalImage;
-            
-            if (img1 != null)
-                img1.Draw(new RectangleF(LeftRightPadding, bounds.Height / 2 - BugImage.Size.Height / 2, BugImage.Size.Width, BugImage.Size.Height));
+            var leftOffset = LeftRightPadding;
 
             //Priority
             /*
@@ -84,7 +58,7 @@ namespace BitbucketBrowser.UI
 
             UIColor.FromRGB(0, 0x44, 0x66).SetColor();
             view.DrawString("#" + Item.LocalId + ": " + Item.Title,
-                new RectangleF(leftOffset, TopBottomPadding, img2left - LeftRightPadding, UserFont.LineHeight),
+                new RectangleF(leftOffset, TopBottomPadding, bounds.Width - leftOffset - LeftRightPadding, UserFont.LineHeight),
                 UserFont, UILineBreakMode.TailTruncation
                 );
 
@@ -101,7 +75,7 @@ namespace BitbucketBrowser.UI
             //Draw the number of days ago
             view.DrawString(
                 daysAgo,
-                new RectangleF(leftOffset,  daysAgoTop, contentWidth - statusWidth - 6f, DateFont.LineHeight),
+                new RectangleF(leftOffset,  daysAgoTop, bounds.Width - leftOffset - LeftRightPadding, DateFont.LineHeight),
                 DateFont,
                 UILineBreakMode.TailTruncation
                 );
@@ -112,7 +86,7 @@ namespace BitbucketBrowser.UI
                 UIColor.Black.SetColor();
                 var top = daysAgoTop + DateFont.LineHeight + 2f;
                 view.DrawString(Message,
-                    new RectangleF(leftOffset, top, contentWidth, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
+                    new RectangleF(leftOffset, top, bounds.Width - leftOffset - LeftRightPadding, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );
             }
         }

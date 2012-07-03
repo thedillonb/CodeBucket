@@ -67,7 +67,7 @@ namespace BitbucketBrowser
     public class MenuController : DialogViewController
     {
         public MenuController()
-            : base(UITableViewStyle.Plain, new RootElement(""))
+            : base(UITableViewStyle.Plain, new RootElement("BitbucketBrowser"))
         {
         }
 
@@ -77,13 +77,18 @@ namespace BitbucketBrowser
 
             Root.Add(new Section() {
                 new CustomImageStringElement("Profile", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/person")),
-                new CustomImageStringElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false }, false), UIImage.FromBundle("/Images/Tabs/events")),
+                new CustomImageStringElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }, false), UIImage.FromBundle("/Images/Tabs/events")),
                 new CustomImageStringElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/repo")),
                 new CustomImageStringElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/group")),
                 new CustomImageStringElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
-            NavigationItem.TitleView = new LogoView();
+            Root.Add(new Section("Settings") {
+                new CustomImageStringElement("Change User", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/person")),
+            });
+
+
+            //NavigationItem.TitleView = new LogoView();
         }
 
         private class LogoView : UIView

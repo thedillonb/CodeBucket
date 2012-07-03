@@ -10,6 +10,7 @@ namespace BitbucketBrowser.UI
         private static float YPad = 10f;
         private static readonly UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
         private static readonly UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
+        private static readonly UIImage Gradient = UIImage.FromBundle("/Images/Cells/gradient");
 
         public string Title { get; set; }
 
@@ -27,7 +28,6 @@ namespace BitbucketBrowser.UI
             Layer.ShadowColor = UIColor.Gray.CGColor;
             Layer.ShadowOpacity = 1.0f;
             Layer.ShadowOffset = new SizeF(0, 2f);
-            BackgroundColor = UIColor.FromRGB(0.985f, 0.985f, 0.985f);
         }
 
         public override void Draw(RectangleF rect)
@@ -37,6 +37,8 @@ namespace BitbucketBrowser.UI
             var context = UIGraphics.GetCurrentContext();
             float titleY = string.IsNullOrWhiteSpace(Subtitle) ? rect.Height / 2 - TitleFont.LineHeight / 2 : YPad;
             float contentWidth = rect.Width - XPad * 2;
+
+            Gradient.Draw(rect);
 
             if (Image != null)
             {
