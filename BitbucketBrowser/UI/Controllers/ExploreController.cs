@@ -19,6 +19,7 @@ namespace BitbucketBrowser.UI
             EnableSearch = true;
             AutoHideSearch = false;
             NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
+            Autorotate = true;
             this.SearchPlaceholder = "Search Repositories";
         }
 
@@ -112,7 +113,7 @@ namespace BitbucketBrowser.UI
 
                     l.Repositories.ForEach(r => 
                     {
-                        var el = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle)
+                        var el = new SubcaptionElement(r.Name, r.Description)
                         { Accessory = UITableViewCellAccessory.DisclosureIndicator, Lines = 1, LineBreakMode = UILineBreakMode.TailTruncation };
                         el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
                         elements.Add(el);

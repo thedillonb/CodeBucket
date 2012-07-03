@@ -27,7 +27,7 @@ namespace BitbucketBrowser.UI
             List<Element> el = new List<Element>(Model.Count);
             foreach (var k in Model.Keys)
             {
-                var element = new StyledStringElement(k)
+                var element = new StyledElement(k)
                                                       { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
                 element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k].Node), true);
                 el.Add(element);

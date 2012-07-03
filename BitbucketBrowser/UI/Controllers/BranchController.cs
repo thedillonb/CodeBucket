@@ -29,7 +29,7 @@ namespace BitbucketBrowser.UI
             InvokeOnMainThread(delegate {
                 Root[0].Clear();
                 Root[0].AddAll(from x in Model 
-                               select (Element)new StyledStringElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))
+                               select (Element)new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))
                                { Accessory = UITableViewCellAccessory.DisclosureIndicator });
             });
         }

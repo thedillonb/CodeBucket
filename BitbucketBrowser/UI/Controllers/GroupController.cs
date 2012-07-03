@@ -25,7 +25,7 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             Model.ForEach(g =>
             {
-                var el = new StyledStringElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))
+                var el = new StyledElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))
                 { Accessory = UITableViewCellAccessory.DisclosureIndicator };
                 sec.Add(el);
             });
@@ -62,11 +62,11 @@ namespace BitbucketBrowser.UI
             Model.Members.OrderBy(x => x.Username).ToList().ForEach(x =>
             {
                 var realName = x.FirstName ?? "" + " " + x.LastName ?? "";
-                StyledStringElement sse;
+                StyledElement sse;
                 if (!string.IsNullOrWhiteSpace(realName))
-                    sse = new StyledStringElement(x.Username, realName, UITableViewCellStyle.Subtitle);
+                    sse = new StyledElement(x.Username, realName, UITableViewCellStyle.Subtitle);
                 else
-                    sse = new StyledStringElement(x.Username);
+                    sse = new StyledElement(x.Username);
                 sse.Tapped += () => NavigationController.PushViewController(new ProfileController(x.Username), true);
                 sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 sec.Add(sse);

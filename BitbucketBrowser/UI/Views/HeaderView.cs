@@ -8,7 +8,7 @@ namespace BitbucketBrowser.UI
     {
         private static float XPad = 14f;
         private static float YPad = 10f;
-        private static readonly UIFont TitleFont = UIFont.BoldSystemFontOfSize(18);
+        private static readonly UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
         private static readonly UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
 
         public string Title { get; set; }
@@ -27,7 +27,7 @@ namespace BitbucketBrowser.UI
             Layer.ShadowColor = UIColor.Gray.CGColor;
             Layer.ShadowOpacity = 1.0f;
             Layer.ShadowOffset = new SizeF(0, 2f);
-            BackgroundColor = UIColor.FromRGB(0.98f, 0.98f, 0.98f);
+            BackgroundColor = UIColor.FromRGB(0.985f, 0.985f, 0.985f);
         }
 
         public override void Draw(RectangleF rect)

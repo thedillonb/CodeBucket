@@ -1,18 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/EventsController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/Controller.cs">
     <Files>
-      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="107" Column="42" />
-      <File FileName="BitbucketBrowser/SourceBrowser/index.html" Line="32" Column="1" />
-      <File FileName="BitbucketBrowser/SourceBrowser/scripts/shCore.js" Line="17" Column="13215" />
-      <File FileName="BitbucketBrowser/UI/Views/ErrorView.cs" Line="24" Column="93" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="109" Column="17" />
-      <File FileName="BitbucketBrowser/UI/Controllers/FollowersController.cs" Line="33" Column="67" />
-      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="25" Column="13" />
-      <File FileName="BitbucketBrowser/Main.cs" Line="50" Column="75" />
-      <File FileName="BitbucketBrowser/UI/Controllers/IssueController.cs" Line="98" Column="53" />
-      <File FileName="../BitbucketSharp/BitbucketSharp/Models/IssueModel.cs" Line="12" Column="5" />
-      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="95" Column="38" />
+      <File FileName="BitbucketBrowser/UI/Views/ChangeElement.cs" Line="51" Column="13" />
+      <File FileName="../MonoTouch.Dialog/MonoTouch.Dialog/Elements.cs" Line="2392" Column="25" />
+      <File FileName="BitbucketBrowser/UI/Controllers/ChangesetController.cs" Line="27" Column="24" />
+      <File FileName="../MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" Line="588" Column="1" />
+      <File FileName="BitbucketBrowser/UI/Views/NewsFeedElement.cs" Line="1" Column="1" />
+      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="28" Column="41" />
+      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="19" Column="39" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,15 +16,14 @@
           <Node name="BitbucketBrowser" expanded="True">
             <Node name="UI" expanded="True">
               <Node name="Controllers" expanded="True">
-                <Node name="EventsController.cs" selected="True" />
+                <Node name="Controller.cs" selected="True" />
               </Node>
               <Node name="Views" expanded="True" />
             </Node>
             <Node name="Utils" expanded="True" />
           </Node>
-          <Node name="BitbucketSharp.MonoTouch" expanded="True">
-            <Node name="Controllers" expanded="True" />
-            <Node name="Models" expanded="True" />
+          <Node name="MonoTouch.Dialog" expanded="True">
+            <Node name="Elements" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -39,8 +34,10 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/Elements.cs" line="2170" />
-      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="611" />
+      <Breakpoint file="/Users/dillonb/Projects/bitbucketbrowser/BitbucketBrowser/UI/Views/ChangeElement.cs" line="75" />
+      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="322" />
+      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="337" />
+      <Breakpoint file="/Users/dillonb/Projects/bitbucketbrowser/BitbucketBrowser/UI/Views/NewsFeedElement.cs" line="140" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

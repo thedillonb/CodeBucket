@@ -100,15 +100,16 @@ namespace BitbucketBrowser.UI
             Title = "Repositories";
             Style = UITableViewStyle.Plain;
             Username = username;
+            Root.UnevenRows = true;
         } 
 
         public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
         {
             StyledStringElement sse;
             if (!string.IsNullOrEmpty(r.Description))
-                sse = new StyledStringElement(r.Name, r.Description, UITableViewCellStyle.Subtitle) { Lines = 1 };
+                sse = new SubcaptionElement(r.Name, r.Description) { Lines = 1, LineBreakMode = UILineBreakMode.CharacterWrap };
             else
-                sse = new StyledStringElement(r.Name);
+                sse = new SubcaptionElement(r.Name);
             sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);
             sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             sec.Add(sse);

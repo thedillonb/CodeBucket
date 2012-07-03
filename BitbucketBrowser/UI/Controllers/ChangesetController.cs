@@ -92,7 +92,7 @@ namespace BitbucketBrowser.UI
             Model.Files.ForEach(x => 
             {
                 var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
-                var sse = new StyledStringElement(file, x.Type, MonoTouch.UIKit.UITableViewCellStyle.Subtitle)
+                var sse = new SubcaptionElement(file, x.Type)
                                                  { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                                                    LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation,
                                                    Lines = 1 };
@@ -105,18 +105,18 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(Model.Message))
             {
                 var desc = new MultilineElement(Model.Message);
-                details.Insert(0, desc);
+                details.Add(desc);
             }
 
-            var author = new StyledStringElement("Author", Model.Author, UITableViewCellStyle.Value1)
+            var author = new StyledElement("Author", Model.Author, UITableViewCellStyle.Value1)
             { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
             author.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
             details.Add(author);
 
             if (Repo != null)
             {
-                var repo = new StyledStringElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
-                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
+                var repo = new StyledElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
+                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, Lines = 1 };
                 repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
                 details.Add(repo);
             }

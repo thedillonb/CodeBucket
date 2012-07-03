@@ -118,6 +118,7 @@
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="UI\Controllers\WikiController.cs" />
     <Compile Include="Markdown\CreoleParser.cs" />
+    <Compile Include="UI\Views\FirstElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -134,7 +135,6 @@
     <Folder Include="SourceBrowser\" />
     <Folder Include="SourceBrowser\styles\" />
     <Folder Include="Images\Issues\" />
-    <Folder Include="Markdown\" />
     <Folder Include="Markdown\" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +175,6 @@
     <Content Include="Images\Issues\task.png" />
     <Content Include="Images\Issues\proposal.png" />
     <Content Include="Images\Issues\enhancement.png" />
-    <Content Include="Images\yellow.png" />
     <Content Include="Images\Tabs\person.png" />
     <Content Include="Images\Tabs\person%402x.png" />
     <Content Include="Images\Tabs\group.png" />

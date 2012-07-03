@@ -21,7 +21,9 @@ namespace BitbucketBrowser.UI
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
 
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);        
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null); 
+
+            Autorotate = true;
         }
             
         protected abstract void OnRefresh();
@@ -32,7 +34,7 @@ namespace BitbucketBrowser.UI
         {
             Root.Caption = this.Title;
             if (Style == UITableViewStyle.Grouped)
-                View.BackgroundColor = UIColor.FromRGB(0.9f, 0.9f, 0.9f);
+                View.BackgroundColor = UIColor.FromRGB(0.94f, 0.94f, 0.94f);
             base.ViewDidLoad();
         }
 

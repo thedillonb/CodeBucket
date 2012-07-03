@@ -22,15 +22,16 @@ namespace BitbucketBrowser.UI
         protected override void OnRefresh()
         {
             BeginInvokeOnMainThread(delegate {
+                Root.Clear();
                 var sec = new Section();
                 Model.ForEach(s =>
                 {
                     var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
-                    StyledStringElement sse;
+                    SubcaptionElement sse;
                     if (!string.IsNullOrWhiteSpace(realName))
-                        sse = new StyledStringElement(s.Username, realName, UITableViewCellStyle.Subtitle);
+                        sse = new SubcaptionElement(s.Username, realName);
                     else
-                        sse = new StyledStringElement(s.Username);
+                        sse = new SubcaptionElement(s.Username);
                     sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                     sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                     sec.Add(sse);
