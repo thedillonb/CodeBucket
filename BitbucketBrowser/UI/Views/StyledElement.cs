@@ -138,7 +138,7 @@ namespace BitbucketBrowser.UI
             var context = UIGraphics.GetCurrentContext();
             using (var cs = CGColorSpace.CreateDeviceRGB ())
             {
-                using (var gradient = new CGGradient (cs, new float [] { 0.41f, 0.41f, 0.41f, 0.5f, 0.0f, 0.0f, 0.0f, 0f }, new float [] {0, 1}))
+                using (var gradient = new CGGradient (cs, new float [] { 0.60f, 0.60f, 0.60f, 0.7f, 0.0f, 0.0f, 0.0f, 0f }, new float [] {0, 1}))
                 {
                     context.DrawLinearGradient(gradient, new PointF(Bounds.GetMidX(), 0), new PointF(Bounds.GetMidX(), Bounds.GetMaxY()), 0);
                 }

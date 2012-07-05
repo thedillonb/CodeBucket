@@ -76,7 +76,7 @@ namespace BitbucketBrowser.UI
             }
             else
             {
-                var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
+                var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
                 view.BackgroundColor = UIColor.Clear;
                 TableView.TableFooterView = view;
             }

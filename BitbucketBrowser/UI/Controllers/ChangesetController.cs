@@ -45,8 +45,9 @@ namespace BitbucketBrowser.UI
             });
 
             InvokeOnMainThread(delegate {
-                Root.Insert(0, UITableViewRowAnimation.Top, new Section() { Elements = items });
-                //Root[0].Insert(0, UITableViewRowAnimation.Top, items);
+                var r = new RootElement(Title) { UnevenRows = true };
+                r.Add(new Section() { Elements = items });
+                Root = r;
             });
         }
 
@@ -84,7 +85,6 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
             Title = "Commit";
-            Root.UnevenRows = true;
         }
 
         protected override void OnRefresh()
@@ -143,7 +143,8 @@ namespace BitbucketBrowser.UI
             var changes = new Section() { Elements = sec };
 
             BeginInvokeOnMainThread(delegate {
-                Root.Add(new [] { details, changes });
+                var r = new RootElement(Title) { new [] { details, changes } };
+                Root = r;
             });
         }
 
