@@ -104,13 +104,8 @@ namespace BitbucketBrowser.UI
 
         public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
         {
-            SubcaptionElement sse;
-            if (!string.IsNullOrEmpty(r.Description))
-                sse = new SubcaptionElement(r.Name, r.Description) { Lines = 1, LineBreakMode = UILineBreakMode.CharacterWrap };
-            else
-                sse = new SubcaptionElement(r.Name);
+            DElement sse = new DElement(r);
             sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);
-            sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             sec.Add(sse);
         }
 

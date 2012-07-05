@@ -120,9 +120,16 @@
     <Compile Include="UI\Controllers\WikiController.cs" />
     <Compile Include="Markdown\CreoleParser.cs" />
     <Compile Include="UI\Views\FirstElement.cs" />
+    <Compile Include="Utils\Util.cs" />
+    <Compile Include="Screens\RepositoryCellView.cs" />
+    <Compile Include="Screens\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\DElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
+    <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -139,6 +146,8 @@
     <Folder Include="Markdown\" />
     <Folder Include="IssueBrowser\" />
     <Folder Include="Images\Cells\" />
+    <Folder Include="Images\Web\" />
+    <Folder Include="Images\Cells\Repository\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -217,5 +226,16 @@
     <Content Include="Images\Cells\button.png" />
     <Content Include="Images\Cells\background2.png" />
     <Content Include="Images\Cells\stuff.png" />
+    <Content Include="Images\Cells\fudge.png" />
+    <Content Include="Images\Web\back.png" />
+    <Content Include="Images\Web\back%402x.png" />
+    <Content Include="Images\Web\forward.png" />
+    <Content Include="Images\Web\forward%402x.png" />
+    <Content Include="Images\Cells\Repository\heart.png" />
+    <Content Include="Images\Cells\Repository\user_9x12.png" />
+    <Content Include="Images\fork.png" />
+    <Content Include="Images\fork%402x.png" />
+    <Content Include="Images\commit_block%402x.png" />
+    <Content Include="Images\commit_block.png" />
   </ItemGroup>
 </Project>

@@ -41,15 +41,11 @@ namespace BitbucketBrowser
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			
-			this.NavigationController.SetNavigationBarHidden(true, false);
 		}
 		
 		public override void ViewDidDisappear(bool animated)
 		{
 			base.ViewDidDisappear(animated);
-			
-			this.NavigationController.SetNavigationBarHidden(false, true);
 		}
 		
 		public override void ViewDidUnload()

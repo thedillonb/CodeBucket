@@ -83,13 +83,32 @@ namespace BitbucketBrowser.UI
             Node = node;
             User = user;
             Slug = slug;
-            Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
+            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Title = "Commit";
+            Root.UnevenRows = true;
         }
 
         protected override void OnRefresh()
         {
-            var sec = new List<Element>(Model.Files.Count);
+            var sec = new Section();
+            //var details = new Section(new HeaderView(View.Bounds.Width) { Title = Node, Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo() });
+
+            //Add the big info thing for the change
+
+            var d = new MultilineElement(Model.Author) { Value = Model.Message };
+
+            sec.Add(d);
+
+            if (Repo != null)
+            {
+                var repo = new StyledElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
+                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, Lines = 1 };
+                repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
+                sec.Add(repo);
+            }
+
+            var sec2 = new Section("Changes");
+
             Model.Files.ForEach(x => 
             {
                 var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
@@ -98,52 +117,14 @@ namespace BitbucketBrowser.UI
                                                    LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation,
                                                    Lines = 1 };
                 sse.Tapped += () => NavigationController.PushViewController(new SourceInfoController(User, Slug, Model.Node, x.File), true);
-                sec.Add(sse);
+                sec2.Add(sse);
             });
 
-            var details = new Section();
-
-            var firstEl2 = new StyledElement(Node, DateTime.Parse(Model.Utctimestamp).ToString("MM/dd/yy")) { 
-                BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/button")),
-                Font = UIFont.BoldSystemFontOfSize(14f),
-                SubtitleFont = UIFont.SystemFontOfSize(12f),
-                TextColor = UIColor.White,
-                DetailColor = UIColor.White 
-            };
-
-            details.Add(firstEl2);
-
-            if (!string.IsNullOrEmpty(Model.Message))
-            {
-                var desc = new MultilineElement(Model.Message);
-                details.Add(desc);
-            }
-
-            var author = new StyledElement("Author", Model.Author, UITableViewCellStyle.Value1)
-            { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
-            author.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Author), true);
-            details.Add(author);
-
-            if (Repo != null)
-            {
-                var repo = new StyledElement("Repository", Repo.Name, UITableViewCellStyle.Value1)
-                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, Lines = 1 };
-                repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
-                details.Add(repo);
-            }
-
-            var firstEl = new StyledElement("Changes") { 
-                BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/button")),
-                Font = UIFont.BoldSystemFontOfSize(14f), 
-                TextColor = UIColor.White 
-            };
-
-            sec.Insert(0, firstEl);
-
-            var changes = new Section() { Elements = sec };
 
             BeginInvokeOnMainThread(delegate {
-                var r = new RootElement(Title) { new [] { details, changes } };
+                var r = new RootElement(Title);
+                r.UnevenRows = true;
+                r.Add(new [] { sec , sec2 });
                 Root = r;
             });
         }

@@ -5,6 +5,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
+using MonoTouch.Foundation;
 
 
 namespace BitbucketBrowser.UI
@@ -56,6 +57,15 @@ namespace BitbucketBrowser.UI
 
             _web = new UIWebView();
             _web.DataDetectorTypes = UIDataDetectorType.None;
+
+            _web.ShouldStartLoad = (webView, request, navType) => {
+                if (navType == UIWebViewNavigationType.LinkClicked) 
+                {
+                    UIApplication.SharedApplication.OpenUrl(request.Url);
+                    return false;
+                }
+                return true;
+            };
 
             this.Add(_web);
 

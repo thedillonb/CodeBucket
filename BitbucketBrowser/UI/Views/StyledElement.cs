@@ -13,7 +13,10 @@ namespace BitbucketBrowser.UI
     {
         private static float Padding = 12f;
         private static float PaddingX = 8f;
-        private static UIFont CaptionFont = UIFont.SystemFontOfSize(14f);
+        private static UIFont CaptionFont = UIFont.SystemFontOfSize(15f);
+        private static UIFont ValueFont = UIFont.SystemFontOfSize(12f);
+
+        public string Value { get; set; }
 
         public MultilineElement(string caption)
             : base(UITableViewCellStyle.Default, "multilineelement")
@@ -22,15 +25,28 @@ namespace BitbucketBrowser.UI
             BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
         }
 
-        public override void Draw (RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
+        public override void Draw(RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
         {
             UIColor.FromRGB(41, 41, 41).SetColor();
             view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), CaptionFont);
+
+            if (Value != null)
+            {
+                UIColor.FromRGB(120, 120, 120).SetColor();
+                view.DrawString(Value, new RectangleF(PaddingX, Padding + CaptionFont.LineHeight + 7f, bounds.Width - Padding * 2, bounds.Height), ValueFont, UILineBreakMode.WordWrap);
+            }
         }
 
-        public override float Height (System.Drawing.RectangleF bounds)
+        public override float Height(System.Drawing.RectangleF bounds)
         {
             var textHeight = Caption.MonoStringHeight(CaptionFont, bounds.Width - PaddingX * 2);
+
+            if (Value != null)
+            {
+                textHeight += 6f;
+                textHeight += Value.MonoStringHeight(ValueFont, bounds.Width - PaddingX * 2);
+            }
+
             return textHeight + Padding * 2;
         }
     }

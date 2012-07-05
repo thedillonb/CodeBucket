@@ -43,12 +43,11 @@ namespace BitbucketBrowser
 		{
             Application.Client = new BitbucketSharp.Client("thedillonb", "djames");
 
-
             window = new UIWindow(UIScreen.MainScreen.Bounds);
             _nav = new SlideoutNavigationController();
 
             _nav.MenuView = new MenuController();
-            _nav.TopView = new RepositoryController("thedillonb", false); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+            _nav.TopView = new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
 
             window.RootViewController = _nav;
 			window.MakeKeyAndVisible();
@@ -56,27 +55,6 @@ namespace BitbucketBrowser
 			return true;
 		}
 	}
-
-    public class FU : DialogViewController
-    {
-        public FU()
-            : base(new RootElement("Hello"))
-        {
-            Style = UITableViewStyle.Plain;
-        }
-
-        public override void ViewDidLoad ()
-        {
-            base.ViewDidLoad ();
-            ThreadPool.QueueUserWorkItem(delegate {
-                Thread.Sleep (1000 * 5);
-                InvokeOnMainThread(delegate {
-                    Root.Add(new Section() { new StyledStringElement("Hello") { BackgroundColor = UIColor.Green } });
-                    ReloadData();
-                });
-            });
-        }
-    }
 
     /// <summary>
     /// Application.
@@ -125,6 +103,13 @@ namespace BitbucketBrowser
                 new NavElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/repo")),
                 new NavElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/group")),
                 new NavElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search")),
+            });
+
+            Root.Add(new Section("Settings") {
+                new NavElement("Login", () => { 
+                    PresentModalViewController(new LoginViewController(), true);
+                
+                }, UIImage.FromBundle("/Images/Tabs/person"))
             });
 
             TableView.BackgroundColor = UIColor.Clear;
