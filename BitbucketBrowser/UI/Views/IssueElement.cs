@@ -35,8 +35,8 @@ namespace BitbucketBrowser.UI
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
-            UIColor.Clear.SetFill();
-            context.FillRect(bounds);
+            //UIColor.Clear.SetFill();
+            //context.FillRect(bounds);
 
             var leftOffset = LeftRightPadding;
 

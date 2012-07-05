@@ -25,7 +25,13 @@ namespace BitbucketBrowser.UI
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Title = "Changes";
             Root.UnevenRows = true;
-            Root.Add(new Section());
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            //TableView.SetContentOffset(new System.Drawing.PointF(0, -8), false);
+            //Root.Add();
         }
 
 
@@ -39,7 +45,8 @@ namespace BitbucketBrowser.UI
             });
 
             InvokeOnMainThread(delegate {
-                Root[0].Insert(0, UITableViewRowAnimation.Top, items);
+                Root.Insert(0, UITableViewRowAnimation.Top, new Section() { Elements = items });
+                //Root[0].Insert(0, UITableViewRowAnimation.Top, items);
             });
         }
 
@@ -69,8 +76,6 @@ namespace BitbucketBrowser.UI
 
         public RepositoryDetailedModel Repo { get; set; }
 
-        private HeaderView _header;
-
         public ChangesetInfoController(string user, string slug, string node)
             : base(true, false)
         {
@@ -79,11 +84,7 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
             Title = "Commit";
-
             Root.UnevenRows = true;
-            _header = new HeaderView(View.Bounds.Width) { Title = "Change: " + node };
-            Root.Add(new Section(_header));
-
         }
 
         protected override void OnRefresh()
@@ -101,6 +102,16 @@ namespace BitbucketBrowser.UI
             });
 
             var details = new Section();
+
+            var firstEl2 = new StyledElement(Node, DateTime.Parse(Model.Utctimestamp).ToString("MM/dd/yy")) { 
+                BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/button")),
+                Font = UIFont.BoldSystemFontOfSize(14f),
+                SubtitleFont = UIFont.SystemFontOfSize(12f),
+                TextColor = UIColor.White,
+                DetailColor = UIColor.White 
+            };
+
+            details.Add(firstEl2);
 
             if (!string.IsNullOrEmpty(Model.Message))
             {
@@ -121,12 +132,17 @@ namespace BitbucketBrowser.UI
                 details.Add(repo);
             }
 
-            _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
+            var firstEl = new StyledElement("Changes") { 
+                BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/button")),
+                Font = UIFont.BoldSystemFontOfSize(14f), 
+                TextColor = UIColor.White 
+            };
 
-            var changes = new Section("Changes") { Elements = sec };
+            sec.Insert(0, firstEl);
+
+            var changes = new Section() { Elements = sec };
 
             BeginInvokeOnMainThread(delegate {
-                _header.SetNeedsDisplay();
                 Root.Add(new [] { details, changes });
             });
         }

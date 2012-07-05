@@ -100,7 +100,6 @@ namespace BitbucketBrowser.UI
             Title = "Repositories";
             Style = UITableViewStyle.Plain;
             Username = username;
-            Root.UnevenRows = true;
         } 
 
         public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
@@ -117,13 +116,15 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
+            var r = new RootElement(Title);
             var sec = new Section();
             Model.ForEach(x => CreateEntry(sec, x, Nav ?? NavigationController));
+            //var root = new RootElement(Title);
+            //root.Add(sec);
+            r.Add(sec);
+
             InvokeOnMainThread(delegate {
-                var root = new RootElement(Title);
-                root.UnevenRows = true;
-                root.Add(sec);
-                Root = root;
+                Root = r;
             });
         }
 

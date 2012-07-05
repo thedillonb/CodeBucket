@@ -80,7 +80,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="monotouch" />
     <Reference Include="System.Core" />
-    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -150,6 +149,10 @@
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\plus.png" />
@@ -211,5 +214,8 @@
     <Content Include="Images\card.png" />
     <Content Include="Images\Cells\gradient.png" />
     <Content Include="Images\Cells\Background.png" />
+    <Content Include="Images\Cells\button.png" />
+    <Content Include="Images\Cells\background2.png" />
+    <Content Include="Images\Cells\stuff.png" />
   </ItemGroup>
 </Project>

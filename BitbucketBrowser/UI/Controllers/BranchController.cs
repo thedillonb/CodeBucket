@@ -21,16 +21,20 @@ namespace BitbucketBrowser.UI
             Username = username;
             Slug = slug;
             Title = "Branches";
-            Root.Add(new Section());
 		}
 		
         protected override void OnRefresh()
         {
-            InvokeOnMainThread(delegate {
-                Root[0].Clear();
-                Root[0].AddAll(from x in Model 
+            var root = new RootElement(Title) { 
+                new Section() { 
+                    from x in Model 
                                select (Element)new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))
-                               { Accessory = UITableViewCellAccessory.DisclosureIndicator });
+                               { Accessory = UITableViewCellAccessory.DisclosureIndicator }
+                }
+            };
+
+            InvokeOnMainThread(delegate {
+                Root = root;
             });
         }
 

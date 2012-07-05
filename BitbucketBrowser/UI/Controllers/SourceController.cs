@@ -29,7 +29,6 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Branch = branch;
             Path = path;
-            Root.Add(new Section());
 
             if (string.IsNullOrEmpty(path))
                 Title = "Source";
@@ -42,10 +41,12 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
-            var items = new List<Element>(Model.Files.Count + Model.Directories.Count);
+            var root = new RootElement(Title);
+            var sec = new Section();
+
             Model.Directories.ForEach(d => 
             {
-                items.Add(new ItemElement(d, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
+                sec.Add(new StyledElement(d, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
                                                  UIImage.FromBundle("/Images/folder.png"))
                           { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,  });
             });
@@ -54,15 +55,15 @@ namespace BitbucketBrowser.UI
             {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
-                items.Add(new ItemElement(p,() => NavigationController.PushViewController(
+                sec.Add(new StyledElement(p,() => NavigationController.PushViewController(
                                           new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p}, true), 
                                           UIImage.FromBundle("/Images/file.png")));
             });
 
+            root.Add(sec);
 
             InvokeOnMainThread(delegate {
-                Root[0].Clear();
-                Root[0].AddAll(items);
+                Root = root;
             });
         }
 
@@ -71,20 +72,6 @@ namespace BitbucketBrowser.UI
             return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo();
         }
 
-        public class ItemElement : ImageStringElement
-        {
-            public ItemElement(string cap, NSAction act, UIImage img)
-                : base(cap, act, img)
-            {
-            }
-
-            public override UITableViewCell GetCell(UITableView tv)
-            {
-                var cell = base.GetCell(tv);
-                cell.TextLabel.Font = UIFont.BoldSystemFontOfSize(15f);
-                return cell;
-            }
-        }
     }
 
     public class SourceInfoController : UIViewController

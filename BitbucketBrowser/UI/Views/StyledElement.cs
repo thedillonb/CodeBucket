@@ -4,6 +4,7 @@ using BitbucketBrowser.Utils;
 using System.Drawing;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;
+using MonoTouch.CoreGraphics;
 
 namespace BitbucketBrowser.UI
 {
@@ -18,11 +19,12 @@ namespace BitbucketBrowser.UI
             : base(UITableViewCellStyle.Default, "multilineelement")
         {
             this.Caption = caption;
+            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
         }
 
         public override void Draw (RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
         {
-            UIColor.Black.SetColor();
+            UIColor.FromRGB(41, 41, 41).SetColor();
             view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), CaptionFont);
         }
 
@@ -41,47 +43,71 @@ namespace BitbucketBrowser.UI
         public StyledElement(string title)
             : base(title)
         {
-            Font = TitleFont;
-            SubtitleFont = SubFont;
+            Init();
         }
 
         public StyledElement(string title, string subtitle, UITableViewCellStyle style)
             : base(title, subtitle, style)
         {
-            Font = TitleFont;
-            SubtitleFont = SubFont;
+            Init();
         }
 
         public StyledElement(string title, string subtitle)
             : base(title, subtitle)
         {
-            Font = TitleFont;
-            SubtitleFont = SubFont;
+            Init();
         }
 
         public StyledElement(string title, NSAction action)
             : base(title, action)
         {
-            Font = TitleFont;
-            SubtitleFont = SubFont;
+            Init();
         }
 
+        public StyledElement (string caption,  NSAction tapped, UIImage image) 
+            : base (caption, tapped)
+        {
+            Init();
+            Image = image;
+        }
+
+        public StyledElement(string caption, UIImage image)
+            : this(caption)
+        {
+            Init();
+            Image = image;
+        }
+
+
+        private void Init()
+        {
+            Font = TitleFont;
+            SubtitleFont = SubFont;
+            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            this.TextColor = UIColor.FromRGB(41, 41, 41);
+            this.DetailColor = UIColor.FromRGB(120, 120, 120);
+        }
+
+
+        /*
         public override UITableViewCell GetCell(UITableView tv)
         {
             var cell = base.GetCell(tv);
-            //if (GetContainerTableView().Style == UITableViewStyle.Grouped)
-            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
-            /*else
+            //cell.TextLabel.BackgroundColor = UIColor.Clear;
+            cell.TextLabel.TextColor = TitleColor;
+
+            if (cell.DetailTextLabel != null)
             {
-                cell.TextLabel.BackgroundColor = UIColor.Clear;
                 cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-                cell.BackgroundView = new UIImageView(UIImage.FromBundle("/Images/Cells/gradient"));
-            }*/
+                cell.DetailTextLabel.TextColor = SubtitleColor;
+            }
+
             return cell;
         }
+        */
     }
 
-    public class SubcaptionElement : MonoTouch.Dialog.StyledStringElement
+    public class SubcaptionElement : StyledElement
     {
         private static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
         private static UIFont SubFont = UIFont.SystemFontOfSize(13f);
@@ -97,48 +123,29 @@ namespace BitbucketBrowser.UI
             : this(title, null)
         {
         }
-
-        public override UITableViewCell GetCell(UITableView tv)
-        {
-            var cell = base.GetCell(tv);
-            //if (GetContainerTableView().Style == UITableViewStyle.Grouped)
-            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
-            /*else
-            {
-                cell.TextLabel.BackgroundColor = UIColor.Clear;
-                cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-                cell.BackgroundView = new UIImageView(UIImage.FromBundle("/Images/Cells/gradient"));
-                cell.ClipsToBounds = true;
-            }*/
-
-            return cell;
-        }
     }
 
-    public class CustomImageStringElement : ImageStringElement
+    public class ShadowView : UIView
     {
-        private static UIFont Font = UIFont.BoldSystemFontOfSize(15f);
-        public CustomImageStringElement (string caption, UIImage image) : base (caption, image)
+        public ShadowView(float width, float height)
+            : base(new RectangleF(0, 0, width, height))
         {
+            //BackgroundColor = UIColor.Clear;
         }
 
-        public CustomImageStringElement (string caption, string value, UIImage image) 
-            : base (caption, value, image)
+        public override void Draw(RectangleF rect)
         {
-        }
-
-        public CustomImageStringElement (string caption,  NSAction tapped, UIImage image) 
-            : base (caption, tapped, image)
-        {
-        }
-
-        public override UITableViewCell GetCell(UITableView tv)
-        {
-            var cell = base.GetCell(tv);
-            cell.TextLabel.Font = Font;
-            cell.BackgroundColor = UIColor.White; //UIColor.FromRGB(242, 242, 242);
-            return cell;
+            var context = UIGraphics.GetCurrentContext();
+            using (var cs = CGColorSpace.CreateDeviceRGB ())
+            {
+                using (var gradient = new CGGradient (cs, new float [] { 0.41f, 0.41f, 0.41f, 0.5f, 0.0f, 0.0f, 0.0f, 0f }, new float [] {0, 1}))
+                {
+                    context.DrawLinearGradient(gradient, new PointF(Bounds.GetMidX(), 0), new PointF(Bounds.GetMidX(), Bounds.GetMaxY()), 0);
+                }
+            }
         }
     }
+
+
 }
 

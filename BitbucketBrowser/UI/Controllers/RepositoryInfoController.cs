@@ -56,26 +56,26 @@ namespace BitbucketBrowser.UI
             sec1.Add(followers);
 
 
-            var events = new CustomImageStringElement("Events", UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var events = new StyledElement("Events", UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             events.Tapped += () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true);
 
             var sec2 = new Section();
             sec2.Add(events);
 
             if (Model.HasIssues) 
-                sec2.Add(new CustomImageStringElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true),
+                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true),
                                                 UIImage.FromBundle("Images/flag")) { Accessory = UITableViewCellAccessory.DisclosureIndicator });
 
             if (Model.HasWiki)
-                sec2.Add(new CustomImageStringElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
+                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
                                                 UIImage.FromBundle("Images/pencil.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator });
 
             var sec3 = new Section() {
-                new CustomImageStringElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 
+                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 
                                        UIImage.FromBundle("Images/commit.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
-                new CustomImageStringElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true),
+                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true),
                                        UIImage.FromBundle("Images/branch.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
-                new CustomImageStringElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true),
+                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true),
                                         UIImage.FromBundle("Images/tag.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
             };
             

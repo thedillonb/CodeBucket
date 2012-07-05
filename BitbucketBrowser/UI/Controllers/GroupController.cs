@@ -22,6 +22,7 @@ namespace BitbucketBrowser.UI
 		
         protected override void OnRefresh()
         {
+            var r = new RootElement(Title);
             var sec = new Section();
             Model.ForEach(g =>
             {
@@ -29,10 +30,10 @@ namespace BitbucketBrowser.UI
                 { Accessory = UITableViewCellAccessory.DisclosureIndicator };
                 sec.Add(el);
             });
+            r.Add(sec);
 
             BeginInvokeOnMainThread(delegate {
-                Root.Clear();
-                Root.Add(sec);
+                Root = r;
             });
         }
 
@@ -58,6 +59,10 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
+
+
+            BeginInvokeOnMainThread(delegate {
+                            var root = new RootElement(Title);
             var sec = new Section();
             Model.Members.OrderBy(x => x.Username).ToList().ForEach(x =>
             {
@@ -71,11 +76,9 @@ namespace BitbucketBrowser.UI
                 sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 sec.Add(sse);
             });
-
-
-            BeginInvokeOnMainThread(delegate {
-                Root.Clear();
-                Root.Add(sec);
+            root.UnevenRows = true;
+            root.Add(sec);
+                Root = root;
             });
         }
 

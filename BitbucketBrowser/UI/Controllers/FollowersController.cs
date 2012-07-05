@@ -21,22 +21,26 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
+            var sec = new Section();
+            Model.ForEach(s =>
+            {
+                var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
+                StyledElement sse;
+                if (!string.IsNullOrWhiteSpace(realName))
+                    sse = new SubcaptionElement(s.Username, realName);
+                else
+                    sse = new SubcaptionElement(s.Username);
+                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+                sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+                sec.Add(sse);
+            });
+
+            var root = new RootElement(Title);
+            root.UnevenRows = true;
+            root.Add(sec);
+
             BeginInvokeOnMainThread(delegate {
-                Root.Clear();
-                var sec = new Section();
-                Model.ForEach(s =>
-                {
-                    var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
-                    SubcaptionElement sse;
-                    if (!string.IsNullOrWhiteSpace(realName))
-                        sse = new SubcaptionElement(s.Username, realName);
-                    else
-                        sse = new SubcaptionElement(s.Username);
-                    sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
-                    sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-                    sec.Add(sse);
-                });
-                Root.Add(sec);
+                Root = root;
             });
         }
 	}

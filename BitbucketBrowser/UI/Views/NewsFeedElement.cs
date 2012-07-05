@@ -25,11 +25,14 @@ namespace BitbucketBrowser.UI
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;
 
+        private static readonly UIImage BackImage = UIImage.FromBundle("/Images/Cells/gradient");
+
         public NewsFeedElement(EventModel eventModel) : base(UITableViewCellStyle.Default, "newsfeedelement")
         {
             Item = eventModel;
             ReportUser = true;
             ReportRepository = false;
+            BackgroundColor = UIColor.FromPatternImage(BackImage);
         }
 
         public EventModel Item { get; set; }
@@ -94,8 +97,7 @@ namespace BitbucketBrowser.UI
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
-            UIColor.Clear.SetFill();
-            context.FillRect(bounds);
+            //UIColor.Clear.SetFill();
 
             var imageRect = new RectangleF(LeftRightPadding, bounds.Height / 2 - 8f, 16f, 16f);
             var leftContent = LeftRightPadding * 2 + imageRect.Width;
@@ -160,6 +162,13 @@ namespace BitbucketBrowser.UI
             var userHeight = (ReportUser) ? UserFont.LineHeight : 0f;
 
             return TopBottomPadding*2 + userHeight + DateFont.LineHeight + 2f + descHeight;
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = base.GetCell(tv);
+            cell.BackgroundView = new UIImageView(BackImage);
+            return cell;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading;
 using MonoTouch.UIKit;
 using RedPlum;
 using System.Linq;
+using System.Drawing;
 
 namespace BitbucketBrowser.UI
 {
@@ -27,6 +28,29 @@ namespace BitbucketBrowser.UI
 
             Autorotate = true;
         }
+
+        class RefreshView : RefreshTableHeaderView
+        {
+            public RefreshView(RectangleF rect)
+                : base(rect)
+            {
+                BackgroundColor = UIColor.Clear;
+                StatusLabel.BackgroundColor = UIColor.Clear;
+                LastUpdateLabel.BackgroundColor = UIColor.Clear;
+            }
+
+            public override void Draw(RectangleF rect)
+            {
+                //Stop the super class from doing stupid shit like drawing the shadow
+            }
+        }
+
+
+        public override RefreshTableHeaderView MakeRefreshTableHeaderView(RectangleF rect)
+        {
+            return new RefreshView(rect);
+        }
+
             
         protected abstract void OnRefresh();
 
@@ -35,8 +59,29 @@ namespace BitbucketBrowser.UI
         public override void ViewDidLoad()
         {
             Root.Caption = this.Title;
+
+
+            TableView.BackgroundColor = UIColor.White;
+            UIImage background = UIImage.FromBundle("/Images/Cells/stuff");
+            View.BackgroundColor = UIColor.FromPatternImage(background);
+
             if (Style == UITableViewStyle.Grouped)
-                View.BackgroundColor = UIColor.FromRGB(217, 221, 224);
+            {
+                //TableView.BackgroundColor = UIColor.Clear;
+                //UIImage background = UIImage.FromBundle("/Images/Cells/background");
+                //ParentViewController.View.BackgroundColor = UIColor.FromPatternImage(background);
+
+
+
+            }
+            else
+            {
+                var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
+                view.BackgroundColor = UIColor.Clear;
+                TableView.TableFooterView = view;
+            }
+
+
             base.ViewDidLoad();
         }
 

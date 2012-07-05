@@ -8,7 +8,7 @@ using MonoTouch.CoreGraphics;
 
 namespace BitbucketBrowser.UI
 {
-    public abstract class CustomElement : Element, IElementSizing
+    public abstract class CustomElement : Element, IElementSizing, IColorizeBackground
     {       
         public string CellReuseIdentifier
         {
@@ -19,6 +19,8 @@ namespace BitbucketBrowser.UI
         {
             get;set;    
         }
+
+        public UIColor BackgroundColor { get; set; }
 
         public CustomElement (UITableViewCellStyle style, string cellIdentifier) : base(null)
         {
@@ -58,7 +60,7 @@ namespace BitbucketBrowser.UI
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
             }
 
-            cell.BackgroundColor = UIColor.White;
+            cell.BackgroundColor = BackgroundColor;
             cell.Update();
             return cell;
         }   
@@ -145,10 +147,17 @@ namespace BitbucketBrowser.UI
 
             public override void Draw (RectangleF rect)
             {
+                base.Draw(rect);
                 CGContext context = UIGraphics.GetCurrentContext();
                 element.Draw(rect, context, this);
             }
         }
+
+        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+        {
+            cell.BackgroundColor = BackgroundColor;
+        }
+
     }
 }
 
