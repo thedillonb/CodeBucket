@@ -21,7 +21,6 @@ namespace BitbucketBrowser.UI
             NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
             Autorotate = true;
             this.SearchPlaceholder = "Search Repositories";
-            Root.UnevenRows = true;
         }
 
         void ShowSearch(bool value)
@@ -84,8 +83,15 @@ namespace BitbucketBrowser.UI
         {
             base.ViewDidLoad();
             var search = (UISearchBar)this.TableView.TableHeaderView;
-
             search.Delegate = new ExploreSearchDelegate(this);
+
+            TableView.BackgroundColor = UIColor.White;
+            UIImage background = UIImage.FromBundle("/Images/Cells/stuff");
+            View.BackgroundColor = UIColor.FromPatternImage(background);
+
+            var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
+            view.BackgroundColor = UIColor.Clear;
+            TableView.TableFooterView = view;
         }
 
         public override void SearchButtonClicked(string text)
@@ -106,32 +112,29 @@ namespace BitbucketBrowser.UI
 
             ThreadPool.QueueUserWorkItem(delegate {
 
-                List<Element> elements;
                 try
                 {
                     var l = Application.Client.Repositories.Search(text);
-                    elements = new List<Element>(l.Repositories.Count);
+                    var sec = new Section();
 
-                    l.Repositories.ForEach(r => 
+                    foreach (var repo in l.Repositories.OrderByDescending(x => x.FollowersCount))
                     {
-                        //var el = new SubcaptionElement(r.Name, r.Description)
-                        //{ Accessory = UITableViewCellAccessory.DisclosureIndicator, Lines = 1, LineBreakMode = UILineBreakMode.TailTruncation };
+                        var r = repo;
                         var el = new DElement(r);
-
                         el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
-                        elements.Add(el);
-                    });
+                        sec.Add(el);
+                    }
+
 
                     InvokeOnMainThread(delegate {
-                        Root.Clear();
-                        Root.Add(new Section() { Elements = elements });
+                        Root = new RootElement(Title) { sec };
                         if (hud != null)
                         {
                             hud.Hide(true);
                             hud.RemoveFromSuperview();
                         }
 
-                        ShowSearch(elements.Count == 0);
+                        ShowSearch(sec.Count == 0);
                     });
 
                 }

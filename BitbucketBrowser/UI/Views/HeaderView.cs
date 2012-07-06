@@ -67,7 +67,7 @@ namespace BitbucketBrowser.UI
 
             if (!string.IsNullOrEmpty(Title))
             {
-                UIColor.FromRGB(41, 41, 41).SetColor();
+                UIColor.FromRGB(0, 64, 128).SetColor();
                 DrawString(
                         Title,
                         new RectangleF(XPad, titleY, contentWidth, TitleFont.LineHeight),
@@ -78,7 +78,7 @@ namespace BitbucketBrowser.UI
 
             if (!string.IsNullOrWhiteSpace(Subtitle))
             {
-                UIColor.FromRGB(120, 120, 120).SetColor();
+                UIColor.FromRGB(81, 81, 81).SetColor();
 
                 DrawString(
                     Subtitle,

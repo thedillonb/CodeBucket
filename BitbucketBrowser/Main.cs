@@ -86,6 +86,23 @@ namespace BitbucketBrowser
             {
                 var cell = base.GetCell(tv);
                 cell.SelectedBackgroundView = new UIView() { BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200) };
+
+                var f = cell.Subviews.Count(x => x.Tag == 1111);
+                if (f == 0)
+                {
+
+                    var v2 = new UIView(new RectangleF(0, cell.Frame.Height - 3, cell.Frame.Width, 1));
+                    v2.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 64);
+                    v2.Tag = 1111;
+                    cell.AddSubview(v2);
+
+
+                    var v = new UIView(new RectangleF(0, cell.Frame.Height - 2, cell.Frame.Width, 1));
+                    v.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200);
+                    v.Tag = 1111;
+                    cell.AddSubview(v);
+                }
+
                 return cell;
             }
 
@@ -105,18 +122,20 @@ namespace BitbucketBrowser
                 new NavElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
+            /*
             Root.Add(new Section("Settings") {
                 new NavElement("Login", () => { 
                     PresentModalViewController(new LoginViewController(), true);
                 
                 }, UIImage.FromBundle("/Images/Tabs/person"))
             });
+            */
 
             TableView.BackgroundColor = UIColor.Clear;
             UIImage background = UIImage.FromBundle("/Images/Cells/background2");
             View.BackgroundColor = UIColor.FromPatternImage(background);
 
-            TableView.SeparatorColor = UIColor.DarkGray;
+            TableView.SeparatorColor = UIColor.FromRGBA(128, 128, 128, 128);
 
 
             /*

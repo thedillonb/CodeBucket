@@ -28,7 +28,7 @@ namespace BitbucketBrowser.UI
 
         public DElement(RepositoryDetailedModel m) : base(null)
         {
-            this.CellReuseIdentifier = "fuck";
+            this.CellReuseIdentifier = "delement";
             this.Style = UITableViewCellStyle.Default;
             Model = m;
         }

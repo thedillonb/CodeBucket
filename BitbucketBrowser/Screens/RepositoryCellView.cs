@@ -5,6 +5,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
+using BitbucketBrowser.Utils;
 
 namespace BitbucketBrowser
 {
@@ -17,7 +18,7 @@ namespace BitbucketBrowser
 
         static RepositoryCellView()
         {
-            Commit = new UIImage(UIImage.FromBundle("/Images/commit_block").CGImage, 1.3f, UIImageOrientation.Up);
+            Commit = new UIImage(Images.ScmType.CGImage, 1.3f, UIImageOrientation.Up);
             Heart = new UIImage(UIImage.FromBundle("/Images/heart").CGImage, 1.3f, UIImageOrientation.Up);
             Fork = new UIImage(UIImage.FromBundle("/Images/fork").CGImage, 1.3f, UIImageOrientation.Up);
         }
@@ -60,6 +61,14 @@ namespace BitbucketBrowser
             if (string.IsNullOrEmpty(Description.Text))
             {
                 Caption.Frame = new RectangleF(Caption.Frame.X, this.Frame.Height / 2 - Caption.Font.LineHeight / 2 - 2, Caption.Frame.Width, Caption.Frame.Height);
+            }
+            else
+            {
+                var height = Description.Text.MonoStringHeight(Description.Font, Description.Frame.Width);
+                if (height < Description.Font.LineHeight + 3)
+                {
+                    Caption.Frame = new RectangleF(Caption.Frame.X, Caption.Frame.Y + 8f, Caption.Frame.Width, Caption.Frame.Height);
+                }
             }
 
 

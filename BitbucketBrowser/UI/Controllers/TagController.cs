@@ -19,23 +19,21 @@ namespace BitbucketBrowser.UI
             Title = "Tags";
             User = user;
             Repo = repo;
-            Root.Add(new Section());
         }
 
         protected override void OnRefresh ()
         {
-            List<Element> el = new List<Element>(Model.Count);
+            var sec = new Section();
             foreach (var k in Model.Keys)
             {
                 var element = new StyledElement(k)
                                                       { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
                 element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k].Node), true);
-                el.Add(element);
+                sec.Add(element);
             }
 
             InvokeOnMainThread(delegate {
-                Root[0].Clear();
-                Root[0].AddAll(el);
+                Root = new RootElement(Title) { sec };
             });
         }
 
