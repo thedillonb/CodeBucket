@@ -41,6 +41,16 @@ namespace BitbucketBrowser
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
+
+            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackTranslucent;
+
+            UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/Titlebar"), UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/ButtonRound").CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(UIImage.FromBundle("/Images/BackButton").CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/ButtonRound").CreateResizableImage(new UIEdgeInsets(0, 6, -1, 6)), UIControlState.Normal, UIBarMetrics.Default);
+
+
+
             Application.Client = new BitbucketSharp.Client("thedillonb", "djames");
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
@@ -48,6 +58,8 @@ namespace BitbucketBrowser
 
             _nav.MenuView = new MenuController();
             _nav.TopView = new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+
+
 
             window.RootViewController = _nav;
 			window.MakeKeyAndVisible();
@@ -108,6 +120,12 @@ namespace BitbucketBrowser
 
         }
 
+        private void DoShit(UIViewController controller)
+        {
+            NavigationController.PushViewController(controller, false);
+
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -115,11 +133,11 @@ namespace BitbucketBrowser
             NavigationController.SetNavigationBarHidden(true, false);
 
             Root.Add(new Section() {
-                new NavElement("Profile", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/person")),
-                new NavElement("Events", () => NavigationController.PushViewController(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }, false), UIImage.FromBundle("/Images/Tabs/events")),
-                new NavElement("Repositories", () => NavigationController.PushViewController(new AccountRepositoryController("thedillonb") { Title = "Repositories" }, false), UIImage.FromBundle("/Images/repo")),
-                new NavElement("Groups", () => NavigationController.PushViewController(new GroupController("thedillonb", false) { Title = "Groups" }, false), UIImage.FromBundle("/Images/Tabs/group")),
-                new NavElement("Explore", () => NavigationController.PushViewController(new ExploreController() { Title = "Explore" }, false), UIImage.FromBundle("/Images/Tabs/search")),
+                new NavElement("Profile", () => DoShit(new ProfileController("thedillonb", false) { Title = "Profile" }), UIImage.FromBundle("/Images/Tabs/person")),
+                new NavElement("Events", () => DoShit(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }), UIImage.FromBundle("/Images/Tabs/events")),
+                new NavElement("Repositories", () => DoShit(new AccountRepositoryController("thedillonb") { Title = "Repositories" }), UIImage.FromBundle("/Images/repo")),
+                new NavElement("Groups", () => DoShit(new GroupController("thedillonb", false) { Title = "Groups" }), UIImage.FromBundle("/Images/Tabs/group")),
+                new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
             /*
@@ -132,7 +150,7 @@ namespace BitbucketBrowser
             */
 
             TableView.BackgroundColor = UIColor.Clear;
-            UIImage background = UIImage.FromBundle("/Images/Cells/background2");
+            UIImage background = UIImage.FromBundle("/Images/Linen");
             View.BackgroundColor = UIColor.FromPatternImage(background);
 
             TableView.SeparatorColor = UIColor.FromRGBA(128, 128, 128, 128);
@@ -147,14 +165,6 @@ namespace BitbucketBrowser
             var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
             view.BackgroundColor = UIColor.Clear;
             TableView.TableFooterView = view;
-
-            /*
-            var viewTop = new UIView(new RectangleF(0, 0, View.Bounds.Width, 1));
-            viewTop.BackgroundColor = UIColor.LightGray;
-            TableView.TableHeaderView = viewTop;
-            */
-
-            //NavigationItem.TitleView = new LogoView();
         }
     }
 }

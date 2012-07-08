@@ -27,9 +27,7 @@ namespace BitbucketBrowser.UI
             Title = "Issues";
             EnableSearch = true;
             AutoHideSearch = true;
-
             Root.UnevenRows = true;
-            Root.Add(new Section());
         }
 
         protected override void OnRefresh ()
@@ -46,7 +44,10 @@ namespace BitbucketBrowser.UI
             });
 
             InvokeOnMainThread(delegate {
-                Root[0].Insert(0, UITableViewRowAnimation.Top, items);
+                if (Root.Count == 0)
+                    Root.Insert(0, new Section() { Elements = items });
+                else
+                    Root[0].Insert(0, UITableViewRowAnimation.Top, items);
             });
         }
 

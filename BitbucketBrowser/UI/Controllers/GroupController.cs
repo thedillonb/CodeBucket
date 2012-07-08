@@ -32,7 +32,7 @@ namespace BitbucketBrowser.UI
             });
             r.Add(sec);
 
-            BeginInvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate {
                 Root = r;
             });
         }
@@ -59,10 +59,7 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
-
-
-            BeginInvokeOnMainThread(delegate {
-                            var root = new RootElement(Title);
+            var root = new RootElement(Title);
             var sec = new Section();
             Model.Members.OrderBy(x => x.Username).ToList().ForEach(x =>
             {
@@ -78,7 +75,10 @@ namespace BitbucketBrowser.UI
             });
             root.UnevenRows = true;
             root.Add(sec);
-                Root = root;
+
+
+            InvokeOnMainThread(delegate {
+                    Root = root;
             });
         }
 

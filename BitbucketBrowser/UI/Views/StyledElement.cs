@@ -100,7 +100,7 @@ namespace BitbucketBrowser.UI
         {
             Font = TitleFont;
             SubtitleFont = SubFont;
-            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/TableCell"));
             this.TextColor = UIColor.FromRGB(41, 41, 41);
             this.DetailColor = UIColor.FromRGB(120, 120, 120);
         }
@@ -160,6 +160,21 @@ namespace BitbucketBrowser.UI
                     context.DrawLinearGradient(gradient, new PointF(Bounds.GetMidX(), 0), new PointF(Bounds.GetMidX(), Bounds.GetMaxY()), 0);
                 }
             }
+        }
+    }
+
+    public class DropbarElement : UIView
+    {
+        private static UIImage Image = UIImage.FromBundle("/Images/Dropbar");
+
+        public DropbarElement(float width)
+            : base (new RectangleF(0, 0, width, Image.Size.Height))
+        {
+            BackgroundColor = UIColor.FromPatternImage(Image);
+            Layer.MasksToBounds = false;
+            Layer.ShadowColor = UIColor.Black.CGColor;
+            Layer.ShadowOpacity = 0.3f;
+            Layer.ShadowOffset = new SizeF(0, 5f);
         }
     }
 

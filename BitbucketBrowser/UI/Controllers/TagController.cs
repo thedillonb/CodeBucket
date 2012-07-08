@@ -23,6 +23,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
+            if (Model.Keys.Count == 0)
+                return;
+
             var sec = new Section();
             foreach (var k in Model.Keys)
             {

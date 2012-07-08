@@ -25,6 +25,9 @@ namespace BitbucketBrowser.UI
 		
         protected override void OnRefresh()
         {
+            if (Model.Count == 0)
+                return;
+
             var root = new RootElement(Title) { 
                 new Section() { 
                     from x in Model 

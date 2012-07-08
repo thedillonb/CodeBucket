@@ -469,7 +469,62 @@
 			<nil key="sourceID"/>
 			<int key="maxID">39</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">RepositoryCellView</string>
+					<string key="superclassName">UITableViewCell</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="Caption">UILabel</string>
+						<string key="Description">UILabel</string>
+						<string key="Image1">UIImageView</string>
+						<string key="Image2">UIImageView</string>
+						<string key="Image3">UIImageView</string>
+						<string key="Label1">UILabel</string>
+						<string key="Label2">UILabel</string>
+						<string key="Label3">UILabel</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="Caption">
+							<string key="name">Caption</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Description">
+							<string key="name">Description</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Image1">
+							<string key="name">Image1</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Image2">
+							<string key="name">Image2</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Image3">
+							<string key="name">Image3</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Label1">
+							<string key="name">Label1</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Label2">
+							<string key="name">Label2</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="Label3">
+							<string key="name">Label3</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/RepositoryCellView.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

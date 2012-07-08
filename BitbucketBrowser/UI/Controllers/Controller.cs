@@ -22,9 +22,8 @@ namespace BitbucketBrowser.UI
             if (refresh)
                 RefreshRequested += (sender, e) => Refresh(true);
 
-           
-
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null); 
+            var button = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null); 
+            NavigationItem.BackBarButtonItem = button;
 
             Autorotate = true;
         }
@@ -41,6 +40,7 @@ namespace BitbucketBrowser.UI
 
             public override void Draw(RectangleF rect)
             {
+                base.Draw(rect);
                 //Stop the super class from doing stupid shit like drawing the shadow
             }
         }
@@ -56,13 +56,15 @@ namespace BitbucketBrowser.UI
 
         protected abstract T OnUpdate();
 
+
         public override void ViewDidLoad()
         {
             Root.Caption = this.Title;
 
 
             TableView.BackgroundColor = UIColor.White;
-            UIImage background = UIImage.FromBundle("/Images/Cells/stuff");
+            //UIImage background = UIImage.FromBundle("/Images/Cells/background2");
+            UIImage background = UIImage.FromBundle("/Images/Background");
             View.BackgroundColor = UIColor.FromPatternImage(background);
 
             if (Style == UITableViewStyle.Grouped)
@@ -78,25 +80,14 @@ namespace BitbucketBrowser.UI
             {
                 var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
                 view.BackgroundColor = UIColor.Clear;
-                TableView.TableFooterView = view;
+                TableView.TableFooterView = new DropbarElement(View.Bounds.Width);
+                TableView.TableFooterView.Hidden = true;
             }
 
 
             base.ViewDidLoad();
         }
 
-        /*
-        public override void LoadView()
-        {
-            base.LoadView();
-            if (Style == UITableViewStyle.Grouped)
-            {
-                TableView.BackgroundColor = UIColor.Clear;
-                UIImage background = UIImage.FromBundle("/Images/Cells/background");
-                ParentViewController.View.BackgroundColor = UIColor.FromPatternImage(background);
-            }
-        }
-        */
 
         public void Refresh(bool force = false)
         {
@@ -112,6 +103,9 @@ namespace BitbucketBrowser.UI
                 }
 
                 InvokeOnMainThread(delegate { 
+                    if (TableView.TableFooterView != null)
+                        TableView.TableFooterView.Hidden = this.Root.Count == 0;
+
                     ReloadComplete(); 
                 });
                 _loaded = true;

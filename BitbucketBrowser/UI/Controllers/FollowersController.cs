@@ -39,7 +39,7 @@ namespace BitbucketBrowser.UI
             root.UnevenRows = true;
             root.Add(sec);
 
-            BeginInvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate {
                 Root = root;
             });
         }

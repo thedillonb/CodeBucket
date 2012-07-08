@@ -37,6 +37,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
+            if (Model.Count == 0)
+                return;
+
             var items = new List<Element>();
             Model.ForEach(x => {
                 var el = new ChangeElement(x);
@@ -121,7 +124,7 @@ namespace BitbucketBrowser.UI
             });
 
 
-            BeginInvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate {
                 var r = new RootElement(Title);
                 r.UnevenRows = true;
                 r.Add(new [] { sec , sec2 });

@@ -42,7 +42,6 @@ namespace BitbucketBrowser.UI
             Style = UITableViewStyle.Plain;
             Username = username;
             Root.UnevenRows = true;
-            Root.Add(new Section());
             ReportUser = true;
             ReportRepository = false;
         }
@@ -99,7 +98,10 @@ namespace BitbucketBrowser.UI
             });
 
             InvokeOnMainThread(delegate {
-                Root[0].Insert(0, UITableViewRowAnimation.Top, elements);
+                if (Root.Count == 0)
+                    Root.Insert(0, new Section() { Elements = elements });
+                else
+                    Root[0].Insert(0, UITableViewRowAnimation.Top, elements);
             });
 
         }

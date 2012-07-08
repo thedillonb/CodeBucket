@@ -1,23 +1,30 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/Main.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/GroupController.cs">
     <Files>
-      <File FileName="../MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" Line="575" Column="1" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="120" Column="37" />
-      <File FileName="BitbucketBrowser/Main.cs" Line="69" Column="44" />
-      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="73" Column="17" />
+      <File FileName="BitbucketBrowser/UI/Views/StyledElement.cs" Line="19" Column="9" />
+      <File FileName="BitbucketBrowser/Main.cs" Line="48" Column="58" />
+      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="102" Column="39" />
+      <File FileName="BitbucketBrowser/UI/Controllers/ExploreController.cs" Line="130" Column="63" />
+      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="1" Column="1" />
+      <File FileName="BitbucketBrowser/UI/Controllers/GroupController.cs" Line="35" Column="42" />
+      <File FileName="BitbucketBrowser/UI/Controllers/FollowersController.cs" Line="42" Column="13" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="BitbucketBrowser" expanded="True">
-            <Node name="References" expanded="True">
-              <Node name="MonoTouch.Dialog" selected="True" />
+            <Node name="Cells" expanded="True">
+              <Node name="RepositoryInfoCellView.cs" expanded="True" />
             </Node>
+            <Node name="Screens" expanded="True" />
             <Node name="UI" expanded="True">
-              <Node name="Controllers" expanded="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="GroupController.cs" selected="True" />
+              </Node>
               <Node name="Views" expanded="True" />
             </Node>
+            <Node name="Utils" expanded="True" />
           </Node>
           <Node name="MonoTouch.Dialog" expanded="True" />
         </State>
@@ -29,13 +36,14 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="345" />
-      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="337" />
       <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/Elements.cs" line="2732" />
       <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/Elements.cs" line="2849" />
+      <Breakpoint file="/Users/dillonb/Projects/bitbucketbrowser/BitbucketBrowser/UI/Controllers/Controller.cs" line="106" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="BitbucketBrowser/UI/Controllers/GroupController.cs" line="81" offsetX="302" offsetY="1200" expression="Root" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
   <MonoDevelop.Ide.ItemProperties.BitbucketBrowser>
     <ProfileHeapShotSettings_27CDebug Output="/var/folders/p2/jqtkyxbd1bq921f2y3t_x6w80000gn/T/profiler-output.mlpd" Zip="True" HeapshotMode="ondemand" HeapshotGCInterval="1" HeapshotTimeInterval="1000" Calls="False" Alloc="False" CallDepth="100" StatisticalSampling="True" SampingFrequency="1000" MaxFrames="8" Mode="Performance" />
   </MonoDevelop.Ide.ItemProperties.BitbucketBrowser>

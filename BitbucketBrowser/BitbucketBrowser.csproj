@@ -153,7 +153,6 @@
     <Folder Include="IssueBrowser\" />
     <Folder Include="Images\Cells\" />
     <Folder Include="Images\Web\" />
-    <Folder Include="Images\Cells\Repository\" />
     <Folder Include="Cells\" />
   </ItemGroup>
   <ItemGroup>
@@ -192,7 +191,6 @@
     <Content Include="Images\heart_break.png" />
     <Content Include="Images\create.png" />
     <Content Include="SourceBrowser\index.html" />
-    <Content Include="Images\Issues\bug.png" />
     <Content Include="Images\Issues\high.png" />
     <Content Include="Images\Issues\low.png" />
     <Content Include="Images\Issues\task.png" />
@@ -229,17 +227,13 @@
     <Content Include="SourceBrowser\prettify.css" />
     <Content Include="Images\card.png" />
     <Content Include="Images\Cells\gradient.png" />
-    <Content Include="Images\Cells\Background.png" />
     <Content Include="Images\Cells\button.png" />
     <Content Include="Images\Cells\background2.png" />
-    <Content Include="Images\Cells\stuff.png" />
     <Content Include="Images\Cells\fudge.png" />
     <Content Include="Images\Web\back.png" />
     <Content Include="Images\Web\back%402x.png" />
     <Content Include="Images\Web\forward.png" />
     <Content Include="Images\Web\forward%402x.png" />
-    <Content Include="Images\Cells\Repository\heart.png" />
-    <Content Include="Images\Cells\Repository\user_9x12.png" />
     <Content Include="Images\fork.png" />
     <Content Include="Images\fork%402x.png" />
     <Content Include="Images\scm_type.png" />
@@ -254,5 +248,13 @@
     <Content Include="Images\locked%402x.png" />
     <Content Include="Images\unlocked.png" />
     <Content Include="Images\unlocked%402x.png" />
+    <Content Include="Images\Titlebar.png" />
+    <Content Include="Images\Background.png" />
+    <Content Include="Images\Dropbar.png" />
+    <Content Include="Images\TableCell.png" />
+    <Content Include="Images\Linen.png" />
+    <Content Include="Images\BackButton.png" />
+    <Content Include="Images\ButtonRound.png" />
+    <Content Include="Images\Web\bug.png" />
   </ItemGroup>
 </Project>
