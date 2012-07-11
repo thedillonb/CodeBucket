@@ -35,7 +35,7 @@ namespace BitbucketBrowser.UI
 
         public float GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
-            return 66f;
+            return 69f;
         }
 
         
@@ -49,6 +49,7 @@ namespace BitbucketBrowser.UI
             if (cell == null)
             {
                 cell = RepositoryCellView.Create();
+
             }
 
             cell.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description);
@@ -68,7 +69,7 @@ namespace BitbucketBrowser.UI
 
         void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            cell.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            //cell.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
         }
     }
 }

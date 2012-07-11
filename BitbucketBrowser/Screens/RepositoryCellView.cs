@@ -14,13 +14,12 @@ namespace BitbucketBrowser
         private static UIImage Commit;
         private static UIImage Heart;
         private static UIImage Fork;
-        private static UIImage Gradient = UIImage.FromBundle("/Images/Cells/gradient");
 
         static RepositoryCellView()
         {
             Commit = new UIImage(Images.ScmType.CGImage, 1.3f, UIImageOrientation.Up);
-            Heart = new UIImage(UIImage.FromBundle("/Images/heart").CGImage, 1.3f, UIImageOrientation.Up);
-            Fork = new UIImage(UIImage.FromBundle("/Images/fork").CGImage, 1.3f, UIImageOrientation.Up);
+            Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);
+            Fork = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up);
         }
 
         public static RepositoryCellView Create()
@@ -33,7 +32,7 @@ namespace BitbucketBrowser
             cell.Image2.Image = Heart;
             cell.Image3.Image = Fork;
 
-            cell.BackgroundView = new UIImageView(Gradient);
+            cell.BackgroundView = new UIImageView(Images.CellGradient);
 
             //Create the icons
             return cell;

@@ -112,7 +112,6 @@
     <Compile Include="UI\Views\ErrorView.cs" />
     <Compile Include="UI\Views\ChangeElement.cs" />
     <Compile Include="UI\Controllers\IssueController.cs" />
-    <Compile Include="UI\Views\IssueElement.cs" />
     <Compile Include="Utils\MySearchDelegate.cs" />
     <Compile Include="UI\Views\StyledElement.cs" />
     <Compile Include="UI\Views\CustomSection.cs" />
@@ -131,11 +130,16 @@
       <DependentUpon>RepositoryInfoCellView.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\Images.cs" />
+    <Compile Include="Screens\IssueCellView.cs" />
+    <Compile Include="Screens\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
     <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
+    <InterfaceDefinition Include="Screens\IssueCellView.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

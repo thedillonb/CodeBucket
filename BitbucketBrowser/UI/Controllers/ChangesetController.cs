@@ -80,25 +80,34 @@ namespace BitbucketBrowser.UI
 
         public RepositoryDetailedModel Repo { get; set; }
 
+        private HeaderView _header;
+
         public ChangesetInfoController(string user, string slug, string node)
             : base(true, false)
         {
             Node = node;
             User = user;
             Slug = slug;
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+            Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
             Title = "Commit";
             Root.UnevenRows = true;
+
+            _header = new HeaderView(0f) { Title = "Commit: " + node };
+            Root.Add(new Section(_header));
         }
 
         protected override void OnRefresh()
         {
             var sec = new Section();
-            //var details = new Section(new HeaderView(View.Bounds.Width) { Title = Node, Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo() });
-
-            //Add the big info thing for the change
+            _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
 
             var d = new MultilineElement(Model.Author) { Value = Model.Message };
+
+            /*
+             * , Model.Message, UITableViewCellStyle.Subtitle) { 
+                Font = UIFont.SystemFontOfSize(15f), SubtitleFont = UIFont.SystemFontOfSize(12f) 
+            };
+            */
 
             sec.Add(d);
 
@@ -110,7 +119,7 @@ namespace BitbucketBrowser.UI
                 sec.Add(repo);
             }
 
-            var sec2 = new Section("Changes");
+            var sec2 = new Section();
 
             Model.Files.ForEach(x => 
             {
@@ -125,10 +134,9 @@ namespace BitbucketBrowser.UI
 
 
             InvokeOnMainThread(delegate {
-                var r = new RootElement(Title);
-                r.UnevenRows = true;
-                r.Add(new [] { sec , sec2 });
-                Root = r;
+                _header.SetNeedsDisplay();
+                Root.Add(new [] { sec, sec2 });
+                ReloadData();
             });
         }
 

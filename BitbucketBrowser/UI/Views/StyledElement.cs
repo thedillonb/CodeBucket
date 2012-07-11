@@ -23,7 +23,8 @@ namespace BitbucketBrowser.UI
             : base(UITableViewCellStyle.Default, "multilineelement")
         {
             this.Caption = caption;
-            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            BackgroundColor = UIColor.FromRGB(246, 247, 248);
+
         }
 
         public override void Draw(RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
@@ -106,22 +107,18 @@ namespace BitbucketBrowser.UI
         }
 
 
-        /*
+
         public override UITableViewCell GetCell(UITableView tv)
         {
             var cell = base.GetCell(tv);
-            //cell.TextLabel.BackgroundColor = UIColor.Clear;
-            cell.TextLabel.TextColor = TitleColor;
+            cell.TextLabel.BackgroundColor = UIColor.Clear;
 
             if (cell.DetailTextLabel != null)
-            {
                 cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-                cell.DetailTextLabel.TextColor = SubtitleColor;
-            }
 
             return cell;
         }
-        */
+
     }
 
     public class SubcaptionElement : StyledElement
@@ -188,7 +185,7 @@ namespace BitbucketBrowser.UI
             : base(UITableViewCellStyle.Default, "repoinfo")
         {
             _rows = new List<Row>(rows);
-            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            BackgroundColor = UIColor.FromRGB(249, 250, 251); //UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
         }
 
         public class Row

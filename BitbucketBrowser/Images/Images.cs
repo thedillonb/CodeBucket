@@ -12,6 +12,11 @@ namespace BitbucketBrowser
         public static UIImage Size = UIImage.FromBundle("/Images/size");
         public static UIImage Locked = UIImage.FromBundle("/Images/locked");
         public static UIImage Unlocked = UIImage.FromBundle("/Images/unlocked");
+        public static UIImage Heart = UIImage.FromBundle("/Images/heart");
+        public static UIImage Fork = UIImage.FromBundle("/Images/fork");
+
+        public static UIImage CellGradient = UIImage.FromBundle("/Images/Cells/gradient");
+        public static UIImage Followers = UIImage.FromBundle("/Images/followers");
     }
 }
 
