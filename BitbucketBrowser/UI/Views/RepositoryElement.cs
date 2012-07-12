@@ -10,25 +10,19 @@ using BitbucketSharp.Models;
 
 namespace BitbucketBrowser.UI
 {
-    public class DElement : Element, IElementSizing, IColorizeBackground
+    public class RepositoryElement : Element, IElementSizing, IColorizeBackground
     {       
-        public string CellReuseIdentifier
-        {
-            get;set;    
-        }
+        private string CellReuseIdentifier { get; set; }
 
-        public UITableViewCellStyle Style
-        {
-            get;set;    
-        }
+        public UITableViewCellStyle Style { get; set;}
 
         public UIColor BackgroundColor { get; set; }
 
         public RepositoryDetailedModel Model { get; set; }
 
-        public DElement(RepositoryDetailedModel m) : base(null)
+        public RepositoryElement(RepositoryDetailedModel m) : base(null)
         {
-            this.CellReuseIdentifier = "delement";
+            this.CellReuseIdentifier = "repositoryelement";
             this.Style = UITableViewCellStyle.Default;
             Model = m;
         }
@@ -40,7 +34,6 @@ namespace BitbucketBrowser.UI
 
         
         public event NSAction Tapped;
-
 
         public override UITableViewCell GetCell (UITableView tv)
         {

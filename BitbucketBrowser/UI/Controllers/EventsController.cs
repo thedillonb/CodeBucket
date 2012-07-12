@@ -99,7 +99,7 @@ namespace BitbucketBrowser.UI
 
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)
-                    Root.Insert(0, new Section() { Elements = elements });
+                    Root = new RootElement(Title) { new Section() { Elements = elements } };
                 else
                     Root[0].Insert(0, UITableViewRowAnimation.Top, elements);
             });

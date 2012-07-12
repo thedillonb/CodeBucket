@@ -124,7 +124,6 @@
     <Compile Include="Screens\RepositoryCellView.designer.cs">
       <DependentUpon>RepositoryCellView.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\DElement.cs" />
     <Compile Include="Cells\RepositoryInfoCellView.cs" />
     <Compile Include="Cells\RepositoryInfoCellView.designer.cs">
       <DependentUpon>RepositoryInfoCellView.cs</DependentUpon>
@@ -134,6 +133,8 @@
     <Compile Include="Screens\IssueCellView.designer.cs">
       <DependentUpon>IssueCellView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Views\RepositoryElement.cs" />
+    <Compile Include="UI\Views\SplitElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -158,6 +159,7 @@
     <Folder Include="Images\Cells\" />
     <Folder Include="Images\Web\" />
     <Folder Include="Cells\" />
+    <Folder Include="Images\Controls\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -179,15 +181,11 @@
     <Content Include="Images\unknown.png" />
     <Content Include="Images\pencil.png" />
     <Content Include="Images\flag.png" />
-    <Content Include="Images\repoevents.png" />
-    <Content Include="Images\followers.png" />
     <Content Include="Images\repo.png" />
     <Content Include="Images\branch.png" />
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
-    <Content Include="Images\commit.png" />
-    <Content Include="Images\bitbucketlogo.png" />
     <Content Include="Images\Tabs\cog.png" />
     <Content Include="Images\Tabs\logout.png" />
     <Content Include="Images\Tabs\help.png" />
@@ -229,7 +227,6 @@
     <Content Include="SourceBrowser\lang-yaml.js" />
     <Content Include="SourceBrowser\prettify.js" />
     <Content Include="SourceBrowser\prettify.css" />
-    <Content Include="Images\card.png" />
     <Content Include="Images\Cells\gradient.png" />
     <Content Include="Images\Cells\button.png" />
     <Content Include="Images\Cells\background2.png" />
@@ -252,13 +249,25 @@
     <Content Include="Images\locked%402x.png" />
     <Content Include="Images\unlocked.png" />
     <Content Include="Images\unlocked%402x.png" />
-    <Content Include="Images\Titlebar.png" />
-    <Content Include="Images\Background.png" />
     <Content Include="Images\Dropbar.png" />
     <Content Include="Images\TableCell.png" />
     <Content Include="Images\Linen.png" />
-    <Content Include="Images\BackButton.png" />
-    <Content Include="Images\ButtonRound.png" />
     <Content Include="Images\Web\bug.png" />
+    <Content Include="Images\pencil%402x.png" />
+    <Content Include="Images\heart%402x.png" />
+    <Content Include="Images\plus%402x.png" />
+    <Content Include="Images\tag%402x.png" />
+    <Content Include="Images\folder%402x.png" />
+    <Content Include="Images\flag%402x.png" />
+    <Content Include="Images\file%402x.png" />
+    <Content Include="Images\branch%402x.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\changes.png" />
+    <Content Include="Images\changes%402x.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\Controls\titlebar.png" />
+    <Content Include="Images\Controls\background.png" />
+    <Content Include="Images\Controls\searchbar.png" />
   </ItemGroup>
 </Project>

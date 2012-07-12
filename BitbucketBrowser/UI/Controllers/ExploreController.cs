@@ -86,12 +86,11 @@ namespace BitbucketBrowser.UI
             search.Delegate = new ExploreSearchDelegate(this);
 
             TableView.BackgroundColor = UIColor.White;
-            UIImage background = UIImage.FromBundle("/Images/Cells/stuff");
+            UIImage background = Images.Background;
             View.BackgroundColor = UIColor.FromPatternImage(background);
 
-            var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
-            view.BackgroundColor = UIColor.Clear;
-            TableView.TableFooterView = view;
+            TableView.TableFooterView = new DropbarElement(View.Bounds.Width);
+            TableView.TableFooterView.Hidden = true;
         }
 
         public override void SearchButtonClicked(string text)
@@ -105,6 +104,7 @@ namespace BitbucketBrowser.UI
             hud.TitleText = "Searching...";
 
             InvokeOnMainThread(delegate {
+                TableView.TableFooterView.Hidden = true;
                 Root.Clear();
                 this.View.Superview.AddSubview(hud);
                 hud.Show(true);
@@ -120,14 +120,17 @@ namespace BitbucketBrowser.UI
                     foreach (var repo in l.Repositories.OrderByDescending(x => x.FollowersCount))
                     {
                         var r = repo;
-                        var el = new DElement(r);
+                        var el = new RepositoryElement(r);
                         el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
                         sec.Add(el);
                     }
 
 
                     InvokeOnMainThread(delegate {
+                        TableView.TableFooterView.Hidden = sec.Elements.Count == 0;
                         Root = new RootElement(Title) { sec };
+
+
                         if (hud != null)
                         {
                             hud.Hide(true);

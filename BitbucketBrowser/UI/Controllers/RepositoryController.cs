@@ -104,7 +104,7 @@ namespace BitbucketBrowser.UI
 
         public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
         {
-            DElement sse = new DElement(r);
+            RepositoryElement sse = new RepositoryElement(r);
             sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);
             sec.Add(sse);
         }

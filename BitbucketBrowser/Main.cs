@@ -44,11 +44,12 @@ namespace BitbucketBrowser
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackTranslucent;
 
-            UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/Titlebar"), UIBarMetrics.Default);
-            UIBarButtonItem.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/ButtonRound").CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(UIImage.FromBundle("/Images/BackButton").CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(UIImage.FromBundle("/Images/ButtonRound").CreateResizableImage(new UIEdgeInsets(0, 6, -1, 6)), UIControlState.Normal, UIBarMetrics.Default);
-
+            //Set the theming
+            UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, -1, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
 
             Application.Client = new BitbucketSharp.Client("thedillonb", "djames");

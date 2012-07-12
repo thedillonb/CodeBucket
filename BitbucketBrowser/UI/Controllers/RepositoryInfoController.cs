@@ -50,7 +50,7 @@ namespace BitbucketBrowser.UI
                 sec1.Add(new MultilineElement(Model.Description));
             }
 
-            sec1.Add(new RepositoryInfo(new [] { new RepositoryInfo.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
+            sec1.Add(new SplitElement(new [] { new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
                 Text2 = Model.Language, Image2 = Images.Language } }));
 
 
@@ -65,12 +65,12 @@ namespace BitbucketBrowser.UI
                 size = string.Format("{0:0.##}MB", Model.Size / 1024f / 1024f);
 
 
-            sec1.Add(new RepositoryInfo(new [] { 
-                new RepositoryInfo.Row() { 
+            sec1.Add(new SplitElement(new [] { 
+                new SplitElement.Row() { 
                     Text1 = Model.IsPrivate ? "Private" : "Public" , Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
                     Text2 = size, Image2 = Images.Size } }));
 
-            sec1.Add(new RepositoryInfo(new [] { new RepositoryInfo.Row() { Text1 = DateTime.Parse(Model.CreatedOn).ToString("MM.dd.yy"), Image1 = UIImage.FromBundle("/Images/create"),
+            sec1.Add(new SplitElement(new [] { new SplitElement.Row() { Text1 = DateTime.Parse(Model.CreatedOn).ToString("MM.dd.yy"), Image1 = UIImage.FromBundle("/Images/create"),
                 Text2 = DateTime.Parse(Model.UtcLastUpdated).ToString("MM.dd.yy"), Image2 = UIImage.FromBundle("/Images/pencil") } }));
 
 
@@ -82,7 +82,7 @@ namespace BitbucketBrowser.UI
             sec1.Add(followers);
 
 
-            var events = new StyledElement("Events", UIImage.FromBundle("Images/repoevents.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var events = new StyledElement("Events", Images.Event) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             events.Tapped += () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true);
 
             var sec2 = new Section();
@@ -90,21 +90,21 @@ namespace BitbucketBrowser.UI
 
             if (Model.HasIssues) 
                 sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true),
-                                                UIImage.FromBundle("Images/flag")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
+                                           Images.Flag) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
                 );
 
             if (Model.HasWiki)
                 sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
-                                                UIImage.FromBundle("Images/pencil.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
+                                           Images.Pencil) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
                 );
 
             var sec3 = new Section() {
                 new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 
-                                       UIImage.FromBundle("Images/commit.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
+                                  Images.Changes) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
                 new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true),
-                                       UIImage.FromBundle("Images/branch.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
+                                  Images.Branch) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
                 new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true),
-                                        UIImage.FromBundle("Images/tag.png")) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
+                                  Images.Tag) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
             };
 
 

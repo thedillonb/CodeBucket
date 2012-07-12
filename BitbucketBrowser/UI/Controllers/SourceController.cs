@@ -46,9 +46,9 @@ namespace BitbucketBrowser.UI
 
             Model.Directories.ForEach(d => 
             {
-                sec.Add(new StyledElement(d, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
-                                                 UIImage.FromBundle("/Images/folder.png"))
-                          { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,  });
+                sec.Add(new StyledElement(d, 
+                                          () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
+                                          Images.Folder));
             });
 
             Model.Files.ForEach(f =>
@@ -56,8 +56,8 @@ namespace BitbucketBrowser.UI
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
                 sec.Add(new StyledElement(p,() => NavigationController.PushViewController(
-                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p}, true), 
-                                          UIImage.FromBundle("/Images/file.png")));
+                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true), 
+                                          Images.File));
             });
 
             root.Add(sec);

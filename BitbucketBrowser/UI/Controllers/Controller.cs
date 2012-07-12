@@ -64,8 +64,7 @@ namespace BitbucketBrowser.UI
 
             TableView.BackgroundColor = UIColor.White;
             //UIImage background = UIImage.FromBundle("/Images/Cells/background2");
-            UIImage background = UIImage.FromBundle("/Images/Background");
-            View.BackgroundColor = UIColor.FromPatternImage(background);
+            View.BackgroundColor = UIColor.FromPatternImage(Images.Background);
 
             if (Style == UITableViewStyle.Grouped)
             {

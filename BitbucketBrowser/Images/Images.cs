@@ -14,9 +14,32 @@ namespace BitbucketBrowser
         public static UIImage Unlocked = UIImage.FromBundle("/Images/unlocked");
         public static UIImage Heart = UIImage.FromBundle("/Images/heart");
         public static UIImage Fork = UIImage.FromBundle("/Images/fork");
+        public static UIImage Pencil = UIImage.FromBundle("/Images/pencil");
+        public static UIImage Plus = UIImage.FromBundle("/Images/plus");
+        public static UIImage Tag = UIImage.FromBundle("/Images/tag");
 
         public static UIImage CellGradient = UIImage.FromBundle("/Images/Cells/gradient");
         public static UIImage Followers = UIImage.FromBundle("/Images/followers");
+
+        public static UIImage Flag = UIImage.FromBundle("/Images/flag");
+
+        public static UIImage Folder = UIImage.FromBundle("/Images/folder");
+        public static UIImage File = UIImage.FromBundle("/Images/file");
+        public static UIImage Branch = UIImage.FromBundle("/Images/branch");
+        public static UIImage Create = UIImage.FromBundle("/Images/create");
+
+        public static UIImage Changes = UIImage.FromBundle("/Images/changes");
+
+        //Tabs
+        public static UIImage Group = UIImage.FromBundle("/Images/Tabs/group");
+        public static UIImage Event = UIImage.FromBundle("/Images/Tabs/events");
+
+        //Controls
+        public static UIImage BackButton = UIImage.FromBundle("/Images/Controls/backbutton");
+        public static UIImage BarButton = UIImage.FromBundle("/Images/Controls/barbutton");
+        public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
+        public static UIImage Background = UIImage.FromBundle("/Images/Controls/background");
+        public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
     }
 }
 
