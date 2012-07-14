@@ -85,9 +85,8 @@ namespace BitbucketBrowser.UI
             var search = (UISearchBar)this.TableView.TableHeaderView;
             search.Delegate = new ExploreSearchDelegate(this);
 
-            TableView.BackgroundColor = UIColor.White;
-            UIImage background = Images.Background;
-            View.BackgroundColor = UIColor.FromPatternImage(background);
+            TableView.BackgroundColor = UIColor.Clear;
+            WatermarkView.AssureWatermark(this);
 
             TableView.TableFooterView = new DropbarElement(View.Bounds.Width);
             TableView.TableFooterView.Hidden = true;

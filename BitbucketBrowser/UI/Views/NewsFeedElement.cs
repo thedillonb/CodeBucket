@@ -15,17 +15,11 @@ namespace BitbucketBrowser.UI
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(13);
-        private static readonly UIImage PlusImage = UIImage.FromBundle("Images/plus.png");
-        private static readonly UIImage HeartImage = UIImage.FromBundle("Images/heart.png");
-        private static readonly UIImage PencilImage = UIImage.FromBundle("Images/pencil.png");
-        private static readonly UIImage UnknownImage = UIImage.FromBundle("Images/unknown.png");
-        private static readonly UIImage HeartBrokenImage = UIImage.FromBundle("Images/heart_break.png");
-        private static readonly UIImage CreateImage = UIImage.FromBundle("Images/create.png");
 
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;
 
-        private static readonly UIImage BackImage = UIImage.FromBundle("/Images/Cells/gradient");
+        private static readonly UIImage BackImage = Images.CellGradient;
 
         public NewsFeedElement(EventModel eventModel) : base(UITableViewCellStyle.Default, "newsfeedelement")
         {
@@ -52,7 +46,7 @@ namespace BitbucketBrowser.UI
             //Drop the image
             if (Item.Event == EventModel.Type.Commit)
             {
-                img = PlusImage;
+                img = Images.Plus;
                 if (ReportRepository)
                     desc = "Commit to " + Item.Repository.Name + ": " + desc;
                 else
@@ -60,7 +54,7 @@ namespace BitbucketBrowser.UI
             }
             else if (Item.Event == EventModel.Type.CreateRepo)
             {
-                img = CreateImage;
+                img = Images.Create;
                 if (ReportRepository)
                     desc = "Created Repo: " + Item.Repository.Name;
                 else
@@ -68,31 +62,31 @@ namespace BitbucketBrowser.UI
             }
             else if (Item.Event == EventModel.Type.WikiUpdated)
             {
-                img = PencilImage;
+                img = Images.Pencil;
                 desc = "Updated the wiki page: " + desc;
             }
-                else if (Item.Event == EventModel.Type.WikiCreated)
+            else if (Item.Event == EventModel.Type.WikiCreated)
             {
-                img = PencilImage;
+                img = Images.Pencil;
                 desc = "Created the wiki page: " + desc;
             }
             else if (Item.Event == EventModel.Type.StartFollowUser)
             {
-                img = HeartImage;
+                img = Images.HeartAdd;
                 desc = "Started following a user";
             }
             else if (Item.Event == EventModel.Type.StartFollowRepo)
             {
-                img = HeartImage;
+                img = Images.HeartAdd;
                 desc = "Started following: " + Item.Repository.Name;
             }
             else if (Item.Event == EventModel.Type.StopFollowRepo)
             {
-                img = HeartBrokenImage;
+                img = Images.HeartDelete;
                 desc = "Stopped following: " + Item.Repository.Name;
             }
             else
-                img = UnknownImage;
+                img = Images.Unknown;
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
@@ -137,7 +131,7 @@ namespace BitbucketBrowser.UI
 
             if (!string.IsNullOrEmpty(desc))
             {
-                UIColor.Black.SetColor();
+                UIColor.FromRGB(41, 41, 41).SetColor();
                 var top = daysAgoTop + DateFont.LineHeight + 2f;
                 var height = bounds.Height - top - TopBottomPadding;
                 view.DrawString(desc,
@@ -150,7 +144,10 @@ namespace BitbucketBrowser.UI
         {
             float descHeight = 0f;
             var leftContent = LeftRightPadding * 2 + 16f;
-            var contentWidth = bounds.Width - 20f - leftContent - LeftRightPadding; //Account for the Accessory
+            var contentWidth = bounds.Width - leftContent - LeftRightPadding; //Account for the Accessory
+            if (IsTappedAssigned)
+                contentWidth = contentWidth - 20f;
+
             string desc = null;
             UIImage img = null;
             CreateDescription(out desc, out img);

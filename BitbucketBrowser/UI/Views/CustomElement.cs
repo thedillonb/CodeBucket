@@ -30,11 +30,16 @@ namespace BitbucketBrowser.UI
 
         public float GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
-            return Height(tableView.Bounds);
+            if (tableView.Style == UITableViewStyle.Grouped)
+                return Height(new RectangleF(tableView.Bounds.Location, new SizeF(tableView.Bounds.Width - 20, tableView.Bounds.Height)));
+            else
+                return Height(tableView.Bounds);
         }
 
         
         public event NSAction Tapped;
+
+        public bool IsTappedAssigned { get { return Tapped != null; } }
 
 
         public override UITableViewCell GetCell (UITableView tv)

@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="UI\Views\RepositoryElement.cs" />
     <Compile Include="UI\Views\SplitElement.cs" />
+    <Compile Include="UI\Views\WatermarkView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -186,18 +187,14 @@
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
-    <Content Include="Images\Tabs\cog.png" />
     <Content Include="Images\Tabs\logout.png" />
     <Content Include="Images\Tabs\help.png" />
     <Content Include="Images\warning.png" />
-    <Content Include="Images\heart_break.png" />
-    <Content Include="Images\create.png" />
     <Content Include="SourceBrowser\index.html" />
     <Content Include="Images\Issues\high.png" />
     <Content Include="Images\Issues\low.png" />
     <Content Include="Images\Issues\task.png" />
     <Content Include="Images\Issues\proposal.png" />
-    <Content Include="Images\Issues\enhancement.png" />
     <Content Include="Images\Tabs\person.png" />
     <Content Include="Images\Tabs\person%402x.png" />
     <Content Include="Images\Tabs\group.png" />
@@ -261,13 +258,25 @@
     <Content Include="Images\flag%402x.png" />
     <Content Include="Images\file%402x.png" />
     <Content Include="Images\branch%402x.png" />
-    <Content Include="Images\create%402x.png" />
     <Content Include="Images\changes.png" />
     <Content Include="Images\changes%402x.png" />
-    <Content Include="Images\Controls\backbutton.png" />
-    <Content Include="Images\Controls\barbutton.png" />
     <Content Include="Images\Controls\titlebar.png" />
     <Content Include="Images\Controls\background.png" />
     <Content Include="Images\Controls\searchbar.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\create.png" />
+    <Content Include="Images\heart_add%402x.png" />
+    <Content Include="Images\heart_delete%402x.png" />
+    <Content Include="Images\heart_add.png" />
+    <Content Include="Images\heart_delete.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\watermark.png" />
+    <Content Include="Images\Issues\priority.png" />
+    <Content Include="Images\Tabs\cog%402x.png" />
+    <Content Include="Images\Tabs\cog.png" />
+    <Content Include="Images\Issues\priority%402x.png" />
+    <Content Include="Images\Issues\issuetype%402x.png" />
+    <Content Include="Images\Issues\issuetype.png" />
   </ItemGroup>
 </Project>

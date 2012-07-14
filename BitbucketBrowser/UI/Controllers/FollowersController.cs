@@ -17,10 +17,15 @@ namespace BitbucketBrowser.UI
 		{
             Style = UITableViewStyle.Plain;
             Title = "Followers";
+            EnableSearch = true;
+            AutoHideSearch = true;
 		}
 
         protected override void OnRefresh()
         {
+            if (Model.Count == 0)
+                return;
+
             var sec = new Section();
             Model.ForEach(s =>
             {
@@ -35,12 +40,8 @@ namespace BitbucketBrowser.UI
                 sec.Add(sse);
             });
 
-            var root = new RootElement(Title);
-            root.UnevenRows = true;
-            root.Add(sec);
-
             InvokeOnMainThread(delegate {
-                Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
 	}

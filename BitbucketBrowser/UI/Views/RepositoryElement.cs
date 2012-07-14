@@ -50,6 +50,10 @@ namespace BitbucketBrowser.UI
             return cell;
         }
 
+        public override bool Matches(string text)
+        {
+            return Model.Name.ToLower().Contains(text.ToLower());
+        }
 
 
         public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)

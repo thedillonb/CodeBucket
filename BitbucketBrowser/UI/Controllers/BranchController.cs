@@ -21,6 +21,8 @@ namespace BitbucketBrowser.UI
             Username = username;
             Slug = slug;
             Title = "Branches";
+            EnableSearch = true;
+            AutoHideSearch = true;
 		}
 		
         protected override void OnRefresh()

@@ -48,7 +48,7 @@ namespace BitbucketBrowser
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, -1, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
 
@@ -58,7 +58,8 @@ namespace BitbucketBrowser
             _nav = new SlideoutNavigationController();
 
             _nav.MenuView = new MenuController();
-            _nav.TopView = new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+            _nav.TopView = new IssuesController("thedillonb", "bitbucketsharp");
+                //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
 
 
 
@@ -134,10 +135,10 @@ namespace BitbucketBrowser
             NavigationController.SetNavigationBarHidden(true, false);
 
             Root.Add(new Section() {
-                new NavElement("Profile", () => DoShit(new ProfileController("thedillonb", false) { Title = "Profile" }), UIImage.FromBundle("/Images/Tabs/person")),
-                new NavElement("Events", () => DoShit(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }), UIImage.FromBundle("/Images/Tabs/events")),
-                new NavElement("Repositories", () => DoShit(new AccountRepositoryController("thedillonb") { Title = "Repositories" }), UIImage.FromBundle("/Images/repo")),
-                new NavElement("Groups", () => DoShit(new GroupController("thedillonb", false) { Title = "Groups" }), UIImage.FromBundle("/Images/Tabs/group")),
+                new NavElement("Profile", () => DoShit(new ProfileController("thedillonb", false) { Title = "Profile" }), Images.Person),
+                new NavElement("Events", () => DoShit(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }), Images.Event),
+                new NavElement("Repositories", () => DoShit(new AccountRepositoryController("thedillonb") { Title = "Repositories" }), Images.Repo),
+                new NavElement("Groups", () => DoShit(new GroupController("thedillonb", false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
             });
 

@@ -5,11 +5,14 @@ using MonoTouch.UIKit;
 using System;
 using MonoTouch.Foundation;
 using BitbucketBrowser.Utils;
+using MonoTouch.Dialog.Utilities;
 
 namespace BitbucketBrowser.UI
 {
-    public class RepositoryInfoController : Controller<RepositoryDetailedModel>
+    public class RepositoryInfoController : Controller<RepositoryDetailedModel>, IImageUpdated
     {
+        private HeaderView _header;
+
 
         public RepositoryInfoController(RepositoryDetailedModel model)
             : base(true)
@@ -29,25 +32,20 @@ namespace BitbucketBrowser.UI
         {
             var lastUpdated = "Updated " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
 
-            var header = new HeaderView(View.Bounds.Width) { 
-                Title = Model.Name, Subtitle = lastUpdated
-            };
+            _header = new HeaderView(View.Bounds.Width) { Title = Model.Name };
+            _header.Subtitle = lastUpdated;
 
             if (!string.IsNullOrEmpty(Model.Logo))
-            {
-                var url = new NSUrl(Model.Logo);
-                var data = NSData.FromUrl(url);
-                header.Image = new UIImage(data);
-            }
+                _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.Logo), this);
 
-            Root.Add(new Section(header));
+            Root.Add(new Section(_header));
             var sec1 = new Section();
 
 
             
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                sec1.Add(new MultilineElement(Model.Description));
+                sec1.Add(new MultilineElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(14f) });
             }
 
             sec1.Add(new SplitElement(new [] { new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
@@ -70,8 +68,10 @@ namespace BitbucketBrowser.UI
                     Text1 = Model.IsPrivate ? "Private" : "Public" , Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
                     Text2 = size, Image2 = Images.Size } }));
 
-            sec1.Add(new SplitElement(new [] { new SplitElement.Row() { Text1 = DateTime.Parse(Model.CreatedOn).ToString("MM.dd.yy"), Image1 = UIImage.FromBundle("/Images/create"),
-                Text2 = DateTime.Parse(Model.UtcLastUpdated).ToString("MM.dd.yy"), Image2 = UIImage.FromBundle("/Images/pencil") } }));
+            sec1.Add(new SplitElement(new [] { 
+                new SplitElement.Row() { 
+                    Text1 = DateTime.Parse(Model.UtcCreatedOn).ToString("MM/dd/yy"), Image1 = Images.Create,
+                    Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"), Image2 = Images.Fork } }));
 
 
             var owner = new StyledElement("Owner", Model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
@@ -124,5 +124,13 @@ namespace BitbucketBrowser.UI
         {
             return Model;
         }
+
+        public void UpdatedImage (Uri uri)
+        {
+            _header.Image = ImageLoader.DefaultRequestImage(uri, this);
+            if (_header.Image != null)
+                _header.SetNeedsDisplay();
+        }
+
     }
 }

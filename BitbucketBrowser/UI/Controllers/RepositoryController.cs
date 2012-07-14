@@ -39,6 +39,8 @@ namespace BitbucketBrowser.UI
             var cur = _segment.SelectedSegment;
             _owned.View.Hidden = cur == 0;
             _followed.View.Hidden = !_owned.View.Hidden;
+
+            WatermarkView.AssureWatermark(this);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -82,7 +84,7 @@ namespace BitbucketBrowser.UI
 
             protected override List<RepositoryDetailedModel> OnUpdate()
             {
-                return Application.Client.Account.GetRepositories().OrderBy(x => x.Name).ToList();
+                return Application.Client.Account.GetRepositories();
             }
         }
 
@@ -100,32 +102,34 @@ namespace BitbucketBrowser.UI
             Title = "Repositories";
             Style = UITableViewStyle.Plain;
             Username = username;
+            AutoHideSearch = true;
+            EnableSearch = true;
         } 
 
-        public static void CreateEntry(Section sec, RepositoryDetailedModel r, UINavigationController v)
-        {
-            RepositoryElement sse = new RepositoryElement(r);
-            sse.Tapped += () => v.PushViewController(new RepositoryInfoController(r), true);
-            sec.Add(sse);
-        }
 
         protected override void OnRefresh()
         {
-            var r = new RootElement(Title);
+            if (Model.Count == 0)
+                return;
+
             var sec = new Section();
-            Model.ForEach(x => CreateEntry(sec, x, Nav ?? NavigationController));
-            //var root = new RootElement(Title);
-            //root.Add(sec);
-            r.Add(sec);
+            Model.ForEach(x => {
+                RepositoryElement sse = new RepositoryElement(x);
+                sse.Tapped += () => Nav.PushViewController(new RepositoryInfoController(x), true);
+                sec.Add(sse);
+            });
+
+            //Sort them by name
+            sec.Elements = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name).ToList();
 
             InvokeOnMainThread(delegate {
-                Root = r;
+                Root = new RootElement(Title) { sec };
             });
         }
 
         protected override List<RepositoryDetailedModel> OnUpdate()
         {
-            return Application.Client.Users[Username].GetInfo().Repositories.OrderBy(x => x.Name).ToList();
+            return Application.Client.Users[Username].GetInfo().Repositories;
         }
     }
 }

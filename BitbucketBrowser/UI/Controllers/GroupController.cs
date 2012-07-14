@@ -18,11 +18,15 @@ namespace BitbucketBrowser.UI
 			Style = UITableViewStyle.Plain;
             Username = username;
             Title = "Groups";
+            EnableSearch = true;
+            AutoHideSearch = true;
 		}
 		
         protected override void OnRefresh()
         {
-            var r = new RootElement(Title);
+            if (Model.Count == 0)
+                return;
+
             var sec = new Section();
             Model.ForEach(g =>
             {
@@ -30,10 +34,9 @@ namespace BitbucketBrowser.UI
                 { Accessory = UITableViewCellAccessory.DisclosureIndicator };
                 sec.Add(el);
             });
-            r.Add(sec);
 
             InvokeOnMainThread(delegate {
-                Root = r;
+                Root = new RootElement(Title) { sec }; 
             });
         }
 
@@ -55,30 +58,28 @@ namespace BitbucketBrowser.UI
             User = user;
             Model = group;
             Title = group.Name;
+            EnableSearch = true;
+            AutoHideSearch = true;
         }
 
         protected override void OnRefresh ()
         {
-            var root = new RootElement(Title);
             var sec = new Section();
             Model.Members.OrderBy(x => x.Username).ToList().ForEach(x =>
             {
                 var realName = x.FirstName ?? "" + " " + x.LastName ?? "";
                 StyledElement sse;
                 if (!string.IsNullOrWhiteSpace(realName))
-                    sse = new StyledElement(x.Username, realName, UITableViewCellStyle.Subtitle);
+                    sse = new SubcaptionElement(x.Username, realName);
                 else
                     sse = new StyledElement(x.Username);
                 sse.Tapped += () => NavigationController.PushViewController(new ProfileController(x.Username), true);
                 sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 sec.Add(sse);
             });
-            root.UnevenRows = true;
-            root.Add(sec);
-
 
             InvokeOnMainThread(delegate {
-                    Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
 

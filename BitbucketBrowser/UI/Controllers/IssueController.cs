@@ -32,6 +32,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
+            if (Model.Issues.Count == 0)
+                return;
+
             var items = new List<Element>();
             Model.Issues.ForEach(x => {
                 var el = new IssueElement(x);
@@ -45,7 +48,11 @@ namespace BitbucketBrowser.UI
 
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)
-                    Root.Insert(0, new Section() { Elements = items });
+                {
+                    var v = new RootElement(Title) { new Section() { Elements = items } };
+                    v.UnevenRows = true;
+                    Root = v;
+                }
                 else
                     Root[0].Insert(0, UITableViewRowAnimation.Top, items);
             });

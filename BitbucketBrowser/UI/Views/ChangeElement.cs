@@ -21,7 +21,7 @@ namespace BitbucketBrowser.UI
         public ChangeElement(ChangesetModel eventModel) : base(UITableViewCellStyle.Default, "changeelement")
         {
             Item = eventModel;
-            BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            BackgroundColor = UIColor.FromPatternImage(Images.CellGradient);
         }
 
         public ChangesetModel Item { get; set; }
@@ -40,7 +40,7 @@ namespace BitbucketBrowser.UI
             var contentWidth = bounds.Width - LeftRightPadding * 2;
 
             var daysAgo = DateTime.Parse(Item.Utctimestamp).ToString("MM/dd/yy");
-            UIColor.FromRGB(84, 135, 188).SetColor();
+            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
             var daysWidth = daysAgo.MonoStringLength(DateFont);
             view.DrawString(
                 daysAgo,
@@ -52,7 +52,7 @@ namespace BitbucketBrowser.UI
             var desc = Message;
             var user = Item.Author;
 
-            UIColor.FromRGB(41, 41, 41).SetColor();
+            UIColor.FromRGB(0, 64, 128).SetColor();
             view.DrawString(user,
                 new RectangleF(LeftRightPadding, TopBottomPadding, bounds.Width - daysWidth - LeftRightPadding * 2, UserFont.LineHeight),
                 UserFont, UILineBreakMode.TailTruncation
@@ -63,7 +63,7 @@ namespace BitbucketBrowser.UI
             {
                 UIColor.Black.SetColor();
                 var top = TopBottomPadding + UserFont.LineHeight + 2f;
-                UIColor.FromRGB(120, 120, 120).SetColor();
+                UIColor.FromRGB(41, 41, 41).SetColor();
                 view.DrawString(desc,
                     new RectangleF(LeftRightPadding, top, contentWidth, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );

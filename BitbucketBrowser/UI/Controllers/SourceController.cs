@@ -29,6 +29,8 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Branch = branch;
             Path = path;
+            AutoHideSearch = true;
+            EnableSearch = true;
 
             if (string.IsNullOrEmpty(path))
                 Title = "Source";
@@ -41,9 +43,7 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
-            var root = new RootElement(Title);
             var sec = new Section();
-
             Model.Directories.ForEach(d => 
             {
                 sec.Add(new StyledElement(d, 
@@ -60,10 +60,11 @@ namespace BitbucketBrowser.UI
                                           Images.File));
             });
 
-            root.Add(sec);
+            if (sec.Count == 0)
+                return;
 
             InvokeOnMainThread(delegate {
-                Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
 

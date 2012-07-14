@@ -7,19 +7,23 @@ using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
+using MonoTouch.CoreGraphics;
+using BitbucketBrowser.Utils;
 
 namespace BitbucketBrowser.UI
 {
     public partial class IssueCellView : UITableViewCell
     {
-        private static UIImage User, Heart, Fork, Date;
+        private static UIImage User, Priority, IssueType, Cog;
+
+        private int MessageCount { get; set; }
 
         static IssueCellView()
         {
-            User = new UIImage(Images.Followers.CGImage, 1.3f, UIImageOrientation.Up);
-            Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);
-            Fork = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up);
-            Date = new UIImage(Images.Language.CGImage, 1.3f, UIImageOrientation.Up);
+            User = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up);
+            Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueType = new UIImage(Images.IssueType.CGImage, 1.3f, UIImageOrientation.Up);
+            Cog = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up);
         }
 
         public static IssueCellView Create()
@@ -28,10 +32,13 @@ namespace BitbucketBrowser.UI
             var views = NSBundle.MainBundle.LoadNib("IssueCellView", cell, null);
             cell = Runtime.GetNSObject( views.ValueAt(0) ) as IssueCellView;
 
-            cell.Image1.Image = User;
-            cell.Image2.Image = Heart;
-            cell.Image3.Image = Fork;
-            cell.Image4.Image = Date;
+            //cell.AddSubview(new SeperatorIssues() { Frame = new RectangleF(66f, 5f, 1f, cell.Frame.Height - 10f) });
+
+            cell.Image1.Image = Cog;
+            cell.Image2.Image = Priority;
+            cell.Image3.Image = IssueType;
+            cell.Image4.Image = User;
+
 
             cell.BackgroundView = new UIImageView(Images.CellGradient);
 
@@ -49,15 +56,94 @@ namespace BitbucketBrowser.UI
         {
         }
 
-        public void Bind(string caption, string label1, string label2, string label3, string label4)
+        public void Bind(IssueModel model)
         {
-            Caption.Text = caption;
-            Label1.Text = label1;
-            Label2.Text = label2;
-            Label3.Text = label3;
-            Label4.Text = label4;
+            var assigned = model.Responsible != null ? model.Responsible.Username : "Unassigned";
+
+
+            Caption.Text = "#" + model.LocalId + " " + model.Title;
+            Label1.Text = model.Status;
+            Label2.Text = model.Priority;
+            Label3.Text = model.Metadata.Kind;
+            Label4.Text = assigned;
+
+
+            /*
+            if (model.CommentCount > 0)
+            {
+                var ms = model.CommentCount.ToString ();
+                var ssize = ms.MonoStringLength(CountFont);
+                var boxWidth = Math.Min (22 + ssize, 18);
+                AddSubview(new CounterView(model.CommentCount) { Frame = new RectangleF(Bounds.Width-30-boxWidth, Bounds.Height / 2 - 8, boxWidth, 16) });
+            }
+            */
+        }
+
+        static UIFont CountFont = UIFont.BoldSystemFontOfSize (13);
+
+
+
+        private class CounterView : UIView
+        {
+            private int _counter;
+            public CounterView(int counter) 
+                : base ()
+            {
+                _counter = counter;
+                BackgroundColor = UIColor.Clear;
+            }
+
+            public override void Draw(RectangleF rect)
+            {
+                if (_counter > 0){
+                    var ctx = UIGraphics.GetCurrentContext ();
+                    var ms = _counter.ToString ();
+
+                    var crect = Bounds;
+                    
+                    UIColor.Gray.SetFill ();
+                    GraphicsUtil.FillRoundedRect (ctx, crect, 3);
+                    UIColor.White.SetColor ();
+                    crect.X += 5;
+                    DrawString (ms, crect, CountFont);
+                }
+                base.Draw(rect);
+            }
+        }
+
+        private class SeperatorIssues : UIView
+        {
+            public SeperatorIssues() 
+                : base ()
+            {
+            }
+
+            public SeperatorIssues(IntPtr handle)
+                : base(handle)
+            {
+            }
+
+            public override void Draw(RectangleF rect)
+            {
+                base.Draw(rect);
+
+                var context = UIGraphics.GetCurrentContext();
+                //context.BeginPath();
+                //context.ClipToRect(new RectangleF(63f, 0f, 3f, rect.Height));
+                using (var cs = CGColorSpace.CreateDeviceRGB ())
+                {
+                    using (var gradient = new CGGradient (cs, new float [] { 1f, 1f, 1f, 1.0f, 
+                        0.7f, 0.7f, 0.7f, 1f, 
+                        1f, 1f, 1.0f, 1.0f }, new float [] {0, 0.5f, 1f}))
+                    {
+                        context.DrawLinearGradient(gradient, new PointF(0, 0), new PointF(0, rect.Height), 0);
+                    }
+                }
+            }
         }
     }
+
+
 
     public class IssueElement : Element, IElementSizing, IColorizeBackground
     {       
@@ -102,8 +188,7 @@ namespace BitbucketBrowser.UI
 
             }
 
-            var assigned = Model.Responsible != null ? Model.Responsible.Username : "Unassigned";
-            cell.Bind(Model.Title, assigned, Model.Status, Model.Status, Model.Priority);
+            cell.Bind(Model);
 
             return cell;
         }

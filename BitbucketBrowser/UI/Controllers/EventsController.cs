@@ -67,6 +67,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
+            if (Model.Count == 0)
+                return;
+
             var elements = new List<Element>(Model.Count);
             Model.ForEach(e => {
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))

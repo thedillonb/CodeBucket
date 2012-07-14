@@ -14,34 +14,40 @@ namespace BitbucketBrowser.UI
     {
         private static float Padding = 12f;
         private static float PaddingX = 8f;
-        private static UIFont CaptionFont = UIFont.SystemFontOfSize(15f);
+        private static UIFont CaptionFont = UIFont.BoldSystemFontOfSize(15f);
         private static UIFont ValueFont = UIFont.SystemFontOfSize(12f);
 
         public string Value { get; set; }
+
+        public UIFont PrimaryFont { get; set; }
+        public UIColor CaptionColor { get; set; }
+        public UIColor ValueColor { get; set; }
 
         public MultilineElement(string caption)
             : base(UITableViewCellStyle.Default, "multilineelement")
         {
             this.Caption = caption;
             BackgroundColor = UIColor.FromRGB(246, 247, 248);
-
+            PrimaryFont = CaptionFont;
+            CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
         }
 
         public override void Draw(RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
         {
-            UIColor.FromRGB(41, 41, 41).SetColor();
-            view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), CaptionFont);
+            CaptionColor.SetColor();
+            view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), PrimaryFont);
 
             if (Value != null)
             {
-                UIColor.FromRGB(120, 120, 120).SetColor();
-                view.DrawString(Value, new RectangleF(PaddingX, Padding + CaptionFont.LineHeight + 7f, bounds.Width - Padding * 2, bounds.Height), ValueFont, UILineBreakMode.WordWrap);
+                ValueColor.SetColor();
+                view.DrawString(Value, new RectangleF(PaddingX, Padding + CaptionFont.LineHeight + 6f, bounds.Width - Padding * 2, bounds.Height), ValueFont, UILineBreakMode.WordWrap);
             }
         }
 
+
         public override float Height(System.Drawing.RectangleF bounds)
         {
-            var textHeight = Caption.MonoStringHeight(CaptionFont, bounds.Width - PaddingX * 2);
+            var textHeight = Caption.MonoStringHeight(PrimaryFont, bounds.Width - PaddingX * 2);
 
             if (Value != null)
             {
@@ -106,21 +112,9 @@ namespace BitbucketBrowser.UI
             BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/TableCell"));
             this.TextColor = UIColor.FromRGB(41, 41, 41);
             this.DetailColor = UIColor.FromRGB(120, 120, 120);
+            LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;
+            Lines = 1;
         }
-
-
-
-        public override UITableViewCell GetCell(UITableView tv)
-        {
-            var cell = base.GetCell(tv);
-            cell.TextLabel.BackgroundColor = UIColor.Clear;
-
-            if (cell.DetailTextLabel != null)
-                cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-
-            return cell;
-        }
-
     }
 
     public class SubcaptionElement : StyledElement

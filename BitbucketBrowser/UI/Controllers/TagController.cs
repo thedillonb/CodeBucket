@@ -19,6 +19,8 @@ namespace BitbucketBrowser.UI
             Title = "Tags";
             User = user;
             Repo = repo;
+            EnableSearch = true;
+            AutoHideSearch = true;
         }
 
         protected override void OnRefresh ()
