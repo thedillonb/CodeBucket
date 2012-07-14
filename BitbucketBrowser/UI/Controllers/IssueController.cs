@@ -100,6 +100,8 @@ namespace BitbucketBrowser.UI
             Slug = slug;
             Id = id;
 
+            Title = "Issue #" + id;
+
             Style = UITableViewStyle.Grouped;
             Root.UnevenRows = true;
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
@@ -120,8 +122,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh ()
         {
-            _header.Title = "#" + Model.Issue.LocalId + ": " + Model.Issue.Title;
-            _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcCreatedOn).ToDaysAgo();
+
+            _header.Title = Model.Issue.Title;
+            _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcLastUpdated).ToDaysAgo();
 
 
             _type.Value = Model.Issue.Metadata.Kind;

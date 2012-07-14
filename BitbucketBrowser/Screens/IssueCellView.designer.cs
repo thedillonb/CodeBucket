@@ -42,7 +42,7 @@ namespace BitbucketBrowser.UI
 		MonoTouch.UIKit.UILabel Number { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Type { get; set; }
+		MonoTouch.UIKit.UILabel IssueType { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -96,9 +96,9 @@ namespace BitbucketBrowser.UI
 				Number = null;
 			}
 
-			if (Type != null) {
-				Type.Dispose ();
-				Type = null;
+			if (IssueType != null) {
+				IssueType.Dispose ();
+				IssueType = null;
 			}
 		}
 	}

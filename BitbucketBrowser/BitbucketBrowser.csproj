@@ -278,5 +278,6 @@
     <Content Include="Images\Issues\priority%402x.png" />
     <Content Include="Images\Issues\issuetype%402x.png" />
     <Content Include="Images\Issues\issuetype.png" />
+    <Content Include="Images\Controls\bottombar.png" />
   </ItemGroup>
 </Project>

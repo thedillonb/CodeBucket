@@ -5,14 +5,15 @@ using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 
 namespace BitbucketBrowser.UI
 {
     public class AccountRepositoryController : UIViewController
     {
-        private UISegmentedControl _segment = new UISegmentedControl(new [] { "Following", "Mine" });
+        private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following", "Viewed" });
         private RepositoryController _owned;
-        private MyRepo _followed;
+        private FollowingRepositoryController _followed;
 
         public string Username { get; private set; }
 
@@ -25,8 +26,11 @@ namespace BitbucketBrowser.UI
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            _owned = new RepositoryController(Username, false) { Nav = this.NavigationController };
-            _followed = new MyRepo(Username) { Nav = this.NavigationController };
+            _owned = new RepositoryController(Username, false) { Nav = this.NavigationController, Title = "Owned Repos" };
+            _owned.View.Frame = new RectangleF(_owned.View.Frame.X, _owned.View.Frame.Y, _owned.View.Frame.Width, _owned.View.Frame.Height - 44f);
+
+            _followed = new FollowingRepositoryController(Username) { Nav = this.NavigationController, Title = "Following Repos" };
+            _followed.View.Frame = new RectangleF(_followed.View.Frame.X, _followed.View.Frame.Y, _followed.View.Frame.Width, _followed.View.Frame.Height - 44f);
 
             View.AddSubview(_owned.View);
             View.AddSubview(_followed.View);
@@ -34,50 +38,63 @@ namespace BitbucketBrowser.UI
             _segment.ControlStyle = UISegmentedControlStyle.Bar;
             _segment.SelectedSegment = 0;
             _segment.ValueChanged += (sender, e) => ChangeSegment();
-            NavigationItem.TitleView = _segment;
+            //NavigationItem.TitleView = _segment;
 
-            var cur = _segment.SelectedSegment;
-            _owned.View.Hidden = cur == 0;
+            _owned.View.Hidden = false;
             _followed.View.Hidden = !_owned.View.Hidden;
 
             WatermarkView.AssureWatermark(this);
+
+            var btn = new UIBarButtonItem(_segment);
+            btn.Width = View.Frame.Width - 10f;
+
+            var changeBar = new UIToolbar(new RectangleF(0, View.Frame.Height - 44f * 2, View.Frame.Width, 44f));
+            changeBar.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Any, UIBarMetrics.Default);
+            changeBar.Items = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn , new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+
+
+            View.AddSubview(changeBar);
         }
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            if (_segment.SelectedSegment == 0)
+            if (_segment.SelectedSegment == 1)
             {
                 if (!_followed.Loaded)
                     _followed.Refresh();
+                Title = _followed.Title;
             }
-            else if (_segment.SelectedSegment == 1)
+            else if (_segment.SelectedSegment == 0)
             {
                 if (!_owned.Loaded)
                     _owned.Refresh();
+                Title = _owned.Title;
             }
         }
 
         private void ChangeSegment()
         {
             var cur = _segment.SelectedSegment;
-            _owned.View.Hidden = cur == 0;
+            _owned.View.Hidden = cur == 1;
             _followed.View.Hidden = !_owned.View.Hidden;
-            if (_segment.SelectedSegment == 0)
+            if (_segment.SelectedSegment == 1)
             {
                 if (!_followed.Loaded)
                     _followed.Refresh();
+                Title = _followed.Title;
             }
-            else if (_segment.SelectedSegment == 1)
+            else if (_segment.SelectedSegment == 0)
             {
                 if (!_owned.Loaded)
                     _owned.Refresh();
+                Title = _owned.Title;
             }
         }
 
-        private class MyRepo : RepositoryController
+        private class FollowingRepositoryController : RepositoryController
         {
-            public MyRepo(string username)
+            public FollowingRepositoryController(string username)
                 : base(username, false)
             {
             }

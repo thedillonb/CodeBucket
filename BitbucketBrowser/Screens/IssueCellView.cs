@@ -14,7 +14,7 @@ namespace BitbucketBrowser.UI
 {
     public partial class IssueCellView : UITableViewCell
     {
-        private static UIImage User, Priority, IssueType, Cog;
+        private static UIImage User, Priority, Pencil, Cog;
 
         private int MessageCount { get; set; }
 
@@ -22,7 +22,7 @@ namespace BitbucketBrowser.UI
         {
             User = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up);
             Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);
-            IssueType = new UIImage(Images.IssueType.CGImage, 1.3f, UIImageOrientation.Up);
+            Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
             Cog = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up);
         }
 
@@ -32,12 +32,12 @@ namespace BitbucketBrowser.UI
             var views = NSBundle.MainBundle.LoadNib("IssueCellView", cell, null);
             cell = Runtime.GetNSObject( views.ValueAt(0) ) as IssueCellView;
 
-            //cell.AddSubview(new SeperatorIssues() { Frame = new RectangleF(66f, 5f, 1f, cell.Frame.Height - 10f) });
+            cell.AddSubview(new SeperatorIssues() { Frame = new RectangleF(65f, 5f, 1f, cell.Frame.Height - 10f) });
 
             cell.Image1.Image = Cog;
             cell.Image2.Image = Priority;
-            cell.Image3.Image = IssueType;
-            cell.Image4.Image = User;
+            cell.Image3.Image = User;
+            cell.Image4.Image = Pencil;
 
 
             cell.BackgroundView = new UIImageView(Images.CellGradient);
@@ -58,15 +58,21 @@ namespace BitbucketBrowser.UI
 
         public void Bind(IssueModel model)
         {
-            var assigned = model.Responsible != null ? model.Responsible.Username : "Unassigned";
+            var assigned = model.Responsible != null ? model.Responsible.Username : "unassigned";
 
 
-            Caption.Text = "#" + model.LocalId + " " + model.Title;
+            Caption.Text = model.Title;
             Label1.Text = model.Status;
             Label2.Text = model.Priority;
-            Label3.Text = model.Metadata.Kind;
-            Label4.Text = assigned;
+            Label3.Text = assigned;
+            Label4.Text = DateTime.Parse(model.UtcLastUpdated).ToDaysAgo();
+            Number.Text = "#" + model.LocalId;
 
+
+            if (model.Metadata.Kind.ToLower().Equals("enhancement")) 
+                IssueType.Text = "enhance";
+            else
+                IssueType.Text = model.Metadata.Kind;
 
             /*
             if (model.CommentCount > 0)
