@@ -134,7 +134,9 @@ namespace BitbucketBrowser.UI
                     if (Model.Parents != null && Model.Parents.Count > 0)
                         parent = Model.Parents[0];
 
-                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, Model.Node, parent, x.File), true);
+                    var type = x.Type.Trim().ToLower();
+                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, Model.Node, parent, x.File)
+                                                            { Removed = type.Equals("removed"), Added = type.Equals("added") }, true);
                 };
                 sec2.Add(sse);
             });
@@ -158,6 +160,8 @@ namespace BitbucketBrowser.UI
     public class ChangesetDiffController : SourceInfoController
     {
         protected string _parent;
+        public bool Removed { get; set; }
+        public bool Added { get; set; }
 
         public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
             : base(user, slug, branch, path)
@@ -167,11 +171,22 @@ namespace BitbucketBrowser.UI
 
         protected override string RequestData()
         {
-            var newSource = System.Security.SecurityElement.Escape(
-                Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path).Data);
+
+            if (Removed && _parent == null)
+            {
+                throw new InvalidOperationException("File does not exist!");
+            }
+
+
+            var newSource = "";
+            if (!Removed)
+            {
+                newSource = System.Security.SecurityElement.Escape(
+                    Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path).Data);
+            }
 
             var oldSource = "";
-            if (_parent != null)
+            if (_parent != null && !Added)
             {
                 try
                 {
@@ -183,7 +198,6 @@ namespace BitbucketBrowser.UI
                     System.Diagnostics.Debug.WriteLine("Unable to get old source (parent: " + _parent + ") - " + e.Message);
                 }
             }
-
 
             var differ = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
             var a = differ.BuildDiffModel(oldSource, newSource);
