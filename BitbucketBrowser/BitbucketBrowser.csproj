@@ -136,6 +136,21 @@
     <Compile Include="UI\Views\RepositoryElement.cs" />
     <Compile Include="UI\Views\SplitElement.cs" />
     <Compile Include="UI\Views\WatermarkView.cs" />
+    <Compile Include="DiffPlex\Model\DiffBlock.cs" />
+    <Compile Include="DiffPlex\Model\DiffResult.cs" />
+    <Compile Include="DiffPlex\Model\EditLengthResult.cs" />
+    <Compile Include="DiffPlex\Model\ModificationData.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\IInlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\InlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPaneModel.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPiece.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs" />
+    <Compile Include="DiffPlex\AssemblyInfo.cs" />
+    <Compile Include="DiffPlex\Differ.cs" />
+    <Compile Include="DiffPlex\IDiffer.cs" />
+    <Compile Include="DiffPlex\Log.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\LoginViewController.xib" />
@@ -161,6 +176,7 @@
     <Folder Include="Images\Web\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
+    <Folder Include="DiffPlex\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">

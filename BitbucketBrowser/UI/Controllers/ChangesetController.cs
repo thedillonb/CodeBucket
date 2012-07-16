@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Utils;
 using System.Linq;
+using System.Text;
 
 
 namespace BitbucketBrowser.UI
@@ -128,7 +129,13 @@ namespace BitbucketBrowser.UI
                                                  { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                                                    LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation,
                                                    Lines = 1 };
-                sse.Tapped += () => NavigationController.PushViewController(new SourceInfoController(User, Slug, Model.Node, x.File), true);
+                sse.Tapped += () => {
+                    string parent = null;
+                    if (Model.Parents != null && Model.Parents.Count > 0)
+                        parent = Model.Parents[0];
+
+                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, Model.Node, parent, x.File), true);
+                };
                 sec2.Add(sse);
             });
 
@@ -145,6 +152,58 @@ namespace BitbucketBrowser.UI
             var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
             x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();
             return x;
+        }
+    }
+
+    public class ChangesetDiffController : SourceInfoController
+    {
+        protected string _parent;
+
+        public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
+            : base(user, slug, branch, path)
+        {
+            _parent = parent;
+        }
+
+        protected override string RequestData()
+        {
+            var newSource = System.Security.SecurityElement.Escape(
+                Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path).Data);
+
+            var oldSource = "";
+            if (_parent != null)
+            {
+                try
+                {
+                    oldSource = System.Security.SecurityElement.Escape(
+                    Application.Client.Users[_user].Repositories[_slug].Branches[_parent].Source.GetFile(_path).Data);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Unable to get old source (parent: " + _parent + ") - " + e.Message);
+                }
+            }
+
+
+            var differ = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
+            var a = differ.BuildDiffModel(oldSource, newSource);
+
+            var builder = new StringBuilder();
+            foreach (var k in a.Lines)
+            {
+                if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Deleted)
+                    builder.Append("<span style='background-color: #ffe0e0;'>" + k.Text + "</span>");
+                else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Inserted)
+                    builder.Append("<span style='background-color: #e0ffe0;'>" + k.Text + "</span>");
+                else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Modified)
+                    builder.Append("<span style='background-color: #ffffe0;'>" + k.Text + "</span>");
+                else
+                    builder.Append(k.Text);
+
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
         }
     }
 }

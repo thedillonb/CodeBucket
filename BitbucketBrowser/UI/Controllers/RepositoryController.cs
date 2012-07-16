@@ -132,7 +132,7 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             Model.ForEach(x => {
                 RepositoryElement sse = new RepositoryElement(x);
-                sse.Tapped += () => Nav.PushViewController(new RepositoryInfoController(x), true);
+                sse.Tapped += () => (Nav ?? NavigationController).PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });
 

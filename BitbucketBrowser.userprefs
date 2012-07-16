@@ -1,28 +1,20 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/CustomElement.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/RepositoryController.cs">
     <Files>
       <File FileName="BitbucketBrowser/Main.cs" Line="50" Column="28" />
       <File FileName="BitbucketBrowser/UI/Views/ErrorView.cs" Line="24" Column="93" />
       <File FileName="BitbucketBrowser/UI/Views/CustomElement.cs" Line="60" Column="64" />
-      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="94" Column="101" />
+      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="94" Column="18" />
       <File FileName="BitbucketBrowser/SourceBrowser/index.html" Line="8" Column="81" />
-      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="107" Column="76" />
-      <File FileName="BitbucketBrowser/Main.cs" Line="73" Column="9" />
-      <File FileName="BitbucketBrowser/UI/Views/ErrorView.cs" Line="24" Column="93" />
-      <File FileName="BitbucketBrowser/UI/Views/CustomElement.cs" Line="61" Column="14" />
-      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="95" Column="18" />
-      <File FileName="BitbucketBrowser/SourceBrowser/index.html" Line="8" Column="81" />
-      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="103" Column="26" />
+      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="107" Column="1" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryInfoController.cs" Line="12" Column="70" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="127" Column="44" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True" selected="True">
           <Node name="BitbucketBrowser" expanded="True">
-            <Node name="UI" expanded="True">
-              <Node name="Controllers" expanded="True" />
-              <Node name="Views" expanded="True" />
-            </Node>
             <Node name="Utils" expanded="True" />
           </Node>
         </State>

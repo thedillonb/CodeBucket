@@ -75,11 +75,12 @@ namespace BitbucketBrowser.UI
 
     }
 
+
     public class SourceInfoController : UIViewController
     {
         private UIWebView _web;
 
-        private string _user, _slug, _branch, _path;
+        protected string _user, _slug, _branch, _path;
 
 
         public SourceInfoController(string user, string slug, string branch, string path)
@@ -113,6 +114,12 @@ namespace BitbucketBrowser.UI
             _web.Frame = bounds;
         }
 
+        protected virtual string RequestData()
+        {
+            var d = Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
+            return System.Security.SecurityElement.Escape(d.Data);
+        }
+
         private void Request()
         {
             var hud = new MBProgressHUD(this.View.Superview); 
@@ -125,8 +132,7 @@ namespace BitbucketBrowser.UI
             ThreadPool.QueueUserWorkItem(delegate {
                 try
                 {
-                    var d = Application.Client.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path);
-                    var data = System.Security.SecurityElement.Escape(d.Data);
+                    var data = RequestData();
 
                     InvokeOnMainThread(delegate {
                         var html = System.IO.File.ReadAllText("SourceBrowser/index.html");

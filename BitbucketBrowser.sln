@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTouch.SlideoutNavigatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTouch.Dialog", "..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj", "{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex", "..\DiffPlex\DiffPlex\DiffPlex.csproj", "{66F6D74C-C811-4069-973D-997FBB8EEDCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -42,6 +44,24 @@ Global
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhone.Build.0 = Release|iPhone
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AdHoc|iPhone.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Release|iPhone.Build.0 = Release|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{66F6D74C-C811-4069-973D-997FBB8EEDCA}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AdHoc|iPhone.Build.0 = Debug|Any CPU
