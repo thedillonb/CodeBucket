@@ -51,8 +51,9 @@ namespace BitbucketBrowser
             UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 14, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
+            Application.LoadSettings();
+            Application.SetUser(Application.Accounts[0]);
 
-            Application.Client = new BitbucketSharp.Client("thedillonb", "djames");
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
@@ -60,7 +61,7 @@ namespace BitbucketBrowser
             _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
 
             _nav.MenuView = new MenuController();
-            _nav.TopView = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+
 
                 //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //;
 
@@ -78,7 +79,24 @@ namespace BitbucketBrowser
     /// </summary>
     public static class Application
     {
-        public static BitbucketSharp.Client Client { get; set; }
+        public static BitbucketSharp.Client Client { get; private set; }
+        public static Account Account { get; private set; }
+        public static List<Account> Accounts { get; private set; }
+
+
+        public static void SetUser(Account account)
+        {
+            Account = account;
+            Client = new BitbucketSharp.Client(Account.Username, Account.Password);
+        }
+
+        public static void LoadSettings()
+        {
+            Accounts = new List<Account>();
+
+            Accounts.Add(new Account() { Username = "thedillonb", Password = "djames" });
+            Accounts.Add(new Account() { Username = "bobdole", Password = "djames" });
+        }
     }
 
     public class MenuController : DialogViewController
@@ -181,17 +199,25 @@ namespace BitbucketBrowser
                             
             _titleView = new TitleView();
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cog, UIBarButtonItemStyle.Plain, (s, e) => { });
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cog, UIBarButtonItemStyle.Plain, (s, e) => {
+            
+                var n = new UINavigationController(new MyAccountsController());
+                this.PresentModalViewController(n, true);
+            
+            });
+
             NavigationItem.TitleView = _titleView;
             _titleView.SizeToFit();
 
             _titleView.Name = "thedillonb";
 
+            var username = Application.Account.Username;
+
             Root.Add(new Section() {
-                new NavElement("Profile", () => DoShit(new ProfileController("thedillonb", false) { Title = "Profile" }), Images.Person),
-                new NavElement("Events", () => DoShit(new EventsController("thedillonb", false) { Title = "Events", ReportUser = false, ReportRepository = true }), Images.Event),
-                new NavElement("Repositories", () => DoShit(new AccountRepositoryController("thedillonb") { Title = "Repositories" }), Images.Repo),
-                new NavElement("Groups", () => DoShit(new GroupController("thedillonb", false) { Title = "Groups" }), Images.Group),
+                new NavElement("Profile", () => DoShit(new ProfileController(username, false) { Title = "Profile" }), Images.Person),
+                new NavElement("Events", () => DoShit(new EventsController(username, false) { Title = "Events", ReportUser = false, ReportRepository = true }), Images.Event),
+                new NavElement("Repositories", () => DoShit(new AccountRepositoryController(username) { Title = "Repositories" }), Images.Repo),
+                new NavElement("Groups", () => DoShit(new GroupController(username, false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
@@ -210,16 +236,22 @@ namespace BitbucketBrowser
 
             TableView.SeparatorColor = UIColor.FromRGBA(128, 128, 128, 128);
 
-
-            /*
-            Root.Add(new Section("Settings") {
-                new CustomImageStringElement("Change User", () => NavigationController.PushViewController(new ProfileController("thedillonb", false) { Title = "Profile" }, false), UIImage.FromBundle("/Images/Tabs/person")),
-            });
-            */
-
             var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
             view.BackgroundColor = UIColor.Clear;
             TableView.TableFooterView = view;
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            //Check to see if anything changed!
+            _titleView.Name = Application.Account.Username;
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportUser = false }, false);
         }
     }
 }

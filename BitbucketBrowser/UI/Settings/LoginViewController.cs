@@ -23,6 +23,9 @@ namespace BitbucketBrowser
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            Title = "Add Account";
+            View.BackgroundColor = UIColor.Clear;
 			
 			User.ShouldReturn = delegate {
 				Password.BecomeFirstResponder();
@@ -32,9 +35,6 @@ namespace BitbucketBrowser
 				Password.ResignFirstResponder();
 				BeginLogin();
 				return true;
-			};
-			LoginButton.TouchUpInside += delegate {
-				BeginLogin();
 			};
 		}
 		

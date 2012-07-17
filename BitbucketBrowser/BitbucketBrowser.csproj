@@ -87,10 +87,6 @@
     <None Include="IssueBrowser\style.css" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Screens\LoginViewController.cs" />
-    <Compile Include="Screens\LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="UI\Controllers\Controller.cs" />
@@ -151,12 +147,17 @@
     <Compile Include="DiffPlex\Differ.cs" />
     <Compile Include="DiffPlex\IDiffer.cs" />
     <Compile Include="DiffPlex\Log.cs" />
+    <Compile Include="UI\Settings\MyAccountsController.cs" />
+    <Compile Include="UI\Settings\LoginViewController.designer.cs">
+      <DependentUpon>LoginViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\LoginViewController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Screens\LoginViewController.xib" />
     <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
     <InterfaceDefinition Include="Screens\IssueCellView.xib" />
+    <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -177,6 +178,7 @@
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="DiffPlex\" />
+    <Folder Include="UI\Settings\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">

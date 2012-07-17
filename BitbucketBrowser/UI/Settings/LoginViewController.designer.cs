@@ -12,9 +12,6 @@ namespace BitbucketBrowser
 	partial class LoginViewController
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIButton LoginButton { get; set; }
-
-		[Outlet]
 		MonoTouch.UIKit.UITextField Password { get; set; }
 
 		[Outlet]
@@ -22,11 +19,6 @@ namespace BitbucketBrowser
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (LoginButton != null) {
-				LoginButton.Dispose ();
-				LoginButton = null;
-			}
-
 			if (Password != null) {
 				Password.Dispose ();
 				Password = null;
