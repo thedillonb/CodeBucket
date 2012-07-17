@@ -55,11 +55,14 @@ namespace BitbucketBrowser
             Application.Client = new BitbucketSharp.Client("thedillonb", "djames");
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
+
             _nav = new SlideoutNavigationController();
+            _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
 
             _nav.MenuView = new MenuController();
-            _nav.TopView = new AccountRepositoryController("thedillonb");
-                //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+            _nav.TopView = new EventsController("thedillonb", false) { Title = "Events", ReportUser = false };
+
+                //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //;
 
 
 
@@ -80,6 +83,8 @@ namespace BitbucketBrowser
 
     public class MenuController : DialogViewController
     {
+        private TitleView _titleView;
+
         public MenuController()
             : base(UITableViewStyle.Plain, new RootElement("BitbucketBrowser"))
         {
@@ -119,7 +124,48 @@ namespace BitbucketBrowser
 
                 return cell;
             }
+        }
 
+        private class TitleView : UIView
+        {
+            public string Name
+            {
+                get { return _name.Text; }
+                set 
+                { 
+                    _name.Text = value;
+                    _name.SetNeedsDisplay();
+                }
+            }
+
+            private UILabel _name;
+
+            public TitleView()
+                : base(new RectangleF(0, 0, 200, 44))
+            {
+                this.AutosizesSubviews = true;
+
+
+                var l = new UILabel(new RectangleF(0, 5, Frame.Width, 20));
+                l.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+                l.BackgroundColor = UIColor.Clear;
+                l.Font = UIFont.BoldSystemFontOfSize(18f);
+                l.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
+                l.TextColor = UIColor.White;
+                l.Text = "Bitbucket Browser";
+                l.TextAlignment = UITextAlignment.Left;
+                this.Add(l);
+
+                _name = new UILabel(new RectangleF(0, 24, Frame.Width, 14));
+                _name.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+                _name.BackgroundColor = UIColor.Clear;
+                _name.Font = UIFont.BoldSystemFontOfSize(10f);
+                _name.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
+                _name.TextColor = UIColor.White;
+                _name.Text = "";
+                _name.TextAlignment = UITextAlignment.Left;
+                this.Add(_name);
+            }
         }
 
         private void DoShit(UIViewController controller)
@@ -132,7 +178,14 @@ namespace BitbucketBrowser
         {
             base.ViewDidLoad();
 
-            NavigationController.SetNavigationBarHidden(true, false);
+                            
+            _titleView = new TitleView();
+
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cog, UIBarButtonItemStyle.Plain, (s, e) => { });
+            NavigationItem.TitleView = _titleView;
+            _titleView.SizeToFit();
+
+            _titleView.Name = "thedillonb";
 
             Root.Add(new Section() {
                 new NavElement("Profile", () => DoShit(new ProfileController("thedillonb", false) { Title = "Profile" }), Images.Person),

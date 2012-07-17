@@ -30,10 +30,18 @@ namespace BitbucketBrowser.UI
 
         public float GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
-            if (tableView.Style == UITableViewStyle.Grouped)
-                return Height(new RectangleF(tableView.Bounds.Location, new SizeF(tableView.Bounds.Width - 20, tableView.Bounds.Height)));
-            else
-                return Height(tableView.Bounds);
+            try
+            {
+                if (tableView.Style == UITableViewStyle.Grouped)
+                    return Height(new RectangleF(tableView.Bounds.Location, new SizeF(tableView.Bounds.Width - 20, tableView.Bounds.Height)));
+                else
+                    return Height(tableView.Bounds);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("Attempted to get cell height resulted in exception: " + e.Message);
+            }
+            return 0f;
         }
 
         
@@ -153,8 +161,15 @@ namespace BitbucketBrowser.UI
             public override void Draw (RectangleF rect)
             {
                 base.Draw(rect);
-                CGContext context = UIGraphics.GetCurrentContext();
-                element.Draw(rect, context, this);
+                try
+                {
+                    CGContext context = UIGraphics.GetCurrentContext();
+                    element.Draw(rect, context, this);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Unable to draw: " + e.Message);
+                }
             }
         }
 

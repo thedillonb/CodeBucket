@@ -2,20 +2,29 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
   <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/RepositoryController.cs">
     <Files>
-      <File FileName="BitbucketBrowser/Main.cs" Line="50" Column="28" />
-      <File FileName="BitbucketBrowser/UI/Views/ErrorView.cs" Line="24" Column="93" />
-      <File FileName="BitbucketBrowser/UI/Views/CustomElement.cs" Line="60" Column="64" />
-      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="94" Column="18" />
-      <File FileName="BitbucketBrowser/SourceBrowser/index.html" Line="8" Column="81" />
-      <File FileName="BitbucketBrowser/UI/Controllers/SourceController.cs" Line="107" Column="1" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryInfoController.cs" Line="12" Column="70" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="127" Column="44" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="79" Column="42" />
+      <File FileName="BitbucketBrowser/Main.cs" Line="51" Column="126" />
+      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="79" Column="42" />
+      <File FileName="BitbucketBrowser/Main.cs" Line="51" Column="126" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True" selected="True">
           <Node name="BitbucketBrowser" expanded="True">
+            <Node name="Images" expanded="True">
+              <Node name="Controls" expanded="True" />
+            </Node>
+            <Node name="Screens" expanded="True">
+              <Node name="IssueCellView.cs" expanded="True" />
+            </Node>
+            <Node name="UI" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Views" expanded="True" />
+            </Node>
             <Node name="Utils" expanded="True" />
+          </Node>
+          <Node name="MonoTouch.Dialog" expanded="True">
+            <Node name="Elements" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -27,7 +36,6 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/Elements.cs" line="2170" />
-      <Breakpoint file="/Users/dillonb/Projects/MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" line="611" />
       <Breakpoint file="/Users/dillonb/Projects/BitbucketBrowser/BitbucketBrowser/UI/Views/CustomSection.cs" line="32" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

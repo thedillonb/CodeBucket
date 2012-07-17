@@ -295,5 +295,6 @@
     <Content Include="Images\Issues\issuetype%402x.png" />
     <Content Include="Images\Issues\issuetype.png" />
     <Content Include="Images\Controls\bottombar.png" />
+    <Content Include="Images\Controls\titlebar_dark.png" />
   </ItemGroup>
 </Project>
