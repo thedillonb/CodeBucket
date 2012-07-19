@@ -213,8 +213,6 @@
     <Content Include="Images\Issues\low.png" />
     <Content Include="Images\Issues\task.png" />
     <Content Include="Images\Issues\proposal.png" />
-    <Content Include="Images\Tabs\person.png" />
-    <Content Include="Images\Tabs\person%402x.png" />
     <Content Include="Images\Tabs\group.png" />
     <Content Include="Images\Tabs\group%402x.png" />
     <Content Include="Images\repo%402x.png" />
@@ -298,5 +296,10 @@
     <Content Include="Images\Issues\issuetype.png" />
     <Content Include="Images\Controls\bottombar.png" />
     <Content Include="Images\Controls\titlebar_dark.png" />
+    <Content Include="Images\Tabs\person%402x.png" />
+    <Content Include="Images\Tabs\person.png" />
+    <Content Include="Images\change_user%402x.png" />
+    <Content Include="Images\change_user.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
   </ItemGroup>
 </Project>

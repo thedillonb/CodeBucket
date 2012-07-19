@@ -30,6 +30,7 @@ namespace BitbucketBrowser
         public static UIImage Create = UIImage.FromBundle("/Images/create");
 
         public static UIImage Changes = UIImage.FromBundle("/Images/changes");
+        public static UIImage ChangeUser = UIImage.FromBundle("/Images/change_user");
 
         //Tabs
         public static UIImage Group = UIImage.FromBundle("/Images/Tabs/group");

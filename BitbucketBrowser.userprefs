@@ -1,31 +1,32 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/RepositoryController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Controllers/Controller.cs">
     <Files>
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="79" Column="42" />
-      <File FileName="BitbucketBrowser/Main.cs" Line="51" Column="126" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="79" Column="42" />
-      <File FileName="BitbucketBrowser/Main.cs" Line="51" Column="126" />
+      <File FileName="BitbucketBrowser/Main.cs" Line="28" Column="34" />
+      <File FileName="BitbucketBrowser/UI/Settings/LoginViewController.cs" Line="25" Column="23" />
+      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="40" Column="91" />
+      <File FileName="../MonoTouch.Dialog/MonoTouch.Dialog/DialogViewController.cs" Line="516" Column="25" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
+        <State expanded="True">
+          <Option id="ShowAllFiles" value="True" />
           <Node name="BitbucketBrowser" expanded="True">
             <Node name="Images" expanded="True">
               <Node name="Controls" expanded="True" />
             </Node>
-            <Node name="Screens" expanded="True">
-              <Node name="IssueCellView.cs" expanded="True" />
-            </Node>
             <Node name="UI" expanded="True">
-              <Node name="Controllers" expanded="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="Controller.cs" selected="True" />
+              </Node>
+              <Node name="Settings" expanded="True">
+                <Node name="LoginViewController.cs" expanded="True" />
+              </Node>
               <Node name="Views" expanded="True" />
             </Node>
-            <Node name="Utils" expanded="True" />
           </Node>
-          <Node name="MonoTouch.Dialog" expanded="True">
-            <Node name="Elements" expanded="True" />
-          </Node>
+          <Node name="MonoTouch.Dialog" expanded="True" />
+          <Node name="MonoTouch.SlideoutNavigation" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">

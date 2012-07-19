@@ -194,12 +194,13 @@ namespace BitbucketBrowser
 
         public override void ViewDidLoad()
         {
+            System.Diagnostics.Debug.WriteLine("Main is now apearing...");
             base.ViewDidLoad();
 
                             
             _titleView = new TitleView();
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cog, UIBarButtonItemStyle.Plain, (s, e) => {
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
             
                 var n = new UINavigationController(new MyAccountsController());
                 this.PresentModalViewController(n, true);
@@ -241,17 +242,28 @@ namespace BitbucketBrowser
             TableView.TableFooterView = view;
         }
 
+        private string _previousUser;
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             //Check to see if anything changed!
             _titleView.Name = Application.Account.Username;
+
+            //First time appear
+            if (_previousUser == null)
+            {
+                NavigationController.PushViewController(new BranchController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
+                _previousUser = Application.Account.Username;
+            }
         }
+
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportUser = false }, false);
+            if (!(_previousUser ?? "").Equals(Application.Account.Username))
+                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportUser = false }, false);
+            _previousUser = Application.Account.Username;
         }
     }
 }

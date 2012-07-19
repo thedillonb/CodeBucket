@@ -59,6 +59,21 @@ namespace BitbucketBrowser.UI
         }
     }
 
+    public class NoItemsElement : StyledElement
+    {
+        public NoItemsElement()
+            : base("No Items")
+        {
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var c = base.GetCell(tv);
+            c.TextLabel.TextAlignment = UITextAlignment.Center;
+            return c;
+        }
+    }
+
     public class StyledElement : MonoTouch.Dialog.StyledStringElement
     {
         private static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
