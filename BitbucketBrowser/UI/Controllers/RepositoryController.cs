@@ -9,102 +9,87 @@ using System.Drawing;
 
 namespace BitbucketBrowser.UI
 {
-    public class AccountRepositoryController : UIViewController
+    public class AccountRepositoryController : RepositoryController
     {
         private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following", "Viewed" });
-        private RepositoryController _owned;
-        private FollowingRepositoryController _followed;
-
-        public string Username { get; private set; }
 
         public AccountRepositoryController(string username)
+            : base(username)
         {
-            Username = username;
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
         }
+
+        protected override void OnRefresh ()
+        {
+            if (Root != null)
+                InvokeOnMainThread(delegate { Root.Clear(); });
+
+            base.OnRefresh();
+        }
+
+        protected override List<RepositoryDetailedModel> OnUpdate ()
+        {
+            if (_segment.SelectedSegment == 0)
+                return Application.Client.Users[Username].GetInfo().Repositories;
+            else if (_segment.SelectedSegment == 1)
+                return Application.Client.Account.GetRepositories();
+            else
+                return new List<RepositoryDetailedModel>();
+        }
+
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            _owned = new RepositoryController(Username, false) { Nav = this.NavigationController, Title = "Owned Repos" };
-            _owned.View.Frame = new RectangleF(_owned.View.Frame.X, _owned.View.Frame.Y, _owned.View.Frame.Width, _owned.View.Frame.Height - 44f);
-
-            _followed = new FollowingRepositoryController(Username) { Nav = this.NavigationController, Title = "Following Repos" };
-            _followed.View.Frame = new RectangleF(_followed.View.Frame.X, _followed.View.Frame.Y, _followed.View.Frame.Width, _followed.View.Frame.Height - 44f);
-
-            View.AddSubview(_owned.View);
-            View.AddSubview(_followed.View);
 
             _segment.ControlStyle = UISegmentedControlStyle.Bar;
             _segment.SelectedSegment = 0;
             _segment.ValueChanged += (sender, e) => ChangeSegment();
             //NavigationItem.TitleView = _segment;
 
-            _owned.View.Hidden = false;
-            _followed.View.Hidden = !_owned.View.Hidden;
+            Title = "Owned";
 
-            WatermarkView.AssureWatermark(this);
-
+            //The bottom bar
             var btn = new UIBarButtonItem(_segment);
             btn.Width = View.Frame.Width - 10f;
-
-            var changeBar = new UIToolbar(new RectangleF(0, View.Frame.Height - 44f * 2, View.Frame.Width, 44f));
-            changeBar.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Any, UIBarMetrics.Default);
-            changeBar.Items = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn , new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-
-
-            View.AddSubview(changeBar);
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override void ViewWillAppear(bool animated)
         {
-            base.ViewDidAppear(animated);
-            if (_segment.SelectedSegment == 1)
-            {
-                if (!_followed.Loaded)
-                    _followed.Refresh();
-                Title = _followed.Title;
-            }
-            else if (_segment.SelectedSegment == 0)
-            {
-                if (!_owned.Loaded)
-                    _owned.Refresh();
-                Title = _owned.Title;
-            }
+            NavigationController.SetToolbarHidden(isSearching, true);
+            base.ViewWillAppear(animated);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationController.SetToolbarHidden(true, true);
         }
 
         private void ChangeSegment()
         {
-            var cur = _segment.SelectedSegment;
-            _owned.View.Hidden = cur == 1;
-            _followed.View.Hidden = !_owned.View.Hidden;
-            if (_segment.SelectedSegment == 1)
-            {
-                if (!_followed.Loaded)
-                    _followed.Refresh();
-                Title = _followed.Title;
-            }
-            else if (_segment.SelectedSegment == 0)
-            {
-                if (!_owned.Loaded)
-                    _owned.Refresh();
-                Title = _owned.Title;
-            }
+            InvokeOnMainThread(delegate { Root.Clear(); TableView.TableFooterView.Hidden = true; });
+
+            Model = null;
+            Refresh();
+
+            if (_segment.SelectedSegment == 0)
+                Title = "Owned";
+            else if (_segment.SelectedSegment == 1)
+                Title = "Following";
+            else if (_segment.SelectedSegment == 2)
+                Title = "Viewed";
         }
 
-        private class FollowingRepositoryController : RepositoryController
+        public override void SearchStart()
         {
-            public FollowingRepositoryController(string username)
-                : base(username, false)
-            {
-            }
-
-            protected override List<RepositoryDetailedModel> OnUpdate()
-            {
-                return Application.Client.Account.GetRepositories();
-            }
+            NavigationController.SetToolbarHidden(true, false);
         }
 
+        public override void SearchEnd()
+        {
+            NavigationController.SetToolbarHidden(false, false);
+        }
     }
 
     public class RepositoryController : Controller<List<RepositoryDetailedModel>>

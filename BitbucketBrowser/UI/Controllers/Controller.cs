@@ -17,7 +17,7 @@ namespace BitbucketBrowser.UI
 
         public bool Loaded { get { return _loaded; } }
 
-        private bool isSearching = false;
+        protected bool isSearching = false;
 
 
 
@@ -42,6 +42,8 @@ namespace BitbucketBrowser.UI
 
             public override void OnEditingStarted (UISearchBar searchBar)
             {
+                container.SearchStart();
+
                 if (searchController == null)
                 {
                     searchController = new DialogViewController(UITableViewStyle.Plain, null);
@@ -83,6 +85,8 @@ namespace BitbucketBrowser.UI
                     container.AddChildViewController(searchController);
                     container.View.AddSubview(searchController.View);
                 }
+
+
             }
 
             public override void OnEditingStopped (UISearchBar searchBar)
@@ -147,6 +151,8 @@ namespace BitbucketBrowser.UI
 
                 searchElements.Clear();
                 searchElements = null;
+
+                container.SearchEnd();
             }
 
             public override void SearchButtonClicked (UISearchBar searchBar)
@@ -163,6 +169,14 @@ namespace BitbucketBrowser.UI
                         x.Enabled = true;
                 }
             }
+        }
+
+        public virtual void SearchStart()
+        {
+        }
+
+        public virtual void SearchEnd()
+        {
         }
 
         public override void ViewWillAppear(bool animated)
@@ -297,7 +311,8 @@ namespace BitbucketBrowser.UI
                 try
                 {
                     Model = OnUpdate();
-                    Refresh();
+                    if (Model != null)
+                        Refresh();
                 }
                 catch (Exception e)
                 {
