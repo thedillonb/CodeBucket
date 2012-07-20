@@ -2,6 +2,7 @@ using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
+using BitbucketSharp.Models;
 
 namespace BitbucketBrowser.UI
 {
@@ -60,8 +61,8 @@ namespace BitbucketBrowser
 {
     public class Account
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Username;
+        public string Password;
     }
 }
 

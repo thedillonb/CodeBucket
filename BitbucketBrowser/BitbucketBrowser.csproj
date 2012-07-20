@@ -264,7 +264,6 @@
     <Content Include="Images\unlocked%402x.png" />
     <Content Include="Images\Dropbar.png" />
     <Content Include="Images\TableCell.png" />
-    <Content Include="Images\Linen.png" />
     <Content Include="Images\Web\bug.png" />
     <Content Include="Images\pencil%402x.png" />
     <Content Include="Images\heart%402x.png" />
@@ -301,5 +300,6 @@
     <Content Include="Images\change_user%402x.png" />
     <Content Include="Images\change_user.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\linen.png" />
   </ItemGroup>
 </Project>

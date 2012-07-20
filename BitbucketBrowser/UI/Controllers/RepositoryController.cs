@@ -11,7 +11,7 @@ namespace BitbucketBrowser.UI
 {
     public class AccountRepositoryController : RepositoryController
     {
-        private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following", "Viewed" });
+        private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following" });
 
         public AccountRepositoryController(string username)
             : base(username)
@@ -23,7 +23,22 @@ namespace BitbucketBrowser.UI
             if (Root != null)
                 InvokeOnMainThread(delegate { Root.Clear(); });
 
-            base.OnRefresh();
+            if (Model.Count == 0)
+                return;
+
+            var sec = new Section();
+            Model.ForEach(x => {
+                RepositoryElement sse = new RepositoryElement(x);
+                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
+                sec.Add(sse);
+            });
+
+            //Sort them by name
+            sec.Elements = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name).ToList();
+
+            InvokeOnMainThread(delegate {
+                Root = new RootElement(Title) { sec };
+            });
         }
 
         protected override List<RepositoryDetailedModel> OnUpdate ()
@@ -96,8 +111,6 @@ namespace BitbucketBrowser.UI
     {
         public string Username { get; private set; }
 
-        public UINavigationController Nav { get; set; }
-
         public RepositoryController(string username, bool push = true) 
             : base(push, true)
         {
@@ -117,7 +130,7 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             Model.ForEach(x => {
                 RepositoryElement sse = new RepositoryElement(x);
-                sse.Tapped += () => (Nav ?? NavigationController).PushViewController(new RepositoryInfoController(x), true);
+                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });
 

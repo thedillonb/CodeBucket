@@ -233,7 +233,7 @@ namespace BitbucketBrowser
             */
 
             TableView.BackgroundColor = UIColor.Clear;
-            UIImage background = UIImage.FromBundle("/Images/Linen");
+            UIImage background = Images.Linen;
             View.BackgroundColor = UIColor.FromPatternImage(background);
 
             TableView.SeparatorColor = UIColor.FromRGBA(128, 128, 128, 128);

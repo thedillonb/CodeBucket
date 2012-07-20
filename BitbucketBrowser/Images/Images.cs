@@ -44,7 +44,6 @@ namespace BitbucketBrowser
         public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
         public static UIImage TitlebarDark = UIImage.FromBundle("/Images/Controls/titlebar_dark");
         public static UIImage Bottombar = UIImage.FromBundle("/Images/Controls/bottombar");
-        public static UIImage Background = UIImage.FromBundle("/Images/Controls/background");
         public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
 
 
@@ -54,6 +53,11 @@ namespace BitbucketBrowser
         //Issues
         public static UIImage Priority = UIImage.FromBundle("/Images/Issues/priority");
         public static UIImage IssueType = UIImage.FromBundle("/Images/Issues/issuetype");
+
+
+        //Size agnostic
+        public static UIImage Background = UIImage.FromFile("Images/Controls/background.png");
+        public static UIImage Linen = UIImage.FromBundle("Images/linen.png");
     }
 }
 
