@@ -7,10 +7,11 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Collections.Generic;
+using MonoTouch.Dialog.Utilities;
 
 namespace BitbucketBrowser.UI
 {
-    public class NewsFeedElement : NameTimeStringElement
+    public class NewsFeedElement : NameTimeStringElement, IImageUpdated
     {
         public NewsFeedElement(EventModel eventModel)
         {
@@ -25,9 +26,9 @@ namespace BitbucketBrowser.UI
             CreateDescription(out desc, out img);
 
             String = desc;
-            Image = img;
             Name = eventModel.User.Username;
             Time = eventModel.UtcCreatedOn;
+            Image = Images.Anonymous;
         }
 
         public EventModel Item { get; set; }
@@ -88,6 +89,34 @@ namespace BitbucketBrowser.UI
             }
             else
                 img = Images.Unknown;
+        }
+
+        private UITableViewCell _cell;
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            if (Image == null || Image == Images.Anonymous)
+            {
+                var img = ImageLoader.DefaultRequestImage(new Uri(Item.User.Avatar), this);
+                if (img != null)
+                    Image = img;
+            }
+
+
+            _cell = base.GetCell(tv);
+            return _cell;
+        }
+
+        public void UpdatedImage (Uri uri)
+        {
+            var img = ImageLoader.DefaultRequestImage(uri, this);
+            Image = img;
+
+            if (uri == null)
+                return;
+            var root = GetImmediateRootElement ();
+            if (root == null || root.TableView == null)
+                return;
+            root.TableView.ReloadRows (new NSIndexPath [] { IndexPath }, UITableViewRowAnimation.None);
         }
     }
 }

@@ -173,7 +173,7 @@ namespace BitbucketBrowser.UI
             }
         }
 
-        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+        public virtual void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
             cell.BackgroundColor = BackgroundColor;
         }

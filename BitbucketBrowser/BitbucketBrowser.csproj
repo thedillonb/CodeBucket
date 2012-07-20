@@ -151,6 +151,7 @@
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Settings\LoginViewController.cs" />
+    <Compile Include="UI\Views\NameTimeStringElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />
@@ -300,5 +301,7 @@
     <Content Include="Images\change_user.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\linen.png" />
+    <Content Include="Images\Cells\anonymous.png" />
+    <Content Include="Images\Cells\anonymous%402x.png" />
   </ItemGroup>
 </Project>

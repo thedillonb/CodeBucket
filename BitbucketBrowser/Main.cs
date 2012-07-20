@@ -10,6 +10,7 @@ using MonoTouch.Dialog;
 using MonoTouch.SlideoutNavigation;
 using System.Drawing;
 using System.Threading;
+using MonoTouch.Dialog.Utilities;
 
 namespace BitbucketBrowser
 {
@@ -65,7 +66,7 @@ namespace BitbucketBrowser
 
 
                 //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //;
-
+            ImageLoader.Purge();
 
 
             window.RootViewController = _nav;
@@ -253,7 +254,7 @@ namespace BitbucketBrowser
             //First time appear
             if (_previousUser == null)
             {
-                NavigationController.PushViewController(new ChangesetController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
+                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events" }, false);
                 _previousUser = Application.Account.Username;
             }
         }

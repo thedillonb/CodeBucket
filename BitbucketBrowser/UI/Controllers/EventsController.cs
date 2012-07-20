@@ -70,7 +70,7 @@ namespace BitbucketBrowser.UI
             if (Model.Count == 0)
                 return;
 
-            var elements = new List<Element>(Model.Count);
+            var sec = new Section();
             Model.ForEach(e => {
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
                     return;
@@ -93,14 +93,17 @@ namespace BitbucketBrowser.UI
                     newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
                 }
 
-                elements.Add(newsEl);
+                sec.Add(newsEl);
             });
 
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)
-                    Root = new RootElement(Title) { new Section() { Elements = elements } };
+                {
+                    var r = new RootElement(Title) { sec };
+                    Root = r;
+                }
                 else
-                    Root[0].Insert(0, UITableViewRowAnimation.Top, elements);
+                    Root.Insert(0, sec);
             });
 
         }

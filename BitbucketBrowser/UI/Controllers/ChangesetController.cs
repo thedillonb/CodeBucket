@@ -43,7 +43,7 @@ namespace BitbucketBrowser.UI
 
             var items = new List<Element>();
             Model.ForEach(x => {
-                var el = new NameTimeStringElement() { Name = x.Author, Time = x.Utctimestamp, String = x.Message, TimeLeft = false, Lines = 4 };
+                var el = new NameTimeStringElement() { Name = x.Author, Time = x.Utctimestamp, String = x.Message, Lines = 4 };
                 el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(User, Slug, x.Node), true);
                 items.Add(el);
             });
