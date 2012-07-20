@@ -20,6 +20,7 @@ namespace BitbucketBrowser.UI
         private bool isSearching = false;
 
 
+
         class CustomSearchDelegate : UISearchBarDelegate 
         {
             Controller<T> container;
@@ -46,9 +47,6 @@ namespace BitbucketBrowser.UI
                     searchController = new DialogViewController(UITableViewStyle.Plain, null);
                     searchController.LoadView();
                     searchController.TableView.TableFooterView = new DropbarElement(1f);
-                    searchController.TableView.TableFooterView.Hidden = true;
-                    searchController.View.BackgroundColor = NoItemColor;
-                    searchController.TableView.ScrollEnabled = false;
                 }
 
                 searchBar.ShowsCancelButton = true;
@@ -59,9 +57,17 @@ namespace BitbucketBrowser.UI
                 container.TableView.ScrollEnabled = false;
 
                 if (searchController.Root != null && searchController.Root.Count > 0 && searchController.Root[0].Count > 0)
+                {
                     searchController.TableView.TableFooterView.Hidden = false;
+                    searchController.View.BackgroundColor = UIColor.White;
+                    searchController.TableView.ScrollEnabled = true;
+                }
                 else
+                {
                     searchController.TableView.TableFooterView.Hidden = true;
+                    searchController.View.BackgroundColor = NoItemColor;
+                    searchController.TableView.ScrollEnabled = false;
+                }
 
                 searchElements = new List<ElementContainer>();
 
