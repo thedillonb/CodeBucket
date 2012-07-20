@@ -253,7 +253,7 @@ namespace BitbucketBrowser
             //First time appear
             if (_previousUser == null)
             {
-                NavigationController.PushViewController(new BranchController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
+                NavigationController.PushViewController(new ChangesetController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
                 _previousUser = Application.Account.Username;
             }
         }

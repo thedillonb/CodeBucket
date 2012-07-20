@@ -310,7 +310,9 @@ namespace BitbucketBrowser.UI
             ThreadPool.QueueUserWorkItem(delegate {
                 try
                 {
+                    Utils.Util.PushNetworkActive();
                     Model = OnUpdate();
+                    Utils.Util.PopNetworkActive();
                     if (Model != null)
                         Refresh();
                 }

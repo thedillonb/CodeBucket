@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using BitbucketSharp;
 using System.Collections.Generic;
+using MonoTouch.Dialog.Utilities;
 
 
 namespace BitbucketBrowser.UI
@@ -27,22 +28,33 @@ namespace BitbucketBrowser.UI
                 return;
 
             var sec = new Section();
-            Model.ForEach(s =>
-            {
-                var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
-                StyledElement sse;
-                if (!string.IsNullOrWhiteSpace(realName))
-                    sse = new SubcaptionElement(s.Username, realName);
-                else
-                    sse = new SubcaptionElement(s.Username);
+            Model.ForEach(s => {
+                StyledElement sse = new UserElement(s);
                 sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
-                sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 sec.Add(sse);
             });
 
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
             });
+        }
+
+
+        private class UserElement : SubcaptionElement, IImageUpdated
+        {
+            private UITableViewCell _cell;
+            private FollowerModel _model;
+
+            public UserElement(FollowerModel s)
+                : base (s.Username)
+            {
+                _model = s;
+                var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
+                 if (!string.IsNullOrWhiteSpace(realName))
+                    Value = realName;
+                Accessory = UITableViewCellAccessory.DisclosureIndicator;
+                ImageUri = new Uri(s.Avatar);
+            }
         }
 	}
 	

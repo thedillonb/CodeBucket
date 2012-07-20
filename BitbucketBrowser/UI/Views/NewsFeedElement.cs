@@ -10,23 +10,24 @@ using System.Collections.Generic;
 
 namespace BitbucketBrowser.UI
 {
-    public class NewsFeedElement : CustomElement
+    public class NewsFeedElement : NameTimeStringElement
     {
-        private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(13);
-
-        private const float LeftRightPadding = 6f;
-        private const float TopBottomPadding = 6f;
-
-        private static readonly UIImage BackImage = Images.CellGradient;
-
-        public NewsFeedElement(EventModel eventModel) : base(UITableViewCellStyle.Default, "newsfeedelement")
+        public NewsFeedElement(EventModel eventModel)
         {
             Item = eventModel;
             ReportUser = true;
             ReportRepository = false;
-            BackgroundColor = UIColor.FromPatternImage(BackImage);
+            Lines = 4;
+
+
+            string desc;
+            UIImage img;
+            CreateDescription(out desc, out img);
+
+            String = desc;
+            Image = img;
+            Name = eventModel.User.Username;
+            Time = eventModel.UtcCreatedOn;
         }
 
         public EventModel Item { get; set; }
@@ -87,85 +88,6 @@ namespace BitbucketBrowser.UI
             }
             else
                 img = Images.Unknown;
-        }
-
-        public override void Draw(RectangleF bounds, CGContext context, UIView view)
-        {
-            //UIColor.Clear.SetFill();
-
-            var imageRect = new RectangleF(LeftRightPadding, bounds.Height / 2 - 8f, 16f, 16f);
-            var leftContent = LeftRightPadding * 2 + imageRect.Width;
-            var contentWidth = bounds.Width - leftContent - LeftRightPadding;
-            var userHeight = UserFont.LineHeight;
-
-            string desc = null;
-            UIImage img = null;
-            CreateDescription(out desc, out img);
-
-            img.Draw(imageRect);
-
-            if (ReportUser)
-            {
-                var user = Item.User != null ? Item.User.Username : Item.Repository.Owner;
-                UIColor.FromRGB(0, 0x44, 0x66).SetColor();
-                view.DrawString(user,
-                    new RectangleF(leftContent, TopBottomPadding, contentWidth, UserFont.LineHeight),
-                    UserFont, UILineBreakMode.TailTruncation
-                    );
-            }
-            else
-            {
-                userHeight = -2;
-            }
-
-            string daysAgo = DateTime.Parse(Item.UtcCreatedOn).ToDaysAgo();
-            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
-            float daysAgoTop = TopBottomPadding + userHeight;
-            view.DrawString(
-                daysAgo,
-                new RectangleF(leftContent,  daysAgoTop, contentWidth, DateFont.LineHeight),
-                DateFont,
-                UILineBreakMode.TailTruncation
-                );
-
-
-            if (!string.IsNullOrEmpty(desc))
-            {
-                UIColor.FromRGB(41, 41, 41).SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + 2f;
-                var height = bounds.Height - top - TopBottomPadding;
-                view.DrawString(desc,
-                    new RectangleF(leftContent, top, contentWidth, height), DescFont, UILineBreakMode.TailTruncation
-                );
-            }
-        }
-
-        public override float Height(RectangleF bounds)
-        {
-            float descHeight = 0f;
-            var leftContent = LeftRightPadding * 2 + 16f;
-            var contentWidth = bounds.Width - leftContent - LeftRightPadding; //Account for the Accessory
-            if (IsTappedAssigned)
-                contentWidth = contentWidth - 20f;
-
-            string desc = null;
-            UIImage img = null;
-            CreateDescription(out desc, out img);
-
-            descHeight = desc.MonoStringHeight(DescFont, contentWidth);
-            if (descHeight > (DescFont.LineHeight + 1) * 4)
-                descHeight = (DescFont.LineHeight + 1) * 4;
-
-            var userHeight = (ReportUser) ? UserFont.LineHeight : 0f;
-
-            return TopBottomPadding*2 + userHeight + DateFont.LineHeight + 2f + descHeight;
-        }
-
-        public override UITableViewCell GetCell(UITableView tv)
-        {
-            var cell = base.GetCell(tv);
-            cell.BackgroundView = new UIImageView(BackImage);
-            return cell;
         }
     }
 }

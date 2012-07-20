@@ -84,15 +84,11 @@ namespace BitbucketBrowser.UI
                             { Repo = e.Repository }, true);
                     };
                 } 
-                else if (e.Event == EventModel.Type.WikiCreated) 
-                {
-                    newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
-                } 
-                else if (e.Event == EventModel.Type.WikiUpdated) 
+                else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated) 
                 {
                     newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
                 }
-                else if (e.Event == EventModel.Type.CreateRepo)
+                else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
                 {
                     newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
                 }
