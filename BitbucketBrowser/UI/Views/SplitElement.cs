@@ -11,6 +11,8 @@ namespace BitbucketBrowser.UI
         private readonly List<Row> _rows;
         private static UIFont Font = UIFont.SystemFontOfSize(12f);
 
+        public List<Row> Rows { get { return _rows; } }
+
         public SplitElement(IEnumerable<Row> rows)
             : base(UITableViewCellStyle.Default, "repoinfo")
         {
@@ -57,15 +59,19 @@ namespace BitbucketBrowser.UI
 
                 row.Image1.Draw(new RectangleF(15, 10 * (i + 1) + i * 28, 16f, 16f));
 
-                UIColor.Gray.SetColor();
-                view.DrawString(row.Text1, new RectangleF(36,  10 * (i + 1) + i * 28, bounds.Width / 2 - 40, Font.LineHeight), Font, UILineBreakMode.TailTruncation);
-
+                if (!string.IsNullOrEmpty(row.Text1))
+                {
+                    UIColor.Gray.SetColor();
+                    view.DrawString(row.Text1, new RectangleF(36,  10 * (i + 1) + i * 28, bounds.Width / 2 - 40, Font.LineHeight), Font, UILineBreakMode.TailTruncation);
+                }
 
                 row.Image2.Draw(new RectangleF(bounds.Width / 2 + 15, 10 * (i + 1) + i * 28, 16f, 16f));
 
-                UIColor.Gray.SetColor();
-                view.DrawString(row.Text2, new RectangleF(bounds.Width / 2 + 36,  10 * (i + 1) + i * 28, bounds.Width / 2 - 40, Font.LineHeight), Font, UILineBreakMode.TailTruncation);
-
+                if (!string.IsNullOrEmpty(row.Text2))
+                {
+                    UIColor.Gray.SetColor();
+                    view.DrawString(row.Text2, new RectangleF(bounds.Width / 2 + 36,  10 * (i + 1) + i * 28, bounds.Width / 2 - 40, Font.LineHeight), Font, UILineBreakMode.TailTruncation);
+                }
 
 
                 //Last item

@@ -90,7 +90,7 @@ namespace BitbucketBrowser.UI
         private readonly HeaderView _header;
         private readonly Section _comments, _details;
         private readonly MultilineElement _desc;
-        private readonly StyledStringElement _status, _type, _priority;
+        private readonly SplitElement _split1, _split2;
 
 
         public IssueInfoController(string user, string slug, int id)
@@ -107,14 +107,13 @@ namespace BitbucketBrowser.UI
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
             Root.Add(new Section(_header));
 
-            _desc = new MultilineElement("");
+            _desc = new MultilineElement("") { PrimaryFont = UIFont.SystemFontOfSize(14f), BackgroundColor = UIColor.White };
 
-            _type = new StyledStringElement("Type", "", UITableViewCellStyle.Value1);
-            _status = new StyledStringElement("Status", "", UITableViewCellStyle.Value1);
-            _priority = new StyledStringElement("Priority", "", UITableViewCellStyle.Value1);
+            _split1 = new SplitElement(new [] { new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }}) { BackgroundColor = UIColor.White };
+            _split2 = new SplitElement(new [] { new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }}) { BackgroundColor = UIColor.White };
 
-            _comments = new Section("Comments");
-            _details = new Section() { _status, _type, _priority };
+            _comments = new Section();
+            _details = new Section() { _split1, _split2 };
 
             Root.Add(_details);
         }
@@ -125,11 +124,13 @@ namespace BitbucketBrowser.UI
 
             _header.Title = Model.Issue.Title;
             _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcLastUpdated).ToDaysAgo();
+            var assigned = Model.Issue.Responsible != null ? Model.Issue.Responsible.Username : "unassigned";
 
+            _split1.Rows[0].Text1 = Model.Issue.Status;
+            _split1.Rows[0].Text2 = Model.Issue.Priority;
+            _split2.Rows[0].Text1 = assigned;
+            _split2.Rows[0].Text2 = Model.Issue.Metadata.Kind;
 
-            _type.Value = Model.Issue.Metadata.Kind;
-            _status.Value = Model.Issue.Status;
-            _priority.Value = Model.Issue.Priority;
             _desc.Caption = Model.Issue.Content;
 
             var descValid = false;
@@ -143,7 +144,14 @@ namespace BitbucketBrowser.UI
             var comments = new List<Element>(Model.Comments.Count);
             Model.Comments.ForEach(x => {
                 if (!string.IsNullOrEmpty(x.Content))
-                    comments.Add(new IssueComment(x));
+                    comments.Add(new NameTimeStringElement() { 
+                        Name = x.AuthorInfo.Username, 
+                        Time = x.UtcCreatedOn, 
+                        String = x.Content, 
+                        Image = Images.Anonymous, 
+                        ImageUri = new Uri(x.AuthorInfo.Avatar),
+                        BackgroundColor = UIColor.White,
+                    });
             });
 
 
@@ -153,9 +161,8 @@ namespace BitbucketBrowser.UI
                 if (descValid)
                     Root.Reload(_desc, UITableViewRowAnimation.None);
 
-                Root.Reload(_type, UITableViewRowAnimation.None);
-                Root.Reload(_status, UITableViewRowAnimation.None);
-                Root.Reload(_priority, UITableViewRowAnimation.None);
+                Root.Reload(_split1, UITableViewRowAnimation.None);
+                Root.Reload(_split2, UITableViewRowAnimation.None);
 
                 if (comments.Count == 0)
                 {
@@ -179,74 +186,6 @@ namespace BitbucketBrowser.UI
                 Issue = l.GetIssue()
             };
             return m;
-        }
-    }
-
-    public class IssueComment : CustomElement
-    {
-        private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(13);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
-
-
-        private const float LeftRightPadding = 6f;
-        private const float TopBottomPadding = 6f;
-
-        public IssueComment(CommentModel comment) : base(UITableViewCellStyle.Default, "changeelement")
-        {
-            Item = comment;
-        }
-
-        public CommentModel Item { get; set; }
-
-        public override void Draw(RectangleF bounds, CGContext context, UIView view)
-        {
-            //UIColor.Clear.SetFill();
-            //context.FillRect(bounds);
-
-            var contentWidth = bounds.Width - LeftRightPadding * 2;
-
-            var desc = Item.Content;
-
-            string user;
-            if (Item.AuthorInfo == null)
-                user = "Unknown";
-            else
-                user = Item.AuthorInfo.Username;
-
-            UIColor.FromRGB(0, 0x44, 0x66).SetColor();
-            view.DrawString(user,
-                new RectangleF(LeftRightPadding, TopBottomPadding, contentWidth, UserFont.LineHeight),
-                UserFont, UILineBreakMode.TailTruncation
-                );
-
-
-            string daysAgo = DateTime.Parse(Item.UtcCreatedOn).ToDaysAgo();
-            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
-            float daysAgoTop = TopBottomPadding + UserFont.LineHeight;
-            view.DrawString(
-                daysAgo,
-                new RectangleF(LeftRightPadding,  daysAgoTop, contentWidth, DateFont.LineHeight),
-                DateFont,
-                UILineBreakMode.TailTruncation
-                );
-
-
-            if (!string.IsNullOrEmpty(desc))
-            {
-                UIColor.Black.SetColor();
-                var top = daysAgoTop + DateFont.LineHeight + 2f;
-                view.DrawString(desc,
-                    new RectangleF(LeftRightPadding, top, contentWidth, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
-                );
-            }
-        }
-
-        public override float Height(RectangleF bounds)
-        {
-            var contentWidth = bounds.Width - LeftRightPadding * 2 - 20f; //Account for the Accessory
-            var descHeight = Item.Content.MonoStringHeight(DescFont, contentWidth);
-            return TopBottomPadding*2 + UserFont.LineHeight + DateFont.LineHeight + 2f + descHeight;
         }
     }
 }

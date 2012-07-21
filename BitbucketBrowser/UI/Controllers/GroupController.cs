@@ -65,16 +65,9 @@ namespace BitbucketBrowser.UI
         protected override void OnRefresh ()
         {
             var sec = new Section();
-            Model.Members.OrderBy(x => x.Username).ToList().ForEach(x =>
-            {
-                var realName = x.FirstName ?? "" + " " + x.LastName ?? "";
-                StyledElement sse;
-                if (!string.IsNullOrWhiteSpace(realName))
-                    sse = new SubcaptionElement(x.Username, realName);
-                else
-                    sse = new StyledElement(x.Username);
-                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(x.Username), true);
-                sse.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            Model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
+                StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
+                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                 sec.Add(sse);
             });
 

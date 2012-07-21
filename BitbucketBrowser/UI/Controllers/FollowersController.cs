@@ -29,7 +29,7 @@ namespace BitbucketBrowser.UI
 
             var sec = new Section();
             Model.ForEach(s => {
-                StyledElement sse = new UserElement(s);
+                StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
                 sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                 sec.Add(sse);
             });
@@ -37,24 +37,6 @@ namespace BitbucketBrowser.UI
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
             });
-        }
-
-
-        private class UserElement : SubcaptionElement, IImageUpdated
-        {
-            private UITableViewCell _cell;
-            private FollowerModel _model;
-
-            public UserElement(FollowerModel s)
-                : base (s.Username)
-            {
-                _model = s;
-                var realName = s.FirstName ?? "" + " " + s.LastName ?? "";
-                 if (!string.IsNullOrWhiteSpace(realName))
-                    Value = realName;
-                Accessory = UITableViewCellAccessory.DisclosureIndicator;
-                ImageUri = new Uri(s.Avatar);
-            }
         }
 	}
 	

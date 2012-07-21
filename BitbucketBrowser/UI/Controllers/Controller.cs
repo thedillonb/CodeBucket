@@ -312,13 +312,16 @@ namespace BitbucketBrowser.UI
                 {
                     Utils.Util.PushNetworkActive();
                     Model = OnUpdate();
-                    Utils.Util.PopNetworkActive();
                     if (Model != null)
                         Refresh();
                 }
                 catch (Exception e)
                 {
                     InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
+                }
+                finally 
+                {
+                    Utils.Util.PopNetworkActive();
                 }
 
 

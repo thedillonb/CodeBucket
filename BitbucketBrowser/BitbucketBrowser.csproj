@@ -152,6 +152,7 @@
     </Compile>
     <Compile Include="UI\Settings\LoginViewController.cs" />
     <Compile Include="UI\Views\NameTimeStringElement.cs" />
+    <Compile Include="UI\Views\UserElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />

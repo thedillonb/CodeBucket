@@ -3,10 +3,12 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using BitbucketBrowser.Utils;
 using MonoTouch.CoreGraphics;
+using MonoTouch.Dialog.Utilities;
+using MonoTouch.Foundation;
 
 namespace BitbucketBrowser.UI
 {
-public class NameTimeStringElement : CustomElement
+public class NameTimeStringElement : CustomElement, IImageUpdated
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(15);
@@ -18,6 +20,7 @@ public class NameTimeStringElement : CustomElement
         public string Name { get; set; }
         public string Time { get; set; }
         public string String { get; set; }
+        public Uri ImageUri { get; set; }
 
         public int Lines { get; set; }
         public UIImage Image { get; set; }
@@ -28,12 +31,6 @@ public class NameTimeStringElement : CustomElement
             Lines = 9999;
             BackgroundColor = UIColor.FromPatternImage(Images.CellGradient);
         }
-
-        private string Message
-        {
-            get { return (String ?? "").Replace("\n", " ").Trim(); }
-        }
-
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
@@ -72,8 +69,7 @@ public class NameTimeStringElement : CustomElement
             );
 
 
-            var desc = Message;
-            if (!string.IsNullOrEmpty(desc))
+            if (!string.IsNullOrEmpty(String))
             {
                 UIColor.Black.SetColor();
                 var top = TopBottomPadding + UserFont.LineHeight + 1f;
@@ -82,7 +78,7 @@ public class NameTimeStringElement : CustomElement
 
 
                 UIColor.FromRGB(41, 41, 41).SetColor();
-                view.DrawString(desc,
+                view.DrawString(String,
                     new RectangleF(LeftRightPadding, top, bounds.Width - LeftRightPadding*2, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );
             }
@@ -94,7 +90,7 @@ public class NameTimeStringElement : CustomElement
             if (IsTappedAssigned)
                 contentWidth -= 20f;
 
-            var desc = Message;
+            var desc = this.String;
             var descHeight = desc.MonoStringHeight(DescFont, contentWidth);
             if (descHeight > (DescFont.LineHeight) * Lines)
                 descHeight = (DescFont.LineHeight) * Lines;
@@ -103,6 +99,31 @@ public class NameTimeStringElement : CustomElement
             if (Image != null)
                 n += DateFont.LineHeight;
             return n;
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            if (ImageUri != null)
+            {
+                var img = ImageLoader.DefaultRequestImage(ImageUri, this);
+                if (img != null)
+                    Image = img;
+            }
+
+            return base.GetCell(tv);
+        }
+
+        void IImageUpdated.UpdatedImage (Uri uri)
+        {
+            var img = ImageLoader.DefaultRequestImage(uri, this);
+            Image = img;
+
+            if (uri == null)
+                return;
+            var root = GetImmediateRootElement ();
+            if (root == null || root.TableView == null)
+                return;
+            root.TableView.ReloadRows (new NSIndexPath [] { IndexPath }, UITableViewRowAnimation.None);
         }
     }
 }
