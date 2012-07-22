@@ -1,26 +1,31 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/StyledElement.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BitbucketBrowser/UI/Views/CellBackground.cs">
     <Files>
-      <File FileName="BitbucketBrowser/UI/Settings/MyAccountsController.cs" Line="65" Column="32" />
-      <File FileName="BitbucketBrowser/UI/Controllers/RepositoryController.cs" Line="38" Column="13" />
-      <File FileName="BitbucketBrowser/UI/Controllers/Controller.cs" Line="315" Column="48" />
-      <File FileName="BitbucketBrowser/UI/Controllers/IssueController.cs" Line="1" Column="1" />
-      <File FileName="BitbucketBrowser/UI/Views/NewsFeedElement.cs" Line="17" Column="1" />
-      <File FileName="BitbucketBrowser/UI/Views/StyledElement.cs" Line="201" Column="26" />
-      <File FileName="BitbucketBrowser/UI/Controllers/EventsController.cs" Line="94" Column="18" />
+      <File FileName="BitbucketBrowser/UI/Controllers/IssueController.cs" Line="114" Column="13" />
+      <File FileName="BitbucketBrowser/Screens/IssueCellView.cs" Line="43" Column="56" />
+      <File FileName="BitbucketBrowser/Screens/RepositoryCellView.cs" Line="36" Column="47" />
+      <File FileName="BitbucketBrowser/UI/Views/CellBackground.cs" Line="22" Column="44" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowAllFiles" value="True" />
           <Node name="BitbucketBrowser" expanded="True">
+            <Node name="Images" expanded="True">
+              <Node name="Controls" expanded="True" />
+            </Node>
+            <Node name="Screens" expanded="True" />
             <Node name="UI" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Views" expanded="True">
-                <Node name="StyledElement.cs" selected="True" />
+                <Node name="CellBackground.cs" selected="True" />
               </Node>
             </Node>
+            <Node name="Utils" expanded="True" />
+          </Node>
+          <Node name="BitbucketSharp.MonoTouch" expanded="True">
+            <Node name="Models" expanded="True" />
           </Node>
         </State>
       </Pad>

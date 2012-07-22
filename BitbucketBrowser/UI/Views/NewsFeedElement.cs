@@ -26,6 +26,7 @@ namespace BitbucketBrowser.UI
             CreateDescription(out desc, out img);
 
             String = desc;
+            LittleImage = img;
             Name = eventModel.User.Username;
             Time = eventModel.UtcCreatedOn;
             Image = Images.Anonymous;
@@ -37,6 +38,8 @@ namespace BitbucketBrowser.UI
         public bool ReportUser { get; set; }
 
         public bool ReportRepository { get; set; }
+
+        private UIImage LittleImage { get; set; }
 
 
         public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
@@ -90,6 +93,14 @@ namespace BitbucketBrowser.UI
             }
             else
                 img = Images.Unknown;
+        }
+
+        public override void Draw(RectangleF bounds, CGContext context, UIView view)
+        {
+            base.Draw(bounds, context, view);
+            if (LittleImage != null)
+                LittleImage.Draw(new RectangleF(26, 26, 16f, 16f));
+
         }
     }
 }

@@ -25,29 +25,48 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
         public int Lines { get; set; }
         public UIImage Image { get; set; }
 
+
         public NameTimeStringElement() 
             : base(UITableViewCellStyle.Default, "nametimestringelement")
         {
             Lines = 9999;
-            BackgroundColor = UIColor.FromPatternImage(Images.CellGradient);
+            //BackgroundColor = UIColor.FromPatternImage(Images.CellGradient);
+
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
         {
             var leftMargin = LeftRightPadding;
 
+            // Superview is the container, its superview the uitableviewcell
+            bool highlighted = (view.Superview.Superview as UITableViewCell).Highlighted & IsTappedAssigned;
+            var timeColor = highlighted ? UIColor.White : UIColor.FromRGB(0.6f, 0.6f, 0.6f);
+            var textColor = highlighted ? UIColor.White : UIColor.FromRGB(41, 41, 41);
+            var nameColor = highlighted ? UIColor.White : UIColor.FromRGB(0, 64, 128);
+
             if (Image != null)
             {
                 var imageRect = new RectangleF(LeftRightPadding, TopBottomPadding, 32f, 32f);
+                UIColor.White.SetColor ();
+                context.SaveState ();
+                //context.TranslateCTM (imageRect.X, imageRect.Y);
+                context.SetLineWidth (1);
+                
+                // On device, the shadow is painted in the opposite direction!
+                context.SetShadowWithColor (new SizeF (0, 0), 3, UIColor.DarkGray.CGColor);
+                context.AddPath (UIBezierPath.FromRect(imageRect).CGPath);
+                context.FillPath ();
+                context.RestoreState ();
+
                 Image.Draw(imageRect);
-                leftMargin += LeftRightPadding + imageRect.Width;
+                leftMargin += LeftRightPadding + imageRect.Width + 3f;
             }
 
             var contentWidth = bounds.Width - LeftRightPadding  - leftMargin;
 
 
             var daysAgo = DateTime.Parse(Time).ToDaysAgo();
-            UIColor.FromRGB(0.6f, 0.6f, 0.6f).SetColor();
+            timeColor.SetColor();
             var daysWidth = daysAgo.MonoStringLength(DateFont);
             RectangleF timeRect;
 
@@ -62,7 +81,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
             var nameWidth = contentWidth;
             if (Image == null)
                 nameWidth -= daysWidth;
-            UIColor.FromRGB(0, 64, 128).SetColor();
+            nameColor.SetColor();
             view.DrawString(Name,
                 new RectangleF(leftMargin, TopBottomPadding, contentWidth, UserFont.LineHeight),
                 UserFont, UILineBreakMode.TailTruncation
@@ -72,12 +91,12 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
             if (!string.IsNullOrEmpty(String))
             {
                 UIColor.Black.SetColor();
-                var top = TopBottomPadding + UserFont.LineHeight + 1f;
+                var top = TopBottomPadding + UserFont.LineHeight + 3f;
                 if (Image != null)
                     top += DateFont.LineHeight;
 
 
-                UIColor.FromRGB(41, 41, 41).SetColor();
+                textColor.SetColor();
                 view.DrawString(String,
                     new RectangleF(LeftRightPadding, top, bounds.Width - LeftRightPadding*2, bounds.Height - TopBottomPadding - top), DescFont, UILineBreakMode.TailTruncation
                 );
@@ -95,10 +114,15 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
             if (descHeight > (DescFont.LineHeight) * Lines)
                 descHeight = (DescFont.LineHeight) * Lines;
 
-            var n = TopBottomPadding*2 + UserFont.LineHeight + 2f + descHeight;
+            var n = TopBottomPadding*2 + UserFont.LineHeight + 3f + descHeight;
             if (Image != null)
                 n += DateFont.LineHeight;
             return n;
+        }
+
+        protected override void OnCreateCell(UITableViewCell cell)
+        {
+            cell.BackgroundView = new CellBackground();
         }
 
         public override UITableViewCell GetCell(UITableView tv)

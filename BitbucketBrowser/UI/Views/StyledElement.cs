@@ -27,7 +27,7 @@ namespace BitbucketBrowser.UI
             : base(UITableViewCellStyle.Default, "multilineelement")
         {
             this.Caption = caption;
-            BackgroundColor = UIColor.FromRGB(246, 247, 248);
+            BackgroundColor = UIColor.White;
             PrimaryFont = CaptionFont;
             CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
         }

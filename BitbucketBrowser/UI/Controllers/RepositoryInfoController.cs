@@ -48,8 +48,8 @@ namespace BitbucketBrowser.UI
                 sec1.Add(new MultilineElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(14f) });
             }
 
-            sec1.Add(new SplitElement(new [] { new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
-                Text2 = Model.Language, Image2 = Images.Language } }));
+            sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
+                Text2 = Model.Language, Image2 = Images.Language }));
 
 
 
@@ -63,15 +63,13 @@ namespace BitbucketBrowser.UI
                 size = string.Format("{0:0.##}MB", Model.Size / 1024f / 1024f);
 
 
-            sec1.Add(new SplitElement(new [] { 
-                new SplitElement.Row() { 
+            sec1.Add(new SplitElement(new SplitElement.Row() { 
                     Text1 = Model.IsPrivate ? "Private" : "Public" , Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
-                    Text2 = size, Image2 = Images.Size } }));
+                    Text2 = size, Image2 = Images.Size }));
 
-            sec1.Add(new SplitElement(new [] { 
-                new SplitElement.Row() { 
+            sec1.Add(new SplitElement(new SplitElement.Row() { 
                     Text1 = DateTime.Parse(Model.UtcCreatedOn).ToString("MM/dd/yy"), Image1 = Images.Create,
-                    Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"), Image2 = Images.Fork } }));
+                    Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"), Image2 = Images.Fork }));
 
 
             var owner = new StyledElement("Owner", Model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };

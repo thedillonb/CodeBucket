@@ -109,8 +109,8 @@ namespace BitbucketBrowser.UI
 
             _desc = new MultilineElement("") { PrimaryFont = UIFont.SystemFontOfSize(14f), BackgroundColor = UIColor.White };
 
-            _split1 = new SplitElement(new [] { new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }}) { BackgroundColor = UIColor.White };
-            _split2 = new SplitElement(new [] { new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }}) { BackgroundColor = UIColor.White };
+            _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
+            _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };
 
             _comments = new Section();
             _details = new Section() { _split1, _split2 };
@@ -126,10 +126,10 @@ namespace BitbucketBrowser.UI
             _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcLastUpdated).ToDaysAgo();
             var assigned = Model.Issue.Responsible != null ? Model.Issue.Responsible.Username : "unassigned";
 
-            _split1.Rows[0].Text1 = Model.Issue.Status;
-            _split1.Rows[0].Text2 = Model.Issue.Priority;
-            _split2.Rows[0].Text1 = assigned;
-            _split2.Rows[0].Text2 = Model.Issue.Metadata.Kind;
+            _split1.Value.Text1 = Model.Issue.Status;
+            _split1.Value.Text2 = Model.Issue.Priority;
+            _split2.Value.Text1 = assigned;
+            _split2.Value.Text2 = Model.Issue.Metadata.Kind;
 
             _desc.Caption = Model.Issue.Content;
 
@@ -144,7 +144,7 @@ namespace BitbucketBrowser.UI
             var comments = new List<Element>(Model.Comments.Count);
             Model.Comments.ForEach(x => {
                 if (!string.IsNullOrEmpty(x.Content))
-                    comments.Add(new NameTimeStringElement() { 
+                    comments.Add(new CommentElement() { 
                         Name = x.AuthorInfo.Username, 
                         Time = x.UtcCreatedOn, 
                         String = x.Content, 
@@ -186,6 +186,24 @@ namespace BitbucketBrowser.UI
                 Issue = l.GetIssue()
             };
             return m;
+        }
+
+        public override UIView InputAccessoryView {
+            get 
+            {
+                var u = new UIView(new RectangleF(0, 0, 320f, 27));
+                u.BackgroundColor = UIColor.White;
+                return u;
+            }
+        }
+
+        private class CommentElement : NameTimeStringElement
+        {
+            protected override void OnCreateCell(UITableViewCell cell)
+            {
+                //Don't call the base since it will assign a background.
+                return;
+            }
         }
     }
 }

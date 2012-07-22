@@ -12,7 +12,7 @@ namespace BitbucketBrowser.UI
             : base (false, false)
         {
             Title = "Accounts";
-            Model = new List<Account>();
+            Model = Application.Accounts;
             Style = UITableViewStyle.Plain;
         }
 
@@ -29,6 +29,12 @@ namespace BitbucketBrowser.UI
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => {  
                 this.DismissModalViewControllerAnimated(true);
             });
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            Refresh(false);
         }
 
         protected override void OnRefresh ()

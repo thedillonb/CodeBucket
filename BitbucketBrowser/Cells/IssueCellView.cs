@@ -40,7 +40,7 @@ namespace BitbucketBrowser.UI
             cell.Image4.Image = Pencil;
 
 
-            cell.BackgroundView = new UIImageView(Images.CellGradient);
+            cell.BackgroundView = new CellBackground();
 
             //Create the icons
             return cell;

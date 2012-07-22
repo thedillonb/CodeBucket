@@ -115,19 +115,11 @@
     <Compile Include="Markdown\CreoleParser.cs" />
     <Compile Include="UI\Views\FirstElement.cs" />
     <Compile Include="Utils\Util.cs" />
-    <Compile Include="Screens\RepositoryCellView.cs" />
-    <Compile Include="Screens\RepositoryCellView.designer.cs">
-      <DependentUpon>RepositoryCellView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cells\RepositoryInfoCellView.cs" />
     <Compile Include="Cells\RepositoryInfoCellView.designer.cs">
       <DependentUpon>RepositoryInfoCellView.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\Images.cs" />
-    <Compile Include="Screens\IssueCellView.cs" />
-    <Compile Include="Screens\IssueCellView.designer.cs">
-      <DependentUpon>IssueCellView.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Views\RepositoryElement.cs" />
     <Compile Include="UI\Views\SplitElement.cs" />
     <Compile Include="UI\Views\WatermarkView.cs" />
@@ -153,16 +145,24 @@
     <Compile Include="UI\Settings\LoginViewController.cs" />
     <Compile Include="UI\Views\NameTimeStringElement.cs" />
     <Compile Include="UI\Views\UserElement.cs" />
+    <Compile Include="UI\Views\CellBackground.cs" />
+    <Compile Include="Cells\IssueCellView.cs" />
+    <Compile Include="Cells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\RepositoryCellView.cs" />
+    <Compile Include="Cells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Screens\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
-    <InterfaceDefinition Include="Screens\IssueCellView.xib" />
     <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
+    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
+    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Screens\" />
     <Folder Include="Images\" />
     <Folder Include="UI\" />
     <Folder Include="Utils\" />
@@ -304,5 +304,8 @@
     <Content Include="Images\linen.png" />
     <Content Include="Images\Cells\anonymous.png" />
     <Content Include="Images\Cells\anonymous%402x.png" />
+    <Content Include="Images\Controls\backbutton%402x.png" />
+    <Content Include="Images\Controls\divider.png" />
+    <Content Include="Images\Controls\divider%402x.png" />
   </ItemGroup>
 </Project>

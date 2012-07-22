@@ -49,6 +49,9 @@ namespace BitbucketBrowser.UI
 
         public bool IsTappedAssigned { get { return Tapped != null; } }
 
+        protected virtual void OnCreateCell(UITableViewCell cell)
+        {
+        }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
@@ -57,6 +60,7 @@ namespace BitbucketBrowser.UI
             if (cell == null)
             {
                 cell = new OwnerDrawnCell(this, this.Style, this.CellReuseIdentifier);
+                OnCreateCell(cell);
             }
             else
             {
@@ -130,6 +134,7 @@ namespace BitbucketBrowser.UI
                 base.LayoutSubviews();
 
                 view.Frame = ContentView.Bounds;
+                view.SetNeedsDisplay();
             }
         }
 

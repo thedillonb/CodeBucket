@@ -3,6 +3,8 @@ using System.Drawing;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using System.Text;
+using System.Net;
 
 namespace BitbucketBrowser
 {
@@ -16,8 +18,6 @@ namespace BitbucketBrowser
 		{
 			// Releases the view if it doesn't have a superview.
 			base.DidReceiveMemoryWarning();
-			
-			// Release any cached data, images, etc that aren't in use.
 		}
 		
 		public override void ViewDidLoad()
@@ -61,8 +61,28 @@ namespace BitbucketBrowser
 		}
 		
 		private void BeginLogin()
-		{
-			Console.WriteLine("Cool!");
+        {
+            var client = new BitbucketSharp.Client(User.Text, Password.Text);
+
+            try
+            {
+                var a = client.Account.SSHKeys.GetKeys();
+            }
+            catch (Exception ex)
+            {
+                //This means its a bad username & password
+                var a = new UIAlertView();
+                a.Title = "Unable to Authenticate";
+                a.Message = "Unable to login as user " + User.Text + ". Please check your credentials and try again.";
+                a.DismissWithClickedButtonIndex(a.AddButton("Ok"), true);
+                a.Show();
+                return;
+            }
+
+            //Logged in correctly!
+            //Go back to the other view and add the username
+            Application.Accounts.Add(new Account() { Username = User.Text, Password = Password.Text });
+            NavigationController.PopViewControllerAnimated(true);
 		}
 		
 		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
