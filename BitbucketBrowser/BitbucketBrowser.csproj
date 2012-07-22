@@ -307,5 +307,6 @@
     <Content Include="Images\Controls\backbutton%402x.png" />
     <Content Include="Images\Controls\divider.png" />
     <Content Include="Images\Controls\divider%402x.png" />
+    <Content Include="Images\Controls\logo.png" />
   </ItemGroup>
 </Project>

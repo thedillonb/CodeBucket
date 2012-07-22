@@ -16,6 +16,9 @@ namespace BitbucketBrowser
 
 		[Outlet]
 		MonoTouch.UIKit.UITextField User { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UIImageView Logo { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -27,6 +30,11 @@ namespace BitbucketBrowser
 			if (User != null) {
 				User.Dispose ();
 				User = null;
+			}
+
+			if (Logo != null) {
+				Logo.Dispose ();
+				Logo = null;
 			}
 		}
 	}

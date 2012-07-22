@@ -107,7 +107,7 @@ namespace BitbucketBrowser
         private TitleView _titleView;
 
         public MenuController()
-            : base(UITableViewStyle.Plain, new RootElement("BitbucketBrowser"))
+            : base(UITableViewStyle.Plain, new RootElement("Bucket Browser"))
         {
         }
 

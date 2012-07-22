@@ -46,6 +46,7 @@ namespace BitbucketBrowser
         public static UIImage Bottombar = UIImage.FromBundle("/Images/Controls/bottombar");
         public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
         public static UIImage Divider = UIImage.FromBundle("/Images/Controls/divider");
+        public static UIImage Logo = UIImage.FromBundle("/Images/Controls/logo");
 
         public static UIImage Watermark = UIImage.FromBundle("/Images/watermark");
         public static UIImage Unknown = UIImage.FromBundle("/Images/unknown");

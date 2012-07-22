@@ -24,6 +24,8 @@ namespace BitbucketBrowser
 		{
 			base.ViewDidLoad();
 
+            Logo.Image = Images.Logo;
+
             Title = "Add Account";
             View.BackgroundColor = UIColor.Clear;
 			
