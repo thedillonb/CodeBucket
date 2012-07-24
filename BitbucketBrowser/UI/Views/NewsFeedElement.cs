@@ -27,10 +27,19 @@ namespace BitbucketBrowser.UI
 
             String = desc;
             LittleImage = img;
-            Name = eventModel.User.Username;
             Time = eventModel.UtcCreatedOn;
             Image = Images.Anonymous;
-            ImageUri = new Uri(eventModel.User.Avatar);
+
+            //Unreal.. User can be null!? Fucking retarded.
+            if (eventModel.User != null)
+            {
+                Name = eventModel.User.Username;
+                ImageUri = new Uri(eventModel.User.Avatar);
+            }
+            else
+            {
+                Name = "Unknown";
+            }
         }
 
         public EventModel Item { get; set; }

@@ -8,9 +8,7 @@ namespace BitbucketBrowser.UI
     {
         private static UIImage Alert = UIImage.FromBundle("/Images/warning.png");
 
-        private static UIFont TitleFont = UIFont.SystemFontOfSize(15f);
-        private static UIFont DetailFont = UIFont.ItalicSystemFontOfSize(13f);
-
+        private static UIFont TitleFont = UIFont.SystemFontOfSize(15f); 
 
         public string Title { get; set; }
         public string Detail { get; set; }

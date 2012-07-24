@@ -68,9 +68,9 @@ namespace BitbucketBrowser
 
             try
             {
-                var a = client.Account.SSHKeys.GetKeys();
+                client.Account.SSHKeys.GetKeys();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //This means its a bad username & password
                 var a = new UIAlertView();
