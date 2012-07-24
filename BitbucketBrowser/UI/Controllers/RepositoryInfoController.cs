@@ -45,7 +45,7 @@ namespace BitbucketBrowser.UI
             
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                sec1.Add(new MultilineElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(14f) });
+                sec1.Add(new MultilineElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(12f) });
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,

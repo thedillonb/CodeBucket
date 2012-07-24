@@ -12,7 +12,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
     {
         private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
         private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(15);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(14);
+        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(12);
 
         private const float LeftRightPadding = 6f;
         private const float TopBottomPadding = 6f;

@@ -28,7 +28,7 @@ namespace BitbucketBrowser.UI
 
         public override float Height(RectangleF bounds)
         {
-            return 36;
+            return 34f;
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
