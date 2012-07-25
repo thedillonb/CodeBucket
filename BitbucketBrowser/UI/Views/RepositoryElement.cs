@@ -20,16 +20,19 @@ namespace BitbucketBrowser.UI
 
         public RepositoryDetailedModel Model { get; set; }
 
+        public bool ShowOwner { get; set; }
+
         public RepositoryElement(RepositoryDetailedModel m) : base(null)
         {
             this.CellReuseIdentifier = "repositoryelement";
             this.Style = UITableViewCellStyle.Default;
             Model = m;
+            ShowOwner = true;
         }
 
         public float GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
-            return 69f;
+            return 67f;
         }
 
         
@@ -45,7 +48,7 @@ namespace BitbucketBrowser.UI
 
             }
 
-            cell.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description);
+            cell.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description, ShowOwner ? Model.Owner : null);
 
             return cell;
         }

@@ -34,6 +34,9 @@ namespace BitbucketBrowser
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView Image2 { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UILabel RepoName { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -75,6 +78,11 @@ namespace BitbucketBrowser
 			if (Image2 != null) {
 				Image2.Dispose ();
 				Image2 = null;
+			}
+
+			if (RepoName != null) {
+				RepoName.Dispose ();
+				RepoName = null;
 			}
 		}
 	}

@@ -28,7 +28,7 @@ namespace BitbucketBrowser.UI
 
             var sec = new Section();
             Model.ForEach(x => {
-                RepositoryElement sse = new RepositoryElement(x);
+                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = _segment.SelectedSegment != 0 };
                 sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });
