@@ -7,6 +7,9 @@ using MonoTouch.UIKit;
 using BitbucketBrowser.Utils;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
+using RedPlum;
+using System.Threading;
+using MonoTouch.Foundation;
 
 namespace BitbucketBrowser.UI
 {
@@ -92,6 +95,7 @@ namespace BitbucketBrowser.UI
         private readonly MultilineElement _desc;
         private readonly SplitElement _split1, _split2;
 
+        private bool _scrollToLastComment = false;
 
         public IssueInfoController(string user, string slug, int id)
             : base(true, false)
@@ -112,10 +116,60 @@ namespace BitbucketBrowser.UI
             _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
             _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };
 
+            var addComment = new StyledElement("Add Comment", Images.Pencil);
+            addComment.Tapped += AddCommentTapped;
+
+
             _comments = new Section();
             _details = new Section() { _split1, _split2 };
 
             Root.Add(_details);
+            Root.Add(_comments);
+            Root.Add(new Section() { addComment });
+        }
+
+        void AddCommentTapped ()
+        {
+            var composer = new Composer();
+            composer.NewComment(this, () => {
+
+                MBProgressHUD hud = null;
+                hud = new MBProgressHUD(this.View.Superview); 
+                hud.Mode = MBProgressHUDMode.Indeterminate;
+                hud.TitleText = "Posting...";
+                this.View.Superview.AddSubview(hud);
+                hud.Show(true);
+
+                var text = composer.Text;
+
+                ThreadPool.QueueUserWorkItem(delegate {
+
+                    try
+                    {
+                        Application.Client.Users[User].Repositories[Slug].Issues[Id].Comments.Create(new CommentModel() {
+                            Content = text
+                        });
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    InvokeOnMainThread(delegate {
+
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+
+                        composer.CloseComposer();
+
+                        _scrollToLastComment = true;
+
+                        //Clear the model and don't force so the spiny wheel will pop up!
+                        Model = null;
+                        Refresh();
+                    });
+                });
+            });
+
         }
 
 
@@ -142,7 +196,7 @@ namespace BitbucketBrowser.UI
             }
 
             var comments = new List<Element>(Model.Comments.Count);
-            Model.Comments.ForEach(x => {
+            Model.Comments.OrderBy(x => DateTime.Parse(x.UtcCreatedOn)).ToList().ForEach(x => {
                 if (!string.IsNullOrEmpty(x.Content))
                     comments.Add(new CommentElement() { 
                         Name = x.AuthorInfo.Username, 
@@ -164,16 +218,13 @@ namespace BitbucketBrowser.UI
                 Root.Reload(_split1, UITableViewRowAnimation.None);
                 Root.Reload(_split2, UITableViewRowAnimation.None);
 
-                if (comments.Count == 0)
+                _comments.Clear();
+                _comments.Insert(0,  UITableViewRowAnimation.None, comments);
+
+                if (_scrollToLastComment && _comments.Elements.Count > 0)
                 {
-                    Root.Remove(_comments);
-                }
-                else
-                {
-                    if (!Root.Contains(_comments))
-                        Root.Add(_comments);
-                    _comments.Clear();
-                    _comments.Insert(0,  UITableViewRowAnimation.None, comments);
+                    TableView.ScrollToRow(NSIndexPath.FromRowSection(_comments.Elements.Count - 1, 2), UITableViewScrollPosition.Top, true);
+                    _scrollToLastComment = false;
                 }
             });
         }

@@ -154,6 +154,7 @@
     <Compile Include="Cells\RepositoryCellView.designer.cs">
       <DependentUpon>RepositoryCellView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Views\Composer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />

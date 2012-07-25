@@ -344,6 +344,44 @@ namespace BitbucketBrowser.UI
                 _loaded = true;
             }
         }
+
+        /*
+        private MBProgressHUD _hud = null;
+        private object _hudLock = new object();
+        protected void showLoading(string text = "Loading...")
+        {
+            lock(_hudLock)
+            {
+                if (_hud != null)
+                    hideLoading();
+
+                InvokeOnMainThread(delegate {
+                    var hud = new MBProgressHUD(this.View.Superview); 
+                    hud.Mode = MBProgressHUDMode.Indeterminate;
+                    hud.TitleText = "Loading...";
+                    this.View.Superview.AddSubview(hud);
+                    hud.Show(true);
+
+                    _hud = hud;
+                });
+            }
+        }
+
+        protected void hideLoading()
+        {
+            lock (_hudLock)
+            {
+                var hud = _hud;
+                if (hud == null)
+                    return;
+
+                InvokeOnMainThread(delegate {
+                    hud.Hide(true);
+                    hud.RemoveFromSuperview();
+                });
+            }
+        }
+        */
     }
 }
 
