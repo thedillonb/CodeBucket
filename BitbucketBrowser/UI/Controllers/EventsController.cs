@@ -96,6 +96,9 @@ namespace BitbucketBrowser.UI
                 sec.Add(newsEl);
             });
 
+            if (sec.Count == 0)
+                return;
+
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)
                 {

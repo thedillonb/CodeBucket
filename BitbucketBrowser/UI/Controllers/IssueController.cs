@@ -31,6 +31,11 @@ namespace BitbucketBrowser.UI
             EnableSearch = true;
             AutoHideSearch = true;
             Root.UnevenRows = true;
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
+                var b = new IssueEditController();
+                NavigationController.PushViewController(b, true);
+            });
         }
 
         protected override void OnRefresh ()
@@ -255,6 +260,34 @@ namespace BitbucketBrowser.UI
                 //Don't call the base since it will assign a background.
                 return;
             }
+        }
+    }
+
+    public class IssueEditController : Controller<object>
+    {
+        public IssueEditController()
+            : base(true, false)
+        {
+            Model = this;
+
+            var title = new EntryElement("Title", "Issue Title", string.Empty);
+            var content = new MultiLineEntryElement("Content", string.Empty) { Rows = 4 };
+
+            var root = new RootElement("New Issue");
+            root.Add(new Section() { title, content });
+
+            Root = root;
+        }
+
+
+
+        protected override void OnRefresh ()
+        {
+        }
+
+        protected override object OnUpdate ()
+        {
+            return this;
         }
     }
 }

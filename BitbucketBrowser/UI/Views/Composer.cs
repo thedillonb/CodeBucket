@@ -102,7 +102,7 @@ namespace BitbucketBrowser.UI
 			navItem = new UINavigationItem ("");
 			var close = new UIBarButtonItem ("Close", UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
 			navItem.LeftBarButtonItem = close;
-			sendItem = new UIBarButtonItem ("Send", UIBarButtonItemStyle.Plain, PostCallback);
+			sendItem = new UIBarButtonItem ("Create", UIBarButtonItemStyle.Plain, PostCallback);
 			navItem.RightBarButtonItem = sendItem;
 
 			navigationBar.PushNavigationItem (navItem, false);

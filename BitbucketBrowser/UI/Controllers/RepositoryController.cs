@@ -58,7 +58,15 @@ namespace BitbucketBrowser.UI
 
             _segment.ControlStyle = UISegmentedControlStyle.Bar;
             _segment.SelectedSegment = 0;
-            _segment.ValueChanged += (sender, e) => ChangeSegment();
+
+            //Fucking bug in the divider
+            BeginInvokeOnMainThread(delegate {
+                _segment.SelectedSegment = 1;
+                _segment.SelectedSegment = 0;
+                _segment.ValueChanged += (sender, e) => ChangeSegment();
+            });
+
+
             //NavigationItem.TitleView = _segment;
 
             Title = "Owned";

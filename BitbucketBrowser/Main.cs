@@ -50,7 +50,7 @@ namespace BitbucketBrowser
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 15, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
             UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 14, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal | UIControlState.Highlighted, UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
             UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Bottom, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
