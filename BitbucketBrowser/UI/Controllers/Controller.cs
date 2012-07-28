@@ -19,6 +19,7 @@ namespace BitbucketBrowser.UI
 
         protected bool isSearching = false;
 
+        private ErrorView _currentError;
 
 
         class CustomSearchDelegate : UISearchBarDelegate 
@@ -277,6 +278,12 @@ namespace BitbucketBrowser.UI
 
         public void Refresh(bool force = false)
         {
+            InvokeOnMainThread(delegate {
+                if (_currentError != null)
+                    _currentError.RemoveFromSuperview();
+                _currentError = null;
+            });
+
             if (Model != null && !force)
             {
                 try
@@ -285,7 +292,7 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
+                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
                 }
 
                 InvokeOnMainThread(delegate { 
@@ -317,7 +324,7 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
+                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
                 }
                 finally 
                 {

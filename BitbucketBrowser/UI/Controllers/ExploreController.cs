@@ -111,6 +111,8 @@ namespace BitbucketBrowser.UI
 
             ThreadPool.QueueUserWorkItem(delegate {
 
+                Utils.Util.PushNetworkActive();
+
                 try
                 {
                     var l = Application.Client.Repositories.Search(text);
@@ -142,8 +144,10 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => ErrorView.Show(this.View.Superview, e.Message));
+                    InvokeOnMainThread(() => Alert.Show("Error to Load", e.Message));
                 }
+
+                Utils.Util.PopNetworkActive();
 
                 if (hud != null)
                 {
