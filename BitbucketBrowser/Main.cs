@@ -206,9 +206,6 @@ namespace BitbucketBrowser
         {
             base.ViewDidLoad();
 
-                            
-            _titleView = new TitleView();
-
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
             
                 var n = new UINavigationController(new MyAccountsController());
@@ -216,16 +213,17 @@ namespace BitbucketBrowser
             
             });
 
-            NavigationItem.TitleView = _titleView;
-            _titleView.SizeToFit();
-
-            _titleView.Name = "thedillonb";
+            //_titleView = new TitleView();
+            //NavigationItem.TitleView = _titleView;
+            //_titleView.SizeToFit();
+            //_titleView.Name = "thedillonb";
 
             var username = Application.Account.Username;
+            Title = username;
 
             Root.Add(new Section() {
                 new NavElement("Profile", () => DoShit(new ProfileController(username, false) { Title = "Profile" }), Images.Person),
-                new NavElement("Events", () => DoShit(new EventsController(username, false) { Title = "Events", ReportUser = false, ReportRepository = true }), Images.Event),
+                new NavElement("Events", () => DoShit(new EventsController(username, false) { Title = "Events", ReportRepository = true }), Images.Event),
                 new NavElement("Repositories", () => DoShit(new AccountRepositoryController(username) { Title = "Repositories" }), Images.Repo),
                 new NavElement("Groups", () => DoShit(new GroupController(username, false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
@@ -256,12 +254,13 @@ namespace BitbucketBrowser
         {
             base.ViewWillAppear(animated);
             //Check to see if anything changed!
-            _titleView.Name = Application.Account.Username;
+            //_titleView.Name = Application.Account.Username;
+            Title = Application.Account.Username;
 
             //First time appear
             if (_previousUser == null)
             {
-                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events" }, false);
+                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
                 _previousUser = Application.Account.Username;
             }
         }
@@ -271,7 +270,7 @@ namespace BitbucketBrowser
         {
             base.ViewDidAppear(animated);
             if (!(_previousUser ?? "").Equals(Application.Account.Username))
-                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportUser = false }, false);
+                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
             _previousUser = Application.Account.Username;
         }
     }

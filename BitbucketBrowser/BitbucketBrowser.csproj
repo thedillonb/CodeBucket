@@ -282,7 +282,6 @@
     <Content Include="Images\heart_add.png" />
     <Content Include="Images\heart_delete.png" />
     <Content Include="Images\Controls\barbutton.png" />
-    <Content Include="Images\watermark.png" />
     <Content Include="Images\Tabs\cog%402x.png" />
     <Content Include="Images\Tabs\cog.png" />
     <Content Include="Images\Controls\bottombar.png" />

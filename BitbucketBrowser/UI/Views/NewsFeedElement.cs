@@ -13,11 +13,10 @@ namespace BitbucketBrowser.UI
 {
     public class NewsFeedElement : NameTimeStringElement
     {
-        public NewsFeedElement(EventModel eventModel)
+        public NewsFeedElement(EventModel eventModel, bool reportRepo = true)
         {
             Item = eventModel;
-            ReportUser = true;
-            ReportRepository = false;
+            ReportRepository = reportRepo;
             Lines = 4;
 
 
@@ -44,9 +43,7 @@ namespace BitbucketBrowser.UI
 
         public EventModel Item { get; set; }
 
-        public bool ReportUser { get; set; }
-
-        public bool ReportRepository { get; set; }
+        private bool ReportRepository { get; set; }
 
         private UIImage LittleImage { get; set; }
 
@@ -63,7 +60,7 @@ namespace BitbucketBrowser.UI
             {
                 img = Images.Plus;
                 if (ReportRepository)
-                    desc = "Commit to " + Item.Repository.Name + ": " + desc;
+                    desc = "Commit to " + repoName() + ":\n" + desc;
                 else
                     desc = "Commited: " + desc;
             }
@@ -71,7 +68,7 @@ namespace BitbucketBrowser.UI
             {
                 img = Images.Create;
                 if (ReportRepository)
-                    desc = "Created Repo: " + Item.Repository.Name;
+                    desc = "Created Repo: " + repoName();
                 else
                     desc = "Repository Created";
             }
@@ -93,15 +90,22 @@ namespace BitbucketBrowser.UI
             else if (Item.Event == EventModel.Type.StartFollowRepo)
             {
                 img = Images.HeartAdd;
-                desc = "Started following: " + Item.Repository.Name;
+                desc = "Started following: " + repoName();
             }
             else if (Item.Event == EventModel.Type.StopFollowRepo)
             {
                 img = Images.HeartDelete;
-                desc = "Stopped following: " + Item.Repository.Name;
+                desc = "Stopped following: " + repoName();
             }
             else
                 img = Images.Unknown;
+        }
+
+        private string repoName()
+        {
+            if (!Item.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
+                return Item.Repository.Owner + "/" + Item.Repository.Name;
+            return Item.Repository.Name;
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)

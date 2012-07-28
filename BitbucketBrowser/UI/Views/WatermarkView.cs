@@ -6,6 +6,7 @@ namespace BitbucketBrowser.UI
 {
     public class WatermarkView : UIView
     {
+        /*
         public WatermarkView(RectangleF frame, UIColor color, UIImage Watermark)
             : base(frame)
         {
@@ -25,27 +26,12 @@ namespace BitbucketBrowser.UI
             this.AutoresizingMask = UIViewAutoresizing.All;
             this.AutosizesSubviews = true;
         }
-
+        */
         public static void AssureWatermark(UIViewController controller)
         {
             if (controller.ParentViewController != null)
             {
-                bool hasSubview = false;
-                foreach (var s in controller.ParentViewController.View.Subviews)
-                {
-                    if (s is WatermarkView)
-                    {
-                        hasSubview = true;
-                        break;
-                    }
-                }
-
-
-                if (!hasSubview)
-                {
-                    controller.ParentViewController.View.InsertSubview(new WatermarkView(controller.View.Frame, UIColor.FromPatternImage(Images.Background), Images.Watermark), 0);
-                }
-
+                controller.ParentViewController.View.BackgroundColor = UIColor.FromPatternImage(Images.Background);
             }
         }
     }

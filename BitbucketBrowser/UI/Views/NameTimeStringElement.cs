@@ -48,6 +48,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
             {
                 var imageRect = new RectangleF(LeftRightPadding, TopBottomPadding, 32f, 32f);
                 UIColor.White.SetColor ();
+
                 context.SaveState ();
                 //context.TranslateCTM (imageRect.X, imageRect.Y);
                 context.SetLineWidth (1);
