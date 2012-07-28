@@ -62,7 +62,6 @@ namespace BitbucketBrowser
 
             _nav = new SlideoutNavigationController();
             _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-
             _nav.MenuView = new MenuController();
 
 
@@ -181,7 +180,7 @@ namespace BitbucketBrowser
                 l.Font = UIFont.BoldSystemFontOfSize(18f);
                 l.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
                 l.TextColor = UIColor.White;
-                l.Text = "Bitbucket Browser";
+                l.Text = "Bucket Browser";
                 l.TextAlignment = UITextAlignment.Left;
                 this.Add(l);
 

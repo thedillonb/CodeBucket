@@ -52,15 +52,14 @@ namespace BitbucketBrowser
         public static UIImage Unknown = UIImage.FromBundle("/Images/unknown");
 
         //Issues
-        public static UIImage Priority = UIImage.FromBundle("/Images/Issues/priority");
-        public static UIImage IssueType = UIImage.FromBundle("/Images/Issues/issuetype");
+        public static UIImage Priority = UIImage.FromBundle("/Images/priority");
 
         public static UIImage Anonymous = UIImage.FromBundle("/Images/Cells/anonymous");
 
 
         //Size agnostic
         public static UIImage Background = UIImage.FromFile("Images/Controls/background.png");
-        public static UIImage Linen = UIImage.FromBundle("Images/linen.png");
+        public static UIImage Linen = UIImage.FromFile("Images/linen.png");
     }
 }
 

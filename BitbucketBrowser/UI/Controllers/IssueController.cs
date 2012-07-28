@@ -32,10 +32,12 @@ namespace BitbucketBrowser.UI
             AutoHideSearch = true;
             Root.UnevenRows = true;
 
+            /*
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
                 var b = new IssueEditController();
                 NavigationController.PushViewController(b, true);
             });
+            */
         }
 
         protected override void OnRefresh ()
