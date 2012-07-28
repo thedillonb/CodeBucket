@@ -59,16 +59,40 @@ namespace BitbucketBrowser.UI
         {
             return Model;
         }
+
+        public override Source CreateSizingSource(bool unevenRows)
+        {
+            return new EditSource(this);
+        }
+
+        private class EditSource : DialogViewController.Source
+        {
+            public EditSource(DialogViewController dvc) : base (dvc) { }
+
+            public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            {
+                return true;
+            }
+
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            {
+                return UITableViewCellEditingStyle.Delete;
+            }
+
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+            {
+                switch (editingStyle)
+                {
+                    case UITableViewCellEditingStyle.Delete:
+                        Console.WriteLine("Deleting!");
+                        break;
+                }
+            }
+        }
+
+
+     
     }
 }
 
-
-namespace BitbucketBrowser 
-{
-    public class Account
-    {
-        public string Username;
-        public string Password;
-    }
-}
 

@@ -156,6 +156,10 @@
       <DependentUpon>RepositoryCellView.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Composer.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\Application.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\SQLite.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
@@ -183,6 +187,7 @@
     <Folder Include="DiffPlex\" />
     <Folder Include="UI\Settings\" />
     <Folder Include="Images\Official\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -297,7 +302,6 @@
     <Content Include="Images\Controls\backbutton%402x.png" />
     <Content Include="Images\Controls\divider.png" />
     <Content Include="Images\Controls\divider%402x.png" />
-    <Content Include="Images\Controls\logo.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
     <Content Include="Images\Official\app_icon.png" />
@@ -308,6 +312,7 @@
     <Content Include="Images\Official\spotlight_icon_retina.png" />
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
+    <Content Include="Images\Controls\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

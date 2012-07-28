@@ -41,7 +41,7 @@ namespace BitbucketBrowser
 		// You have 17 seconds to return from this method, or iOS will terminate your application.
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-		{
+        {
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackOpaque;
 
@@ -55,21 +55,25 @@ namespace BitbucketBrowser
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
             Application.LoadSettings();
-            Application.SetUser(Application.Accounts[0]);
-
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            _nav = new SlideoutNavigationController();
-            _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-            _nav.MenuView = new MenuController();
+            if (Application.Accounts.Count == 0)
+                window.RootViewController = new LoginViewController();
+            else
+            {
+                var defaultAccount = Application.DefaultAccount();
+
+                //Select another account! Something was wrong!
 
 
-                //new ChangesetInfoController("thedillonb", "bitbucketsharp", "e9d8cf73c610"); //;
-            ImageLoader.Purge();
 
+                _nav = new SlideoutNavigationController();
+                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
+                _nav.MenuView = new MenuController();
+                window.RootViewController = _nav;
+            }
 
-            window.RootViewController = _nav;
 			window.MakeKeyAndVisible();
 			
 			return true;
@@ -84,35 +88,8 @@ namespace BitbucketBrowser
 
 	}
 
-    /// <summary>
-    /// Application.
-    /// </summary>
-    public static class Application
-    {
-        public static BitbucketSharp.Client Client { get; private set; }
-        public static Account Account { get; private set; }
-        public static List<Account> Accounts { get; private set; }
-
-
-        public static void SetUser(Account account)
-        {
-            Account = account;
-            Client = new BitbucketSharp.Client(Account.Username, Account.Password);
-        }
-
-        public static void LoadSettings()
-        {
-            Accounts = new List<Account>();
-
-            Accounts.Add(new Account() { Username = "thedillonb", Password = "djames" });
-            Accounts.Add(new Account() { Username = "bobdole", Password = "djames" });
-        }
-    }
-
     public class MenuController : DialogViewController
     {
-        private TitleView _titleView;
-
         public MenuController()
             : base(UITableViewStyle.Plain, new RootElement("Bucket Browser"))
         {
