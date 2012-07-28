@@ -160,6 +160,7 @@
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Utils\UIImageExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
@@ -313,6 +314,9 @@
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
     <Content Include="Images\Controls\logo.png" />
+    <Content Include="Images\Controls\logo%402x.png" />
+    <Content Include="Images\Controls\logobehind.png" />
+    <Content Include="Images\Controls\logobehind%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

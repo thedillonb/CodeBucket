@@ -5,6 +5,8 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Text;
 using System.Net;
+using RedPlum;
+using System.Threading;
 
 namespace BitbucketBrowser
 {
@@ -24,10 +26,11 @@ namespace BitbucketBrowser
 		{
 			base.ViewDidLoad();
 
-            Logo.Image = Images.Logo;
 
+            View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
+
+            Logo.Image = Images.Logo;
             Title = "Add Account";
-            View.BackgroundColor = UIColor.Clear;
 			
 			User.ShouldReturn = delegate {
 				Password.BecomeFirstResponder();
@@ -35,19 +38,11 @@ namespace BitbucketBrowser
 			};
 			Password.ShouldReturn = delegate {
 				Password.ResignFirstResponder();
-				BeginLogin();
+
+                //Run this in another thread
+                ThreadPool.QueueUserWorkItem(delegate { BeginLogin(); });
 				return true;
 			};
-		}
-		
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(animated);
-		}
-		
-		public override void ViewDidDisappear(bool animated)
-		{
-			base.ViewDidDisappear(animated);
 		}
 		
 		public override void ViewDidUnload()
@@ -64,27 +59,49 @@ namespace BitbucketBrowser
 		
 		private void BeginLogin()
         {
-            var client = new BitbucketSharp.Client(User.Text, Password.Text);
+            MBProgressHUD hud;
+            bool successful = false;
+
+            //The nice hud
+            InvokeOnMainThread(delegate {
+                hud = new MBProgressHUD(this.View); 
+                hud.Mode = MBProgressHUDMode.Indeterminate;
+                hud.TitleText = "Logging In...";
+                this.View.AddSubview(hud);
+                hud.Show(true);
+            });
 
             try
             {
+                var client = new BitbucketSharp.Client(User.Text, Password.Text);
                 client.Account.SSHKeys.GetKeys();
+                successful = true;
             }
             catch (Exception)
             {
-                //This means its a bad username & password
-                var a = new UIAlertView();
-                a.Title = "Unable to Authenticate";
-                a.Message = "Unable to login as user " + User.Text + ". Please check your credentials and try again.";
-                a.DismissWithClickedButtonIndex(a.AddButton("Ok"), true);
-                a.Show();
-                return;
             }
 
-            //Logged in correctly!
-            //Go back to the other view and add the username
-            Application.Accounts.Add(new Account() { Username = User.Text, Password = Password.Text });
-            NavigationController.PopViewControllerAnimated(true);
+
+            InvokeOnMainThread(delegate {
+                //Dismiss the hud
+                hud.Hide(true);
+                hud.RemoveFromSuperview();
+
+                if (!successful)
+                {
+                    var a = new UIAlertView();
+                    a.Title = "Unable to Authenticate";
+                    a.Message = "Unable to login as user " + User.Text + ". Please check your credentials and try again.";
+                    a.DismissWithClickedButtonIndex(a.AddButton("Ok"), true);
+                    a.Show();
+                    return;
+                }
+
+                //Logged in correctly!
+                //Go back to the other view and add the username
+                Application.Accounts.Add(new Account() { Username = User.Text, Password = Password.Text });
+                NavigationController.PopViewControllerAnimated(true);
+            });
 		}
 		
 		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
