@@ -24,6 +24,7 @@
     <MtouchProfiling>true</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
     <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -181,6 +182,7 @@
     <Folder Include="Images\Controls\" />
     <Folder Include="DiffPlex\" />
     <Folder Include="UI\Settings\" />
+    <Folder Include="Images\Official\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -299,5 +301,16 @@
     <Content Include="Images\Controls\logo.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
+    <Content Include="Images\Official\app_icon.png" />
+    <Content Include="Images\Official\app_icon_ipad.png" />
+    <Content Include="Images\Official\app_icon_retina.png" />
+    <Content Include="Images\Official\spotlight_icon.png" />
+    <Content Include="Images\Official\spotlight_icon_ipad.png" />
+    <Content Include="Images\Official\spotlight_icon_retina.png" />
+    <Content Include="Default.png" />
+    <Content Include="Default%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
 </Project>
