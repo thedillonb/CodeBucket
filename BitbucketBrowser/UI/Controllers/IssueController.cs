@@ -196,7 +196,8 @@ namespace BitbucketBrowser.UI
             if (!string.IsNullOrEmpty(_desc.Caption))
             {
                 _desc.Caption = _desc.Caption.Trim();
-                _details.Insert(0, _desc);
+                if (_desc.Parent == null)
+                    _details.Insert(0, _desc);
                 descValid = true;
             }
 

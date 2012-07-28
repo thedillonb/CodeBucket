@@ -40,7 +40,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
 
             // Superview is the container, its superview the uitableviewcell
             bool highlighted = (view.Superview.Superview as UITableViewCell).Highlighted & IsTappedAssigned;
-            var timeColor = highlighted ? UIColor.White : UIColor.FromRGB(0.6f, 0.6f, 0.6f);
+            var timeColor = highlighted ? UIColor.White : UIColor.Gray;
             var textColor = highlighted ? UIColor.White : UIColor.FromRGB(41, 41, 41);
             var nameColor = highlighted ? UIColor.White : UIColor.FromRGB(0, 64, 128);
 
