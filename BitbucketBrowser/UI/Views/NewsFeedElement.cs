@@ -98,7 +98,7 @@ namespace BitbucketBrowser.UI
                 desc = "Stopped following: " + repoName();
             }
             else
-                img = Images.Unknown;
+                img = Images.Priority;
         }
 
         private string repoName()

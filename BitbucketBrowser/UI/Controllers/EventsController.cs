@@ -58,7 +58,7 @@ namespace BitbucketBrowser.UI
                   //orderby DateTime.Parse(s.UtcCreatedOn)
                   select s).ToList();
              if (newEvents.Count > 0)
-                 _lastUpdate = (from r in newEvents select DateTime.Parse(r.CreatedOn)).Max();
+                 _lastUpdate = (from r in newEvents select DateTime.Parse(r.UtcCreatedOn)).Max();
             return newEvents;
         }
 

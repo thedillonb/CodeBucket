@@ -178,11 +178,9 @@
     <Folder Include="UI\Views\" />
     <Folder Include="SourceBrowser\" />
     <Folder Include="SourceBrowser\styles\" />
-    <Folder Include="Images\Issues\" />
     <Folder Include="Markdown\" />
     <Folder Include="IssueBrowser\" />
     <Folder Include="Images\Cells\" />
-    <Folder Include="Images\Web\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="DiffPlex\" />
@@ -211,7 +209,6 @@
   <ItemGroup>
     <Content Include="Images\plus.png" />
     <Content Include="Images\heart.png" />
-    <Content Include="Images\unknown.png" />
     <Content Include="Images\pencil.png" />
     <Content Include="Images\flag.png" />
     <Content Include="Images\repo.png" />
@@ -219,8 +216,6 @@
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
-    <Content Include="Images\Tabs\logout.png" />
-    <Content Include="Images\Tabs\help.png" />
     <Content Include="Images\warning.png" />
     <Content Include="SourceBrowser\index.html" />
     <Content Include="Images\Tabs\group.png" />

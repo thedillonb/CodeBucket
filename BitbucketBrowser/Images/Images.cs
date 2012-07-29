@@ -51,8 +51,6 @@ namespace BitbucketBrowser
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
         public static UIImage LogoBehind { get { return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); } }
 
-        public static UIImage Unknown = UIImage.FromBundle("/Images/unknown");
-
         //Issues
         public static UIImage Priority = UIImage.FromBundle("/Images/priority");
 
