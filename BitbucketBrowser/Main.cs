@@ -59,10 +59,19 @@ namespace BitbucketBrowser
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             if (Application.Accounts.Count == 0)
+            {
                 window.RootViewController = new LoginViewController();
+            }
             else
             {
-                var defaultAccount = Application.DefaultAccount();
+                var defaultAccount = Application.Accounts.GetDefault();
+                if (defaultAccount == null)
+                {
+                    defaultAccount = Application.Accounts.First();
+                    Application.Accounts.SetDefault(defaultAccount);
+                }
+
+                Application.SetUser(defaultAccount);
 
                 //Select another account! Something was wrong!
 
@@ -75,6 +84,16 @@ namespace BitbucketBrowser
             }
 
 			window.MakeKeyAndVisible();
+
+            var killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default"));
+            window.AddSubview(killSplash);
+            window.BringSubviewToFront(killSplash);
+
+            UIView.Animate(0.8, () => { 
+                killSplash.Alpha = 0.0f; 
+            }, () => { 
+                killSplash.RemoveFromSuperview(); 
+            });
 			
 			return true;
 		}

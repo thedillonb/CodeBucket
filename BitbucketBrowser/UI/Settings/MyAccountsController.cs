@@ -12,7 +12,7 @@ namespace BitbucketBrowser.UI
             : base (false, false)
         {
             Title = "Accounts";
-            Model = Application.Accounts;
+            Model = new List<Account>(Application.Accounts);
             Style = UITableViewStyle.Plain;
         }
 
@@ -40,17 +40,19 @@ namespace BitbucketBrowser.UI
         protected override void OnRefresh ()
         {
             var s = new Section();
-            Application.Accounts.ForEach(x => {
-                var t = new StyledElement(x.Username);
-                t.Tapped += () => { 
 
-                    Application.SetUser(x);
+            foreach (var account in Application.Accounts)
+            {
+                var thisAccount = account;
+                var t = new StyledElement(thisAccount.Username);
+                t.Tapped += () => { 
+                    Application.SetUser(thisAccount);
                     this.DismissModalViewControllerAnimated(true);
 
                 };
 
                 s.Add(t);
-            });
+            };
 
             Root = new RootElement(Title) { s };
         }

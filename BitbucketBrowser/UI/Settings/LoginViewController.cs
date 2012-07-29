@@ -99,8 +99,10 @@ namespace BitbucketBrowser
 
                 //Logged in correctly!
                 //Go back to the other view and add the username
-                Application.Accounts.Add(new Account() { Username = User.Text, Password = Password.Text });
-                NavigationController.PopViewControllerAnimated(true);
+                Application.Accounts.Insert(new Account() { Username = User.Text, Password = Password.Text });
+
+                if (NavigationController != null)
+                    NavigationController.PopViewControllerAnimated(true);
             });
 		}
 		
