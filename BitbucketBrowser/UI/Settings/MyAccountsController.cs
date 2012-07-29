@@ -54,6 +54,7 @@ namespace BitbucketBrowser.UI
                 s.Add(t);
             };
 
+            TableView.TableFooterView.Hidden = false;
             Root = new RootElement(Title) { s };
         }
 
@@ -75,6 +76,11 @@ namespace BitbucketBrowser.UI
 
             var username = styledElement.Caption;
             Application.Accounts.Remove(username);
+
+            if (Application.Accounts.Count == 0)
+            {
+                TableView.TableFooterView.Hidden = true;
+            }
 
             if ((Application.Accounts.Count == 0) ||
                 (String.Compare(Application.Account.Username, username, true) == 0))

@@ -31,8 +31,6 @@ namespace BitbucketBrowser.UI
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            //TableView.SetContentOffset(new System.Drawing.PointF(0, -8), false);
-            //Root.Add();
         }
 
 
@@ -94,7 +92,7 @@ namespace BitbucketBrowser.UI
             Title = "Commit";
             Root.UnevenRows = true;
 
-            _header = new HeaderView(0f) { Title = "Commit: " + node };
+            _header = new HeaderView(0f) { Title = "Commit: " + node.Substring(0, node.Length > 10 ? 10 : node.Length) };
             Root.Add(new Section(_header));
         }
 
@@ -104,12 +102,6 @@ namespace BitbucketBrowser.UI
             _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
 
             var d = new MultilineElement(Model.Author) { Value = Model.Message };
-
-            /*
-             * , Model.Message, UITableViewCellStyle.Subtitle) { 
-                Font = UIFont.SystemFontOfSize(15f), SubtitleFont = UIFont.SystemFontOfSize(12f) 
-            };
-            */
 
             sec.Add(d);
 

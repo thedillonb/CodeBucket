@@ -84,8 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="IssueBrowser\index.html" />
-    <None Include="IssueBrowser\style.css" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -179,7 +177,6 @@
     <Folder Include="SourceBrowser\" />
     <Folder Include="SourceBrowser\styles\" />
     <Folder Include="Markdown\" />
-    <Folder Include="IssueBrowser\" />
     <Folder Include="Images\Cells\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
