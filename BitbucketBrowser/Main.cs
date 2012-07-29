@@ -43,7 +43,7 @@ namespace BitbucketBrowser
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
 
-            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackOpaque;
+            //UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackOpaque;
 
             //Set the theming
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar, UIBarMetrics.Default);
