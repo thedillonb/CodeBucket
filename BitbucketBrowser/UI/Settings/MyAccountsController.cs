@@ -51,6 +51,12 @@ namespace BitbucketBrowser.UI
 
                 };
 
+
+                if (string.Compare(account.Username, Application.Account.Username, true) == 0)
+                {
+                    t.Accessory = UITableViewCellAccessory.Checkmark;
+                }
+
                 s.Add(t);
             };
 
