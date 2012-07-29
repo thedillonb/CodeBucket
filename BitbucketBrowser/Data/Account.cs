@@ -2,6 +2,7 @@ using System;
 using SQLite;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 namespace BitbucketBrowser 
 {
@@ -42,7 +43,17 @@ namespace BitbucketBrowser
 
         public void Remove(Account a)
         {
-            Database.Main.Delete(a);
+            Database.Main.Delete<Account>(a);
+        }
+
+        public void Remove(string username)
+        {
+            var q = from f in Database.Main.Table<Account>()
+                    where f.Username == username
+                    select f;
+            var account = q.FirstOrDefault();
+            if (account != null)
+                Remove(account);
         }
 
         public void SetDefault(Account a)
@@ -52,9 +63,8 @@ namespace BitbucketBrowser
 
         public bool Exists(Account a)
         {
-            foreach (var c in Database.Main.Table<Account>().Where(b => b.Username.ToLower().Equals(a.Username.ToLower())))
-                return true;
-            return false;
+            var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", a.Username);
+            return query.Count > 0;
         }
 
     }

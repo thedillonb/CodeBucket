@@ -7,11 +7,15 @@ using System.Text;
 using System.Net;
 using RedPlum;
 using System.Threading;
+using BitbucketBrowser.UI;
 
 namespace BitbucketBrowser
 {
 	public partial class LoginViewController : UIViewController
 	{
+
+        public Action LoginComplete;
+
 		public LoginViewController() : base ("LoginViewController", null)
 		{
 		}
@@ -89,20 +93,27 @@ namespace BitbucketBrowser
 
                 if (!successful)
                 {
-                    var a = new UIAlertView();
-                    a.Title = "Unable to Authenticate";
-                    a.Message = "Unable to login as user " + User.Text + ". Please check your credentials and try again.";
-                    a.DismissWithClickedButtonIndex(a.AddButton("Ok"), true);
-                    a.Show();
+                    Alert.Show("Unable to Authenticate", "Unable to login as user " + User.Text + ". Please check your credentials and try again.");
+                    return;
+                }
+
+                var newAccount = new Account() { Username = User.Text, Password = Password.Text };
+
+                if (Application.Accounts.Exists(newAccount))
+                {
+                    Alert.Show("Unable to Add User", "That user already exists!");
                     return;
                 }
 
                 //Logged in correctly!
                 //Go back to the other view and add the username
-                Application.Accounts.Insert(new Account() { Username = User.Text, Password = Password.Text });
+                Application.Accounts.Insert(newAccount);
 
                 if (NavigationController != null)
                     NavigationController.PopViewControllerAnimated(true);
+
+                if (LoginComplete != null)
+                    LoginComplete();
             });
 		}
 		

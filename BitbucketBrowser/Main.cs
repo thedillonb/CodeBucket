@@ -60,27 +60,17 @@ namespace BitbucketBrowser
 
             if (Application.Accounts.Count == 0)
             {
-                window.RootViewController = new LoginViewController();
+                var login = new LoginViewController();
+                login.LoginComplete = () => {
+                    ShowMainWindow();
+                };
+
+                //Make it so!
+                window.RootViewController = login;
             }
             else
             {
-                var defaultAccount = Application.Accounts.GetDefault();
-                if (defaultAccount == null)
-                {
-                    defaultAccount = Application.Accounts.First();
-                    Application.Accounts.SetDefault(defaultAccount);
-                }
-
-                Application.SetUser(defaultAccount);
-
-                //Select another account! Something was wrong!
-
-
-
-                _nav = new SlideoutNavigationController();
-                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-                _nav.MenuView = new MenuController();
-                window.RootViewController = _nav;
+                ShowMainWindow();
             }
 
 			window.MakeKeyAndVisible();
@@ -97,6 +87,23 @@ namespace BitbucketBrowser
 			
 			return true;
 		}
+
+        private void ShowMainWindow()
+        {
+            var defaultAccount = Application.Accounts.GetDefault();
+            if (defaultAccount == null)
+            {
+                defaultAccount = Application.Accounts.First();
+                Application.Accounts.SetDefault(defaultAccount);
+            }
+
+            Application.SetUser(defaultAccount);
+
+            _nav = new SlideoutNavigationController();
+            _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
+            _nav.MenuView = new MenuController();
+            window.RootViewController = _nav;
+        }
 
         public override void ReceiveMemoryWarning(UIApplication application)
         {

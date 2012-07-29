@@ -67,9 +67,32 @@ namespace BitbucketBrowser.UI
             return new EditSource(this);
         }
 
+        private void Delete(Element element)
+        {
+            var styledElement = element as StyledElement;
+            if (styledElement == null)
+                return;
+
+            var username = styledElement.Caption;
+            Application.Accounts.Remove(username);
+
+            if ((Application.Accounts.Count == 0) ||
+                (String.Compare(Application.Account.Username, username, true) == 0))
+            {
+                //Block the ability to go back!
+                NavigationItem.LeftBarButtonItem.Enabled = false;
+                return;
+            }
+        }
+
         private class EditSource : DialogViewController.Source
         {
-            public EditSource(DialogViewController dvc) : base (dvc) { }
+            private MyAccountsController _parent;
+            public EditSource(MyAccountsController dvc) 
+                : base (dvc)
+            {
+                _parent = dvc;
+            }
 
             public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
             {
@@ -86,7 +109,10 @@ namespace BitbucketBrowser.UI
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        Console.WriteLine("Deleting!");
+                        var section = _parent.Root[indexPath.Section];
+                        var element = section[indexPath.Row];
+                        _parent.Delete(element);
+                        section.Remove(element);
                         break;
                 }
             }
