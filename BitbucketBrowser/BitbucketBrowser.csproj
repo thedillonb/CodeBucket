@@ -84,6 +84,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
+    <None Include="Images\Official\app_icon.png" />
+    <None Include="Images\Official\app_icon_ipad.png" />
+    <None Include="Images\Official\app_icon_retina.png" />
+    <None Include="Images\Official\spotlight_icon.png" />
+    <None Include="Images\Official\spotlight_icon_ipad.png" />
+    <None Include="Images\Official\spotlight_icon_retina.png" />
+    <None Include="Images\Official\app_icon_ipad_retnia.png" />
+    <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -114,10 +122,6 @@
     <Compile Include="Markdown\CreoleParser.cs" />
     <Compile Include="UI\Views\FirstElement.cs" />
     <Compile Include="Utils\Util.cs" />
-    <Compile Include="Cells\RepositoryInfoCellView.cs" />
-    <Compile Include="Cells\RepositoryInfoCellView.designer.cs">
-      <DependentUpon>RepositoryInfoCellView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Images\Images.cs" />
     <Compile Include="UI\Views\RepositoryElement.cs" />
     <Compile Include="UI\Views\SplitElement.cs" />
@@ -161,7 +165,6 @@
     <Compile Include="Utils\UIImageExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Cells\RepositoryInfoCellView.xib" />
     <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
@@ -297,18 +300,16 @@
     <Content Include="Images\Controls\divider%402x.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
-    <Content Include="Images\Official\app_icon.png" />
-    <Content Include="Images\Official\app_icon_ipad.png" />
-    <Content Include="Images\Official\app_icon_retina.png" />
-    <Content Include="Images\Official\spotlight_icon.png" />
-    <Content Include="Images\Official\spotlight_icon_ipad.png" />
-    <Content Include="Images\Official\spotlight_icon_retina.png" />
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
     <Content Include="Images\Controls\logo.png" />
     <Content Include="Images\Controls\logo%402x.png" />
     <Content Include="Images\Controls\logobehind.png" />
     <Content Include="Images\Controls\logobehind%402x.png" />
+    <Content Include="Default-Portrait%402x.png" />
+    <Content Include="Default-Portrait.png" />
+    <Content Include="Images\Controls\logobehind-portrait.png" />
+    <Content Include="Images\Controls\logobehind-portrait%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

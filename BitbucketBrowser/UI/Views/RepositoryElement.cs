@@ -48,8 +48,6 @@ namespace BitbucketBrowser.UI
 
             }
 
-            cell.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description, ShowOwner ? Model.Owner : null);
-
             return cell;
         }
 
@@ -69,7 +67,9 @@ namespace BitbucketBrowser.UI
 
         void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            //cell.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            var c = cell as RepositoryCellView;
+            if (c != null)
+                c.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description, ShowOwner ? Model.Owner : null);
         }
     }
 }

@@ -53,6 +53,7 @@ namespace BitbucketBrowser
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
             UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Bottom, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) });
 
             Application.LoadSettings();
 
@@ -75,7 +76,19 @@ namespace BitbucketBrowser
 
 			window.MakeKeyAndVisible();
 
-            var killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default"));
+            UIImageView killSplash;
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+            {
+                killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default-Portrait"));
+                var frame = killSplash.Frame;
+                frame.Y += 20f;
+                killSplash.Frame = frame;
+            }
+            else
+            {
+                killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default"));
+            }
+
             window.AddSubview(killSplash);
             window.BringSubviewToFront(killSplash);
 

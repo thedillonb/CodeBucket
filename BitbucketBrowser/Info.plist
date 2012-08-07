@@ -12,6 +12,8 @@
 		<string>Images/Official/spotlight_icon.png</string>
 		<string>Images/Official/spotlight_icon_retina.png</string>
 		<string>Images/Official/spotlight_icon_ipad.png</string>
+		<string>Images/Official/app_icon_ipad_retnia.png</string>
+		<string>Images/Official/spotlight_icon_ipad_retina.png</string>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.0.0.0</string>
@@ -20,6 +22,7 @@
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
+		<integer>2</integer>
 	</array>
 	<key>UIPrerenderedIcon</key>
 	<true/>

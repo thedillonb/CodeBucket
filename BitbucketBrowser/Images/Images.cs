@@ -49,7 +49,15 @@ namespace BitbucketBrowser
 
 
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
-        public static UIImage LogoBehind { get { return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); } }
+        public static UIImage LogoBehind 
+        { 
+            get 
+            { 
+                if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                    return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); 
+                return UIImageHelper.FromFileAuto("Images/Controls/logobehind-portrait");
+            } 
+        }
 
         //Issues
         public static UIImage Priority = UIImage.FromBundle("/Images/priority");
