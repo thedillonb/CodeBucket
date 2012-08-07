@@ -22,6 +22,7 @@ namespace BitbucketBrowser
         public static void SetUser(Account account)
         {
             Account = account;
+            Accounts.SetDefault(Account);
             Client = new BitbucketSharp.Client(Account.Username, Account.Password) { Timeout = 1000 * 30 };
         }
 

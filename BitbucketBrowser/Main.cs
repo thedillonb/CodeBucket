@@ -42,9 +42,6 @@ namespace BitbucketBrowser
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-
-            //UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.BlackOpaque;
-
             //Set the theming
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 15, 6)), UIControlState.Normal, UIBarMetrics.Default);
@@ -53,7 +50,10 @@ namespace BitbucketBrowser
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
             UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Bottom, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
-            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) });
+
+            var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
+            UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
+            UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
 
             Application.LoadSettings();
 
@@ -229,19 +229,11 @@ namespace BitbucketBrowser
             
             });
 
-            //_titleView = new TitleView();
-            //NavigationItem.TitleView = _titleView;
-            //_titleView.SizeToFit();
-            //_titleView.Name = "thedillonb";
-
-            var username = Application.Account.Username;
-            Title = username;
-
             Root.Add(new Section() {
-                new NavElement("Profile", () => DoShit(new ProfileController(username, false) { Title = "Profile" }), Images.Person),
-                new NavElement("Events", () => DoShit(new EventsController(username, false) { Title = "Events", ReportRepository = true }), Images.Event),
-                new NavElement("Repositories", () => DoShit(new AccountRepositoryController(username) { Title = "Repositories" }), Images.Repo),
-                new NavElement("Groups", () => DoShit(new GroupController(username, false) { Title = "Groups" }), Images.Group),
+                new NavElement("Profile", () => DoShit(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person),
+                new NavElement("Events", () => DoShit(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }), Images.Event),
+                new NavElement("Repositories", () => DoShit(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo),
+                new NavElement("Groups", () => DoShit(new GroupController(Application.Account.Username, false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
             });
 

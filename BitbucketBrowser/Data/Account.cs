@@ -59,6 +59,7 @@ namespace BitbucketBrowser
         public void SetDefault(Account a)
         {
             Utils.Util.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
+            Utils.Util.Defaults.Synchronize();
         }
 
         public bool Exists(Account a)

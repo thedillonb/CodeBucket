@@ -61,7 +61,7 @@ namespace BitbucketBrowser
             RepoName.Text = repoOwner != null ? repoOwner + "/" : string.Empty;
             RepoName.SizeToFit();
 
-            Caption.Frame = new RectangleF(RepoName.Frame.Right, Caption.Frame.Y, 252 - RepoName.Frame.Right, Caption.Frame.Height);
+            Caption.Frame = new RectangleF(RepoName.Frame.Right, Caption.Frame.Y, this.Description.Frame.Width - RepoName.Frame.Right + RepoName.Frame.Left, Caption.Frame.Height);
 
 
             if (string.IsNullOrEmpty(Description.Text))

@@ -194,7 +194,7 @@ namespace RedPlum
 			
 			this.TitleText = null;
 			this.DetailText = null;
-			this.Opacity = 0.9f;
+			this.Opacity = 0.7f;
 			this.TitleFont = UIFont.BoldSystemFontOfSize (LABELFONTSIZE);
 			this.DetailFont = UIFont.BoldSystemFontOfSize (LABELDETAILSFONTSIZE);
 			this.XOffset = 0.0f;

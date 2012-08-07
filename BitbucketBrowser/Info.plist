@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Bucket</string>
+	<string>BucketBrowser</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Images/Official/app_icon.png</string>
