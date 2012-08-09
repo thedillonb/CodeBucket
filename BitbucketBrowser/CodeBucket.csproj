@@ -327,6 +327,8 @@
     <Content Include="Images\Controls\logobehind-portrait%402x.png" />
     <Content Include="Images\Controls\backbutton-landscape.png" />
     <Content Include="Images\Controls\backbutton-landscape%402x.png" />
+    <Content Include="Default-Landscape.png" />
+    <Content Include="Default-Landscape%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

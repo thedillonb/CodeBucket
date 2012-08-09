@@ -82,27 +82,21 @@ namespace BitbucketBrowser
 
 			window.MakeKeyAndVisible();
 
-            UIImageView killSplash;
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
-                killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default-Portrait"));
-                var frame = killSplash.Frame;
-                frame.Y += 20f;
-                killSplash.Frame = frame;
-            }
-            else
-            {
-                killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default"));
+                var killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default"));
+                window.AddSubview(killSplash);
+                window.BringSubviewToFront(killSplash);
+
+                UIView.Animate(0.8, () => { 
+                    killSplash.Alpha = 0.0f; 
+                }, () => { 
+                    killSplash.RemoveFromSuperview(); 
+                });
             }
 
-            window.AddSubview(killSplash);
-            window.BringSubviewToFront(killSplash);
 
-            UIView.Animate(0.8, () => { 
-                killSplash.Alpha = 0.0f; 
-            }, () => { 
-                killSplash.RemoveFromSuperview(); 
-            });
 			
 			return true;
 		}
