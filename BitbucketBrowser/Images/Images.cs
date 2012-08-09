@@ -40,10 +40,12 @@ namespace BitbucketBrowser
 
         //Controls
         public static UIImage BackButton = UIImage.FromBundle("/Images/Controls/backbutton");
+        public static UIImage BackButtonLandscape = UIImage.FromBundle("/Images/Controls/backbutton-landscape");
+
         public static UIImage BarButton = UIImage.FromBundle("/Images/Controls/barbutton");
         public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
         public static UIImage TitlebarDark = UIImage.FromBundle("/Images/Controls/titlebar_dark");
-        public static UIImage Bottombar = UIImage.FromBundle("/Images/Controls/bottombar");
+        public static UIImage Bottombar = UIImage.FromFile("Images/Controls/bottombar.png");
         public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
         public static UIImage Divider = UIImage.FromBundle("/Images/Controls/divider");
 

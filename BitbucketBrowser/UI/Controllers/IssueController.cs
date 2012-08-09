@@ -140,6 +140,10 @@ namespace BitbucketBrowser.UI
             var composer = new Composer();
             composer.NewComment(this, () => {
 
+                var text = composer.Text;
+                composer.CloseComposer();
+
+
                 MBProgressHUD hud = null;
                 hud = new MBProgressHUD(this.View.Superview); 
                 hud.Mode = MBProgressHUDMode.Indeterminate;
@@ -147,7 +151,7 @@ namespace BitbucketBrowser.UI
                 this.View.Superview.AddSubview(hud);
                 hud.Show(true);
 
-                var text = composer.Text;
+
 
                 ThreadPool.QueueUserWorkItem(delegate {
 
@@ -165,8 +169,6 @@ namespace BitbucketBrowser.UI
 
                         hud.Hide(true);
                         hud.RemoveFromSuperview();
-
-                        composer.CloseComposer();
 
                         _scrollToLastComment = true;
 

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>BucketBrowser</string>
+	<string>CodeBucket</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Images/Official/app_icon.png</string>
@@ -15,6 +15,8 @@
 		<string>Images/Official/app_icon_ipad_retnia.png</string>
 		<string>Images/Official/spotlight_icon_ipad_retina.png</string>
 	</array>
+	<key>CFBundleIdentifier</key>
+	<string>codebucket</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0.0</string>
 	<key>MinimumOSVersion</key>
@@ -29,6 +31,16 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>

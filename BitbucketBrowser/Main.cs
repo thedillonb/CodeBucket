@@ -43,17 +43,23 @@ namespace BitbucketBrowser
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             //Set the theming
-            UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar, UIBarMetrics.Default);
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 15, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(12, 6, 11, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(15, 6, 14, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(12, 6, 11, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
-            UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar, UIToolbarPosition.Bottom, UIBarMetrics.Default);
+            UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
             var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
             UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
             UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
+
+            //Resize the back button only on the iPhone
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 12, 0, 5)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+            }
 
             Application.LoadSettings();
 

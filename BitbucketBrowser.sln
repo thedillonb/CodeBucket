@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitbucketBrowser", "BitbucketBrowser\BitbucketBrowser.csproj", "{88AEDD05-831D-474F-B598-CF08C0836C24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBucket", "BitbucketBrowser\CodeBucket.csproj", "{88AEDD05-831D-474F-B598-CF08C0836C24}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitbucketSharp.MonoTouch", "..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj", "{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}"
 EndProject
@@ -48,8 +48,8 @@ Global
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
-		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhone.Build.0 = Release|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -84,8 +84,8 @@ Global
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
-		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhone.Build.0 = Release|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -102,8 +102,8 @@ Global
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Ad-Hoc|iPhone.Build.0 = Debug|iPhone
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AdHoc|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhone.ActiveCfg = Debug|iPhone
-		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhone.Build.0 = Debug|iPhone
+		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhone.ActiveCfg = Release|iPhone
+		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhone.Build.0 = Release|iPhone
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.AppStore|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Debug|iPhone.ActiveCfg = Debug|iPhone
@@ -116,7 +116,7 @@ Global
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = BitbucketBrowser\BitbucketBrowser.csproj
+		StartupItem = BitbucketBrowser\CodeBucket.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 180

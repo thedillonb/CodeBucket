@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{88AEDD05-831D-474F-B598-CF08C0836C24}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>BitbucketBrowser</RootNamespace>
+    <AssemblyName>BitbucketBrowser</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchLink>None</MtouchLink>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchI18n />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchProfiling>true</MtouchProfiling>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer: Dillon Buchanan (BD3M6C4CAK)</CodesignKey>
+    <MtouchArch>ARMv7</MtouchArch>
+    <IpaPackageName />
+    <MtouchI18n />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <BuildIpa>true</BuildIpa>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <MtouchArch>ARMv7</MtouchArch>
+    <IpaPackageName />
+    <CrashReportingApiKey />
+    <MtouchI18n />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Distribution</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Distribution: Dillon Buchanan</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="monotouch" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Images\Official\app_icon.png" />
+    <None Include="Images\Official\app_icon_ipad.png" />
+    <None Include="Images\Official\app_icon_retina.png" />
+    <None Include="Images\Official\spotlight_icon.png" />
+    <None Include="Images\Official\spotlight_icon_ipad.png" />
+    <None Include="Images\Official\spotlight_icon_retina.png" />
+    <None Include="Images\Official\app_icon_ipad_retnia.png" />
+    <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="Utils\StringExtensions.cs" />
+    <Compile Include="UI\Controllers\Controller.cs" />
+    <Compile Include="UI\Controllers\FollowersController.cs" />
+    <Compile Include="UI\Controllers\GroupController.cs" />
+    <Compile Include="UI\Controllers\ProfileController.cs" />
+    <Compile Include="UI\Controllers\RepositoryController.cs" />
+    <Compile Include="UI\Controllers\RepositoryInfoController.cs" />
+    <Compile Include="UI\Views\HeaderView.cs" />
+    <Compile Include="UI\Views\NewsFeedElement.cs" />
+    <Compile Include="UI\Controllers\EventsController.cs" />
+    <Compile Include="Utils\MbProgressHud.cs" />
+    <Compile Include="UI\Controllers\ExploreController.cs" />
+    <Compile Include="UI\Controllers\BranchController.cs" />
+    <Compile Include="UI\Controllers\ChangesetController.cs" />
+    <Compile Include="UI\Views\CustomElement.cs" />
+    <Compile Include="UI\Controllers\SourceController.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
+    <Compile Include="UI\Views\ErrorView.cs" />
+    <Compile Include="UI\Controllers\IssueController.cs" />
+    <Compile Include="Utils\MySearchDelegate.cs" />
+    <Compile Include="UI\Views\StyledElement.cs" />
+    <Compile Include="UI\Views\CustomSection.cs" />
+    <Compile Include="UI\Controllers\TagController.cs" />
+    <Compile Include="UI\Controllers\WikiController.cs" />
+    <Compile Include="Markdown\CreoleParser.cs" />
+    <Compile Include="UI\Views\FirstElement.cs" />
+    <Compile Include="Utils\Util.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="UI\Views\RepositoryElement.cs" />
+    <Compile Include="UI\Views\SplitElement.cs" />
+    <Compile Include="UI\Views\WatermarkView.cs" />
+    <Compile Include="DiffPlex\Model\DiffBlock.cs" />
+    <Compile Include="DiffPlex\Model\DiffResult.cs" />
+    <Compile Include="DiffPlex\Model\EditLengthResult.cs" />
+    <Compile Include="DiffPlex\Model\ModificationData.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\IInlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\InlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPaneModel.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPiece.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs" />
+    <Compile Include="DiffPlex\AssemblyInfo.cs" />
+    <Compile Include="DiffPlex\Differ.cs" />
+    <Compile Include="DiffPlex\IDiffer.cs" />
+    <Compile Include="DiffPlex\Log.cs" />
+    <Compile Include="UI\Settings\MyAccountsController.cs" />
+    <Compile Include="UI\Settings\LoginViewController.designer.cs">
+      <DependentUpon>LoginViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\LoginViewController.cs" />
+    <Compile Include="UI\Views\NameTimeStringElement.cs" />
+    <Compile Include="UI\Views\UserElement.cs" />
+    <Compile Include="UI\Views\CellBackground.cs" />
+    <Compile Include="Cells\IssueCellView.cs" />
+    <Compile Include="Cells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\RepositoryCellView.cs" />
+    <Compile Include="Cells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Composer.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\Application.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Utils\UIImageExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
+    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
+    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Images\" />
+    <Folder Include="UI\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Images\Tabs\" />
+    <Folder Include="UI\Controllers\" />
+    <Folder Include="UI\Views\" />
+    <Folder Include="SourceBrowser\" />
+    <Folder Include="SourceBrowser\styles\" />
+    <Folder Include="Markdown\" />
+    <Folder Include="Images\Cells\" />
+    <Folder Include="Cells\" />
+    <Folder Include="Images\Controls\" />
+    <Folder Include="DiffPlex\" />
+    <Folder Include="UI\Settings\" />
+    <Folder Include="Images\Official\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
+      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
+      <Name>BitbucketSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
+      <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
+      <Name>RestSharp.MonoTouch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\plus.png" />
+    <Content Include="Images\heart.png" />
+    <Content Include="Images\pencil.png" />
+    <Content Include="Images\flag.png" />
+    <Content Include="Images\repo.png" />
+    <Content Include="Images\branch.png" />
+    <Content Include="Images\tag.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\file.png" />
+    <Content Include="Images\warning.png" />
+    <Content Include="SourceBrowser\index.html" />
+    <Content Include="Images\Tabs\group.png" />
+    <Content Include="Images\Tabs\group%402x.png" />
+    <Content Include="Images\repo%402x.png" />
+    <Content Include="Images\Tabs\search%402x.png" />
+    <Content Include="Images\Tabs\search.png" />
+    <Content Include="Images\Tabs\events%402x.png" />
+    <Content Include="Images\Tabs\events.png" />
+    <Content Include="SourceBrowser\lang-apollo.js" />
+    <Content Include="SourceBrowser\lang-clj.js" />
+    <Content Include="SourceBrowser\lang-css.js" />
+    <Content Include="SourceBrowser\lang-go.js" />
+    <Content Include="SourceBrowser\lang-hs.js" />
+    <Content Include="SourceBrowser\lang-lisp.js" />
+    <Content Include="SourceBrowser\lang-lua.js" />
+    <Content Include="SourceBrowser\lang-ml.js" />
+    <Content Include="SourceBrowser\lang-n.js" />
+    <Content Include="SourceBrowser\lang-proto.js" />
+    <Content Include="SourceBrowser\lang-scala.js" />
+    <Content Include="SourceBrowser\lang-sql.js" />
+    <Content Include="SourceBrowser\lang-tex.js" />
+    <Content Include="SourceBrowser\lang-vb.js" />
+    <Content Include="SourceBrowser\lang-vhdl.js" />
+    <Content Include="SourceBrowser\lang-wiki.js" />
+    <Content Include="SourceBrowser\lang-xq.js" />
+    <Content Include="SourceBrowser\lang-yaml.js" />
+    <Content Include="SourceBrowser\prettify.js" />
+    <Content Include="SourceBrowser\prettify.css" />
+    <Content Include="Images\Cells\gradient.png" />
+    <Content Include="Images\fork.png" />
+    <Content Include="Images\fork%402x.png" />
+    <Content Include="Images\scm_type.png" />
+    <Content Include="Images\scm_type%402x.png" />
+    <Content Include="Images\language%402x.png" />
+    <Content Include="Images\language.png" />
+    <Content Include="Images\webpage.png" />
+    <Content Include="Images\webpage%402x.png" />
+    <Content Include="Images\size%402x.png" />
+    <Content Include="Images\size.png" />
+    <Content Include="Images\locked.png" />
+    <Content Include="Images\locked%402x.png" />
+    <Content Include="Images\unlocked.png" />
+    <Content Include="Images\unlocked%402x.png" />
+    <Content Include="Images\Dropbar.png" />
+    <Content Include="Images\TableCell.png" />
+    <Content Include="Images\pencil%402x.png" />
+    <Content Include="Images\heart%402x.png" />
+    <Content Include="Images\plus%402x.png" />
+    <Content Include="Images\tag%402x.png" />
+    <Content Include="Images\folder%402x.png" />
+    <Content Include="Images\flag%402x.png" />
+    <Content Include="Images\file%402x.png" />
+    <Content Include="Images\branch%402x.png" />
+    <Content Include="Images\changes.png" />
+    <Content Include="Images\changes%402x.png" />
+    <Content Include="Images\Controls\titlebar.png" />
+    <Content Include="Images\Controls\background.png" />
+    <Content Include="Images\Controls\searchbar.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\create.png" />
+    <Content Include="Images\heart_add%402x.png" />
+    <Content Include="Images\heart_delete%402x.png" />
+    <Content Include="Images\heart_add.png" />
+    <Content Include="Images\heart_delete.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\Tabs\cog%402x.png" />
+    <Content Include="Images\Tabs\cog.png" />
+    <Content Include="Images\Controls\bottombar.png" />
+    <Content Include="Images\Controls\titlebar_dark.png" />
+    <Content Include="Images\Tabs\person%402x.png" />
+    <Content Include="Images\Tabs\person.png" />
+    <Content Include="Images\change_user%402x.png" />
+    <Content Include="Images\change_user.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\linen.png" />
+    <Content Include="Images\Cells\anonymous.png" />
+    <Content Include="Images\Cells\anonymous%402x.png" />
+    <Content Include="Images\Controls\backbutton%402x.png" />
+    <Content Include="Images\Controls\divider.png" />
+    <Content Include="Images\Controls\divider%402x.png" />
+    <Content Include="Images\priority%402x.png" />
+    <Content Include="Images\priority.png" />
+    <Content Include="Default.png" />
+    <Content Include="Default%402x.png" />
+    <Content Include="Images\Controls\logo.png" />
+    <Content Include="Images\Controls\logo%402x.png" />
+    <Content Include="Images\Controls\logobehind.png" />
+    <Content Include="Images\Controls\logobehind%402x.png" />
+    <Content Include="Default-Portrait%402x.png" />
+    <Content Include="Default-Portrait.png" />
+    <Content Include="Images\Controls\logobehind-portrait.png" />
+    <Content Include="Images\Controls\logobehind-portrait%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape.png" />
+    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork" />
+  </ItemGroup>
+</Project>
