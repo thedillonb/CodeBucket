@@ -215,5 +215,17 @@ namespace MonoTouch
         }   
         #endregion
     }
+
+    public class Alert 
+    {
+        public static void Show(string title, string message)
+        {
+            var alert = new UIAlertView();
+            alert.Title = title;
+            alert.Message = message;
+            alert.DismissWithClickedButtonIndex(alert.AddButton("Ok"), true);
+            alert.Show();
+        }
+    }
 }
 

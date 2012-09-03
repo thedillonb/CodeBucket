@@ -105,12 +105,12 @@ namespace BitbucketBrowser.UI
                 Title = "Viewed";
         }
 
-        public override void SearchStart()
+        protected override void SearchStart()
         {
             NavigationController.SetToolbarHidden(true, false);
         }
 
-        public override void SearchEnd()
+        protected override void SearchEnd()
         {
             NavigationController.SetToolbarHidden(false, false);
         }

@@ -15,14 +15,198 @@ namespace CodeFramework.UI.Controllers
     public abstract class Controller<T> : DialogViewController
     {
         public T Model { get; set; }
-
-        private bool _loaded = false;
-
-        public bool Loaded { get { return _loaded; } }
-
+        public bool Loaded { get; private set; }
         protected bool isSearching = false;
-
         private ErrorView _currentError;
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            if (NavigationController != null && isSearching)
+                NavigationController.SetNavigationBarHidden(true, true);
+            if (isSearching)
+            {
+                TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
+            }
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            if (NavigationController != null && NavigationController.NavigationBarHidden)
+                NavigationController.SetNavigationBarHidden(false, true);
+
+            if (isSearching)
+            {
+                View.EndEditing(true);
+                var searchBar = TableView.TableHeaderView as UISearchBar;
+                if (searchBar != null)
+                {
+                    //Enable the cancel button again....
+                    foreach (var s in searchBar.Subviews)
+                    {
+                        var x = s as UIButton;
+                        if (x != null)
+                            x.Enabled = true;
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CodeFramework.UI.Controllers.Controller`1"/> class.
+        /// </summary>
+        /// <param name='push'>True if navigation controller should push, false if otherwise</param>
+        /// <param name='refresh'>True if the data can be refreshed, false if otherwise</param>
+        public Controller(bool push = false, bool refresh = false)
+            : base(new RootElement(""), push)
+        {
+            if (refresh)
+                RefreshRequested += (sender, e) => Refresh(true);
+
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);;
+            SearchPlaceholder = "Search";
+            Autorotate = true;
+        }
+
+        //Called when the UI needs to be updated with the model data            
+        protected abstract void OnRefresh();
+
+        //Called when the controller needs to request the model from the server
+        protected abstract T OnUpdate();
+
+
+
+        /// <summary>
+        /// Makes the refresh table header view.
+        /// </summary>
+        /// <returns>
+        /// The refresh table header view.
+        /// </returns>
+        /// <param name='rect'>
+        /// Rect.
+        /// </param>
+        public override RefreshTableHeaderView MakeRefreshTableHeaderView(RectangleF rect)
+        {
+            //Replace it with our own
+            return new RefreshView(rect);
+        }
+
+        public override void ViewDidLoad()
+        {
+            var search = this.TableView.TableHeaderView as UISearchBar;
+            if (search != null)
+                search.Delegate = new CustomSearchDelegate(this);
+
+            Root.Caption = this.Title;
+            TableView.BackgroundColor = UIColor.Clear;
+            if (Style != UITableViewStyle.Grouped)
+            {
+                TableView.TableFooterView = new DropbarView(View.Bounds.Width);
+                TableView.TableFooterView.Hidden = true;
+            }
+
+            WatermarkView.AssureWatermark(this);
+            base.ViewDidLoad();
+        }
+
+
+        public void Refresh(bool force = false)
+        {
+            InvokeOnMainThread(delegate {
+                if (_currentError != null)
+                    _currentError.RemoveFromSuperview();
+                _currentError = null;
+            });
+
+            if (Model != null && !force)
+            {
+                try
+                {
+                    OnRefresh();
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
+                }
+
+                InvokeOnMainThread(delegate { 
+                    if (TableView.TableFooterView != null)
+                        TableView.TableFooterView.Hidden = this.Root.Count == 0;
+
+                    ReloadComplete(); 
+                });
+                Loaded = true;
+                return;
+            }
+
+            MBProgressHUD hud = null;
+            if (!force) {
+                hud = new MBProgressHUD(this.View.Superview); 
+                hud.Mode = MBProgressHUDMode.Indeterminate;
+                hud.TitleText = "Loading...";
+                this.View.Superview.AddSubview(hud);
+                hud.Show(true);
+            }
+
+            ThreadPool.QueueUserWorkItem(delegate {
+                try
+                {
+                    Utilities.PushNetworkActive();
+                    Model = OnUpdate();
+                    if (Model != null)
+                        Refresh();
+                }
+                catch (Exception e)
+                {
+                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
+                }
+                finally 
+                {
+                    Utilities.PopNetworkActive();
+                }
+
+
+                if (hud != null)
+                {
+                    InvokeOnMainThread(delegate {
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+                    });
+                }
+            });
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            if (!Loaded)
+            {
+                Refresh();
+                Loaded = true;
+            }
+        }
+
+        protected virtual void SearchStart()
+        {
+        }
+
+        protected virtual void SearchEnd()
+        {
+        }
+
+        class RefreshView : RefreshTableHeaderView
+        {
+            public RefreshView(RectangleF rect)
+                : base(rect)
+            {
+                BackgroundColor = UIColor.Clear;
+                StatusLabel.BackgroundColor = UIColor.Clear;
+                LastUpdateLabel.BackgroundColor = UIColor.Clear;
+            }
+        }
+
 
         class CustomSearchDelegate : UISearchBarDelegate 
         {
@@ -171,186 +355,6 @@ namespace CodeFramework.UI.Controllers
                     if (x != null)
                         x.Enabled = true;
                 }
-            }
-        }
-
-        public virtual void SearchStart()
-        {
-        }
-
-        public virtual void SearchEnd()
-        {
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            if (NavigationController != null && isSearching)
-                NavigationController.SetNavigationBarHidden(true, true);
-            if (isSearching)
-            {
-                TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
-            }
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (NavigationController != null && NavigationController.NavigationBarHidden)
-                NavigationController.SetNavigationBarHidden(false, true);
-
-            if (isSearching)
-            {
-                View.EndEditing(true);
-                var searchBar = TableView.TableHeaderView as UISearchBar;
-                if (searchBar != null)
-                {
-                    //Enable the cancel button again....
-                    foreach (var s in searchBar.Subviews)
-                    {
-                        var x = s as UIButton;
-                        if (x != null)
-                            x.Enabled = true;
-                    }
-                }
-            }
-        }
-
-
-        public Controller(bool push = false, bool refresh = false)
-            : base(new RootElement(""), push)
-        {
-            if (refresh)
-                RefreshRequested += (sender, e) => Refresh(true);
-
-            var button = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null); 
-            NavigationItem.BackBarButtonItem = button;
-            SearchPlaceholder = "Search";
-
-            Autorotate = true;
-        }
-
-        class RefreshView : RefreshTableHeaderView
-        {
-            public RefreshView(RectangleF rect)
-                : base(rect)
-            {
-                BackgroundColor = UIColor.Clear;
-                StatusLabel.BackgroundColor = UIColor.Clear;
-                LastUpdateLabel.BackgroundColor = UIColor.Clear;
-            }
-
-            public override void Draw(RectangleF rect)
-            {
-                base.Draw(rect);
-                //Stop the super class from doing stupid shit like drawing the shadow
-            }
-        }
-
-
-        public override RefreshTableHeaderView MakeRefreshTableHeaderView(RectangleF rect)
-        {
-            return new RefreshView(rect);
-        }
-
-            
-        protected abstract void OnRefresh();
-
-        protected abstract T OnUpdate();
-
-
-        public override void ViewDidLoad()
-        {
-            var search = this.TableView.TableHeaderView as UISearchBar;
-            if (search != null)
-                search.Delegate = new CustomSearchDelegate(this);
-
-            Root.Caption = this.Title;
-            TableView.BackgroundColor = UIColor.Clear;
-            if (Style != UITableViewStyle.Grouped)
-            {
-                TableView.TableFooterView = new DropbarView(View.Bounds.Width);
-                TableView.TableFooterView.Hidden = true;
-            }
-
-            WatermarkView.AssureWatermark(this);
-            base.ViewDidLoad();
-        }
-
-
-        public void Refresh(bool force = false)
-        {
-            InvokeOnMainThread(delegate {
-                if (_currentError != null)
-                    _currentError.RemoveFromSuperview();
-                _currentError = null;
-            });
-
-            if (Model != null && !force)
-            {
-                try
-                {
-                    OnRefresh();
-                }
-                catch (Exception e)
-                {
-                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
-                }
-
-                InvokeOnMainThread(delegate { 
-                    if (TableView.TableFooterView != null)
-                        TableView.TableFooterView.Hidden = this.Root.Count == 0;
-
-                    ReloadComplete(); 
-                });
-                _loaded = true;
-                return;
-            }
-
-            MBProgressHUD hud = null;
-            if (!force) {
-                hud = new MBProgressHUD(this.View.Superview); 
-                hud.Mode = MBProgressHUDMode.Indeterminate;
-                hud.TitleText = "Loading...";
-                this.View.Superview.AddSubview(hud);
-                hud.Show(true);
-            }
-
-            ThreadPool.QueueUserWorkItem(delegate {
-                try
-                {
-                    Utilities.PushNetworkActive();
-                    Model = OnUpdate();
-                    if (Model != null)
-                        Refresh();
-                }
-                catch (Exception e)
-                {
-                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
-                }
-                finally 
-                {
-                    Utilities.PopNetworkActive();
-                }
-
-
-                if (hud != null)
-                {
-                    InvokeOnMainThread(delegate {
-                        hud.Hide(true);
-                        hud.RemoveFromSuperview();
-                    });
-                }
-            });
-        }
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            if (!_loaded)
-            {
-                Refresh();
-                _loaded = true;
             }
         }
     }

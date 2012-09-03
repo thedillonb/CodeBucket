@@ -60,7 +60,7 @@ namespace BitbucketBrowser
             DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
             WatermarkView.Image = Images.Background;
             HeaderView.Gradient = Images.CellGradient;
-            StyledElement.BackgroundImage = UIImage.FromBundle("/Images/TableCell");
+            StyledElement.BgColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/TableCell"));
             ErrorView.AlertImage = UIImage.FromBundle("/Images/warning.png");
 
             //Resize the back button only on the iPhone

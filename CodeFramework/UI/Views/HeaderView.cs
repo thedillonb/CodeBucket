@@ -8,8 +8,8 @@ namespace CodeFramework.UI.Views
     {
         private static float XPad = 14f;
         private static float YPad = 10f;
-        private static readonly UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
-        private static readonly UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
+        public static UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
+        public static UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
         public static UIImage Gradient;
 
         public string Title { get; set; }

@@ -6,7 +6,6 @@ namespace CodeFramework.UI.Views
 {
     public class WatermarkView : UIView
     {
-        //TODO: This needs a value...
         public static UIImage Image;
 
         public static void AssureWatermark(UIViewController controller)

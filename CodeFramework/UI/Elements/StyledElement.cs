@@ -8,8 +8,7 @@ namespace CodeFramework.UI.Elements
     {
         private static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
         private static UIFont SubFont = UIFont.SystemFontOfSize(15f);
-
-        public static UIImage BackgroundImage = null;
+        public static UIColor BgColor;
 
         public StyledElement(string title)
             : base(title)
@@ -56,10 +55,7 @@ namespace CodeFramework.UI.Elements
         {
             Font = TitleFont;
             SubtitleFont = SubFont;
-            if (BackgroundImage != null)
-            {
-                BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
-            }
+            this.BackgroundColor = BgColor;
             this.TextColor = UIColor.FromRGB(41, 41, 41);
             this.DetailColor = UIColor.FromRGB(120, 120, 120);
             LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;

@@ -7,15 +7,12 @@ namespace CodeFramework.UI.Views
     public class ErrorView : UIView
     {
         public static UIImage AlertImage;
-
-        private static UIFont TitleFont = UIFont.SystemFontOfSize(15f); 
+        public static UIFont TitleFont = UIFont.SystemFontOfSize(15f); 
 
         public string Title { get; set; }
         public string Detail { get; set; }
 
-        private ErrorView()
-        {
-        }
+        private ErrorView() { }
 
         public static ErrorView Show(UIView parent, string title, string error = "")
         {
@@ -41,18 +38,5 @@ namespace CodeFramework.UI.Views
             DrawString(Title, new RectangleF(0, ty, rect.Width, TitleFont.LineHeight * 3), TitleFont, UILineBreakMode.WordWrap, UITextAlignment.Center);
         }
     }
-
-    public class Alert 
-    {
-        public static void Show(string title, string message)
-        {
-            var alert = new UIAlertView();
-            alert.Title = title;
-            alert.Message = message;
-            alert.DismissWithClickedButtonIndex(alert.AddButton("Ok"), true);
-            alert.Show();
-        }
-    }
-
 }
 

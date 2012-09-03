@@ -10,8 +10,6 @@ namespace CodeFramework.UI.Views
 {
     public class DropbarView : UIView
     {
-        //TODO: OK?
-        //Should be: UIImage.FromBundle("/Images/Dropbar");
         public static UIImage Image;
 
         public DropbarView(float width)
