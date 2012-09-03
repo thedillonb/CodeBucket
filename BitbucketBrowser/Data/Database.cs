@@ -1,5 +1,6 @@
 using System;
 using SQLite;
+using MonoTouch;
 
 namespace BitbucketBrowser
 {
@@ -10,7 +11,7 @@ namespace BitbucketBrowser
             CreateTable<Account>();
         }
 
-        public readonly static Database Main = new Database(Utils.Util.BaseDir + "/Documents/data.db");
+        public readonly static Database Main = new Database(Utilities.BaseDir + "/Documents/data.db");
     }
 }
 

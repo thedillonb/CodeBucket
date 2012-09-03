@@ -3,6 +3,7 @@ using SQLite;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using MonoTouch;
 
 namespace BitbucketBrowser 
 {
@@ -16,7 +17,7 @@ namespace BitbucketBrowser
 
         public Account GetDefault()
         {
-            var name = Utils.Util.Defaults.StringForKey("DEFAULT_ACCOUNT");
+            var name = Utilities.Defaults.StringForKey("DEFAULT_ACCOUNT");
             if (name == null)
                 return null;
 
@@ -58,8 +59,8 @@ namespace BitbucketBrowser
 
         public void SetDefault(Account a)
         {
-            Utils.Util.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
-            Utils.Util.Defaults.Synchronize();
+            Utilities.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
+            Utilities.Defaults.Synchronize();
         }
 
         public bool Exists(Account a)

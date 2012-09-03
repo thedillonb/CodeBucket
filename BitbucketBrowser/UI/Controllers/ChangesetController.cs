@@ -3,7 +3,6 @@ using BitbucketSharp.Models;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Utils;
 using System.Linq;
 using System.Text;
 

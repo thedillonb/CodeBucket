@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using RedPlum;
 using System.Drawing;
+using MonoTouch;
 
 namespace BitbucketBrowser.UI
 {
@@ -111,7 +112,7 @@ namespace BitbucketBrowser.UI
 
             ThreadPool.QueueUserWorkItem(delegate {
 
-                Utils.Util.PushNetworkActive();
+                Utilities.PushNetworkActive();
 
                 try
                 {
@@ -147,7 +148,7 @@ namespace BitbucketBrowser.UI
                     InvokeOnMainThread(() => Alert.Show("Error to Load", e.Message));
                 }
 
-                Utils.Util.PopNetworkActive();
+                Utilities.PopNetworkActive();
 
                 if (hud != null)
                 {

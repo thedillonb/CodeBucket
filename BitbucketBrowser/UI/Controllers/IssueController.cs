@@ -4,7 +4,6 @@ using MonoTouch.Dialog;
 using System.Linq;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Utils;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
 using RedPlum;

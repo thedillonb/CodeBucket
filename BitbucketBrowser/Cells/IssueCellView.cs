@@ -8,7 +8,6 @@ using MonoTouch.ObjCRuntime;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
-using BitbucketBrowser.Utils;
 
 namespace BitbucketBrowser.UI
 {

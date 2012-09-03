@@ -1,5 +1,5 @@
 using System;
-namespace BitbucketBrowser.Utils
+namespace System
 {
     public static class DateTimeExtensions
     {

@@ -6,6 +6,7 @@ using RedPlum;
 using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
+using MonoTouch;
 
 namespace BitbucketBrowser.UI
 {
@@ -317,7 +318,7 @@ namespace BitbucketBrowser.UI
             ThreadPool.QueueUserWorkItem(delegate {
                 try
                 {
-                    Utils.Util.PushNetworkActive();
+                    Utilities.PushNetworkActive();
                     Model = OnUpdate();
                     if (Model != null)
                         Refresh();
@@ -328,7 +329,7 @@ namespace BitbucketBrowser.UI
                 }
                 finally 
                 {
-                    Utils.Util.PopNetworkActive();
+                    Utilities.PopNetworkActive();
                 }
 
 

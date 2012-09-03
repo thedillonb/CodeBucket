@@ -110,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="UI\Controllers\Controller.cs" />
     <Compile Include="UI\Controllers\FollowersController.cs" />
     <Compile Include="UI\Controllers\GroupController.cs" />
@@ -120,42 +119,22 @@
     <Compile Include="UI\Views\HeaderView.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\EventsController.cs" />
-    <Compile Include="Utils\MbProgressHud.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\BranchController.cs" />
     <Compile Include="UI\Controllers\ChangesetController.cs" />
     <Compile Include="UI\Views\CustomElement.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
-    <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="UI\Views\ErrorView.cs" />
     <Compile Include="UI\Controllers\IssueController.cs" />
-    <Compile Include="Utils\MySearchDelegate.cs" />
     <Compile Include="UI\Views\StyledElement.cs" />
     <Compile Include="UI\Views\CustomSection.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="UI\Controllers\WikiController.cs" />
-    <Compile Include="Markdown\CreoleParser.cs" />
     <Compile Include="UI\Views\FirstElement.cs" />
-    <Compile Include="Utils\Util.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="UI\Views\RepositoryElement.cs" />
     <Compile Include="UI\Views\SplitElement.cs" />
     <Compile Include="UI\Views\WatermarkView.cs" />
-    <Compile Include="DiffPlex\Model\DiffBlock.cs" />
-    <Compile Include="DiffPlex\Model\DiffResult.cs" />
-    <Compile Include="DiffPlex\Model\EditLengthResult.cs" />
-    <Compile Include="DiffPlex\Model\ModificationData.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\IInlineDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\InlineDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPaneModel.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPiece.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs" />
-    <Compile Include="DiffPlex\AssemblyInfo.cs" />
-    <Compile Include="DiffPlex\Differ.cs" />
-    <Compile Include="DiffPlex\IDiffer.cs" />
-    <Compile Include="DiffPlex\Log.cs" />
     <Compile Include="UI\Settings\MyAccountsController.cs" />
     <Compile Include="UI\Settings\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
@@ -176,8 +155,6 @@
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
-    <Compile Include="Data\SQLite.cs" />
-    <Compile Include="Utils\UIImageExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
@@ -188,17 +165,12 @@
   <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="UI\" />
-    <Folder Include="Utils\" />
     <Folder Include="Images\Tabs\" />
     <Folder Include="UI\Controllers\" />
     <Folder Include="UI\Views\" />
-    <Folder Include="SourceBrowser\" />
-    <Folder Include="SourceBrowser\styles\" />
-    <Folder Include="Markdown\" />
     <Folder Include="Images\Cells\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
-    <Folder Include="DiffPlex\" />
     <Folder Include="UI\Settings\" />
     <Folder Include="Images\Official\" />
     <Folder Include="Data\" />
@@ -220,6 +192,10 @@
       <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
       <Name>RestSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\CodeFramework.csproj">
+      <Project>{3E01B962-FE29-4992-8140-34465C86418F}</Project>
+      <Name>CodeFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\plus.png" />
@@ -232,7 +208,6 @@
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
     <Content Include="Images\warning.png" />
-    <Content Include="SourceBrowser\index.html" />
     <Content Include="Images\Tabs\group.png" />
     <Content Include="Images\Tabs\group%402x.png" />
     <Content Include="Images\repo%402x.png" />
@@ -240,26 +215,6 @@
     <Content Include="Images\Tabs\search.png" />
     <Content Include="Images\Tabs\events%402x.png" />
     <Content Include="Images\Tabs\events.png" />
-    <Content Include="SourceBrowser\lang-apollo.js" />
-    <Content Include="SourceBrowser\lang-clj.js" />
-    <Content Include="SourceBrowser\lang-css.js" />
-    <Content Include="SourceBrowser\lang-go.js" />
-    <Content Include="SourceBrowser\lang-hs.js" />
-    <Content Include="SourceBrowser\lang-lisp.js" />
-    <Content Include="SourceBrowser\lang-lua.js" />
-    <Content Include="SourceBrowser\lang-ml.js" />
-    <Content Include="SourceBrowser\lang-n.js" />
-    <Content Include="SourceBrowser\lang-proto.js" />
-    <Content Include="SourceBrowser\lang-scala.js" />
-    <Content Include="SourceBrowser\lang-sql.js" />
-    <Content Include="SourceBrowser\lang-tex.js" />
-    <Content Include="SourceBrowser\lang-vb.js" />
-    <Content Include="SourceBrowser\lang-vhdl.js" />
-    <Content Include="SourceBrowser\lang-wiki.js" />
-    <Content Include="SourceBrowser\lang-xq.js" />
-    <Content Include="SourceBrowser\lang-yaml.js" />
-    <Content Include="SourceBrowser\prettify.js" />
-    <Content Include="SourceBrowser\prettify.css" />
     <Content Include="Images\Cells\gradient.png" />
     <Content Include="Images\fork.png" />
     <Content Include="Images\fork%402x.png" />

@@ -1,6 +1,5 @@
 using System;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Utils;
 using System.Drawing;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;

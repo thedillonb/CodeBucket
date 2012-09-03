@@ -2,7 +2,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace BitbucketBrowser.Utils
+namespace System
 {
 	public static class StringExtensions
 	{

@@ -4,7 +4,6 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Utils;
 using MonoTouch.Dialog.Utilities;
 
 namespace BitbucketBrowser.UI

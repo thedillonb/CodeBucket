@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using BitbucketBrowser.Utils;
 using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog;

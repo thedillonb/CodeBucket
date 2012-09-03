@@ -1,8 +1,7 @@
 using System;
 using MonoTouch.UIKit;
-using MonoTouch.Dialog;
 
-namespace BitbucketBrowser.Utils
+namespace MonoTouch.Dialog
 {
     class MySearchDelegate : UISearchBarDelegate 
     {
