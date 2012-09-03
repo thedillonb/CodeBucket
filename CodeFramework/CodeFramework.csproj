@@ -38,7 +38,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Markdown\CreoleParser.cs" />
-    <Compile Include="Utils\MySearchDelegate.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\MbProgressHud.cs" />
     <Compile Include="Utils\StringExtensions.cs" />

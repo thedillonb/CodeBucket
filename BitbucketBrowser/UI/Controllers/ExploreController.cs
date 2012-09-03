@@ -146,7 +146,7 @@ namespace BitbucketBrowser.UI
                 }
                 catch (Exception e)
                 {
-                    InvokeOnMainThread(() => Alert.Show("Error to Load", e.Message));
+                    InvokeOnMainThread(() => Utilities.ShowAlert("Error to Load", e.Message));
                 }
 
                 Utilities.PopNetworkActive();

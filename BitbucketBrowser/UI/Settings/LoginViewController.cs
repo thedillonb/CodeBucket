@@ -95,7 +95,7 @@ namespace BitbucketBrowser
 
                 if (!successful)
                 {
-                    Alert.Show("Unable to Authenticate", "Unable to login as user " + User.Text + ". Please check your credentials and try again.");
+                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + User.Text + ". Please check your credentials and try again.");
                     return;
                 }
 
@@ -103,7 +103,7 @@ namespace BitbucketBrowser
 
                 if (Application.Accounts.Exists(newAccount))
                 {
-                    Alert.Show("Unable to Add User", "That user already exists!");
+                    Utilities.ShowAlert("Unable to Add User", "That user already exists!");
                     return;
                 }
 

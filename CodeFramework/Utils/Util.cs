@@ -178,47 +178,9 @@ namespace MonoTouch
                 return americanCulture;
             }
         }
-        #region Location
 
-        internal class MyCLLocationManagerDelegate : CLLocationManagerDelegate {
-            Action<CLLocation> callback;
 
-            public MyCLLocationManagerDelegate (Action<CLLocation> callback)
-            {
-                this.callback = callback;
-            }
-
-            public override void UpdatedLocation (CLLocationManager manager, CLLocation newLocation, CLLocation oldLocation)
-            {
-                manager.StopUpdatingLocation ();
-                locationManager = null;
-                callback (newLocation);
-            }
-
-            public override void Failed (CLLocationManager manager, NSError error)
-            {
-                callback (null);
-            }
-
-        }
-
-        static CLLocationManager locationManager;
-        static public void RequestLocation (Action<CLLocation> callback)
-        {
-            locationManager = new CLLocationManager () {
-                DesiredAccuracy = CLLocation.AccuracyBest,
-                Delegate = new MyCLLocationManagerDelegate (callback),
-                DistanceFilter = 1000f
-            };
-            if (CLLocationManager.LocationServicesEnabled)
-                locationManager.StartUpdatingLocation ();
-        }   
-        #endregion
-    }
-
-    public class Alert 
-    {
-        public static void Show(string title, string message)
+        public static void ShowAlert(string title, string message)
         {
             var alert = new UIAlertView();
             alert.Title = title;
