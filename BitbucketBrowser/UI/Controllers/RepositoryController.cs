@@ -6,6 +6,7 @@ using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
+using CodeFramework.UI.Controllers;
 
 namespace BitbucketBrowser.UI
 {

@@ -8,6 +8,7 @@ using MonoTouch.ObjCRuntime;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI
 {
@@ -39,7 +40,7 @@ namespace BitbucketBrowser.UI
             cell.Image4.Image = Pencil;
 
 
-            cell.BackgroundView = new CellBackground();
+            cell.BackgroundView = new CellBackgroundView();
 
             //Create the icons
             return cell;

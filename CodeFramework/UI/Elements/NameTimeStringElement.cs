@@ -4,8 +4,9 @@ using System.Drawing;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog.Utilities;
 using MonoTouch.Foundation;
+using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Elements
 {
 public class NameTimeStringElement : CustomElement, IImageUpdated
     {
@@ -122,7 +123,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
 
         protected override void OnCreateCell(UITableViewCell cell)
         {
-            cell.BackgroundView = new CellBackground();
+            cell.BackgroundView = new CellBackgroundView();
         }
 
         public override UITableViewCell GetCell(UITableView tv)

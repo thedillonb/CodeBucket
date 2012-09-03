@@ -7,8 +7,10 @@ using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch;
+using CodeFramework.UI.Views;
+using CodeFramework.UI.Elements;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Controllers
 {
     public abstract class Controller<T> : DialogViewController
     {
@@ -21,7 +23,6 @@ namespace BitbucketBrowser.UI
         protected bool isSearching = false;
 
         private ErrorView _currentError;
-
 
         class CustomSearchDelegate : UISearchBarDelegate 
         {
@@ -50,7 +51,7 @@ namespace BitbucketBrowser.UI
                 {
                     searchController = new DialogViewController(UITableViewStyle.Plain, null);
                     searchController.LoadView();
-                    searchController.TableView.TableFooterView = new DropbarElement(1f);
+                    searchController.TableView.TableFooterView = new DropbarView(1f);
                 }
 
                 searchBar.ShowsCancelButton = true;
@@ -268,7 +269,7 @@ namespace BitbucketBrowser.UI
             TableView.BackgroundColor = UIColor.Clear;
             if (Style != UITableViewStyle.Grouped)
             {
-                TableView.TableFooterView = new DropbarElement(View.Bounds.Width);
+                TableView.TableFooterView = new DropbarView(View.Bounds.Width);
                 TableView.TableFooterView.Hidden = true;
             }
 
@@ -352,44 +353,6 @@ namespace BitbucketBrowser.UI
                 _loaded = true;
             }
         }
-
-        /*
-        private MBProgressHUD _hud = null;
-        private object _hudLock = new object();
-        protected void showLoading(string text = "Loading...")
-        {
-            lock(_hudLock)
-            {
-                if (_hud != null)
-                    hideLoading();
-
-                InvokeOnMainThread(delegate {
-                    var hud = new MBProgressHUD(this.View.Superview); 
-                    hud.Mode = MBProgressHUDMode.Indeterminate;
-                    hud.TitleText = "Loading...";
-                    this.View.Superview.AddSubview(hud);
-                    hud.Show(true);
-
-                    _hud = hud;
-                });
-            }
-        }
-
-        protected void hideLoading()
-        {
-            lock (_hudLock)
-            {
-                var hud = _hud;
-                if (hud == null)
-                    return;
-
-                InvokeOnMainThread(delegate {
-                    hud.Hide(true);
-                    hud.RemoveFromSuperview();
-                });
-            }
-        }
-        */
     }
 }
 

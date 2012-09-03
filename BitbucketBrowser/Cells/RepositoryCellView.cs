@@ -6,6 +6,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
 using BitbucketBrowser.UI;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser
 {
@@ -32,7 +33,7 @@ namespace BitbucketBrowser
             cell.Image2.Image = Heart;
             cell.Image3.Image = Fork;
 
-            cell.BackgroundView = new CellBackground();
+            cell.BackgroundView = new CellBackgroundView();
 
             //Create the icons
             return cell;

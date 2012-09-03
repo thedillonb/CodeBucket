@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using MonoTouch.UIKit;
 using System.Linq;
 using System.Text;
+using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Elements;
+using CodeFramework.UI.Views;
 
 
 namespace BitbucketBrowser.UI
@@ -100,7 +103,7 @@ namespace BitbucketBrowser.UI
             var sec = new Section();
             _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
 
-            var d = new MultilineElement(Model.Author) { Value = Model.Message };
+            var d = new MultilinedElement(Model.Author) { Value = Model.Message };
 
             sec.Add(d);
 

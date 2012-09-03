@@ -7,6 +7,8 @@ using System.Threading;
 using BitbucketSharp;
 using System.Collections.Generic;
 using MonoTouch.Dialog.Utilities;
+using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Elements;
 
 
 namespace BitbucketBrowser.UI

@@ -9,6 +9,9 @@ using MonoTouch.CoreGraphics;
 using RedPlum;
 using System.Threading;
 using MonoTouch.Foundation;
+using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Views;
+using CodeFramework.UI.Elements;
 
 namespace BitbucketBrowser.UI
 {
@@ -98,7 +101,7 @@ namespace BitbucketBrowser.UI
 
         private readonly HeaderView _header;
         private readonly Section _comments, _details;
-        private readonly MultilineElement _desc;
+        private readonly CodeFramework.UI.Elements.MultilinedElement _desc;
         private readonly SplitElement _split1, _split2;
 
         private bool _scrollToLastComment = false;
@@ -117,7 +120,7 @@ namespace BitbucketBrowser.UI
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
             Root.Add(new Section(_header));
 
-            _desc = new MultilineElement("") { PrimaryFont = UIFont.SystemFontOfSize(14f), BackgroundColor = UIColor.White };
+            _desc = new CodeFramework.UI.Elements.MultilinedElement("") { PrimaryFont = UIFont.SystemFontOfSize(14f), BackgroundColor = UIColor.White };
 
             _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
             _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };

@@ -7,6 +7,7 @@ using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Collections.Generic;
 using MonoTouch.Dialog.Utilities;
+using CodeFramework.UI.Elements;
 
 namespace BitbucketBrowser.UI
 {

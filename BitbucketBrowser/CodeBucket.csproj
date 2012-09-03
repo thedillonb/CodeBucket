@@ -110,39 +110,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="UI\Controllers\Controller.cs" />
     <Compile Include="UI\Controllers\FollowersController.cs" />
     <Compile Include="UI\Controllers\GroupController.cs" />
     <Compile Include="UI\Controllers\ProfileController.cs" />
     <Compile Include="UI\Controllers\RepositoryController.cs" />
     <Compile Include="UI\Controllers\RepositoryInfoController.cs" />
-    <Compile Include="UI\Views\HeaderView.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\EventsController.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\BranchController.cs" />
     <Compile Include="UI\Controllers\ChangesetController.cs" />
-    <Compile Include="UI\Views\CustomElement.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
-    <Compile Include="UI\Views\ErrorView.cs" />
     <Compile Include="UI\Controllers\IssueController.cs" />
-    <Compile Include="UI\Views\StyledElement.cs" />
-    <Compile Include="UI\Views\CustomSection.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="UI\Controllers\WikiController.cs" />
-    <Compile Include="UI\Views\FirstElement.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="UI\Views\RepositoryElement.cs" />
-    <Compile Include="UI\Views\SplitElement.cs" />
-    <Compile Include="UI\Views\WatermarkView.cs" />
-    <Compile Include="UI\Settings\MyAccountsController.cs" />
     <Compile Include="UI\Settings\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Settings\LoginViewController.cs" />
-    <Compile Include="UI\Views\NameTimeStringElement.cs" />
     <Compile Include="UI\Views\UserElement.cs" />
-    <Compile Include="UI\Views\CellBackground.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs">
       <DependentUpon>IssueCellView.cs</DependentUpon>
@@ -151,10 +139,10 @@
     <Compile Include="Cells\RepositoryCellView.designer.cs">
       <DependentUpon>RepositoryCellView.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\Composer.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
+    <Compile Include="UI\Controllers\MyAccountsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />

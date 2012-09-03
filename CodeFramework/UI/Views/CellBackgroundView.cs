@@ -3,14 +3,14 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Views
 {
-    public class CellBackground : UIView
+    public class CellBackgroundView : UIView
     {
 
         static CGGradient bottomGradient, topGradient;
 
-        static CellBackground ()
+        static CellBackgroundView ()
         {
             using (var rgb = CGColorSpace.CreateDeviceRGB()){
                 float [] colorsBottom = {
@@ -27,7 +27,7 @@ namespace BitbucketBrowser.UI
         }
 
 
-        public CellBackground() : base() { }
+        public CellBackgroundView() : base() { }
 
         public override void Draw(RectangleF rect)
         {

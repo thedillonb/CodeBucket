@@ -2,6 +2,7 @@ using System;
 using MonoTouch.Dialog.Utilities;
 using BitbucketSharp.Models;
 using MonoTouch.UIKit;
+using CodeFramework.UI.Elements;
 
 namespace BitbucketBrowser.UI
 {

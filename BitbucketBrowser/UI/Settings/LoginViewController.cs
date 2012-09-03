@@ -8,6 +8,7 @@ using System.Net;
 using RedPlum;
 using System.Threading;
 using BitbucketBrowser.UI;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser
 {

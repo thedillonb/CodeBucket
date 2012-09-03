@@ -6,6 +6,8 @@ using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch.Foundation;
+using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Views;
 
 
 namespace BitbucketBrowser.UI

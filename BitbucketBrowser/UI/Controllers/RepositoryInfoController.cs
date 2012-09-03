@@ -5,6 +5,9 @@ using MonoTouch.UIKit;
 using System;
 using MonoTouch.Foundation;
 using MonoTouch.Dialog.Utilities;
+using CodeFramework.UI.Elements;
+using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI
 {
@@ -44,7 +47,7 @@ namespace BitbucketBrowser.UI
             
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                sec1.Add(new MultilineElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(12f) });
+                sec1.Add(new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(12f) });
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,

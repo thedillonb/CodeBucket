@@ -2,11 +2,11 @@ using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Views
 {
     public class ErrorView : UIView
     {
-        private static UIImage Alert = UIImage.FromBundle("/Images/warning.png");
+        public static UIImage AlertImage;
 
         private static UIFont TitleFont = UIFont.SystemFontOfSize(15f); 
 
@@ -31,10 +31,11 @@ namespace BitbucketBrowser.UI
         public override void Draw(System.Drawing.RectangleF rect)
         {
             base.Draw(rect);
-            Alert.Draw(new System.Drawing.RectangleF(rect.Width / 2 - Alert.Size.Width / 2,
-                                         rect.Height / 2 - Alert.Size.Height - 2f,
-                                         Alert.Size.Width,
-                                         Alert.Size.Height));
+            var img = AlertImage;
+            img.Draw(new System.Drawing.RectangleF(rect.Width / 2 - img.Size.Width / 2,
+                                         rect.Height / 2 - img.Size.Height - 2f,
+                                         img.Size.Width,
+                                         img.Size.Height));
 
             var ty = rect.Height / 2 + 2f;
             DrawString(Title, new RectangleF(0, ty, rect.Width, TitleFont.LineHeight * 3), TitleFont, UILineBreakMode.WordWrap, UITextAlignment.Center);

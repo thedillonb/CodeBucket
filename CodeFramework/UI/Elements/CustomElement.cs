@@ -6,7 +6,7 @@ using System.Drawing;
 using MonoTouch.CoreGraphics;
 
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Elements
 {
     public abstract class CustomElement : Element, IElementSizing, IColorizeBackground
     {       

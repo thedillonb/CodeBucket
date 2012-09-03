@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI
 {
@@ -89,7 +90,7 @@ namespace BitbucketBrowser.UI
             TableView.BackgroundColor = UIColor.Clear;
             WatermarkView.AssureWatermark(this);
 
-            TableView.TableFooterView = new DropbarElement(View.Bounds.Width);
+            TableView.TableFooterView = new DropbarView(View.Bounds.Width);
             TableView.TableFooterView.Hidden = true;
         }
 

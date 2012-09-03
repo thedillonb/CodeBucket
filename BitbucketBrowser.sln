@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.MonoTouch", "..\R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework", "CodeFramework\CodeFramework.csproj", "{3E01B962-FE29-4992-8140-34465C86418F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub", "CodeHub\CodeHub.csproj", "{21C3450E-9BE2-4049-A33F-4442AA8F532D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -26,6 +28,24 @@ Global
 		AppStore|iPhoneSimulator = AppStore|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AdHoc|iPhone.ActiveCfg = Debug|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AdHoc|iPhone.Build.0 = Debug|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AdHoc|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AppStore|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.AppStore|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Debug|iPhone.Build.0 = Debug|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Release|iPhone.ActiveCfg = Release|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Release|iPhone.Build.0 = Release|iPhone
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{21C3450E-9BE2-4049-A33F-4442AA8F532D}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{3E01B962-FE29-4992-8140-34465C86418F}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
 		{3E01B962-FE29-4992-8140-34465C86418F}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{3E01B962-FE29-4992-8140-34465C86418F}.AdHoc|iPhone.Build.0 = Debug|Any CPU

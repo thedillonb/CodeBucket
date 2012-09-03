@@ -11,6 +11,8 @@ using MonoTouch.SlideoutNavigation;
 using System.Drawing;
 using System.Threading;
 using MonoTouch.Dialog.Utilities;
+using CodeFramework.UI.Elements;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser
 {
@@ -54,6 +56,12 @@ namespace BitbucketBrowser
             var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
             UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
             UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
+
+            DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
+            WatermarkView.Image = Images.Background;
+            HeaderView.Gradient = Images.CellGradient;
+            StyledElement.BackgroundImage = UIImage.FromBundle("/Images/TableCell");
+            ErrorView.AlertImage = UIImage.FromBundle("/Images/warning.png");
 
             //Resize the back button only on the iPhone
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

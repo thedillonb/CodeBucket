@@ -59,6 +59,20 @@
     <Compile Include="DiffPlex\IDiffer.cs" />
     <Compile Include="DiffPlex\Log.cs" />
     <Compile Include="Data\SQLite.cs" />
+    <Compile Include="UI\Controllers\Composer.cs" />
+    <Compile Include="UI\Views\ErrorView.cs" />
+    <Compile Include="UI\Elements\NameTimeStringElement.cs" />
+    <Compile Include="UI\Elements\CustomElement.cs" />
+    <Compile Include="UI\Views\CellBackgroundView.cs" />
+    <Compile Include="UI\Elements\SplitElement.cs" />
+    <Compile Include="UI\Elements\StyledElement.cs" />
+    <Compile Include="UI\Elements\SubcaptionElement.cs" />
+    <Compile Include="UI\Elements\NoItemsElement.cs" />
+    <Compile Include="UI\Controllers\Controller.cs" />
+    <Compile Include="UI\Views\DropbarView.cs" />
+    <Compile Include="UI\Views\WatermarkView.cs" />
+    <Compile Include="UI\Views\HeaderView.cs" />
+    <Compile Include="UI\Elements\MultilinedElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SourceBrowser\index.html" />
@@ -87,6 +101,9 @@
     <Folder Include="UI\" />
     <Folder Include="Utils\" />
     <Folder Include="Data\" />
+    <Folder Include="UI\Controllers\" />
+    <Folder Include="UI\Views\" />
+    <Folder Include="UI\Elements\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">

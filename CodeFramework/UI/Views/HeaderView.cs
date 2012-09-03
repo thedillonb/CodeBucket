@@ -2,7 +2,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Dialog;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Views
 {
     public class HeaderView : UIView
     {
@@ -10,7 +10,7 @@ namespace BitbucketBrowser.UI
         private static float YPad = 10f;
         private static readonly UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
         private static readonly UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
-        private static readonly UIImage Gradient = UIImage.FromBundle("/Images/Cells/gradient");
+        public static UIImage Gradient;
 
         public string Title { get; set; }
 
@@ -38,7 +38,8 @@ namespace BitbucketBrowser.UI
             float titleY = string.IsNullOrWhiteSpace(Subtitle) ? rect.Height / 2 - TitleFont.LineHeight / 2 : YPad;
             float contentWidth = rect.Width - XPad * 2;
 
-            Gradient.Draw(rect);
+            if (Gradient != null)
+                Gradient.Draw(rect);
 
             if (Image != null)
             {

@@ -4,7 +4,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Elements
 {
   public class SplitElement : CustomElement
     {

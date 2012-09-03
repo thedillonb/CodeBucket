@@ -34,7 +34,7 @@ using MonoTouch.AVFoundation;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Controllers
 {
 	
 	/// <summary>
