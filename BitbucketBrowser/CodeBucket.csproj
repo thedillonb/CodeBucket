@@ -125,11 +125,6 @@
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="UI\Controllers\WikiController.cs" />
     <Compile Include="Images\Images.cs" />
-    <Compile Include="UI\Views\RepositoryElement.cs" />
-    <Compile Include="UI\Settings\LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Settings\LoginViewController.cs" />
     <Compile Include="UI\Views\UserElement.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs">
@@ -143,11 +138,15 @@
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="UI\Controllers\MyAccountsController.cs" />
+    <Compile Include="UI\Controllers\LoginViewController.cs" />
+    <Compile Include="UI\Controllers\LoginViewController.designer.cs">
+      <DependentUpon>LoginViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="UI\Settings\LoginViewController.xib" />
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+    <InterfaceDefinition Include="UI\Controllers\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -159,7 +158,6 @@
     <Folder Include="Images\Cells\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
-    <Folder Include="UI\Settings\" />
     <Folder Include="Images\Official\" />
     <Folder Include="Data\" />
   </ItemGroup>

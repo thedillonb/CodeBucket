@@ -69,8 +69,6 @@ namespace BitbucketBrowser
                 UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 12, 0, 5)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
             }
 
-            Application.LoadSettings();
-
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             if (Application.Accounts.Count == 0)
@@ -138,7 +136,7 @@ namespace BitbucketBrowser
     public class MenuController : DialogViewController
     {
         public MenuController()
-            : base(UITableViewStyle.Plain, new RootElement("Bucket Browser"))
+            : base(UITableViewStyle.Plain, new RootElement("CodeBucket"))
         {
         }
 
@@ -204,7 +202,7 @@ namespace BitbucketBrowser
                 l.Font = UIFont.BoldSystemFontOfSize(18f);
                 l.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
                 l.TextColor = UIColor.White;
-                l.Text = "Bucket Browser";
+                l.Text = "CodeBucket";
                 l.TextAlignment = UITextAlignment.Left;
                 this.Add(l);
 
@@ -276,7 +274,11 @@ namespace BitbucketBrowser
             //First time appear
             if (_previousUser == null)
             {
+#if DEBUG
+                NavigationController.PushViewController(new IssueEditController(), false);
+#else
                 NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
+#endif
                 _previousUser = Application.Account.Username;
             }
         }

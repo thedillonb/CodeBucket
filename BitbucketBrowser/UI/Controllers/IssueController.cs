@@ -34,12 +34,10 @@ namespace BitbucketBrowser.UI
             AutoHideSearch = true;
             Root.UnevenRows = true;
 
-            /*
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
                 var b = new IssueEditController();
                 NavigationController.PushViewController(b, true);
             });
-            */
         }
 
         protected override void OnRefresh ()
@@ -272,20 +270,83 @@ namespace BitbucketBrowser.UI
 
     public class IssueEditController : Controller<object>
     {
+        private static readonly string[] Priorities = { "Trivial", "Minor", "Major", "Critical", "Blocker" };
+        private static readonly string[] Statuses = { "New", "Opened", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
+        private static readonly string[] Kinds = { "Bug", "Enhancement", "Proposal", "Task" };
+
         public IssueEditController()
             : base(true, false)
         {
-            Model = this;
+            Model = new object();
 
-            var title = new EntryElement("Title", "Issue Title", string.Empty);
-            var content = new MultiLineEntryElement("Content", string.Empty) { Rows = 4 };
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => {
+                //All done!
+            });
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            var title = new EntryElement("Title", string.Empty, string.Empty) { 
+                TitleFont = UIFont.BoldSystemFontOfSize(15f),
+                EntryFont = UIFont.SystemFontOfSize(15f),
+            };
+
+            var issueType = new RootElement("Type", new RadioGroup("type", 0)) {
+                new Section("Issue Type") {
+                    from x in Kinds select ((Element)new PopNavRadioElement(x, "type"))
+                }
+            };
+
+            var priority = new RootElement("Priority", new RadioGroup("priority", 0)) {
+                new Section("Priority") {
+                    from x in Priorities select ((Element)new PopNavRadioElement(x, "priority"))
+                }
+            };
+
+            var assignedTo = new EntryElement("Assigned To", string.Empty, string.Empty) { 
+                AutocorrectionType = UITextAutocorrectionType.No, 
+                AutocapitalizationType = UITextAutocapitalizationType.None,
+                TitleFont = UIFont.BoldSystemFontOfSize(15f),
+                EntryFont = UIFont.SystemFontOfSize(15f),
+            };
+
+            var content = new MultilinedElement("Detail") {  };
+            content.Tapped += () => {
+
+                var composer = new Composer();
+                composer.NewComment(this, () => {
+                    var text = composer.Text;
+                    content.Value = text;
+                    composer.CloseComposer();
+                    
+                });
+
+            };
+
 
             var root = new RootElement("New Issue");
-            root.Add(new Section() { title, content });
-
+            root.Add(new Section() { title, assignedTo, issueType, priority });
+            root.Add(new Section() { content });
             Root = root;
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            TableView.ReloadData();
+        }
+
+        private class PopNavRadioElement : RadioElement
+        {
+            public PopNavRadioElement(string caption, string group) : base(caption, group) { }
+            public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+            {
+                base.Selected(dvc, tableView, indexPath);
+                dvc.NavigationController.PopViewControllerAnimated(true);
+            }
+        }
 
 
         protected override void OnRefresh ()
@@ -294,7 +355,7 @@ namespace BitbucketBrowser.UI
 
         protected override object OnUpdate ()
         {
-            return this;
+            return new object();
         }
     }
 }
