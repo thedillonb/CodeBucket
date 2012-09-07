@@ -275,7 +275,7 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
 #if DEBUG
-                NavigationController.PushViewController(new IssueEditController(), false);
+                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
 #else
                 NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
 #endif

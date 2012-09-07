@@ -15,7 +15,7 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
         private static readonly UIFont DescFont = UIFont.SystemFontOfSize(12);
 
         private const float LeftRightPadding = 6f;
-        private const float TopBottomPadding = 6f;
+        private const float TopBottomPadding = 8f;
 
         public string Name { get; set; }
         public string Time { get; set; }

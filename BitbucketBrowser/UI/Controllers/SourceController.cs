@@ -96,7 +96,7 @@ namespace BitbucketBrowser.UI
 
             _web = new UIWebView();
             _web.DataDetectorTypes = UIDataDetectorType.None;
-            _web.ScalesPageToFit = false;
+            _web.ScalesPageToFit = true;
             this.Add(_web);
 
             Title = path.Substring(path.LastIndexOf('/') + 1);

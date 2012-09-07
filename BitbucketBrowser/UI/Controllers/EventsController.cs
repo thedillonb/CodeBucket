@@ -20,15 +20,18 @@ namespace BitbucketBrowser.UI
             Slug = slug;
         }
 
-        protected override EventsModel OnGetData()
+        protected override EventsModel OnGetData(int start, int limit)
         {
-            return Application.Client.Users[Username].Repositories[Slug].GetEvents();
+            return Application.Client.Users[Username].Repositories[Slug].GetEvents(start, limit);
         }
     }
 
     public class EventsController : Controller<List<EventModel>>
     {
         private DateTime _lastUpdate = DateTime.MinValue;
+        private int _firstIndex = 0;
+        private int _lastIndex = 0;
+        private LoadMoreElement _loadMore;
 
         public string Username { get; private set; }
 
@@ -42,16 +45,33 @@ namespace BitbucketBrowser.UI
             Username = username;
             Root.UnevenRows = true;
             ReportRepository = false;
+
+            _loadMore = new LoadMoreElement("Load More", "Loading...", (e) => {
+                GetMore();
+            });
         }
 
-        protected virtual EventsModel OnGetData()
+        protected virtual EventsModel OnGetData(int start = 0, int limit = 5)
         {
-            return Application.Client.Users[Username].GetEvents(0, 40);
+            return Application.Client.Users[Username].GetEvents(start, limit);
+        }
+
+        private void GetMore()
+        {
+            ThreadPool.QueueUserWorkItem(delegate {
+                var lastIndex = 0;
+                var currentCount = OnGetData(0, 0).Count;
+                var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
+                var newEvents = (from s in moreEvents.Events select s).ToList();
+                AddItems(newEvents, false);
+            });
         }
 
         protected override List<EventModel> OnUpdate()
         {
             var events = OnGetData();
+            _firstIndex = events.Count;
+            _lastIndex = events.Events.Count;
 
              var newEvents =
                  (from s in events.Events
@@ -65,11 +85,16 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
-            if (Model.Count == 0)
+            AddItems(Model);
+        }
+
+        private void AddItems(List<EventModel> events, bool prepend = true)
+        {
+            if (events.Count == 0)
                 return;
 
             var sec = new Section();
-            Model.ForEach(e => {
+            events.ForEach(e => {
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
                     return;
 
@@ -104,9 +129,13 @@ namespace BitbucketBrowser.UI
                     Root = r;
                 }
                 else
-                    Root.Insert(0, sec);
+                {
+                    if (prepend)
+                        Root.Insert(0, sec);
+                    else
+                        Root.Add(sec);
+                }
             });
-
         }
     }
 }
