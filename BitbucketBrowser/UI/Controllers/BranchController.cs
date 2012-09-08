@@ -32,7 +32,7 @@ namespace BitbucketBrowser.UI
             if (Model.Count == 0)
                 return;
 
-            var root = new RootElement(Title) { 
+            var root = new RootElement(string.Empty) { 
                 new Section() { 
                     from x in Model 
                                select (Element)new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))
@@ -41,6 +41,7 @@ namespace BitbucketBrowser.UI
             };
 
             InvokeOnMainThread(delegate {
+                root.Caption = Title;
                 Root = root;
             });
         }

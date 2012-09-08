@@ -27,9 +27,12 @@ namespace BitbucketBrowser.UI
             if (Model.Count == 0)
                 return;
 
+            var selected = 0;
+            InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
+
             var sec = new Section();
             Model.ForEach(x => {
-                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = _segment.SelectedSegment != 0 };
+                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = selected != 0 };
                 sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });
@@ -44,9 +47,12 @@ namespace BitbucketBrowser.UI
 
         protected override List<RepositoryDetailedModel> OnUpdate ()
         {
-            if (_segment.SelectedSegment == 0)
+            var selected = 0;
+            InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
+
+            if (selected == 0)
                 return Application.Client.Users[Username].GetInfo().Repositories;
-            else if (_segment.SelectedSegment == 1)
+            else if (selected == 1)
                 return Application.Client.Account.GetRepositories();
             else
                 return new List<RepositoryDetailedModel>();
@@ -92,8 +98,8 @@ namespace BitbucketBrowser.UI
 
         private void ChangeSegment()
         {
-            InvokeOnMainThread(delegate { Root.Clear(); TableView.TableFooterView.Hidden = true; });
-
+            Root.Clear(); 
+            TableView.TableFooterView.Hidden = true;
             Model = null;
             Refresh();
 
@@ -119,6 +125,7 @@ namespace BitbucketBrowser.UI
     public class RepositoryController : Controller<List<RepositoryDetailedModel>>
     {
         public string Username { get; private set; }
+        public bool ShowOwner { get; set; }
 
         public RepositoryController(string username, bool push = true) 
             : base(push, true)
@@ -128,6 +135,7 @@ namespace BitbucketBrowser.UI
             Username = username;
             AutoHideSearch = true;
             EnableSearch = true;
+            ShowOwner = true;
         } 
 
 
@@ -138,7 +146,7 @@ namespace BitbucketBrowser.UI
 
             var sec = new Section();
             Model.ForEach(x => {
-                RepositoryElement sse = new RepositoryElement(x);
+                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = ShowOwner };
                 sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });

@@ -76,8 +76,6 @@ namespace CodeFramework.UI.Controllers
         //Called when the controller needs to request the model from the server
         protected abstract T OnUpdate();
 
-
-
         /// <summary>
         /// Makes the refresh table header view.
         /// </summary>
