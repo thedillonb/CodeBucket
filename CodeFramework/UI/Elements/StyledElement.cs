@@ -6,8 +6,8 @@ namespace CodeFramework.UI.Elements
 {
     public class StyledElement : MonoTouch.Dialog.StyledStringElement
     {
-        private static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
-        private static UIFont SubFont = UIFont.SystemFontOfSize(15f);
+        public static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
+        public static UIFont SubFont = UIFont.SystemFontOfSize(15f);
         public static UIColor BgColor;
 
         public StyledElement(string title)

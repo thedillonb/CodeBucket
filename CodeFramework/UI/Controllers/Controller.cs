@@ -237,7 +237,6 @@ namespace CodeFramework.UI.Controllers
                 }
 
                 searchBar.ShowsCancelButton = true;
-                container.StartSearch ();
                 container.TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
                 container.NavigationController.SetNavigationBarHidden(true, true);
                 container.isSearching = true;
@@ -318,7 +317,6 @@ namespace CodeFramework.UI.Controllers
                 //Reset the parent
                 foreach (var s in searchElements)
                     s.Element.Parent = s.Parent;
-
 
                 searchBar.Text = "";
                 searchBar.ShowsCancelButton = false;

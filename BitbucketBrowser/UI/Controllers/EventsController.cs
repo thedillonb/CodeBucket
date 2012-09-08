@@ -7,6 +7,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using CodeFramework.UI.Controllers;
+using CodeFramework.UI.Elements;
 
 namespace BitbucketBrowser.UI
 {
@@ -45,10 +46,6 @@ namespace BitbucketBrowser.UI
             Username = username;
             Root.UnevenRows = true;
             ReportRepository = false;
-
-            _loadMore = new LoadMoreElement("Load More", "Loading...", (e) => {
-                GetMore();
-            });
         }
 
         protected virtual EventsModel OnGetData(int start = 0, int limit = 5)
@@ -59,11 +56,27 @@ namespace BitbucketBrowser.UI
         private void GetMore()
         {
             ThreadPool.QueueUserWorkItem(delegate {
-                var lastIndex = 0;
                 var currentCount = OnGetData(0, 0).Count;
                 var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
+                _firstIndex = currentCount;
+                _lastIndex += moreEvents.Events.Count;
                 var newEvents = (from s in moreEvents.Events select s).ToList();
                 AddItems(newEvents, false);
+
+                //Should never happen. Sanity check..
+                if (_loadMore != null)
+                {
+                    BeginInvokeOnMainThread(() => {
+                        _loadMore.Animating = false;
+
+                        if (_firstIndex == _lastIndex)
+                        {
+                            Root.Remove(_loadMore.Parent as Section);
+                            _loadMore.Dispose();
+                            _loadMore = null;
+                        }
+                    });
+                }
             });
         }
 
@@ -126,6 +139,14 @@ namespace BitbucketBrowser.UI
                 if (Root.Count == 0)
                 {
                     var r = new RootElement(Title) { sec };
+
+                    //If there are more items to load then insert the load object
+                    if (_lastIndex != _firstIndex)
+                    {
+                        _loadMore = new PaginateElement("Load More", "Loading...", (e) => GetMore());
+                        r.Add(new Section() { _loadMore });
+                    }
+
                     Root = r;
                 }
                 else
@@ -133,7 +154,7 @@ namespace BitbucketBrowser.UI
                     if (prepend)
                         Root.Insert(0, sec);
                     else
-                        Root.Add(sec);
+                        Root.Insert(Root.Count - 1, sec);
                 }
             });
         }

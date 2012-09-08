@@ -49,7 +49,7 @@ namespace BitbucketBrowser.UI
 
 
         public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
-                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo };
+                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment };
 
         private void CreateDescription(out string desc, out UIImage img)
         {
@@ -96,6 +96,11 @@ namespace BitbucketBrowser.UI
             {
                 img = Images.HeartDelete;
                 desc = "Stopped following: " + repoName();
+            }
+            else if (Item.Event == EventModel.Type.IssueComment)
+            {
+                img = Images.Priority;
+                desc = "Issue commented on in " + repoName();
             }
             else
                 img = Images.Priority;
