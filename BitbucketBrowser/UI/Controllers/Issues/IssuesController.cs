@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using MonoTouch.Dialog;
 using System.Linq;
 using MonoTouch.Foundation;
+using MonoTouch;
+using CodeFramework.UI.Elements;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {
@@ -16,6 +18,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private DateTime _lastUpdate = DateTime.MinValue;
         private bool _needsUpdate;
+        private int _firstIndex = 0;
+        private int _lastIndex = 0;
+        private LoadMoreElement _loadMore;
         
         public IssuesController(string user, string slug)
             : base(true, true)
@@ -35,6 +40,11 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 };
                 NavigationController.PushViewController(b, true);
             });
+        }
+
+        private IssuesModel OnGetData(int start = 0, int limit = 2)
+        {
+            return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -84,34 +94,85 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 Root.Reload(element, UITableViewRowAnimation.None);
             }
         }
+
+        private void GetMore()
+        {
+            this.DoWorkNoHud(() => {
+                var currentCount = OnGetData(0, 0).Count;
+                var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
+                _firstIndex = currentCount;
+                _lastIndex += moreEvents.Issues.Count;
+                var newEvents = (from s in moreEvents.Issues
+                                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                                 select s).ToList();
+                AddItems(newEvents, false);
+                
+                //Should never happen. Sanity check..
+                if (_loadMore != null && _firstIndex == _lastIndex)
+                {
+                    InvokeOnMainThread(() => {
+                        Root.Remove(_loadMore.Parent as Section);
+                        _loadMore.Dispose();
+                        _loadMore = null;
+                    });
+                }
+            },
+            (ex) => {
+                Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
+            },
+            () => {
+                if (_loadMore != null)
+                    _loadMore.Animating = false;
+            });
+        }
         
         protected override void OnRefresh ()
         {
-            if (Model.Issues.Count == 0)
+            AddItems(Model.Issues);
+        }
+
+        private void AddItems(List<IssueModel> issues, bool prepend = true)
+        {
+            if (issues.Count == 0)
                 return;
             
-            var items = new List<Element>();
-            Model.Issues.ForEach(x => {
-                items.Add(CreateElement(x));
+            var sec = new Section();
+            issues.ForEach(x => {
+                sec.Add(CreateElement(x));
             });
+
+            if (sec.Count == 0)
+                return;
             
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)
                 {
-                    var sec = new Section();
-                    sec.AddAll(items);
-                    var v = new RootElement(Title) { sec };
-                    v.UnevenRows = true;
-                    Root = v;
+                    var r = new RootElement(Title) { sec };
+                    
+                    //If there are more items to load then insert the load object
+                    if (_lastIndex != _firstIndex)
+                    {
+                        _loadMore = new PaginateElement("Load More", "Loading...", (e) => GetMore());
+                        r.Add(new Section() { _loadMore });
+                    }
+                    
+                    Root = r;
                 }
                 else
-                    Root[0].Insert(0, UITableViewRowAnimation.Top, items);
+                {
+                    if (prepend)
+                        Root.Insert(0, sec);
+                    else
+                        Root.Insert(Root.Count - 1, sec);
+                }
             });
         }
         
         protected override IssuesModel OnUpdate ()
         {
-            var issues = Application.Client.Users[User].Repositories[Slug].Issues.GetIssues();
+            var issues = OnGetData();
+            _firstIndex = issues.Count;
+            _lastIndex = issues.Issues.Count;
             
             var newChanges =
                 (from s in issues.Issues

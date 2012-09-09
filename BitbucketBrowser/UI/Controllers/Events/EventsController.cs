@@ -11,6 +11,8 @@ using CodeFramework.UI.Elements;
 using BitbucketBrowser.UI.Controllers.Wikis;
 using BitbucketBrowser.UI.Controllers.Repositories;
 using BitbucketBrowser.UI.Controllers.Issues;
+using BitbucketBrowser.UI.Controllers.Changesets;
+using MonoTouch;
 
 namespace BitbucketBrowser.UI.Controllers.Events
 {
@@ -35,35 +37,39 @@ namespace BitbucketBrowser.UI.Controllers.Events
             ReportRepository = false;
         }
 
-        protected virtual EventsModel OnGetData(int start = 0, int limit = 30)
+        protected virtual EventsModel OnGetData(int start = 0, int limit = 4)
         {
             return Application.Client.Users[Username].GetEvents(start, limit);
         }
 
         private void GetMore()
         {
-            ThreadPool.QueueUserWorkItem(delegate {
+            this.DoWorkNoHud(() => {
                 var currentCount = OnGetData(0, 0).Count;
                 var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Events.Count;
-                var newEvents = moreEvents.Events;
+                var newEvents = (from s in moreEvents.Events
+                                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                                 select s).ToList();
                 AddItems(newEvents, false);
-
+                
                 //Should never happen. Sanity check..
-                if (_loadMore != null)
+                if (_loadMore != null && _firstIndex == _lastIndex)
                 {
-                    BeginInvokeOnMainThread(() => {
-                        _loadMore.Animating = false;
-
-                        if (_firstIndex == _lastIndex)
-                        {
-                            Root.Remove(_loadMore.Parent as Section);
-                            _loadMore.Dispose();
-                            _loadMore = null;
-                        }
+                    InvokeOnMainThread(() => {
+                        Root.Remove(_loadMore.Parent as Section);
+                        _loadMore.Dispose();
+                        _loadMore = null;
                     });
                 }
+            },
+            (ex) => {
+                Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
+            },
+            () => {
+                if (_loadMore != null)
+                    _loadMore.Animating = false;
             });
         }
 

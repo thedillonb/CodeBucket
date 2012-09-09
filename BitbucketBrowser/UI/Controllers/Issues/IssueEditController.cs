@@ -7,6 +7,7 @@ using MonoTouch.Dialog;
 using CodeFramework.UI.Elements;
 using MonoTouch.Foundation;
 using BitbucketBrowser.UI.Controllers.Privileges;
+using System.Collections.Generic;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {

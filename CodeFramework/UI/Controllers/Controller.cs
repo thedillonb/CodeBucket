@@ -36,7 +36,6 @@ namespace CodeFramework.UI.Controllers
         //Called when the controller needs to request the model from the server
         protected abstract T OnUpdate();
 
-
         public void Refresh(bool force = false)
         {
             InvokeOnMainThread(delegate {
@@ -51,9 +50,9 @@ namespace CodeFramework.UI.Controllers
                 {
                     OnRefresh();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
+                    Console.WriteLine("There was an issue attempting to refresh: " + ex.Message);
                 }
 
                 InvokeOnMainThread(delegate { 
@@ -66,41 +65,25 @@ namespace CodeFramework.UI.Controllers
                 return;
             }
 
-            MBProgressHUD hud = null;
-            if (!force) {
-                hud = new MBProgressHUD(this.View.Superview); 
-                hud.Mode = MBProgressHUDMode.Indeterminate;
-                hud.TitleText = "Loading...";
-                this.View.Superview.AddSubview(hud);
-                hud.Show(true);
+            if (!force)
+            {
+                this.DoWork(UpdateAndRefresh, (ex) => {
+                    _currentError = ErrorView.Show(this.View.Superview, ex.Message);
+                });
             }
+            else
+            {
+                this.DoWorkNoHud(UpdateAndRefresh, (ex) => {
+                    Utilities.ShowAlert("Unable to refresh!", "There was an issue while attempting to refresh. " + ex.Message);
+                }, ReloadComplete);
+            }
+        }
 
-            ThreadPool.QueueUserWorkItem(delegate {
-                try
-                {
-                    Utilities.PushNetworkActive();
-                    Model = OnUpdate();
-                    if (Model != null)
-                        Refresh();
-                }
-                catch (Exception e)
-                {
-                    InvokeOnMainThread(() => _currentError = ErrorView.Show(this.View.Superview, e.Message));
-                }
-                finally 
-                {
-                    Utilities.PopNetworkActive();
-                }
-
-
-                if (hud != null)
-                {
-                    InvokeOnMainThread(delegate {
-                        hud.Hide(true);
-                        hud.RemoveFromSuperview();
-                    });
-                }
-            });
+        private void UpdateAndRefresh()
+        {
+            Model = OnUpdate();
+            if (Model != null)
+                Refresh();
         }
 
         public override void ViewDidAppear(bool animated)

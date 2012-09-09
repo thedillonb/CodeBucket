@@ -13,6 +13,7 @@ using BitbucketBrowser.UI.Controllers.Followers;
 using BitbucketBrowser.UI.Controllers.Events;
 using BitbucketBrowser.UI.Controllers.Wikis;
 using BitbucketBrowser.UI.Controllers.Branches;
+using BitbucketBrowser.UI.Controllers.Changesets;
 
 namespace BitbucketBrowser.UI.Controllers.Repositories
 {

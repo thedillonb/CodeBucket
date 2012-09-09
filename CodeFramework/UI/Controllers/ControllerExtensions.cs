@@ -44,6 +44,28 @@ namespace CodeFramework.UI.Controllers
                 }
             });
         }
+
+        public static void DoWorkNoHud(this UIViewController controller, Action work, Action<Exception> error = null, Action final = null)
+        {
+            ThreadPool.QueueUserWorkItem(delegate {
+                try
+                {
+                    Utilities.PushNetworkActive();
+                    work();
+                }
+                catch (Exception e)
+                {
+                    if (error != null)
+                        controller.InvokeOnMainThread(() => error(e));
+                }
+                finally 
+                {
+                    Utilities.PopNetworkActive();
+                    if (final != null)
+                        controller.InvokeOnMainThread(() => final());
+                }
+            });
+        }
     }
 }
 

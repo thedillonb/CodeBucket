@@ -20,7 +20,11 @@ namespace CodeFramework.UI.Controllers
         {
             Title = title;
             Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
+            SetValues(values, selected);
+        }
 
+        public void SetValues(string[] values, string selected)
+        {
             var sec = new Section();
             foreach (var s in values)
             {

@@ -112,7 +112,6 @@
     <Compile Include="Main.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
-    <Compile Include="UI\Controllers\ChangesetController.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="Images\Images.cs" />
@@ -150,6 +149,10 @@
     <Compile Include="UI\Controllers\Accounts\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controllers\Changesets\ChangesetDiffController.cs" />
+    <Compile Include="UI\Controllers\Changesets\ChangesetInfoController.cs" />
+    <Compile Include="UI\Controllers\Changesets\ChangesetController.cs" />
+    <Compile Include="UI\Controllers\Issues\IssueTrackerSettingsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -177,6 +180,7 @@
     <Folder Include="UI\Controllers\Privileges\" />
     <Folder Include="UI\Controllers\Repositories\" />
     <Folder Include="UI\Controllers\Accounts\" />
+    <Folder Include="UI\Controllers\Changesets\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
