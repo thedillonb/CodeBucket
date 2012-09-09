@@ -13,6 +13,11 @@ using System.Threading;
 using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Elements;
 using CodeFramework.UI.Views;
+using BitbucketBrowser.UI.Controllers.Issues;
+using BitbucketBrowser.UI.Controllers.Events;
+using BitbucketBrowser.UI.Controllers.Repositories;
+using BitbucketBrowser.UI.Controllers.Groups;
+using BitbucketBrowser.UI.Controllers.Accounts;
 
 namespace BitbucketBrowser
 {
@@ -60,7 +65,7 @@ namespace BitbucketBrowser
             DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
             WatermarkView.Image = Images.Background;
             HeaderView.Gradient = Images.CellGradient;
-            StyledElement.BgColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/TableCell"));
+            StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             ErrorView.AlertImage = UIImage.FromBundle("/Images/warning.png");
 
             //Resize the back button only on the iPhone
@@ -118,7 +123,7 @@ namespace BitbucketBrowser
 
             Application.SetUser(defaultAccount);
 
-            _nav = new SlideoutNavigationController();
+            _nav = new SlideoutNavigationController() { SlideHeight = 999f };
             _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
             _nav.MenuView = new MenuController();
             window.RootViewController = _nav;
@@ -243,15 +248,6 @@ namespace BitbucketBrowser
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
             });
 
-            /*
-            Root.Add(new Section("Settings") {
-                new NavElement("Login", () => { 
-                    PresentModalViewController(new LoginViewController(), true);
-                
-                }, UIImage.FromBundle("/Images/Tabs/person"))
-            });
-            */
-
             TableView.BackgroundColor = UIColor.Clear;
             UIImage background = Images.Linen;
             View.BackgroundColor = UIColor.FromPatternImage(background);
@@ -275,7 +271,7 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
 #if DEBUG
-                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
+                NavigationController.PushViewController(new IssuesController(Application.Account.Username, "bitbucketbrowser") { Title = "Events" }, false);
 #else
                 NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
 #endif

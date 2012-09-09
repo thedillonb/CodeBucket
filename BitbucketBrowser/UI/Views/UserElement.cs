@@ -16,7 +16,8 @@ namespace BitbucketBrowser.UI
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
             Image = Images.Anonymous;
-            ImageUri = new Uri(avatar);
+            if (avatar != null)
+                ImageUri = new Uri(avatar);
         }
     }
 }

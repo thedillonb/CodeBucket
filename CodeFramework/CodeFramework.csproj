@@ -73,6 +73,9 @@
     <Compile Include="UI\Views\HeaderView.cs" />
     <Compile Include="UI\Elements\MultilinedElement.cs" />
     <Compile Include="UI\Elements\PaginateElement.cs" />
+    <Compile Include="UI\Controllers\BaseDialogViewController.cs" />
+    <Compile Include="UI\Controllers\EnumViewController.cs" />
+    <Compile Include="UI\Controllers\ControllerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SourceBrowser\index.html" />

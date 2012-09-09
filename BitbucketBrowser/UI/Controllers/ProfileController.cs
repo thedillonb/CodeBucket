@@ -9,6 +9,10 @@ using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.UI.Controllers.Followers;
+using BitbucketBrowser.UI.Controllers.Events;
+using BitbucketBrowser.UI.Controllers.Groups;
+using BitbucketBrowser.UI.Controllers.Repositories;
 
 namespace BitbucketBrowser.UI
 {

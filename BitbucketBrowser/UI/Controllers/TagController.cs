@@ -25,22 +25,27 @@ namespace BitbucketBrowser.UI
             AutoHideSearch = true;
         }
 
-        protected override void OnRefresh ()
+        protected override void OnRefresh()
         {
-            if (Model.Keys.Count == 0)
-                return;
-
             var sec = new Section();
-            foreach (var k in Model.Keys)
+            
+            if (Model.Keys.Count == 0)
             {
-                var element = new StyledElement(k)
-                                                      { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator };
-                element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k].Node), true);
-                sec.Add(element);
+                sec.Add(new NoItemsElement());
+            }
+            else
+            {
+                foreach (var k in Model.Keys)
+                {
+                    var element = new StyledElement(k);
+                    element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k].Node), true);
+                    sec.Add(element);
+                }
             }
 
             InvokeOnMainThread(delegate {
-                Root = new RootElement(Title) { sec };
+                var root = new RootElement(Title) { sec };
+                Root = root;
             });
         }
 

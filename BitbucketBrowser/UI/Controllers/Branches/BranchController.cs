@@ -7,13 +7,11 @@ using System.Linq;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 
-
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers.Branches
 {
 	public class BranchController : Controller<List<BranchModel>>
 	{
         public string Username { get; private set; }
-
         public string Slug { get; private set; }
 
 		public BranchController(string username, string slug) 
@@ -32,16 +30,15 @@ namespace BitbucketBrowser.UI
             if (Model.Count == 0)
                 return;
 
-            var root = new RootElement(string.Empty) { 
-                new Section() { 
-                    from x in Model 
-                               select (Element)new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))
-                               { Accessory = UITableViewCellAccessory.DisclosureIndicator }
-                }
-            };
-
+            var sec = new Section();
+            Model.ForEach(x => {
+                var element = new StyledElement(x.Branch);
+                element.Tapped += () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true);
+                sec.Add(element);
+            });
+           
             InvokeOnMainThread(delegate {
-                root.Caption = Title;
+                var root = new RootElement(Title) { sec };
                 Root = root;
             });
         }

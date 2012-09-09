@@ -9,6 +9,7 @@ using RedPlum;
 using System.Drawing;
 using MonoTouch;
 using CodeFramework.UI.Views;
+using BitbucketBrowser.UI.Controllers.Repositories;
 
 namespace BitbucketBrowser.UI
 {

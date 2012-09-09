@@ -44,7 +44,7 @@ namespace BitbucketBrowser.UI
         }
 
 
-        protected override void OnRefresh ()
+        protected override void OnRefresh()
         {
             var sec = new Section();
             Model.Directories.ForEach(d => 
@@ -58,13 +58,15 @@ namespace BitbucketBrowser.UI
             {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
-                sec.Add(new StyledElement(p,() => NavigationController.PushViewController(
+                sec.Add(new StyledElement(p, () => NavigationController.PushViewController(
                                           new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true), 
                                           Images.File));
             });
 
             if (sec.Count == 0)
-                return;
+            {
+                sec.Add(new NoItemsElement());
+            }
 
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
@@ -112,7 +114,6 @@ namespace BitbucketBrowser.UI
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-
             var bounds = View.Bounds;
             _web.Frame = bounds;
         }
@@ -125,46 +126,23 @@ namespace BitbucketBrowser.UI
 
         private void Request()
         {
-            var hud = new MBProgressHUD(this.View.Superview); 
-            hud.Mode = MBProgressHUDMode.Indeterminate;
-            hud.TitleText = "Loading...";
-            this.View.Superview.AddSubview(hud);
-            hud.Show(true);
-
-
-            ThreadPool.QueueUserWorkItem(delegate {
-                try
-                {
-                    var data = RequestData();
-
-                    InvokeOnMainThread(delegate {
-                        var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
-                        var filled = html.Replace("{DATA}", data);
-
-                        var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
-                        url = url.Replace("/", "//").Replace(" ", "%20");
-
-                        //var url = NSBundle.PathForResourceAbsolute("SourceBrowser", 
-                        _web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
-
-                        //_web.LoadHtmlString("<pre>" + data + "</pre>", null);
-                        hud.Hide(true);
-                        hud.RemoveFromSuperview();
-                    });
-                }
-                catch (Exception e)
-                {
-                    InvokeOnMainThread(delegate {
-                        hud.Hide(true);
-                        hud.RemoveFromSuperview();
-                        ErrorView.Show(this.View, e.Message);
-                    });
-                }
+            this.DoWork(() => {
+                var data = RequestData();
+                
+                InvokeOnMainThread(delegate {
+                    var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
+                    var filled = html.Replace("{DATA}", data);
+                    
+                    var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
+                    url = url.Replace("/", "//").Replace(" ", "%20");
+                    
+                    _web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
+                });
+            }, (ex) => {
+                ErrorView.Show(this.View, ex.Message);
             });
 
         }
-
-
     }
 }
 

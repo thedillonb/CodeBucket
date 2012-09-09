@@ -16,6 +16,11 @@ namespace CodeFramework.UI.Elements
             c.TextLabel.TextAlignment = UITextAlignment.Center;
             return c;
         }
+
+        public override string Summary()
+        {
+            return string.Empty;
+        }
     }
 }
 

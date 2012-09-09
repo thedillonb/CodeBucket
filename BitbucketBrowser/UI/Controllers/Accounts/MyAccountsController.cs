@@ -6,28 +6,20 @@ using BitbucketSharp.Models;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers.Accounts
 {
-    public class MyAccountsController : Controller<List<Account>>
+    public class MyAccountsController : BaseDialogViewController
     {
         public MyAccountsController()
-            : base (false, false)
+            : base(false)
         {
             Title = "Accounts";
-            Model = new List<Account>(Application.Accounts);
             Style = UITableViewStyle.Plain;
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            //Pull the model!
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {  
                 NavigationController.PushViewController(new LoginViewController(), true);
             });
-
+            
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => {  
                 this.DismissModalViewControllerAnimated(true);
             });
@@ -36,13 +28,8 @@ namespace BitbucketBrowser.UI
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            Refresh(false);
-        }
 
-        protected override void OnRefresh ()
-        {
             var s = new Section();
-
             foreach (var account in Application.Accounts)
             {
                 var thisAccount = account;
@@ -50,25 +37,20 @@ namespace BitbucketBrowser.UI
                 t.Tapped += () => { 
                     Application.SetUser(thisAccount);
                     this.DismissModalViewControllerAnimated(true);
-
+                    
                 };
-
-
+                
+                
                 if (string.Compare(account.Username, Application.Account.Username, true) == 0)
                 {
                     t.Accessory = UITableViewCellAccessory.Checkmark;
                 }
-
+                
                 s.Add(t);
             };
 
-            TableView.TableFooterView.Hidden = false;
+            TableView.TableFooterView.Hidden = s.Count == 0;
             Root = new RootElement(Title) { s };
-        }
-
-        protected override List<Account> OnUpdate ()
-        {
-            return Model;
         }
 
         public override Source CreateSizingSource(bool unevenRows)
@@ -131,9 +113,6 @@ namespace BitbucketBrowser.UI
                 }
             }
         }
-
-
-     
     }
 }
 

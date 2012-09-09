@@ -19,6 +19,9 @@ namespace BitbucketBrowser
         public static UIImage Pencil = UIImage.FromBundle("/Images/pencil");
         public static UIImage Plus = UIImage.FromBundle("/Images/plus");
         public static UIImage Tag = UIImage.FromBundle("/Images/tag");
+        public static UIImage CommentAdd = UIImage.FromBundle("/Images/comment_add");
+        public static UIImage ReportEdit = UIImage.FromBundle("/Images/report_edit");
+        public static UIImage BinClosed = UIImage.FromBundle("/Images/bin_closed");
 
         public static UIImage CellGradient = UIImage.FromBundle("/Images/Cells/gradient");
 
@@ -49,6 +52,8 @@ namespace BitbucketBrowser
         public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
         public static UIImage Divider = UIImage.FromBundle("/Images/Controls/divider");
 
+        public static UIImage TableCell = UIImage.FromBundle("/Images/TableCell");
+        public static UIImage TableCellRed = UIImage.FromBundle("/Images/tablecell_red");
 
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
         public static UIImage LogoBehind 

@@ -49,7 +49,9 @@ namespace BitbucketBrowser.UI
 
 
         public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
-                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment };
+                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment,
+                                                    EventModel.Type.IssueUpdated, EventModel.Type.IssueReported                   
+        };
 
         private void CreateDescription(out string desc, out UIImage img)
         {
@@ -99,8 +101,18 @@ namespace BitbucketBrowser.UI
             }
             else if (Item.Event == EventModel.Type.IssueComment)
             {
-                img = Images.Priority;
+                img = Images.CommentAdd;
                 desc = "Issue commented on in " + repoName();
+            }
+            else if (Item.Event == EventModel.Type.IssueUpdated)
+            {
+                img = Images.ReportEdit;
+                desc = "Issue updated in " + repoName();
+            }
+            else if (Item.Event == EventModel.Type.IssueReported)
+            {
+                img = Images.ReportEdit;
+                desc = "Issue reported on in " + repoName();
             }
             else
                 img = Images.Priority;

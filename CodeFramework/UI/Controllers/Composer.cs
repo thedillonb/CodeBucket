@@ -51,6 +51,12 @@ namespace CodeFramework.UI.Controllers
 		UIViewController previousController;
         public Action returnAction;
 
+        public bool EnableSendButton
+        {
+            get { return sendItem.Enabled; }
+            set { sendItem.Enabled = value; }
+        }
+
         private class ComposerView : UIView 
         {
             const UIBarButtonItemStyle style = UIBarButtonItemStyle.Bordered;
@@ -97,6 +103,8 @@ namespace CodeFramework.UI.Controllers
 		
 		public Composer () : base (null, null)
 		{
+            Title = "New Comment";
+
 			// Navigation Bar
 			navigationBar = new UINavigationBar (new RectangleF (0, 0, 320, 44));
 			navItem = new UINavigationItem ("");
@@ -123,6 +131,12 @@ namespace CodeFramework.UI.Controllers
             set { composerView.Text = value; }
         }
 
+        public string ActionButtonText 
+        {
+            get { return navItem.RightBarButtonItem.Title; }
+            set { navItem.RightBarButtonItem.Title = value; }
+        }
+
 		UIImage Scale (UIImage image, SizeF size)
 		{
 			UIGraphics.BeginImageContext (size);
@@ -145,16 +159,14 @@ namespace CodeFramework.UI.Controllers
 		{
 			sendItem.Enabled = true;
 			previousController.DismissModalViewControllerAnimated (true);
-		}		
-		
+        }
+
 		void PostCallback (object sender, EventArgs a)
 		{
 			sendItem.Enabled = false;
 
             if (returnAction != null)
                 returnAction();
-
-            sendItem.Enabled = true;
 		}
 		
 		void KeyboardWillShow (NSNotification notification)
@@ -180,7 +192,7 @@ namespace CodeFramework.UI.Controllers
 		
 		public void NewComment (UIViewController parent, Action action)
 		{
-            navItem.Title = "New Comment";
+            navItem.Title = Title;
             returnAction = action;
             previousController = parent;
             composerView.textView.BecomeFirstResponder ();

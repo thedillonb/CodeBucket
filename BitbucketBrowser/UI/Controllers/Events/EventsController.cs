@@ -8,25 +8,12 @@ using MonoTouch.UIKit;
 using System.Collections.Generic;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.UI.Controllers.Wikis;
+using BitbucketBrowser.UI.Controllers.Repositories;
+using BitbucketBrowser.UI.Controllers.Issues;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers.Events
 {
-    public class RepoEventsController : EventsController
-    {
-        public string Slug { get; private set; }
-
-        public RepoEventsController(string username, string slug)
-            : base(username)
-        {
-            Slug = slug;
-        }
-
-        protected override EventsModel OnGetData(int start, int limit)
-        {
-            return Application.Client.Users[Username].Repositories[Slug].GetEvents(start, limit);
-        }
-    }
-
     public class EventsController : Controller<List<EventModel>>
     {
         private DateTime _lastUpdate = DateTime.MinValue;
@@ -48,7 +35,7 @@ namespace BitbucketBrowser.UI
             ReportRepository = false;
         }
 
-        protected virtual EventsModel OnGetData(int start = 0, int limit = 5)
+        protected virtual EventsModel OnGetData(int start = 0, int limit = 30)
         {
             return Application.Client.Users[Username].GetEvents(start, limit);
         }
@@ -60,7 +47,7 @@ namespace BitbucketBrowser.UI
                 var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Events.Count;
-                var newEvents = (from s in moreEvents.Events select s).ToList();
+                var newEvents = moreEvents.Events;
                 AddItems(newEvents, false);
 
                 //Should never happen. Sanity check..
@@ -127,6 +114,10 @@ namespace BitbucketBrowser.UI
                 else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
                 {
                     newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+                }
+                else if (e.Event == EventModel.Type.IssueComment || e.Event == EventModel.Type.IssueUpdated || e.Event == EventModel.Type.IssueReported)
+                {
+                    newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
                 }
 
                 sec.Add(newsEl);

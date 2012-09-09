@@ -8,6 +8,7 @@ using System.Text;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 using CodeFramework.UI.Views;
+using BitbucketBrowser.UI.Controllers.Repositories;
 
 
 namespace BitbucketBrowser.UI
@@ -201,11 +202,11 @@ namespace BitbucketBrowser.UI
             foreach (var k in a.Lines)
             {
                 if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Deleted)
-                    builder.Append("<span style='background-color: #ffe0e0;'>" + k.Text + "</span>");
+                    builder.Append("<div style='background-color: #ffe0e0;'>" + k.Text + "</div>");
                 else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Inserted)
-                    builder.Append("<span style='background-color: #e0ffe0;'>" + k.Text + "</span>");
+                    builder.Append("<div style='background-color: #e0ffe0;'>" + k.Text + "</div>");
                 else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Modified)
-                    builder.Append("<span style='background-color: #ffffe0;'>" + k.Text + "</span>");
+                    builder.Append("<div style='background-color: #ffffe0;'>" + k.Text + "</div>");
                 else
                     builder.Append(k.Text);
 

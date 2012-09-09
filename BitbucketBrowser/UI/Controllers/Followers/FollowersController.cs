@@ -11,7 +11,7 @@ using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers.Followers
 {
 	public abstract class FollowersController : Controller<List<FollowerModel>>
     {
@@ -39,40 +39,6 @@ namespace BitbucketBrowser.UI
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
             });
-        }
-	}
-	
-	public class UserFollowersController : FollowersController
-	{
-		private readonly string _name;
-
-		public UserFollowersController(string name)
-		{
-			_name = name;
-		}
-
-        protected override List<FollowerModel> OnUpdate()
-        {
-            var f = Application.Client.Users[_name].GetFollowers().Followers;
-            return f.OrderBy(x => x.Username).ToList();
-        }
-	}
-	
-	public class RepoFollowersController : FollowersController
-	{
-		private readonly string _name;
-		private readonly string _owner;
-
-		public RepoFollowersController(string owner, string name)
-		{
-			_name = name;
-			_owner = owner;
-		}
-
-        protected override List<FollowerModel> OnUpdate()
-        {
-            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers().Followers;
-            return f.OrderBy(x => x.Username).ToList();
         }
 	}
 }

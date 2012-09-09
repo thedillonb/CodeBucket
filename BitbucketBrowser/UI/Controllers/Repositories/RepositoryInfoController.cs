@@ -8,13 +8,17 @@ using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Elements;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
+using BitbucketBrowser.UI.Controllers.Issues;
+using BitbucketBrowser.UI.Controllers.Followers;
+using BitbucketBrowser.UI.Controllers.Events;
+using BitbucketBrowser.UI.Controllers.Wikis;
+using BitbucketBrowser.UI.Controllers.Branches;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers.Repositories
 {
     public class RepositoryInfoController : Controller<RepositoryDetailedModel>, IImageUpdated
     {
         private HeaderView _header;
-
 
         public RepositoryInfoController(RepositoryDetailedModel model)
             : base(true)
@@ -42,17 +46,17 @@ namespace BitbucketBrowser.UI
 
             Root.Add(new Section(_header));
             var sec1 = new Section();
-
-
             
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                sec1.Add(new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { PrimaryFont = UIFont.SystemFontOfSize(12f) });
+                sec1.Add(new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { 
+                    CaptionFont = UIFont.SystemFontOfSize(13f),
+                    BackgroundColor = UIColor.White
+                });
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
                 Text2 = Model.Language, Image2 = Images.Language }));
-
 
 
             //Calculate the best representation of the size
@@ -82,40 +86,30 @@ namespace BitbucketBrowser.UI
             sec1.Add(followers);
 
 
-            var events = new StyledElement("Events", Images.Event) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            events.Tapped += () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true);
+            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true), Images.Event);
 
             var sec2 = new Section();
             sec2.Add(events);
 
             if (Model.HasIssues) 
-                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true),
-                                           Images.Flag) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
-                );
+                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true), Images.Flag));
 
             if (Model.HasWiki)
-                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true),
-                                           Images.Pencil) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
-                );
+                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true), Images.Pencil));
 
             var sec3 = new Section() {
-                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), 
-                                  Images.Changes) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
-                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true),
-                                  Images.Branch) { Accessory = UITableViewCellAccessory.DisclosureIndicator },
-                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true),
-                                  Images.Tag) { Accessory = UITableViewCellAccessory.DisclosureIndicator }
+                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), Images.Changes),
+                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true), Images.Branch),
+                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true), Images.Tag)
             };
 
-
-            
             Root.Add(new [] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(Model.Website))
             {
                 var web = new StyledElement("Website", () => {
                     UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(Model.Website));
-                }, Images.Webpage) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                }, Images.Webpage);
                 Root.Add(new Section() { web });
             }
         }

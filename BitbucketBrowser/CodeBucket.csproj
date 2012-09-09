@@ -12,50 +12,50 @@
     <AssemblyName>BitbucketBrowser</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
+    <ConsolePause>False</ConsolePause>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchProfiling>True</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
-    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchUseSGen>True</MtouchUseSGen>
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchProfiling>True</MtouchProfiling>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer: Dillon Buchanan (BD3M6C4CAK)</CodesignKey>
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
@@ -63,21 +63,21 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <BuildIpa>true</BuildIpa>
+    <ConsolePause>False</ConsolePause>
+    <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\AppStore</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Distribution</OutputPath>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Distribution: Dillon Buchanan</CodesignKey>
@@ -110,20 +110,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="UI\Controllers\FollowersController.cs" />
-    <Compile Include="UI\Controllers\GroupController.cs" />
-    <Compile Include="UI\Controllers\ProfileController.cs" />
-    <Compile Include="UI\Controllers\RepositoryController.cs" />
-    <Compile Include="UI\Controllers\RepositoryInfoController.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
-    <Compile Include="UI\Controllers\EventsController.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
-    <Compile Include="UI\Controllers\BranchController.cs" />
     <Compile Include="UI\Controllers\ChangesetController.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
-    <Compile Include="UI\Controllers\IssueController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
-    <Compile Include="UI\Controllers\WikiController.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="UI\Views\UserElement.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
@@ -137,16 +128,33 @@
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
-    <Compile Include="UI\Controllers\MyAccountsController.cs" />
-    <Compile Include="UI\Controllers\LoginViewController.cs" />
-    <Compile Include="UI\Controllers\LoginViewController.designer.cs">
+    <Compile Include="UI\Controllers\Issues\IssuesController.cs" />
+    <Compile Include="UI\Controllers\Issues\IssueEditController.cs" />
+    <Compile Include="UI\Controllers\Issues\IssueInfoController.cs" />
+    <Compile Include="UI\Controllers\Events\RepoEventsController.cs" />
+    <Compile Include="UI\Controllers\Events\EventsController.cs" />
+    <Compile Include="UI\Controllers\Wikis\WikiController.cs" />
+    <Compile Include="UI\Controllers\Branches\BranchController.cs" />
+    <Compile Include="UI\Controllers\Followers\UserFollowersController.cs" />
+    <Compile Include="UI\Controllers\Followers\RepoFollowersController.cs" />
+    <Compile Include="UI\Controllers\Followers\FollowersController.cs" />
+    <Compile Include="UI\Controllers\Groups\GroupInfoController.cs" />
+    <Compile Include="UI\Controllers\Groups\GroupController.cs" />
+    <Compile Include="UI\Controllers\Privileges\PrivilegesController.cs" />
+    <Compile Include="UI\Controllers\Repositories\RepositoryInfoController.cs" />
+    <Compile Include="UI\Controllers\Repositories\AccountRepositoryController.cs" />
+    <Compile Include="UI\Controllers\Repositories\RepositoryController.cs" />
+    <Compile Include="UI\Controllers\ProfileController.cs" />
+    <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
+    <Compile Include="UI\Controllers\Accounts\LoginViewController.cs" />
+    <Compile Include="UI\Controllers\Accounts\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <InterfaceDefinition Include="UI\Controllers\LoginViewController.xib" />
+    <InterfaceDefinition Include="UI\Controllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -160,6 +168,15 @@
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Official\" />
     <Folder Include="Data\" />
+    <Folder Include="UI\Controllers\Issues\" />
+    <Folder Include="UI\Controllers\Events\" />
+    <Folder Include="UI\Controllers\Wikis\" />
+    <Folder Include="UI\Controllers\Branches\" />
+    <Folder Include="UI\Controllers\Followers\" />
+    <Folder Include="UI\Controllers\Groups\" />
+    <Folder Include="UI\Controllers\Privileges\" />
+    <Folder Include="UI\Controllers\Repositories\" />
+    <Folder Include="UI\Controllers\Accounts\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -270,6 +287,13 @@
     <Content Include="Images\Controls\backbutton-landscape%402x.png" />
     <Content Include="Default-Landscape.png" />
     <Content Include="Default-Landscape%402x.png" />
+    <Content Include="Images\tablecell_red.png" />
+    <Content Include="Images\comment_add%402x.png" />
+    <Content Include="Images\comment_add.png" />
+    <Content Include="Images\report_edit%402x.png" />
+    <Content Include="Images\report_edit.png" />
+    <Content Include="Images\bin_closed%402x.png" />
+    <Content Include="Images\bin_closed.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
