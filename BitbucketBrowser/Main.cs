@@ -144,6 +144,8 @@ namespace BitbucketBrowser
         public MenuController()
             : base(UITableViewStyle.Plain, new RootElement("CodeBucket"))
         {
+            if (Application.Account != null && !string.IsNullOrEmpty(Application.Account.Username))
+                Root.Caption = Application.Account.Username;
         }
 
         class NavElement : StyledElement
