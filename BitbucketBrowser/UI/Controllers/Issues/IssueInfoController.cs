@@ -111,7 +111,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             composer.NewComment(this, () => {
                 var comment = new CommentModel() { Content = composer.Text };
 
-                this.DoWork(() => {
+                composer.DoWork(() => {
                     Application.Client.Users[User].Repositories[Slug].Issues[Id].Comments.Create(comment);
 
                     InvokeOnMainThread(() => {

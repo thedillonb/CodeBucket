@@ -31,7 +31,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         public IssueEditController()
             : base(true)
         {
-            Title = "News Issue";
+            Title = "New Issue";
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => SaveIssue());
         }
         

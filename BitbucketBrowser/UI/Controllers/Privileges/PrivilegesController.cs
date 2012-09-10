@@ -50,6 +50,9 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
                 sec.Add(sse);
             });
 
+            if (sec.Count == 0)
+                sec.Add(new NoItemsElement());
+
             InvokeOnMainThread(delegate {
                 var root = new RootElement(Title) { sec };
                 Root = root;
@@ -58,10 +61,17 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
 
         protected override List<PrivilegeModel> OnUpdate()
         {
-            if (RepoSlug != null)
-                return Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges();
-            else
-                return Application.Client.Users[Username].Privileges.GetPrivileges();
+            try
+            {
+                if (RepoSlug != null)
+                    return Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges();
+                else
+                    return Application.Client.Users[Username].Privileges.GetPrivileges();
+            }
+            catch (Exception)
+            {
+                return new List<PrivilegeModel>();
+            }
         }
     }
 }

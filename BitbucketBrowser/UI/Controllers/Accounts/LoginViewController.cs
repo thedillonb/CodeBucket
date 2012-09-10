@@ -67,9 +67,12 @@ namespace BitbucketBrowser
         {
             MBProgressHUD hud;
             bool successful = false;
+            string username = null, password = null;
 
             //The nice hud
             InvokeOnMainThread(delegate {
+                username = User.Text;
+                password = Password.Text;
                 hud = new MBProgressHUD(this.View); 
                 hud.Mode = MBProgressHUDMode.Indeterminate;
                 hud.TitleText = "Logging In...";
@@ -79,12 +82,13 @@ namespace BitbucketBrowser
 
             try
             {
-                var client = new BitbucketSharp.Client(User.Text, Password.Text);
+                var client = new BitbucketSharp.Client(username, password);
                 client.Account.SSHKeys.GetKeys();
                 successful = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("Error = " + e.Message);
             }
 
 
@@ -95,7 +99,7 @@ namespace BitbucketBrowser
 
                 if (!successful)
                 {
-                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + User.Text + ". Please check your credentials and try again.");
+                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + username + ". Please check your credentials and try again.");
                     return;
                 }
 
