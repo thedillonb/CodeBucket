@@ -8,13 +8,14 @@ using CodeFramework.UI.Elements;
 using MonoTouch.Foundation;
 using BitbucketBrowser.UI.Controllers.Privileges;
 using System.Collections.Generic;
+using BitbucketSharp;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {
     public class IssueEditController : BaseDialogViewController
     {
         private static readonly string[] Priorities = { "Trivial", "Minor", "Major", "Critical", "Blocker" };
-        private static readonly string[] Statuses = { "New", "Opened", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
+        private static readonly string[] Statuses = { "New", "Open", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
         private static readonly string[] Kinds = { "Bug", "Enhancement", "Proposal", "Task" };
         private static readonly string Unassigned = "Unassigned";
         
@@ -34,7 +35,32 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             Title = "New Issue";
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => SaveIssue());
         }
-        
+
+        private CreateIssueModel CreateRequest()
+        {
+            var issue = new CreateIssueModel() {
+                Title = _title.Value,
+                Content = _content.Value,
+                Kind = _issueType.Value.ToLower(),
+                Priority = _priority.Value.ToLower(),
+                Responsible = _assignedTo.Value.Equals(Unassigned) ? null : _assignedTo.Value.ToLower(),
+                Status = _status == null ? null : _status.Value.ToLower(),
+            };
+
+            //Nullify them if they are the same...
+            if (ExistingIssue != null)
+            {
+                if (object.Equals(issue.Title, ExistingIssue.Title)) issue.Title = null;
+                if (object.Equals(issue.Content, ExistingIssue.Content)) issue.Content = null;
+                if (object.Equals(issue.Kind, ExistingIssue.Metadata.Kind)) issue.Kind = null;
+                if (object.Equals(issue.Priority, ExistingIssue.Priority)) issue.Priority = null;
+                if (object.Equals(issue.Responsible, ExistingIssue.Responsible)) issue.Responsible = null;
+                if (object.Equals(issue.Status, ExistingIssue.Status)) issue.Status = null;
+            }
+
+            return issue;
+        }
+
         private void SaveIssue()
         {
             //Stop any editing!
@@ -47,14 +73,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 return;
             }
             
-            var issue = new CreateIssueModel() {
-                Title = _title.Value,
-                Content = _content.Value,
-                Kind = _issueType.Value.ToLower(),
-                Priority = _priority.Value.ToLower(),
-                Responsible = _assignedTo.Value.Equals(Unassigned) ? null : _assignedTo.Value.ToLower(),
-                Status = _status == null ? null : _status.Value.ToLower(),
-            };
+            var issue = CreateRequest();
             
             NavigationItem.RightBarButtonItem.Enabled = false;
             this.DoWork(() => {
@@ -103,7 +122,11 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            
+            PopulateRoot();
+        }
+
+        private void PopulateRoot()
+        {
             _title = new EntryElement("Title", string.Empty, string.Empty) { 
                 TitleFont = UIFont.BoldSystemFontOfSize(15f),
                 EntryFont = UIFont.SystemFontOfSize(14f),
@@ -160,11 +183,11 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     composer.CloseComposer();
                 });
             };
-
+            
             var root = new RootElement(Title);
             root.Add(new Section() { _title, _assignedTo, _issueType, _priority });
             root.Add(new Section() { _content });
-
+            
             //See if it's an existing issue or not...
             if (ExistingIssue != null)
             {
@@ -175,8 +198,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 _priority.Value = ExistingIssue.Priority;
                 if (!string.IsNullOrEmpty(ExistingIssue.Content))
                     _content.Value = ExistingIssue.Content;
-
-                _status = new StyledElement("Status", Statuses[0], UITableViewCellStyle.Value1) {
+                
+                _status = new StyledElement("Status", ExistingIssue.Status, UITableViewCellStyle.Value1) {
                     Accessory = UITableViewCellAccessory.DisclosureIndicator
                 };
                 _status.Tapped += () => {
@@ -187,11 +210,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     };
                     NavigationController.PushViewController(en, true);
                 };
-
+                
                 //Insert the status thing inbetween title and assigned to elements
                 root[0].Insert(1, _status);
-
-                //TODO: Add trash image
+                
                 var deleteButton = new StyledElement("Delete Issue", () => {
                     var alert = new UIAlertView() { 
                         Title = "Are you sure?",
@@ -199,12 +221,12 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     };
                     alert.CancelButtonIndex = alert.AddButton("Cancel");
                     var ok = alert.AddButton("Delete");
-
+                    
                     alert.Clicked += (object sender, UIButtonEventArgs e) => {
                         if (e.ButtonIndex == ok)
                             DeleteIssue();
                     };
-
+                    
                     alert.Show();
                 }, Images.BinClosed) {
                     BackgroundColor = UIColor.FromPatternImage(Images.TableCellRed),
@@ -212,7 +234,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 };
                 root.Add(new Section() { deleteButton });
             }
-
+            
             Root = root;
         }
         

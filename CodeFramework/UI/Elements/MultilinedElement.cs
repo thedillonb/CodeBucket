@@ -21,22 +21,25 @@ namespace CodeFramework.UI.Elements
             this.Caption = caption;
             BackgroundColor = UIColor.FromRGB(247, 247, 247);
             CaptionFont = UIFont.BoldSystemFontOfSize(15f);
-            ValueFont = UIFont.SystemFontOfSize(13f);
+            ValueFont = UIFont.SystemFontOfSize(14f);
             CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
         }
 
         public override void Draw(RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
         {
             CaptionColor.SetColor();
-            view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), CaptionFont);
+            var textHeight = Caption.MonoStringHeight(CaptionFont, bounds.Width - PaddingX * 2);
+            Console.WriteLine("Title draw: " + textHeight);
+            view.DrawString(Caption, new RectangleF(PaddingX, Padding, bounds.Width - Padding * 2, bounds.Height - Padding * 2), CaptionFont, UILineBreakMode.WordWrap);
 
             if (Value != null)
             {
                 ValueColor.SetColor();
-                view.DrawString(Value, new RectangleF(PaddingX, Padding + CaptionFont.LineHeight + 6f, bounds.Width - Padding * 2, bounds.Height), ValueFont, UILineBreakMode.WordWrap);
+                var valueHeight = Value.MonoStringHeight(ValueFont, bounds.Width - PaddingX * 2);
+                Console.WriteLine("Value draw: " + valueHeight);
+                view.DrawString(Value, new RectangleF(PaddingX, Padding + textHeight + 6f, bounds.Width - Padding * 2, valueHeight), ValueFont, UILineBreakMode.WordWrap);
             }
         }
-
 
         public override float Height(System.Drawing.RectangleF bounds)
         {
@@ -45,11 +48,13 @@ namespace CodeFramework.UI.Elements
                 width -= 20f;
              
             var textHeight = Caption.MonoStringHeight(CaptionFont, width - PaddingX * 2);
+            Console.WriteLine("Height title = " + textHeight);
 
             if (Value != null)
             {
                 textHeight += 6f;
                 textHeight += Value.MonoStringHeight(ValueFont, width - PaddingX * 2);
+                Console.WriteLine("Height is: " + Value.MonoStringHeight(ValueFont, width - PaddingX * 2));
             }
 
             return textHeight + Padding * 2;

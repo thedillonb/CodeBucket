@@ -18,6 +18,7 @@ using BitbucketBrowser.UI.Controllers.Events;
 using BitbucketBrowser.UI.Controllers.Repositories;
 using BitbucketBrowser.UI.Controllers.Groups;
 using BitbucketBrowser.UI.Controllers.Accounts;
+using BitbucketBrowser.UI.Controllers.Changesets;
 
 namespace BitbucketBrowser
 {
@@ -271,7 +272,7 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
 #if DEBUG
-                NavigationController.PushViewController(new IssuesController(Application.Account.Username, "bitbucketbrowser") { Title = "Events" }, false);
+                NavigationController.PushViewController(new ChangesetController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
 #else
                 NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
 #endif

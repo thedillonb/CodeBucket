@@ -61,7 +61,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
             Root.Add(new Section(_header));
             
-            _desc = new CodeFramework.UI.Elements.MultilinedElement("") { CaptionFont = UIFont.SystemFontOfSize(14f), BackgroundColor = UIColor.White };
+            _desc = new CodeFramework.UI.Elements.MultilinedElement("") { BackgroundColor = UIColor.White };
             
             _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
             _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };
