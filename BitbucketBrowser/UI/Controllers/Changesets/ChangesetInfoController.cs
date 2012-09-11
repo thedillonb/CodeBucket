@@ -41,8 +41,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var sec = new Section();
             _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
             
-            var d = new MultilinedElement(Model.Author) { Value = Model.Message };
-            
+            var d = new MultilinedElement(Model.Author, Model.Message);
             sec.Add(d);
             
             if (Repo != null)

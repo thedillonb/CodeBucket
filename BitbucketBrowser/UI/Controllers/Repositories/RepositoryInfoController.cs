@@ -50,10 +50,12 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                sec1.Add(new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { 
-                    CaptionFont = UIFont.SystemFontOfSize(13f),
+                var element = new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { 
                     BackgroundColor = UIColor.White
-                });
+                };
+                element.CaptionColor = element.ValueColor;
+                element.CaptionFont = element.ValueFont;
+                sec1.Add(element);
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,

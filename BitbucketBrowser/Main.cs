@@ -202,8 +202,6 @@ namespace BitbucketBrowser
                 : base(new RectangleF(0, 0, 200, 44))
             {
                 this.AutosizesSubviews = true;
-
-
                 var l = new UILabel(new RectangleF(0, 5, Frame.Width, 20));
                 l.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
                 l.BackgroundColor = UIColor.Clear;
@@ -229,7 +227,6 @@ namespace BitbucketBrowser
         private void DoShit(UIViewController controller)
         {
             NavigationController.PushViewController(controller, false);
-
         }
 
         public override void ViewDidLoad()
@@ -237,7 +234,6 @@ namespace BitbucketBrowser
             base.ViewDidLoad();
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
-            
                 var n = new UINavigationController(new MyAccountsController());
                 this.PresentModalViewController(n, true);
             
@@ -274,7 +270,7 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
 #if DEBUG
-                NavigationController.PushViewController(new ChangesetController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
+                NavigationController.PushViewController(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
 #else
                 NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
 #endif

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using BitbucketSharp.Models;
 using MonoTouch;
 using MonoTouch.UIKit;
@@ -18,15 +19,21 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private static readonly string[] Statuses = { "New", "Open", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
         private static readonly string[] Kinds = { "Bug", "Enhancement", "Proposal", "Task" };
         private static readonly string Unassigned = "Unassigned";
-        
+        private static readonly string None = "None";
+
         public string Username { get; set; }
         public string RepoSlug { get; set; }
-        public IssueModel ExistingIssue { get; set; } 
+        public IssueModel ExistingIssue { get; set; }
+
+        bool _extrasDone = false;
+        public List<MilestoneModel> Milestones { get; set; }
+        public List<ComponentModel> Components { get; set; }
+        public List<VersionModel> Versions { get; set; }
 
         public Action<IssueModel> Success;
 
         EntryElement _title;
-        StyledElement _assignedTo, _issueType, _priority, _status;
+        StyledElement _assignedTo, _issueType, _priority, _status, _milestone, _component, _version;
         MultilinedElement _content;
          
         public IssueEditController()
@@ -34,6 +41,114 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         {
             Title = "New Issue";
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => SaveIssue());
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            if (!_extrasDone)
+                LoadExtras();
+            _extrasDone = true; 
+        }
+
+        private void LoadExtras()
+        {
+            if (Milestones == null || Components == null || Versions == null)
+            {
+                this.DoWork(() => {
+                    try
+                    {
+                        if (Milestones == null)
+                            Milestones = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetMilestones();
+                    }
+                    catch
+                    {
+                    }
+                    
+                    try
+                    {
+                        if (Components == null)
+                            Components = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetComponents();
+                    }
+                    catch
+                    {
+                    }
+                    
+                    try
+                    {
+                        if (Versions == null)
+                            Versions = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetVersions();
+                    }
+                    catch
+                    {
+                    }
+                }, 
+                (ex) => {  }, AddExtrasToRoot);
+            }
+            else
+            {
+                AddExtrasToRoot();
+            }
+        }
+
+        private StyledElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
+        {
+            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1) {
+                Accessory = UITableViewCellAccessory.DisclosureIndicator
+            };
+            element.Tapped += () => {
+                var en = new EnumViewController(element.Caption, values, element.Value);
+                en.ValueSelected += (obj) => {
+                    element.Value = obj;
+                    NavigationController.PopViewControllerAnimated(true);
+                };
+                NavigationController.PushViewController(en, true);
+            };
+
+            return element;
+        }
+
+        private void AddExtrasToRoot()
+        {
+            var sec = new Section();
+            if (Milestones != null && Milestones.Count > 0)
+            {
+                var elements = new List<string>() { None };
+                elements.AddRange(from s in Milestones select s.Name);
+                string defaultValue = None;
+                if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Milestone))
+                    defaultValue = ExistingIssue.Metadata.Milestone;
+                _milestone = CreateEnumElement("Milestone", defaultValue, elements);
+                sec.Add(_milestone);
+            }
+
+            if (Components != null && Components.Count > 0)
+            {
+                var elements = new List<string>() { None };
+                elements.AddRange(from s in Components select s.Name);
+                string defaultValue = None;
+                if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Component))
+                    defaultValue = ExistingIssue.Metadata.Component;
+                _component = CreateEnumElement("Components", defaultValue, elements);
+                sec.Add(_component);
+            }
+
+            if (Versions != null && Versions.Count > 0)
+            {
+                var elements = new List<string>() { None };
+                elements.AddRange(from s in Versions select s.Name);
+                string defaultValue = None;
+                if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Version))
+                    defaultValue = ExistingIssue.Metadata.Version;
+                _version = CreateEnumElement("Version", defaultValue, elements);
+                sec.Add(_version);
+            }
+
+            if (sec.Count == 0)
+                return;
+
+            Root.Insert(1, sec);
         }
 
         private CreateIssueModel CreateRequest()
@@ -45,6 +160,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 Priority = _priority.Value.ToLower(),
                 Responsible = _assignedTo.Value.Equals(Unassigned) ? null : _assignedTo.Value.ToLower(),
                 Status = _status == null ? null : _status.Value.ToLower(),
+                Version = (_version == null || _version.Value.Equals(None)) ? null : _version.Value,
+                Component = (_component == null || _component.Value.Equals(None)) ? null : _component.Value,
+                Milestone = (_milestone == null || _milestone.Value.Equals(None)) ? null : _milestone.Value,
             };
 
             //Nullify them if they are the same...
@@ -56,6 +174,22 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 if (object.Equals(issue.Priority, ExistingIssue.Priority)) issue.Priority = null;
                 if (object.Equals(issue.Responsible, ExistingIssue.Responsible)) issue.Responsible = null;
                 if (object.Equals(issue.Status, ExistingIssue.Status)) issue.Status = null;
+
+                //Component shit
+                if (object.Equals(issue.Version, ExistingIssue.Metadata.Version)) 
+                    issue.Version = null;
+                else if (issue.Version == null)
+                    issue.Version = string.Empty;
+
+                if (object.Equals(issue.Component, ExistingIssue.Metadata.Component)) 
+                    issue.Component = null;
+                else if (issue.Component == null)
+                    issue.Component = string.Empty;
+
+                if (object.Equals(issue.Milestone, ExistingIssue.Metadata.Milestone)) 
+                    issue.Milestone = null;
+                else if (issue.Milestone == null)
+                    issue.Milestone = string.Empty;
             }
 
             return issue;
@@ -149,30 +283,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 };
                 NavigationController.PushViewController(privileges, true);
             };
-            
-            _issueType = new StyledElement("Issue Type", Kinds[0], UITableViewCellStyle.Value1) {
-                Accessory = UITableViewCellAccessory.DisclosureIndicator
-            };
-            _issueType.Tapped += () => {
-                var en = new EnumViewController(_issueType.Caption, Kinds, _issueType.Value);
-                en.ValueSelected += (obj) => {
-                    _issueType.Value = obj;
-                    NavigationController.PopViewControllerAnimated(true);
-                };
-                NavigationController.PushViewController(en, true);
-            };
-            
-            _priority = new StyledElement("Priority", Priorities[0], UITableViewCellStyle.Value1) {
-                Accessory = UITableViewCellAccessory.DisclosureIndicator
-            };
-            _priority.Tapped += () => {
-                var en = new EnumViewController(_priority.Caption, Priorities, _priority.Value);
-                en.ValueSelected += (obj) => {
-                    _priority.Value = obj;
-                    NavigationController.PopViewControllerAnimated(true);
-                };
-                NavigationController.PushViewController(en, true);
-            };
+
+            _issueType = CreateEnumElement("Issue Type", Kinds[0], Kinds);
+            _priority = CreateEnumElement("Priority", Priorities[0], Priorities);
             
             _content = new MultilinedElement("Comments");
             _content.Tapped += () => {
@@ -198,19 +311,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 _priority.Value = ExistingIssue.Priority;
                 if (!string.IsNullOrEmpty(ExistingIssue.Content))
                     _content.Value = ExistingIssue.Content;
-                
-                _status = new StyledElement("Status", ExistingIssue.Status, UITableViewCellStyle.Value1) {
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator
-                };
-                _status.Tapped += () => {
-                    var en = new EnumViewController(_status.Caption, Statuses, ExistingIssue.Status);
-                    en.ValueSelected += (obj) => {
-                        _status.Value = obj;
-                        NavigationController.PopViewControllerAnimated(true);
-                    };
-                    NavigationController.PushViewController(en, true);
-                };
-                
+
+                _status = CreateEnumElement("Status", ExistingIssue.Status, Statuses);
+
                 //Insert the status thing inbetween title and assigned to elements
                 root[0].Insert(1, _status);
                 

@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.Dialog;
 using CodeFramework.UI.Elements;
+using System.Collections.Generic;
 
 namespace CodeFramework.UI.Controllers
 {
@@ -15,7 +16,7 @@ namespace CodeFramework.UI.Controllers
                 handler(value);
         }
 
-        public EnumViewController(string title, string[] values, string selected)
+        public EnumViewController(string title, IEnumerable<string> values, string selected)
             : base (true)
         {
             Title = title;
@@ -23,7 +24,7 @@ namespace CodeFramework.UI.Controllers
             SetValues(values, selected);
         }
 
-        public void SetValues(string[] values, string selected)
+        public void SetValues(IEnumerable<string> values, string selected)
         {
             var sec = new Section();
             foreach (var s in values)

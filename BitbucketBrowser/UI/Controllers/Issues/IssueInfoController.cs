@@ -62,6 +62,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             Root.Add(new Section(_header));
             
             _desc = new CodeFramework.UI.Elements.MultilinedElement("") { BackgroundColor = UIColor.White };
+            _desc.CaptionFont = _desc.ValueFont;
+            _desc.CaptionColor = _desc.ValueColor;
             
             _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
             _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };
