@@ -125,8 +125,18 @@ namespace BitbucketBrowser
 		
 		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
 		{
-			// Return true for supported orientations
-			return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                if (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
+                    return true;
+            }
+            else
+            {
+    			// Return true for supported orientations
+                return true;
+            }
+
+            return false;
 		}
 	}
 }

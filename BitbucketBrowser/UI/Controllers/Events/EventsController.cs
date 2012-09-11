@@ -37,7 +37,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
             ReportRepository = false;
         }
 
-        protected virtual EventsModel OnGetData(int start = 0, int limit = 4)
+        protected virtual EventsModel OnGetData(int start = 0, int limit = 30)
         {
             return Application.Client.Users[Username].GetEvents(start, limit);
         }

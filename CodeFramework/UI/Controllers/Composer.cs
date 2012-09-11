@@ -106,7 +106,10 @@ namespace CodeFramework.UI.Controllers
             Title = "New Comment";
 
 			// Navigation Bar
-			navigationBar = new UINavigationBar (new RectangleF (0, 0, 320, 44));
+            navigationBar = new UINavigationBar (new RectangleF (0, 0, UIScreen.MainScreen.Bounds.Width, 44));
+            navigationBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+            navigationBar.AutosizesSubviews = true;
+
 			navItem = new UINavigationItem ("");
 			var close = new UIBarButtonItem ("Close", UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
 			navItem.LeftBarButtonItem = close;
@@ -136,19 +139,6 @@ namespace CodeFramework.UI.Controllers
             get { return navItem.RightBarButtonItem.Title; }
             set { navItem.RightBarButtonItem.Title = value; }
         }
-
-		UIImage Scale (UIImage image, SizeF size)
-		{
-			UIGraphics.BeginImageContext (size);
-			image.Draw (new RectangleF (new PointF (0, 0), size));
-			var ret = UIGraphics.GetImageFromCurrentImageContext ();
-			UIGraphics.EndImageContext ();
-			return ret;
-		}
-		
-		public void ReleaseResources ()
-		{
-		}
 		
 		public override void ViewDidLoad ()
 		{
@@ -183,6 +173,17 @@ namespace CodeFramework.UI.Controllers
 
 			return new RectangleF (0, nav.Height, view.Width, view.Height-kbdBounds.Height-nav.Height);
 		}
+       
+        public override void ViewWillLayoutSubviews()
+        {
+            base.ViewWillLayoutSubviews();
+            navigationBar.Frame = new RectangleF (0, 0, View.Bounds.Width, 44);
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
+            return true;
+        }
 		
 		public override void ViewWillAppear (bool animated)
 		{

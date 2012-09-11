@@ -60,6 +60,8 @@
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
     <MtouchI18n />
+    <MtouchUseLlvm>True</MtouchUseLlvm>
+    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -277,20 +279,14 @@
     <Content Include="Images\Controls\divider%402x.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
-    <Content Include="Default.png" />
-    <Content Include="Default%402x.png" />
     <Content Include="Images\Controls\logo.png" />
     <Content Include="Images\Controls\logo%402x.png" />
     <Content Include="Images\Controls\logobehind.png" />
     <Content Include="Images\Controls\logobehind%402x.png" />
-    <Content Include="Default-Portrait%402x.png" />
-    <Content Include="Default-Portrait.png" />
     <Content Include="Images\Controls\logobehind-portrait.png" />
     <Content Include="Images\Controls\logobehind-portrait%402x.png" />
     <Content Include="Images\Controls\backbutton-landscape.png" />
     <Content Include="Images\Controls\backbutton-landscape%402x.png" />
-    <Content Include="Default-Landscape.png" />
-    <Content Include="Default-Landscape%402x.png" />
     <Content Include="Images\tablecell_red.png" />
     <Content Include="Images\comment_add%402x.png" />
     <Content Include="Images\comment_add.png" />
@@ -307,5 +303,13 @@
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Default-Landscape%402x.png" />
+    <BundleResource Include="Default-Portrait%402x.png" />
+    <BundleResource Include="Default-Portrait.png" />
+    <BundleResource Include="Default-Landscape.png" />
+    <BundleResource Include="Default%402x.png" />
+    <BundleResource Include="Default.png" />
   </ItemGroup>
 </Project>

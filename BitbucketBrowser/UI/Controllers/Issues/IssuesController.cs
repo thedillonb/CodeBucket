@@ -42,7 +42,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             });
         }
 
-        private IssuesModel OnGetData(int start = 0, int limit = 2)
+        private IssuesModel OnGetData(int start = 0, int limit = 30)
         {
             return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit);
         }

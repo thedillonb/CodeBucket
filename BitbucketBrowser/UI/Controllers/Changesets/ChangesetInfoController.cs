@@ -46,8 +46,12 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             
             if (Repo != null)
             {
-                var repo = new StyledElement(Repo.Name, Images.Repo)
-                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, Lines = 1, Font = UIFont.SystemFontOfSize(15f), TextColor = UIColor.Gray };
+                var repo = new StyledElement(Repo.Name, Images.Repo) { 
+                    Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
+                    Lines = 1, 
+                    Font = StyledElement.DefaultDetailFont, 
+                    TextColor = StyledElement.DefaultDetailColor,
+                };
                 repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
                 sec.Add(repo);
             }

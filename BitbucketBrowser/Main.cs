@@ -124,7 +124,7 @@ namespace BitbucketBrowser
 
             Application.SetUser(defaultAccount);
 
-            _nav = new SlideoutNavigationController() { SlideHeight = 999f };
+            _nav = new MySlideout() { SlideHeight = 999f };
             _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
             _nav.MenuView = new MenuController();
             window.RootViewController = _nav;
@@ -138,6 +138,42 @@ namespace BitbucketBrowser
         }
 
 	}
+
+    public class MySlideout : SlideoutNavigationController
+    {
+        private string _previousUser;
+
+
+        public MySlideout()
+            : base()
+        {
+        }
+        
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            if (!(_previousUser ?? "").Equals(Application.Account.Username))
+                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+            _previousUser = Application.Account.Username;
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            //First time appear
+            if (_previousUser == null)
+            {
+#if DEBUG
+                SelectView(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" });
+#else
+                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+#endif
+                _previousUser = Application.Account.Username;
+            }
+
+        }
+    }
 
     public class MenuController : DialogViewController
     {
@@ -258,34 +294,13 @@ namespace BitbucketBrowser
             TableView.TableFooterView = view;
         }
 
-        private string _previousUser;
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
             //Check to see if anything changed!
-            //_titleView.Name = Application.Account.Username;
             Title = Application.Account.Username;
-
-            //First time appear
-            if (_previousUser == null)
-            {
-#if DEBUG
-                NavigationController.PushViewController(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" }, false);
-#else
-                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
-#endif
-                _previousUser = Application.Account.Username;
-            }
+            base.ViewWillAppear(animated);
         }
 
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            if (!(_previousUser ?? "").Equals(Application.Account.Username))
-                NavigationController.PushViewController(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }, false);
-            _previousUser = Application.Account.Username;
-        }
     }
 }
 
