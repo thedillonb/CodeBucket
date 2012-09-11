@@ -31,7 +31,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private readonly HeaderView _header;
         private readonly Section _comments, _details;
         private readonly CodeFramework.UI.Elements.MultilinedElement _desc;
-        private readonly SplitElement _split1, _split2;
+        private readonly SplitElement _split1, _split2, _split3;
+        private readonly StyledElement _responsible;
         
         private bool _scrollToLastComment = false;
         private bool _issueRemoved = false;
@@ -66,14 +67,23 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             _desc.CaptionColor = _desc.ValueColor;
             
             _split1 = new SplitElement(new SplitElement.Row() { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
-            _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Person, Image2 = Images.Flag }) { BackgroundColor = UIColor.White };
-            
+            _split2 = new SplitElement(new SplitElement.Row() { Image1 = Images.Flag, Image2 = Images.ServerComponents }) { BackgroundColor = UIColor.White };
+            _split3 = new SplitElement(new SplitElement.Row() { Image1 = Images.SitemapColor, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
+
+            _responsible = new StyledElement("Unassigned", Images.Person) {
+                Font = StyledElement.DefaultDetailFont,
+                TextColor = StyledElement.DefaultDetailColor,
+            };
+            _responsible.Tapped += () => {
+                if (Model != null && Model.Issue.Responsible != null)
+                    NavigationController.PushViewController(new ProfileController(Model.Issue.Responsible.Username, true), true);
+            };
+
             var addComment = new StyledElement("Add Comment", Images.Pencil);
             addComment.Tapped += AddCommentTapped;
             
-            
             _comments = new Section();
-            _details = new Section() { _split1, _split2 };
+            _details = new Section() { _split1, _split2, _split3, _responsible };
             
             Root.Add(_details);
             Root.Add(_comments);
@@ -129,22 +139,23 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             });
         }
         
-        protected override void OnRefresh ()
+        protected override void OnRefresh()
         {
             BeginInvokeOnMainThread(() => { NavigationItem.RightBarButtonItem.Enabled = true; });
 
             _header.Title = Model.Issue.Title;
             _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcLastUpdated).ToDaysAgo();
-            var assigned = Model.Issue.Responsible != null ? Model.Issue.Responsible.Username : "unassigned";
-            
             _split1.Value.Text1 = Model.Issue.Status;
             _split1.Value.Text2 = Model.Issue.Priority;
-            _split2.Value.Text1 = assigned;
-            _split2.Value.Text2 = Model.Issue.Metadata.Kind;
-            
+            _split2.Value.Text1 = Model.Issue.Metadata.Kind;
+            _split2.Value.Text2 = Model.Issue.Metadata.Component ?? "No Component";
+            _split3.Value.Text1 = Model.Issue.Metadata.Version ?? "No Version";
+            _split3.Value.Text2 = Model.Issue.Metadata.Milestone ?? "No Milestone";
             _desc.Caption = Model.Issue.Content;
+            _responsible.Caption = Model.Issue.Responsible != null ? Model.Issue.Responsible.Username : "Unassigned";
+            if (Model.Issue.Responsible != null)
+                _responsible.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             
-            var descValid = false;
             if (!string.IsNullOrEmpty(_desc.Caption))
             {
                 _desc.Caption = _desc.Caption.Trim();
@@ -152,7 +163,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 {
                     InvokeOnMainThread(() => _details.Insert(0, _desc));
                 }
-                descValid = true;
             }
             
             var comments = new List<Element>(Model.Comments.Count);
@@ -171,13 +181,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             
             InvokeOnMainThread(delegate { 
                 _header.SetNeedsDisplay(); 
-                
-                if (descValid)
-                    Root.Reload(_desc, UITableViewRowAnimation.None);
-                
-                Root.Reload(_split1, UITableViewRowAnimation.None);
-                Root.Reload(_split2, UITableViewRowAnimation.None);
-                
+                ReloadData();
                 _comments.Clear();
                 _comments.Insert(0,  UITableViewRowAnimation.None, comments);
                 

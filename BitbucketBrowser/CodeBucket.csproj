@@ -298,6 +298,12 @@
     <Content Include="Images\report_edit.png" />
     <Content Include="Images\bin_closed%402x.png" />
     <Content Include="Images\bin_closed.png" />
+    <Content Include="Images\server_components%402x.png" />
+    <Content Include="Images\milestone%402x.png" />
+    <Content Include="Images\sitemap_color%402x.png" />
+    <Content Include="Images\sitemap_color.png" />
+    <Content Include="Images\server_components.png" />
+    <Content Include="Images\milestone.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

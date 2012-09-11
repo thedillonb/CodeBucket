@@ -208,6 +208,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             }
             
             var issue = CreateRequest();
+
+            //Check to see if there is any change...
+            if (issue.CheckNoChange())
+            {
+                NavigationController.PopViewControllerAnimated(true);
+                return;
+            }
             
             NavigationItem.RightBarButtonItem.Enabled = false;
             this.DoWork(() => {

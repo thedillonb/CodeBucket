@@ -22,6 +22,10 @@ namespace BitbucketBrowser
         public static UIImage CommentAdd = UIImage.FromBundle("/Images/comment_add");
         public static UIImage ReportEdit = UIImage.FromBundle("/Images/report_edit");
         public static UIImage BinClosed = UIImage.FromBundle("/Images/bin_closed");
+        public static UIImage Milestone = UIImage.FromBundle("/Images/milestone");
+        public static UIImage ServerComponents = UIImage.FromBundle("/Images/server_components");
+        public static UIImage SitemapColor = UIImage.FromBundle("/Images/sitemap_color");
+
 
         public static UIImage CellGradient = UIImage.FromBundle("/Images/Cells/gradient");
 

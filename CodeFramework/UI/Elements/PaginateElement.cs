@@ -15,8 +15,8 @@ namespace CodeFramework.UI.Elements
         public PaginateElement(string normal, string loading, Action<LoadMoreElement> tap)
             : base(normal, loading, tap)
         {
-            Font = StyledElement.TitleFont;
-            this.TextColor = UIColor.FromRGB(41, 41, 41);
+            Font = StyledElement.DefaultTitleFont;
+            this.TextColor = StyledElement.DefaultTitleColor;
         }
 
         protected override void CellCreated(UITableViewCell cell, UIView view)

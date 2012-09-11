@@ -6,8 +6,10 @@ namespace CodeFramework.UI.Elements
 {
     public class StyledElement : MonoTouch.Dialog.StyledStringElement
     {
-        public static UIFont TitleFont = UIFont.BoldSystemFontOfSize(15f);
-        public static UIFont SubFont = UIFont.SystemFontOfSize(15f);
+        public static UIFont  DefaultTitleFont = UIFont.BoldSystemFontOfSize(15f);
+        public static UIFont  DefaultDetailFont = UIFont.SystemFontOfSize(15f);
+        public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
+        public static UIColor DefaultDetailColor = UIColor.FromRGB(120, 120, 120);
         public static UIColor BgColor;
 
         public StyledElement(string title)
@@ -53,11 +55,11 @@ namespace CodeFramework.UI.Elements
 
         private void Init()
         {
-            Font = TitleFont;
-            SubtitleFont = SubFont;
+            Font = DefaultTitleFont;
+            SubtitleFont = DefaultDetailFont;
             this.BackgroundColor = BgColor;
-            this.TextColor = UIColor.FromRGB(41, 41, 41);
-            this.DetailColor = UIColor.FromRGB(120, 120, 120);
+            this.TextColor = DefaultTitleColor;
+            this.DetailColor = DefaultDetailColor;
             LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;
             Lines = 1;
         }
