@@ -220,46 +220,6 @@ namespace BitbucketBrowser
             }
         }
 
-        private class TitleView : UIView
-        {
-            public string Name
-            {
-                get { return _name.Text; }
-                set 
-                { 
-                    _name.Text = value;
-                    _name.SetNeedsDisplay();
-                }
-            }
-
-            private UILabel _name;
-
-            public TitleView()
-                : base(new RectangleF(0, 0, 200, 44))
-            {
-                this.AutosizesSubviews = true;
-                var l = new UILabel(new RectangleF(0, 5, Frame.Width, 20));
-                l.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-                l.BackgroundColor = UIColor.Clear;
-                l.Font = UIFont.BoldSystemFontOfSize(18f);
-                l.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
-                l.TextColor = UIColor.White;
-                l.Text = "CodeBucket";
-                l.TextAlignment = UITextAlignment.Left;
-                this.Add(l);
-
-                _name = new UILabel(new RectangleF(0, 24, Frame.Width, 14));
-                _name.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-                _name.BackgroundColor = UIColor.Clear;
-                _name.Font = UIFont.BoldSystemFontOfSize(10f);
-                _name.ShadowColor = UIColor.FromWhiteAlpha(0, 0.5f);
-                _name.TextColor = UIColor.White;
-                _name.Text = "";
-                _name.TextAlignment = UITextAlignment.Left;
-                this.Add(_name);
-            }
-        }
-
         private void DoShit(UIViewController controller)
         {
             NavigationController.PushViewController(controller, false);
@@ -296,9 +256,9 @@ namespace BitbucketBrowser
 
         public override void ViewWillAppear(bool animated)
         {
-            //Check to see if anything changed!
-            Title = Application.Account.Username;
             base.ViewWillAppear(animated);
+            Root.Caption = Application.Account.Username;
+            Title = Root.Caption;
         }
 
     }

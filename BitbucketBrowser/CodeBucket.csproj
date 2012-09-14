@@ -61,7 +61,6 @@
     <IpaPackageName />
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
-    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -85,6 +84,7 @@
     <IpaPackageName />
     <CrashReportingApiKey />
     <MtouchI18n />
+    <MtouchUseLlvm>True</MtouchUseLlvm>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
     <DebugType>none</DebugType>
@@ -111,7 +111,6 @@
     <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\SourceController.cs" />
@@ -146,7 +145,6 @@
     <Compile Include="UI\Controllers\Repositories\AccountRepositoryController.cs" />
     <Compile Include="UI\Controllers\Repositories\RepositoryController.cs" />
     <Compile Include="UI\Controllers\ProfileController.cs" />
-    <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
     <Compile Include="UI\Controllers\Accounts\LoginViewController.cs" />
     <Compile Include="UI\Controllers\Accounts\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
@@ -155,6 +153,8 @@
     <Compile Include="UI\Controllers\Changesets\ChangesetInfoController.cs" />
     <Compile Include="UI\Controllers\Changesets\ChangesetController.cs" />
     <Compile Include="UI\Controllers\Issues\IssueTrackerSettingsController.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />

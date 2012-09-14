@@ -156,7 +156,7 @@ Global
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = BitbucketBrowser\CodeBucket.csproj
+		StartupItem = CodeHub\CodeHub.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 180

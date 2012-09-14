@@ -12,66 +12,66 @@
     <AssemblyName>CodeHub</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
+    <ConsolePause>False</ConsolePause>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchProfiling>True</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchProfiling>True</MtouchProfiling>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <BuildIpa>true</BuildIpa>
+    <ConsolePause>False</ConsolePause>
+    <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\AppStore</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
@@ -79,23 +79,35 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="ServiceStack.Text.MonoTouch">
+      <HintPath>Resources\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="GithubSharp.Core">
       <HintPath>Resources\GithubSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.Text">
-      <HintPath>Resources\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="Resources\GithubSharp.Core.dll" />
-    <None Include="Resources\ServiceStack.Text.dll" />
+    <None Include="Images\Official\app_icon.png" />
+    <None Include="Images\Official\app_icon_ipad.png" />
+    <None Include="Images\Official\app_icon_retina.png" />
+    <None Include="Images\Official\spotlight_icon.png" />
+    <None Include="Images\Official\spotlight_icon_ipad.png" />
+    <None Include="Images\Official\spotlight_icon_retina.png" />
+    <None Include="Images\Official\app_icon_ipad_retnia.png" />
+    <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppDelegate.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Controllers\RepositoryController.cs" />
+    <Compile Include="Cells\RepositoryCellView.cs" />
+    <Compile Include="Cells\RepositoryCellView.designer.cs">
+      <DependentUpon>..\..\BitbucketBrowser\Cells\RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Images.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -114,5 +126,108 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ServiceStack.Text.dll" />
+    <BundleResource Include="Resources\GithubSharp.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\plus.png" />
+    <Content Include="Images\heart.png" />
+    <Content Include="Images\pencil.png" />
+    <Content Include="Images\flag.png" />
+    <Content Include="Images\repo.png" />
+    <Content Include="Images\branch.png" />
+    <Content Include="Images\tag.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\file.png" />
+    <Content Include="Images\warning.png" />
+    <Content Include="Images\Tabs\group.png" />
+    <Content Include="Images\Tabs\group%402x.png" />
+    <Content Include="Images\repo%402x.png" />
+    <Content Include="Images\Tabs\search%402x.png" />
+    <Content Include="Images\Tabs\search.png" />
+    <Content Include="Images\Tabs\events%402x.png" />
+    <Content Include="Images\Tabs\events.png" />
+    <Content Include="Images\Cells\gradient.png" />
+    <Content Include="Images\fork.png" />
+    <Content Include="Images\fork%402x.png" />
+    <Content Include="Images\scm_type.png" />
+    <Content Include="Images\scm_type%402x.png" />
+    <Content Include="Images\language%402x.png" />
+    <Content Include="Images\language.png" />
+    <Content Include="Images\webpage.png" />
+    <Content Include="Images\webpage%402x.png" />
+    <Content Include="Images\size%402x.png" />
+    <Content Include="Images\size.png" />
+    <Content Include="Images\locked.png" />
+    <Content Include="Images\locked%402x.png" />
+    <Content Include="Images\unlocked.png" />
+    <Content Include="Images\unlocked%402x.png" />
+    <Content Include="Images\Dropbar.png" />
+    <Content Include="Images\TableCell.png" />
+    <Content Include="Images\pencil%402x.png" />
+    <Content Include="Images\heart%402x.png" />
+    <Content Include="Images\plus%402x.png" />
+    <Content Include="Images\tag%402x.png" />
+    <Content Include="Images\folder%402x.png" />
+    <Content Include="Images\flag%402x.png" />
+    <Content Include="Images\file%402x.png" />
+    <Content Include="Images\branch%402x.png" />
+    <Content Include="Images\changes.png" />
+    <Content Include="Images\changes%402x.png" />
+    <Content Include="Images\Controls\titlebar.png" />
+    <Content Include="Images\Controls\background.png" />
+    <Content Include="Images\Controls\searchbar.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\create.png" />
+    <Content Include="Images\heart_add%402x.png" />
+    <Content Include="Images\heart_delete%402x.png" />
+    <Content Include="Images\heart_add.png" />
+    <Content Include="Images\heart_delete.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\Tabs\cog%402x.png" />
+    <Content Include="Images\Tabs\cog.png" />
+    <Content Include="Images\Controls\bottombar.png" />
+    <Content Include="Images\Controls\titlebar_dark.png" />
+    <Content Include="Images\Tabs\person%402x.png" />
+    <Content Include="Images\Tabs\person.png" />
+    <Content Include="Images\change_user%402x.png" />
+    <Content Include="Images\change_user.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\linen.png" />
+    <Content Include="Images\Cells\anonymous.png" />
+    <Content Include="Images\Cells\anonymous%402x.png" />
+    <Content Include="Images\Controls\backbutton%402x.png" />
+    <Content Include="Images\Controls\divider.png" />
+    <Content Include="Images\Controls\divider%402x.png" />
+    <Content Include="Images\priority%402x.png" />
+    <Content Include="Images\priority.png" />
+    <Content Include="Images\Controls\logo.png" />
+    <Content Include="Images\Controls\logo%402x.png" />
+    <Content Include="Images\Controls\logobehind.png" />
+    <Content Include="Images\Controls\logobehind%402x.png" />
+    <Content Include="Images\Controls\logobehind-portrait.png" />
+    <Content Include="Images\Controls\logobehind-portrait%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape.png" />
+    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
+    <Content Include="Images\tablecell_red.png" />
+    <Content Include="Images\comment_add%402x.png" />
+    <Content Include="Images\comment_add.png" />
+    <Content Include="Images\report_edit%402x.png" />
+    <Content Include="Images\report_edit.png" />
+    <Content Include="Images\bin_closed%402x.png" />
+    <Content Include="Images\bin_closed.png" />
+    <Content Include="Images\server_components%402x.png" />
+    <Content Include="Images\milestone%402x.png" />
+    <Content Include="Images\sitemap_color%402x.png" />
+    <Content Include="Images\sitemap_color.png" />
+    <Content Include="Images\server_components.png" />
+    <Content Include="Images\milestone.png" />
   </ItemGroup>
 </Project>
