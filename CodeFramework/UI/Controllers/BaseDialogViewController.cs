@@ -85,7 +85,7 @@ namespace CodeFramework.UI.Controllers
                 TableView.TableFooterView = new DropbarView(View.Bounds.Width);
                 TableView.TableFooterView.Hidden = true;
             }
-            
+
             WatermarkView.AssureWatermark(this);
             base.ViewDidLoad();
         }
@@ -93,7 +93,7 @@ namespace CodeFramework.UI.Controllers
         protected virtual void SearchStart()
         {
         }
-        
+
         protected virtual void SearchEnd()
         {
         }

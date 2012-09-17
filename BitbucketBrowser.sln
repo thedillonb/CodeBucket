@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework", "CodeFramew
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub", "CodeHub\CodeHub.csproj", "{21C3450E-9BE2-4049-A33F-4442AA8F532D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubSharp.MonoTouch", "GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj", "{89E14828-85BB-4790-9B4E-E44DD4CE000E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -118,6 +120,24 @@ Global
 		{88AEDD05-831D-474F-B598-CF08C0836C24}.Release|iPhone.Build.0 = Release|iPhone
 		{88AEDD05-831D-474F-B598-CF08C0836C24}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{88AEDD05-831D-474F-B598-CF08C0836C24}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AdHoc|iPhone.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Release|iPhone.Build.0 = Release|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}.AdHoc|iPhone.Build.0 = Debug|Any CPU
@@ -160,6 +180,7 @@ Global
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 180
+		$1.EolMarker = Unix
 		$1.inheritsSet = VisualStudio
 		$1.inheritsScope = text/plain
 		$1.scope = text/x-csharp

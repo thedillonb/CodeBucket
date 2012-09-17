@@ -95,11 +95,11 @@ namespace CodeHub
 
         public UIColor BackgroundColor { get; set; }
 
-        public GithubSharp.Core.Models.Repository Model { get; set; }
+        public GitHubSharp.Models.Repository Model { get; set; }
 
         public bool ShowOwner { get; set; }
 
-        public RepositoryElement(GithubSharp.Core.Models.Repository m) : base(null)
+        public RepositoryElement(GitHubSharp.Models.Repository m) : base(null)
         {
             this.CellReuseIdentifier = "repositoryelement";
             this.Style = UITableViewCellStyle.Default;
@@ -146,7 +146,7 @@ namespace CodeHub
         {
             var c = cell as RepositoryCellView;
             if (c != null)
-                c.Bind(Model.Name, "git", Model.Watchers.ToString(), Model.Forks.ToString(), Model.Description, ShowOwner ? Model.Owner : null);
+                c.Bind(Model.Name, "git", Model.Watchers.ToString(), Model.Forks.ToString(), Model.Description, ShowOwner ? Model.Owner.Login : null);
         }
     }
 }

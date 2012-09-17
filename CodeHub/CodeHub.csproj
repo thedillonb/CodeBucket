@@ -79,12 +79,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-    <Reference Include="ServiceStack.Text.MonoTouch">
-      <HintPath>Resources\ServiceStack.Text.dll</HintPath>
-    </Reference>
-    <Reference Include="GithubSharp.Core">
-      <HintPath>Resources\GithubSharp.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -123,14 +117,13 @@
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
     <Folder Include="Controllers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\ServiceStack.Text.dll" />
-    <BundleResource Include="Resources\GithubSharp.Core.dll" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />

@@ -9,7 +9,7 @@ namespace CodeHub
     /// </summary>
     public static class Application
     {
-        public static GithubSharp.Core.API.User Client { get; private set; }
+        public static GitHubSharp.Client Client { get; private set; }
         public static Account Account { get; private set; }
         public static Accounts Accounts { get; private set; }
 
