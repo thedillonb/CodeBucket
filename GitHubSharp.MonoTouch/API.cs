@@ -12,9 +12,12 @@ namespace GitHubSharp
             _client = client;
         }
 
-        public List<Models.Repository> ListRepositories()
+        public List<Models.Repository> ListRepositories(string username = null)
         {
-            return _client.Get<List<Models.Repository>>("/users/" + _client.Username + "/repos");
+            if (username == null)
+                return _client.Get<List<Models.Repository>>("/user/repos");
+            else
+                return _client.Get<List<Models.Repository>>("/users/" + username + "/repos");
         }
     }
 }

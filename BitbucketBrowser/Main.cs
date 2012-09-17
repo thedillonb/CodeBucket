@@ -135,6 +135,9 @@ namespace BitbucketBrowser
             //Pop back to the root view...
             if (_nav.TopView != null && _nav.TopView.NavigationController != null)
                 _nav.TopView.NavigationController.PopToRootViewController(false);
+
+            //Remove everything from the cache
+            Application.Cache.DeleteAll();
         }
 
 	}

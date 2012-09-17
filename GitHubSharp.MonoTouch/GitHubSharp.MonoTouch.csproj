@@ -64,6 +64,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="API.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Models\Event.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />

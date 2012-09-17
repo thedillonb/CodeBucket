@@ -155,6 +155,7 @@
     <Compile Include="UI\Controllers\Issues\IssueTrackerSettingsController.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
+    <Compile Include="Data\WebCacheProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />

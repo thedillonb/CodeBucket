@@ -3,19 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBucket", "BitbucketBrowser\CodeBucket.csproj", "{88AEDD05-831D-474F-B598-CF08C0836C24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework", "CodeFramework\CodeFramework.csproj", "{3E01B962-FE29-4992-8140-34465C86418F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub", "CodeHub\CodeHub.csproj", "{21C3450E-9BE2-4049-A33F-4442AA8F532D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{354B15FE-757D-4C6C-B7AF-0BFECC12AEEF}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitbucketSharp.MonoTouch", "..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj", "{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubSharp.MonoTouch", "GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj", "{89E14828-85BB-4790-9B4E-E44DD4CE000E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTouch.SlideoutNavigation", "..\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj", "{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTouch.Dialog", "..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj", "{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.MonoTouch", "..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj", "{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework", "CodeFramework\CodeFramework.csproj", "{3E01B962-FE29-4992-8140-34465C86418F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub", "CodeHub\CodeHub.csproj", "{21C3450E-9BE2-4049-A33F-4442AA8F532D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubSharp.MonoTouch", "GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj", "{89E14828-85BB-4790-9B4E-E44DD4CE000E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -175,8 +179,15 @@ Global
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A} = {354B15FE-757D-4C6C-B7AF-0BFECC12AEEF}
+		{89E14828-85BB-4790-9B4E-E44DD4CE000E} = {354B15FE-757D-4C6C-B7AF-0BFECC12AEEF}
+		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
+		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
+		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CodeHub\CodeHub.csproj
+		StartupItem = BitbucketBrowser\CodeBucket.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 180
