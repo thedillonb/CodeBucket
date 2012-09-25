@@ -36,21 +36,21 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             
             //Sort them by name
             sec.Elements = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name).ToList();
-            
+
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
             });
         }
         
-        protected override List<RepositoryDetailedModel> OnUpdate ()
+        protected override List<RepositoryDetailedModel> OnUpdate (bool forced)
         {
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
             
             if (selected == 0)
-                return Application.Client.Users[Username].GetInfo().Repositories;
+                return Application.Client.Users[Username].GetInfo(forced).Repositories;
             else if (selected == 1)
-                return Application.Client.Account.GetRepositories();
+                return Application.Client.Account.GetRepositories(forced);
             else
                 return new List<RepositoryDetailedModel>();
         }

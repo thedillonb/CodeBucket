@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -34,7 +34,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <MtouchLink>None</MtouchLink>
+    <MtouchUseLlvm>True</MtouchUseLlvm>
+    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchUseThumb>True</MtouchUseThumb>
+    <MtouchI18n />
+    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -61,6 +65,7 @@
     <IpaPackageName />
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
+    <MtouchUseThumb>True</MtouchUseThumb>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -113,7 +118,6 @@
   <ItemGroup>
     <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
-    <Compile Include="UI\Controllers\SourceController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="UI\Views\UserElement.cs" />
@@ -156,6 +160,8 @@
     <Compile Include="Main.cs" />
     <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
+    <Compile Include="UI\Controllers\Source\SourceInfoController.cs" />
+    <Compile Include="UI\Controllers\Source\SourceController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -184,6 +190,7 @@
     <Folder Include="UI\Controllers\Repositories\" />
     <Folder Include="UI\Controllers\Accounts\" />
     <Folder Include="UI\Controllers\Changesets\" />
+    <Folder Include="UI\Controllers\Source\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">

@@ -57,7 +57,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
         private void Request()
         {
             this.DoWork(() => {
-                var d = Application.Client.Users[_user].Repositories[_slug].Wikis[_page].GetInfo();
+                var d = Application.Client.Users[_user].Repositories[_slug].Wikis[_page].GetInfo(true);
                 var w = new Wiki.CreoleParser();
                 var markup = w.ToHTML(d.Data);
                 

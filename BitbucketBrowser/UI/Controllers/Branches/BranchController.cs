@@ -6,6 +6,7 @@ using MonoTouch.UIKit;
 using System.Linq;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.UI.Controllers.Source;
 
 namespace BitbucketBrowser.UI.Controllers.Branches
 {
@@ -43,9 +44,10 @@ namespace BitbucketBrowser.UI.Controllers.Branches
             });
         }
 
-        protected override List<BranchModel> OnUpdate()
+        protected override List<BranchModel> OnUpdate(bool forced)
         {
-            return new List<BranchModel>(Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches().Values);
+            var branches = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced);
+            return new List<BranchModel>(branches.Values);
         }
 	}
 }

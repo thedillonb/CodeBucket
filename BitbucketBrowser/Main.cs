@@ -132,14 +132,13 @@ namespace BitbucketBrowser
 
         public override void ReceiveMemoryWarning(UIApplication application)
         {
+            //Remove everything from the cache
+            Application.Cache.DeleteAll();
+
             //Pop back to the root view...
             if (_nav.TopView != null && _nav.TopView.NavigationController != null)
                 _nav.TopView.NavigationController.PopToRootViewController(false);
-
-            //Remove everything from the cache
-            Application.Cache.DeleteAll();
         }
-
 	}
 
     public class MySlideout : SlideoutNavigationController

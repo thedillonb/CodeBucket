@@ -193,12 +193,12 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             });
         }
         
-        protected override InternalIssueInfoModel OnUpdate ()
+        protected override InternalIssueInfoModel OnUpdate (bool forced)
         {
             var l = Application.Client.Users[User].Repositories[Slug].Issues[Id];
             var m = new InternalIssueInfoModel() {
-                Comments = l.Comments.GetComments(),
-                Issue = l.GetIssue()
+                Comments = l.Comments.GetComments(forced),
+                Issue = l.GetIssue(forced),
             };
             return m;
         }

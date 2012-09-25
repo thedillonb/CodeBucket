@@ -59,14 +59,14 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
             });
         }
 
-        protected override List<PrivilegeModel> OnUpdate()
+        protected override List<PrivilegeModel> OnUpdate(bool forced)
         {
             try
             {
                 if (RepoSlug != null)
-                    return Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges();
+                    return Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges(forced);
                 else
-                    return Application.Client.Users[Username].Privileges.GetPrivileges();
+                    return Application.Client.Users[Username].Privileges.GetPrivileges(forced);
             }
             catch (Exception)
             {

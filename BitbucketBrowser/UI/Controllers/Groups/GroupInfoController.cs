@@ -38,9 +38,9 @@ namespace BitbucketBrowser.UI.Controllers.Groups
             });
         }
         
-        protected override GroupModel OnUpdate ()
+        protected override GroupModel OnUpdate(bool forced)
         {
-            return Application.Client.Users[User].Groups[Model.Slug].GetInfo();
+            return Application.Client.Users[User].Groups[Model.Slug].GetInfo(forced);
         }
     }
 }

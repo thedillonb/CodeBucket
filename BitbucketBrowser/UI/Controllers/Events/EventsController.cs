@@ -73,7 +73,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
             });
         }
 
-        protected override List<EventModel> OnUpdate()
+        protected override List<EventModel> OnUpdate(bool forced)
         {
             var events = OnGetData();
             _firstIndex = events.Count;

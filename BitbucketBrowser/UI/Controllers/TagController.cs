@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MonoTouch.Dialog;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.UI.Controllers.Source;
 
 
 namespace BitbucketBrowser.UI
@@ -49,9 +50,9 @@ namespace BitbucketBrowser.UI
             });
         }
 
-        protected override Dictionary<string, TagModel> OnUpdate ()
+        protected override Dictionary<string, TagModel> OnUpdate (bool forced)
         {
-            return Application.Client.Users[User].Repositories[Repo].GetTags();
+            return Application.Client.Users[User].Repositories[Repo].GetTags(forced);
         }
 
     }

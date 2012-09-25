@@ -15,10 +15,10 @@ namespace BitbucketBrowser.UI.Controllers.Followers
             _name = name;
             _owner = owner;
         }
-        
-        protected override List<FollowerModel> OnUpdate()
+
+        protected override List<FollowerModel> OnUpdate(bool forced)
         {
-            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers().Followers;
+            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers(forced).Followers;
             return f.OrderBy(x => x.Username).ToList();
         }
     }

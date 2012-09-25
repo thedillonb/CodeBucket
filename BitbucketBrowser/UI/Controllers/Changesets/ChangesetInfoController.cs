@@ -85,9 +85,9 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             });
         }
         
-        protected override ChangesetModel OnUpdate()
+        protected override ChangesetModel OnUpdate(bool forced)
         {
-            var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo();
+            var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo(forced);
             x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();
             return x;
         }

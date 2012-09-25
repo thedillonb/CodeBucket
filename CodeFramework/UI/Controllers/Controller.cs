@@ -34,7 +34,7 @@ namespace CodeFramework.UI.Controllers
         protected abstract void OnRefresh();
 
         //Called when the controller needs to request the model from the server
-        protected abstract T OnUpdate();
+        protected abstract T OnUpdate(bool forced);
 
         public void Refresh(bool force = false)
         {
@@ -67,21 +67,21 @@ namespace CodeFramework.UI.Controllers
 
             if (!force)
             {
-                this.DoWork(UpdateAndRefresh, (ex) => {
+                this.DoWork(() => UpdateAndRefresh(force), (ex) => {
                     _currentError = ErrorView.Show(this.View.Superview, ex.Message);
                 });
             }
             else
             {
-                this.DoWorkNoHud(UpdateAndRefresh, (ex) => {
+                this.DoWorkNoHud(() => UpdateAndRefresh(force), (ex) => {
                     Utilities.ShowAlert("Unable to refresh!", "There was an issue while attempting to refresh. " + ex.Message);
                 }, ReloadComplete);
             }
         }
 
-        private void UpdateAndRefresh()
+        private void UpdateAndRefresh(bool force)
         {
-            Model = OnUpdate();
+            Model = OnUpdate(force);
             if (Model != null)
                 Refresh();
         }

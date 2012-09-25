@@ -228,7 +228,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 InvokeOnMainThread(() => {
                     if (Success != null)
                         Success(updatedModel);
-                    NavigationController.PopViewControllerAnimated(true);
+
+                    if (NavigationController != null)
+                        NavigationController.PopViewControllerAnimated(true);
                 });
             }, 
             (ex) => {
@@ -249,7 +251,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 InvokeOnMainThread(() => {
                     if (Success != null)
                         Success(null);
-                    NavigationController.PopViewControllerAnimated(true);
+
+                    if (NavigationController != null)
+                        NavigationController.PopViewControllerAnimated(true);
                 });
             },
             (ex) => {

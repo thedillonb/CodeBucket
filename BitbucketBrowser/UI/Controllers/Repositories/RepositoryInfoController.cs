@@ -117,7 +117,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             }
         }
 
-        protected override RepositoryDetailedModel OnUpdate()
+        protected override RepositoryDetailedModel OnUpdate(bool forced)
         {
             return Model;
         }

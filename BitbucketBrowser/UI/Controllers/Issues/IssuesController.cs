@@ -168,7 +168,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             });
         }
         
-        protected override IssuesModel OnUpdate ()
+        protected override IssuesModel OnUpdate (bool forced)
         {
             var issues = OnGetData();
             _firstIndex = issues.Count;

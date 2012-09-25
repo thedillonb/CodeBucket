@@ -18,13 +18,13 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
     public class ChangesetController : Controller<List<ChangesetModel>>
     {
         private static int RequestLimit = 30;
-
-        public string User { get; private set; }
-        public string Slug { get; private set; }
-
         private DateTime _lastUpdate = DateTime.MinValue;
         private string _lastNode;
         private LoadMoreElement _loadMore;
+
+        public string User { get; private set; }
+
+        public string Slug { get; private set; }
 
         public ChangesetController(string user, string slug)
             : base(true, true)
@@ -122,7 +122,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             }); 
         }
 
-        protected override List<ChangesetModel> OnUpdate()
+        protected override List<ChangesetModel> OnUpdate(bool forced)
         {
             var changes = OnGetData();
             var newChanges =

@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using BitbucketBrowser.UI.Controllers.Source;
 
 namespace BitbucketBrowser.UI.Controllers.Changesets
 {
@@ -17,7 +18,6 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
         
         protected override string RequestData()
         {
-            
             if (Removed && _parent == null)
             {
                 throw new InvalidOperationException("File does not exist!");

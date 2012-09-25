@@ -47,9 +47,9 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             });
         }
 
-        protected override List<RepositoryDetailedModel> OnUpdate()
+        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
         {
-            return Application.Client.Users[Username].GetInfo().Repositories;
+            return Application.Client.Users[Username].GetInfo(forced).Repositories;
         }
     }
 }

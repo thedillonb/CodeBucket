@@ -2,12 +2,14 @@ using System;
 using BitbucketSharp;
 using System.Linq;
 using System.Collections.Generic;
+using MonoTouch;
 
 namespace BitbucketBrowser.Data
 {
     public class WebCacheProvider : ICacheProvider
     {
-        private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
+        private static int MAX_CACHED_ITEMS = 50;
+        private readonly Dictionary<string, CachedObject> _cache = new Dictionary<string, CachedObject>(MAX_CACHED_ITEMS);
 
         public T Get<T>(string name) where T : class
         {
@@ -21,14 +23,14 @@ namespace BitbucketBrowser.Data
                 if (!IsCached(name))
                     return null;
 
-                var cached = _cache[name] as CachedObject<T>;
+                var cached = _cache[name];
                 if (cached == null)
                     return null;
 
                 if (cached.When.AddMinutes(cacheDurationInMinutes) < DateTime.Now)
                     return null;
 
-                return cached.Cached;
+                return cached.Cached as T;
             }
         }
 
@@ -40,10 +42,41 @@ namespace BitbucketBrowser.Data
             }
         }
 
+        private class CachedObjectComparable : IComparer<CachedObject>
+        {
+            public int Compare(CachedObject x, CachedObject y)
+            {
+                return x.When.CompareTo(y.When);
+            }
+        }
+
         public void Set<T>(T objectToCache, string name) where T : class
         {
-            var cacheObj = new CachedObject<T>() { When = DateTime.Now, Cached = objectToCache };
-            _cache.Add(name, cacheObj);
+            var cacheObj = new CachedObject() { When = DateTime.Now, Cached = objectToCache };
+
+            lock (_cache)
+            {
+                _cache[name] = cacheObj;
+
+                if (_cache.Count >= MAX_CACHED_ITEMS)
+                {
+                    //Create a reverse dictionary
+                    var sortedCached = new SortedDictionary<CachedObject, string>(new CachedObjectComparable());
+                    foreach (var key in _cache.Keys)
+                        sortedCached[_cache[key] as CachedObject] = key; 
+
+                    //Remove the first 25 items
+                    int i = 0;
+                    foreach (var obj in sortedCached)
+                    {
+                        _cache.Remove(obj.Value);
+                        Utilities.Log("Removed cached item {0} -> {1}", obj.Value, obj.Key.GetType().ToString());
+                        i++;
+                        if (i >= MAX_CACHED_ITEMS / 2)
+                            break;
+                    }
+                }
+            }
         }
 
         public void Delete(string name)

@@ -49,9 +49,9 @@ namespace BitbucketBrowser.UI
             BeginInvokeOnMainThread(delegate { _header.SetNeedsDisplay(); });
         }
 
-        protected override UsersModel OnUpdate()
+        protected override UsersModel OnUpdate(bool forced)
         {
-            return Application.Client.Users[Username].GetInfo();
+            return Application.Client.Users[Username].GetInfo(forced);
         }
 
         public void UpdatedImage (System.Uri uri)
