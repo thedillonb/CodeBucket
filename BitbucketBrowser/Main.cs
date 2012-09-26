@@ -167,7 +167,8 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
 #if DEBUG
-                SelectView(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" });
+                //SelectView(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" });
+                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif

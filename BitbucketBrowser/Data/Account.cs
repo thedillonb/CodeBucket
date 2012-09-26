@@ -44,7 +44,7 @@ namespace BitbucketBrowser
 
         public void Remove(Account a)
         {
-            Database.Main.Delete<Account>(a);
+            Database.Main.Delete(a);
         }
 
         public void Remove(string username)

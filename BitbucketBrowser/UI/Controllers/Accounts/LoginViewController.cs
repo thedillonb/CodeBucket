@@ -99,7 +99,7 @@ namespace BitbucketBrowser
 
                 if (!successful)
                 {
-                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + username + ". Please check your credentials and try again.");
+                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
                     return;
                 }
 
