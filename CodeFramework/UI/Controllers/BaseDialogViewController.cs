@@ -80,6 +80,7 @@ namespace CodeFramework.UI.Controllers
                 Root.Caption = this.Title;
 
             TableView.BackgroundColor = UIColor.Clear;
+            TableView.BackgroundView = null;
             if (Style != UITableViewStyle.Grouped)
             {
                 TableView.TableFooterView = new DropbarView(View.Bounds.Width);

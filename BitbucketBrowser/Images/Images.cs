@@ -26,8 +26,7 @@ namespace BitbucketBrowser
         public static UIImage ServerComponents = UIImage.FromBundle("/Images/server_components");
         public static UIImage SitemapColor = UIImage.FromBundle("/Images/sitemap_color");
 
-
-        public static UIImage CellGradient = UIImage.FromBundle("/Images/Cells/gradient");
+        public static UIImage CellGradient = UIImage.FromBundle("/Images/gradient");
 
         public static UIImage Flag = UIImage.FromBundle("/Images/flag");
 
@@ -50,6 +49,7 @@ namespace BitbucketBrowser
         public static UIImage BackButtonLandscape = UIImage.FromBundle("/Images/Controls/backbutton-landscape");
 
         public static UIImage BarButton = UIImage.FromBundle("/Images/Controls/barbutton");
+        public static UIImage BarButtonLandscape = UIImage.FromBundle("/Images/Controls/barbutton-landscape");
         public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
         public static UIImage TitlebarDark = UIImage.FromBundle("/Images/Controls/titlebar_dark");
         public static UIImage Bottombar = UIImage.FromFile("Images/Controls/bottombar.png");
@@ -65,7 +65,12 @@ namespace BitbucketBrowser
             get 
             { 
                 if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-                    return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); 
+                {
+                    if (MonoTouch.Utilities.IsTall)
+                        return UIImageHelper.FromFileAuto("Images/Controls/logobehind-568h"); 
+                    else
+                        return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); 
+                }
                 return UIImageHelper.FromFileAuto("Images/Controls/logobehind-portrait");
             } 
         }
@@ -73,7 +78,7 @@ namespace BitbucketBrowser
         //Issues
         public static UIImage Priority = UIImage.FromBundle("/Images/priority");
 
-        public static UIImage Anonymous = UIImage.FromBundle("/Images/Cells/anonymous");
+        public static UIImage Anonymous = UIImage.FromBundle("/Images/anonymous");
 
 
         //Size agnostic

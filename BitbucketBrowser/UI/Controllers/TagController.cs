@@ -32,7 +32,7 @@ namespace BitbucketBrowser.UI
             
             if (Model.Keys.Count == 0)
             {
-                sec.Add(new NoItemsElement());
+                sec.Add(new NoItemsElement("No Tags"));
             }
             else
             {

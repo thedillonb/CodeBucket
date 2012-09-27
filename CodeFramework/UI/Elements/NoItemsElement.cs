@@ -6,7 +6,12 @@ namespace CodeFramework.UI.Elements
     public class NoItemsElement : StyledElement
     {
         public NoItemsElement()
-            : base("No Items")
+            : this("No Items")
+        {
+        }
+
+        public NoItemsElement(string text)
+            : base(text)
         {
         }
 

@@ -5,13 +5,13 @@ namespace MonoTouch.UIKit
 {
     public static class UIImageHelper
     {
-        public static UIImage FromFileAuto(string filename)
+        public static UIImage FromFileAuto(string filename, string extension = "png")
         {
             var retina = (UIScreen.MainScreen.Scale > 1.0);
             if (retina)
-                return UIImage.FromFile(filename + "@2x.png");
+                return UIImage.FromFile(filename + "@2x." + extension);
             else
-                return UIImage.FromFile(filename + ".png");
+                return UIImage.FromFile(filename + "." + extension);
         }
     }
 }

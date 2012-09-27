@@ -16,7 +16,7 @@ namespace CodeFramework.UI.Elements
             : base(UITableViewCellStyle.Default, "repoinfo")
         {
             Value = row;
-            BackgroundColor = UIColor.FromRGB(249, 250, 251); //UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
+            BackgroundColor = UIColor.FromRGB(249, 250, 251);
         }
 
         public class Row

@@ -211,7 +211,6 @@ namespace BitbucketBrowser.UI
 
         void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            //cell.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle("/Images/Cells/gradient"));
         }
 
         public override bool Matches(string text)

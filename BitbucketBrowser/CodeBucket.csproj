@@ -175,7 +175,6 @@
     <Folder Include="Images\Tabs\" />
     <Folder Include="UI\Controllers\" />
     <Folder Include="UI\Views\" />
-    <Folder Include="Images\Cells\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Official\" />
@@ -232,7 +231,6 @@
     <Content Include="Images\Tabs\search.png" />
     <Content Include="Images\Tabs\events%402x.png" />
     <Content Include="Images\Tabs\events.png" />
-    <Content Include="Images\Cells\gradient.png" />
     <Content Include="Images\fork.png" />
     <Content Include="Images\fork%402x.png" />
     <Content Include="Images\scm_type.png" />
@@ -280,8 +278,6 @@
     <Content Include="Images\change_user.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\linen.png" />
-    <Content Include="Images\Cells\anonymous.png" />
-    <Content Include="Images\Cells\anonymous%402x.png" />
     <Content Include="Images\Controls\backbutton%402x.png" />
     <Content Include="Images\Controls\divider.png" />
     <Content Include="Images\Controls\divider%402x.png" />
@@ -308,16 +304,20 @@
     <Content Include="Images\sitemap_color.png" />
     <Content Include="Images\server_components.png" />
     <Content Include="Images\milestone.png" />
+    <Content Include="Images\gradient.png" />
+    <Content Include="Images\anonymous%402x.png" />
+    <Content Include="Images\anonymous.png" />
+    <Content Include="Default.jpg" />
+    <Content Include="Default%402x.jpg" />
+    <Content Include="Default-Landscape.jpg" />
+    <Content Include="Default-Portrait.jpg" />
+    <Content Include="Default-Landscape%402x.jpg" />
+    <Content Include="Default-Portrait%402x.jpg" />
+    <Content Include="Default-568h%402x.jpg" />
+    <Content Include="Images\Controls\barbutton-landscape.png" />
+    <Content Include="Images\Controls\logobehind-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Default-Landscape%402x.png" />
-    <BundleResource Include="Default-Portrait%402x.png" />
-    <BundleResource Include="Default-Portrait.png" />
-    <BundleResource Include="Default-Landscape.png" />
-    <BundleResource Include="Default%402x.png" />
-    <BundleResource Include="Default.png" />
   </ItemGroup>
 </Project>

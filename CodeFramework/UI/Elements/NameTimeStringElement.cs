@@ -30,8 +30,6 @@ public class NameTimeStringElement : CustomElement, IImageUpdated
             : base(UITableViewCellStyle.Default, "nametimestringelement")
         {
             Lines = 9999;
-            //BackgroundColor = UIColor.FromPatternImage(Images.CellGradient);
-
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
