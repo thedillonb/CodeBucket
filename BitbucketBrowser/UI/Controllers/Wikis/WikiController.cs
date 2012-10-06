@@ -16,7 +16,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
     {
         private UIWebView _web;
         private string _user, _slug, _page;
-        private UIBarButtonItem _back;
+        private UIBarButtonItem _back, _refresh;
         private LinkedList<string> _history = new LinkedList<string>();
         private ErrorView _errorView;
 
@@ -40,6 +40,9 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             if (push)
                 AddHistory(page);
 
+            _back.Enabled = false;
+            _refresh.Enabled = false;
+
             this.DoWork(() => {
                 if (_errorView != null)
                 {
@@ -62,6 +65,9 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 });
             }, (ex) => {
                 _errorView = ErrorView.Show(this.View, ex.Message);
+            }, () => {
+                _back.Enabled = _history.Count > 1;
+                _refresh.Enabled = true;
             });
         }
 
@@ -79,13 +85,12 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             ToolbarItems = new [] { 
                 (_back = new UIBarButtonItem(UIImage.FromBundle("Images/back_button"), UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
                 new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { _web.Reload(); }),
+                (_refresh = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { _web.Reload(); })),
             };
         }
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
         {
-            Console.WriteLine("Here we go: " + navType);
             if (navType == UIWebViewNavigationType.LinkClicked) 
             {
                 var url = request.Url.ToString();
