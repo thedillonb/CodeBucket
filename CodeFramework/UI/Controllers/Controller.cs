@@ -37,7 +37,13 @@ namespace CodeFramework.UI.Controllers
         //Called when the controller needs to request the model from the server
         protected abstract T OnUpdate(bool forced);
 
-        protected override UIView CreateHeaderView()
+        //Filter the items!
+        protected virtual T OnOrder(T item)
+        {
+            return item;
+        }
+
+        protected override UISearchBar CreateHeaderView()
         {
             searchBar = new SearchFilterBar();
             searchBar.Delegate = new CustomSearchDelegate(this);
@@ -54,6 +60,15 @@ namespace CodeFramework.UI.Controllers
 
             if (Model != null && !force)
             {
+                try
+                {
+                    Model = OnOrder(Model);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("There was an issue attempting to filter: " + ex.Message);
+                }
+
                 try
                 {
                     OnRefresh();

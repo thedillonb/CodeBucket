@@ -24,6 +24,11 @@ namespace BitbucketBrowser.UI.Controllers.Followers
             AutoHideSearch = true;
 		}
 
+        protected override List<FollowerModel> OnOrder(List<FollowerModel> item)
+        {
+            return item.OrderBy(a => a.Username).ToList();
+        }
+
         protected override void OnRefresh()
         {
             if (Model.Count == 0)
