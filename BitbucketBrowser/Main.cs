@@ -19,6 +19,7 @@ using BitbucketBrowser.UI.Controllers.Repositories;
 using BitbucketBrowser.UI.Controllers.Groups;
 using BitbucketBrowser.UI.Controllers.Accounts;
 using BitbucketBrowser.UI.Controllers.Changesets;
+using BitbucketBrowser.UI.Controllers.Wikis;
 
 namespace BitbucketBrowser
 {
@@ -184,9 +185,10 @@ namespace BitbucketBrowser
             //First time appear
             if (_previousUser == null)
             {
+               
+                
 #if DEBUG
-                //SelectView(new IssuesController(Application.Account.Username, "bitbucketsharp") { Title = "Events" });
-                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+                SelectView(new WikiInfoController(Application.Account.Username, "bitbucketbrowser"));
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif

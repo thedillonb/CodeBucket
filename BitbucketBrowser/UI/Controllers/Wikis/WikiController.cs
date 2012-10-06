@@ -16,22 +16,105 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
     {
         private UIWebView _web;
         private string _user, _slug, _page;
+        private UIBarButtonItem _back;
+        private LinkedList<string> _history = new LinkedList<string>();
+        private ErrorView _errorView;
+
+        private void AddHistory(string page)
+        {
+            _history.AddLast(page);
+            _back.Enabled = _history.Count > 1;
+        }
+
+        private void GoBack()
+        {
+            if (_history.Count <= 1)
+                return;
+            _history.RemoveLast();
+            _back.Enabled = _history.Count > 1;
+            Load(_history.Last.Value, false);
+        }
+
+        private void Load(string page, bool push = true, bool forceInvalidation = false)
+        {
+            if (push)
+                AddHistory(page);
+
+            this.DoWork(() => {
+                if (_errorView != null)
+                {
+                    InvokeOnMainThread(delegate {
+                        _errorView.RemoveFromSuperview();
+                        _errorView = null;
+                    });
+                }
+
+                var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page];
+                var d = wiki.GetInfo(forceInvalidation);
+                var w = new Wiki.CreoleParser();
+                w.OnLink += HandleOnLink;
+                var markup = w.ToHTML(d.Data);
+                
+                InvokeOnMainThread(delegate {
+                    _web.ScalesPageToFit = false;
+                    Title = page;
+                    _web.LoadHtmlString(markup, null);
+                });
+            }, (ex) => {
+                _errorView = ErrorView.Show(this.View, ex.Message);
+            });
+        }
+
 
         public WikiInfoController(string user, string slug, string page = "Home")
             : base()
         {
             _user = user;
             _slug = slug;
-            _page = Title = page;
+            _page = page;
+            Title = "Wiki";
             _web = new UIWebView() { DataDetectorTypes = UIDataDetectorType.None };
-            _web.ShouldStartLoad = (webView, request, navType) => {
-                if (navType == UIWebViewNavigationType.LinkClicked) 
+            _web.ShouldStartLoad = ShouldStartLoad;
+
+            ToolbarItems = new [] { 
+                (_back = new UIBarButtonItem(UIImage.FromBundle("Images/back_button"), UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { _web.Reload(); }),
+            };
+        }
+
+        private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
+        {
+            Console.WriteLine("Here we go: " + navType);
+            if (navType == UIWebViewNavigationType.LinkClicked) 
+            {
+                var url = request.Url.ToString();
+                if (url.StartsWith("wiki://"))
+                {
+                    var page = url.Substring(7);
+                    Load(page);
+                    return false;
+                }
+                else
                 {
                     UIApplication.SharedApplication.OpenUrl(request.Url);
                     return false;
                 }
-                return true;
-            };
+            }
+            else if (navType == UIWebViewNavigationType.Reload)
+            {
+                //Reload.
+                Load(_history.Last.Value, false, true);
+                return false;
+            }
+
+            return true;
+        }
+        
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationController.SetToolbarHidden(true, true);
         }
 
         public override void ViewDidLoad()
@@ -42,9 +125,13 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
         public override void ViewWillAppear(bool animated)
         {
+            NavigationController.SetToolbarHidden(false, true);
             base.ViewWillAppear(animated);
-            _web.Frame = this.View.Bounds;
-            Request();
+            var bounds = View.Bounds;
+            bounds.Height -= NavigationController.Toolbar.Frame.Height;
+            _web.Frame = bounds;
+
+            Load(_page);
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -54,19 +141,17 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             _web.Frame = bounds;
         }
 
-        private void Request()
+        void HandleOnLink (object sender, Wiki.LinkEventArgs e)
         {
-            this.DoWork(() => {
-                var d = Application.Client.Users[_user].Repositories[_slug].Wikis[_page].GetInfo(true);
-                var w = new Wiki.CreoleParser();
-                var markup = w.ToHTML(d.Data);
-                
-                InvokeOnMainThread(delegate {
-                    _web.LoadHtmlString(markup, null);
-                });
-            }, (ex) => {
-                ErrorView.Show(this.View, ex.Message);
-            });
+            if (e.Href.Contains("://"))
+            {
+                e.Target = Wiki.LinkEventArgs.TargetEnum.External;
+            }
+            else
+            {
+                e.Target = Wiki.LinkEventArgs.TargetEnum.Internal;
+                e.Href = "wiki://" + e.Href;
+            }
         }
     }
 }

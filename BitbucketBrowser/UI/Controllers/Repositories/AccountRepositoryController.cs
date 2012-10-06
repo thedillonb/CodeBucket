@@ -70,9 +70,6 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                 _segment.ValueChanged += (sender, e) => ChangeSegment();
             });
             
-            
-            //NavigationItem.TitleView = _segment;
-            
             Title = "Owned";
             
             //The bottom bar
