@@ -76,6 +76,7 @@
     <Compile Include="UI\Controllers\EnumViewController.cs" />
     <Compile Include="UI\Controllers\ControllerExtensions.cs" />
     <Compile Include="Data\IAccount.cs" />
+    <Compile Include="UI\Views\SearchFilterView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SourceBrowser\index.html" />

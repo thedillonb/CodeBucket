@@ -111,11 +111,13 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         protected override void SearchStart()
         {
             NavigationController.SetToolbarHidden(true, false);
+            base.SearchStart();
         }
         
         protected override void SearchEnd()
         {
             NavigationController.SetToolbarHidden(false, false);
+            base.SearchEnd();
         }
     }
 

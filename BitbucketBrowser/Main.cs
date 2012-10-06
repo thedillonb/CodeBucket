@@ -57,6 +57,9 @@ namespace BitbucketBrowser
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 
+            CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
+            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Branch;
+
             //BackButton
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
 
