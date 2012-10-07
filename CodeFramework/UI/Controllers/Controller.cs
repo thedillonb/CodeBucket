@@ -47,7 +47,18 @@ namespace CodeFramework.UI.Controllers
         {
             searchBar = new SearchFilterBar();
             searchBar.Delegate = new CustomSearchDelegate(this);
+            searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
             return searchBar;
+        }
+
+        void FilterButtonTouched (object sender, EventArgs e)
+        {
+            var filter = new FilterController();
+            filter.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, a) => { 
+                filter.DismissModalViewControllerAnimated(true); 
+            });
+            var nav = new UINavigationController(filter);
+            this.PresentModalViewController(nav, true);
         }
 
         public void Refresh(bool force = false)

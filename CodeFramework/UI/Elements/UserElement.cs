@@ -1,13 +1,14 @@
 using System;
 using MonoTouch.Dialog.Utilities;
-using BitbucketSharp.Models;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Elements;
 
-namespace BitbucketBrowser.UI
+namespace CodeFramework.UI.Elements
 {
     public class UserElement : SubcaptionElement, IImageUpdated
     {
+        public static UIImage Default = null;
+
         public UserElement(string username, string firstName, string lastName, string avatar)
             : base (username)
         {
@@ -15,7 +16,8 @@ namespace BitbucketBrowser.UI
              if (!string.IsNullOrWhiteSpace(realName))
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            Image = Images.Anonymous;
+            if (Default != null)
+                Image = Default;
             if (avatar != null)
                 ImageUri = new Uri(avatar);
         }

@@ -5,27 +5,13 @@ using System.Linq;
 
 namespace CodeFramework.UI.Views
 {
-    public class SearchFilterView : UIToolbar
-    {
-        public SearchFilterView()
-            : base(new RectangleF(0, 0, 320, 44f))
-        {
-            var searchBar = new UISearchBar();
-            var frame = searchBar.Frame;
-            frame.Width = 100f;
-            searchBar.Frame = frame;
-            var filterButton = new UIBarButtonItem(UIBarButtonSystemItem.Organize, (s, e) => { });
-            filterButton.Style = UIBarButtonItemStyle.Bordered;
-
-            this.Items = new UIBarButtonItem[] { new UIBarButtonItem(searchBar) { Width = 0 }, filterButton };
-        }
-    }
-
     public class SearchFilterBar : UISearchBar
     {
         public static UIImage ButtonBackground;
         public static UIImage FilterImage;
         private UIButton _button;
+
+        public UIButton FilterButton { get { return _button; } }
 
         public bool FilterButtonVisible
         {
@@ -58,7 +44,7 @@ namespace CodeFramework.UI.Views
 
             if (FilterButtonVisible)
             {
-                var buttonWidth = 50f;
+                var buttonWidth = 44f;
                 _button.Frame = new RectangleF(bounds.Width - 5 - buttonWidth, 7f, buttonWidth, 30f);
 
                 var searchBar = this.Subviews.GetValue(1) as UIView;

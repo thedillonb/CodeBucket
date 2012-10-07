@@ -84,6 +84,8 @@ namespace BitbucketBrowser
         //Size agnostic
         public static UIImage Background = UIImage.FromFile("Images/Controls/background.png");
         public static UIImage Linen = UIImage.FromFile("Images/linen.png");
+
+        public static UIImage Filter = UIImage.FromBundle("/Images/filter");
     }
 }
 

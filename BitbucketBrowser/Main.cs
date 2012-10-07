@@ -20,6 +20,7 @@ using BitbucketBrowser.UI.Controllers.Groups;
 using BitbucketBrowser.UI.Controllers.Accounts;
 using BitbucketBrowser.UI.Controllers.Changesets;
 using BitbucketBrowser.UI.Controllers.Wikis;
+using BucketBrowser.Controllers;
 
 namespace BitbucketBrowser
 {
@@ -59,7 +60,7 @@ namespace BitbucketBrowser
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 
             CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
-            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Branch;
+            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
 
             //BackButton
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
@@ -82,6 +83,7 @@ namespace BitbucketBrowser
             HeaderView.Gradient = Images.CellGradient;
             StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             ErrorView.AlertImage = UIImage.FromBundle("/Images/warning.png");
+            UserElement.Default = Images.Anonymous;
 
             //Resize the back button only on the iPhone
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
@@ -196,94 +198,6 @@ namespace BitbucketBrowser
             }
 
         }
-    }
-
-    public class MenuController : DialogViewController
-    {
-        public MenuController()
-            : base(UITableViewStyle.Plain, new RootElement("CodeBucket"))
-        {
-            if (Application.Account != null && !string.IsNullOrEmpty(Application.Account.Username))
-                Root.Caption = Application.Account.Username;
-        }
-
-        class NavElement : StyledElement
-        {
-            public NavElement(string title, NSAction tapped, UIImage image)
-                : base(title, tapped, image)
-            {
-                BackgroundColor = UIColor.Clear;
-                TextColor = UIColor.White;
-                DetailColor = UIColor.White;
-            }
-
-
-            public override UITableViewCell GetCell(UITableView tv)
-            {
-                var cell = base.GetCell(tv);
-                cell.SelectedBackgroundView = new UIView() { BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200) };
-
-                var f = cell.Subviews.Count(x => x.Tag == 1111);
-                if (f == 0)
-                {
-
-                    var v2 = new UIView(new RectangleF(0, cell.Frame.Height - 3, cell.Frame.Width, 1));
-                    v2.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 64);
-                    v2.Tag = 1111;
-                    cell.AddSubview(v2);
-
-
-                    var v = new UIView(new RectangleF(0, cell.Frame.Height - 2, cell.Frame.Width, 1));
-                    v.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200);
-                    v.Tag = 1111;
-                    cell.AddSubview(v);
-                }
-
-                return cell;
-            }
-        }
-
-        private void DoShit(UIViewController controller)
-        {
-            NavigationController.PushViewController(controller, false);
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
-                var n = new UINavigationController(new MyAccountsController());
-                this.PresentModalViewController(n, true);
-            
-            });
-
-            Root.Add(new Section() {
-                new NavElement("Profile", () => DoShit(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person),
-                new NavElement("Events", () => DoShit(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true }), Images.Event),
-                new NavElement("Repositories", () => DoShit(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo),
-                new NavElement("Groups", () => DoShit(new GroupController(Application.Account.Username, false) { Title = "Groups" }), Images.Group),
-                new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
-            });
-
-            TableView.BackgroundColor = UIColor.Clear;
-            UIImage background = Images.Linen;
-            View.BackgroundColor = UIColor.FromPatternImage(background);
-
-            TableView.SeparatorColor = UIColor.FromRGBA(128, 128, 128, 128);
-
-            var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
-            view.BackgroundColor = UIColor.Clear;
-            TableView.TableFooterView = view;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            Root.Caption = Application.Account.Username;
-            Title = Root.Caption;
-        }
-
     }
 }
 

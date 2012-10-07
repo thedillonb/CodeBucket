@@ -121,7 +121,6 @@
     <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="Images\Images.cs" />
-    <Compile Include="UI\Views\UserElement.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs">
       <DependentUpon>IssueCellView.cs</DependentUpon>
@@ -163,6 +162,7 @@
     <Compile Include="Data\WebCacheProvider.cs" />
     <Compile Include="UI\Controllers\Source\SourceInfoController.cs" />
     <Compile Include="UI\Controllers\Source\SourceController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -191,6 +191,7 @@
     <Folder Include="UI\Controllers\Accounts\" />
     <Folder Include="UI\Controllers\Changesets\" />
     <Folder Include="UI\Controllers\Source\" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
@@ -318,6 +319,7 @@
     <Content Include="Images\Controls\barbutton-landscape.png" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\back_button%402x.png" />
+    <Content Include="Images\filter%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
