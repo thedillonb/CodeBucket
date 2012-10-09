@@ -80,14 +80,14 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         
         public override void ViewWillAppear(bool animated)
         {
-            NavigationController.SetToolbarHidden(isSearching, true);
+            NavigationController.SetToolbarHidden(isSearching, animated);
             base.ViewWillAppear(animated);
         }
         
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NavigationController.SetToolbarHidden(true, true);
+            NavigationController.SetToolbarHidden(true, animated);
         }
         
         private void ChangeSegment()

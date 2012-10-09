@@ -156,13 +156,14 @@
     <Compile Include="UI\Controllers\Changesets\ChangesetDiffController.cs" />
     <Compile Include="UI\Controllers\Changesets\ChangesetInfoController.cs" />
     <Compile Include="UI\Controllers\Changesets\ChangesetController.cs" />
-    <Compile Include="UI\Controllers\Issues\IssueTrackerSettingsController.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
     <Compile Include="UI\Controllers\Source\SourceInfoController.cs" />
     <Compile Include="UI\Controllers\Source\SourceController.cs" />
-    <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\MenuViewController.cs" />
+    <Compile Include="Controllers\HelpViewController.cs" />
+    <Compile Include="Controllers\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -320,6 +321,9 @@
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\filter%402x.png" />
+    <Content Include="Images\help%402x.png" />
+    <Content Include="Images\help.png" />
+    <Content Include="Images\forward_button%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

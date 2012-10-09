@@ -8,15 +8,14 @@ using System.Threading;
 using MonoTouch.Foundation;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
+using BitbucketBrowser.Controllers;
 
 
 namespace BitbucketBrowser.UI.Controllers.Wikis
 {
-    public class WikiInfoController : UIViewController
+    public class WikiInfoController : WebViewController
     {
-        private UIWebView _web;
         private string _user, _slug, _page;
-        private UIBarButtonItem _back, _refresh;
         private LinkedList<string> _history = new LinkedList<string>();
         private ErrorView _errorView;
 
@@ -26,7 +25,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             _back.Enabled = _history.Count > 1;
         }
 
-        private void GoBack()
+        protected override void GoBack()
         {
             if (_history.Count <= 1)
                 return;
@@ -59,9 +58,9 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 var markup = w.ToHTML(d.Data);
                 
                 InvokeOnMainThread(delegate {
-                    _web.ScalesPageToFit = false;
+                    Web.ScalesPageToFit = false;
                     Title = page;
-                    _web.LoadHtmlString(markup, null);
+                    Web.LoadHtmlString(markup, null);
                 });
             }, (ex) => {
                 _errorView = ErrorView.Show(this.View, ex.Message);
@@ -79,14 +78,14 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             _slug = slug;
             _page = page;
             Title = "Wiki";
-            _web = new UIWebView() { DataDetectorTypes = UIDataDetectorType.None };
-            _web.ShouldStartLoad = ShouldStartLoad;
+            Web.DataDetectorTypes = UIDataDetectorType.None;
+            Web.ShouldStartLoad = ShouldStartLoad;
+        }
 
-            ToolbarItems = new [] { 
-                (_back = new UIBarButtonItem(UIImage.FromBundle("Images/back_button"), UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_refresh = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { _web.Reload(); })),
-            };
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            Load(_page);
         }
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
@@ -115,36 +114,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
             return true;
         }
-        
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.SetToolbarHidden(true, true);
-        }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            this.Add(_web);
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            NavigationController.SetToolbarHidden(false, true);
-            base.ViewWillAppear(animated);
-            var bounds = View.Bounds;
-            bounds.Height -= NavigationController.Toolbar.Frame.Height;
-            _web.Frame = bounds;
-
-            Load(_page);
-        }
-
-        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
-        {
-            base.DidRotate(fromInterfaceOrientation);
-            var bounds = View.Bounds;
-            _web.Frame = bounds;
-        }
 
         void HandleOnLink (object sender, Wiki.LinkEventArgs e)
         {

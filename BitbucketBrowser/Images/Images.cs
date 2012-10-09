@@ -77,7 +77,6 @@ namespace BitbucketBrowser
 
         //Issues
         public static UIImage Priority = UIImage.FromBundle("/Images/priority");
-
         public static UIImage Anonymous = UIImage.FromBundle("/Images/anonymous");
 
 
@@ -86,6 +85,10 @@ namespace BitbucketBrowser
         public static UIImage Linen = UIImage.FromFile("Images/linen.png");
 
         public static UIImage Filter = UIImage.FromBundle("/Images/filter");
+        public static UIImage Help = UIImage.FromBundle("/Images/help");
+
+        public static UIImage BackNavigationButton = UIImage.FromFile("Images/back_button@2x.png");
+        public static UIImage ForwardNavigationButton = UIImage.FromFile("Images/forward_button@2x.png");
     }
 }
 

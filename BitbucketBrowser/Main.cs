@@ -20,7 +20,7 @@ using BitbucketBrowser.UI.Controllers.Groups;
 using BitbucketBrowser.UI.Controllers.Accounts;
 using BitbucketBrowser.UI.Controllers.Changesets;
 using BitbucketBrowser.UI.Controllers.Wikis;
-using BucketBrowser.Controllers;
+using BitbucketBrowser.Controllers;
 
 namespace BitbucketBrowser
 {
@@ -59,8 +59,6 @@ namespace BitbucketBrowser
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
             UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 
-            CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
-            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
 
             //BackButton
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
@@ -72,11 +70,15 @@ namespace BitbucketBrowser
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
 
             UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.TintColor = UIColor.White;
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
             var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
             UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
             UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
+
+            CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
+            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
 
             DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
             WatermarkView.Image = Images.Background;

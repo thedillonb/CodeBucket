@@ -12,7 +12,7 @@ using CodeFramework.UI.Elements;
 
 namespace CodeFramework.UI.Controllers
 {
-    public abstract class Controller<T> : BaseDialogViewController
+    public abstract class Controller<T> : BaseDialogViewController where T : class
     {
         public T Model { get; set; }
         public bool Loaded { get; private set; }
@@ -46,7 +46,7 @@ namespace CodeFramework.UI.Controllers
         protected override UISearchBar CreateHeaderView()
         {
             searchBar = new SearchFilterBar();
-            searchBar.Delegate = new CustomSearchDelegate(this);
+            searchBar.Delegate = new CustomSearchDelegate<T>(this);
             searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
             return searchBar;
         }
@@ -140,7 +140,7 @@ namespace CodeFramework.UI.Controllers
             searchBar.FilterButtonVisible = true;
         }
         
-        class CustomSearchDelegate : UISearchBarDelegate 
+        class CustomSearchDelegate<T> : UISearchBarDelegate where T : class
         {
             Controller<T> container;
             DialogViewController searchController;

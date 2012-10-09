@@ -39,6 +39,9 @@ namespace MonoTouch
         public static void PopNetworkActive ()
         {
             lock (networkLock){
+                if (active == 0)
+                    return;
+
                 active--;
                 if (active == 0)
                     MainApp.NetworkActivityIndicatorVisible = false;
