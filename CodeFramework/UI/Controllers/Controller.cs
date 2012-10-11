@@ -43,6 +43,7 @@ namespace CodeFramework.UI.Controllers
             return item;
         }
 
+        /*
         protected override UISearchBar CreateHeaderView()
         {
             searchBar = new SearchFilterBar();
@@ -50,6 +51,7 @@ namespace CodeFramework.UI.Controllers
             searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
             return searchBar;
         }
+        */
 
         void FilterButtonTouched (object sender, EventArgs e)
         {

@@ -9,39 +9,19 @@ using MonoTouch.Foundation;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
 using BitbucketBrowser.Controllers;
+using MonoTouch;
 
 
 namespace BitbucketBrowser.UI.Controllers.Wikis
 {
     public class WikiInfoController : WebViewController
     {
+        private static string WikiCache = Utilities.BaseDir + "/Documents/WikiCache/";
         private string _user, _slug, _page;
-        private LinkedList<string> _history = new LinkedList<string>();
         private ErrorView _errorView;
-
-        private void AddHistory(string page)
-        {
-            _history.AddLast(page);
-            _back.Enabled = _history.Count > 1;
-        }
-
-        protected override void GoBack()
-        {
-            if (_history.Count <= 1)
-                return;
-            _history.RemoveLast();
-            _back.Enabled = _history.Count > 1;
-            Load(_history.Last.Value, false);
-        }
 
         private void Load(string page, bool push = true, bool forceInvalidation = false)
         {
-            if (push)
-                AddHistory(page);
-
-            _back.Enabled = false;
-            _refresh.Enabled = false;
-
             this.DoWork(() => {
                 if (_errorView != null)
                 {
@@ -51,25 +31,22 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                     });
                 }
 
-                var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page];
-                var d = wiki.GetInfo(forceInvalidation);
-                var w = new Wiki.CreoleParser();
-                w.OnLink += HandleOnLink;
-                var markup = w.ToHTML(d.Data);
-                
+                var url = RequestAndSave(page, forceInvalidation);
+                var escapedUrl = Uri.EscapeUriString("file://" + url);
+
                 InvokeOnMainThread(delegate {
                     Web.ScalesPageToFit = false;
-                    Title = page;
-                    Web.LoadHtmlString(markup, null);
+                    Web.LoadRequest(NSUrlRequest.FromUrl(new NSUrl(escapedUrl)));
                 });
-            }, (ex) => {
-                _errorView = ErrorView.Show(this.View, ex.Message);
-            }, () => {
-                _back.Enabled = _history.Count > 1;
+            },
+            (ex) => {
+                Utilities.ShowAlert("Unable to Find Wiki Page", ex.Message);
+                Utilities.PopNetworkActive();
+            },
+             () => {
                 _refresh.Enabled = true;
             });
         }
-
 
         public WikiInfoController(string user, string slug, string page = "Home")
             : base()
@@ -82,39 +59,77 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             Web.ShouldStartLoad = ShouldStartLoad;
         }
 
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            if (System.IO.Directory.Exists(WikiCache))
+                System.IO.Directory.Delete(WikiCache, true);
+        }
+
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+
+            //Delete the cache directory just incase it already exists..
+            if (System.IO.Directory.Exists(WikiCache))
+                System.IO.Directory.Delete(WikiCache, true);
+            System.IO.Directory.CreateDirectory(WikiCache);
+
+
             Load(_page);
         }
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
         {
+            if (request.Url.ToString().Substring(0, 7).Equals("file://"))
+                Web.ScalesPageToFit = false;
+            else
+                Web.ScalesPageToFit = true;
+
             if (navType == UIWebViewNavigationType.LinkClicked) 
             {
-                var url = request.Url.ToString();
-                if (url.StartsWith("wiki://"))
+                if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
                 {
-                    var page = url.Substring(7);
-                    Load(page);
+                    Load(request.Url.ToString().Substring(7));
                     return false;
                 }
-                else
-                {
-                    UIApplication.SharedApplication.OpenUrl(request.Url);
-                    return false;
-                }
-            }
-            else if (navType == UIWebViewNavigationType.Reload)
-            {
-                //Reload.
-                Load(_history.Last.Value, false, true);
-                return false;
             }
 
             return true;
         }
 
+        protected override void OnLoadFinished(object sender, EventArgs e)
+        {
+            base.OnLoadFinished(sender, e);
+            Title = Web.EvaluateJavascript("document.title");
+        }
+
+        private string RequestAndSave(string page, bool forceInvalidation)
+        {
+            var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page];
+            var d = wiki.GetInfo(forceInvalidation);
+            var w = new Wiki.CreoleParser();
+            w.OnLink += HandleOnLink;
+
+            //Generate the markup
+            var markup = new System.Text.StringBuilder();
+            markup.Append("<html><head><title>");
+            markup.Append(page);
+            markup.Append("</title></head><body>");
+            markup.Append(w.ToHTML(d.Data));
+            markup.Append("</body></html>");
+
+            var url = WikiCache + page + ".html";
+            using (var file = System.IO.File.Create(url))
+            {
+                using (var writer = new System.IO.StreamWriter(file))
+                {
+                    writer.Write(markup.ToString());
+                }
+            }
+
+            return url;
+        }
 
         void HandleOnLink (object sender, Wiki.LinkEventArgs e)
         {
