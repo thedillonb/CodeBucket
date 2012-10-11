@@ -19,6 +19,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
         private static string WikiCache = Utilities.BaseDir + "/Documents/WikiCache/";
         private string _user, _slug, _page;
         private ErrorView _errorView;
+        private bool _isVisible = false;
 
         private void Load(string page, bool push = true, bool forceInvalidation = false)
         {
@@ -40,11 +41,8 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 });
             },
             (ex) => {
-                Utilities.ShowAlert("Unable to Find Wiki Page", ex.Message);
-                Utilities.PopNetworkActive();
-            },
-             () => {
-                _refresh.Enabled = true;
+                if (_isVisible)
+                    Utilities.ShowAlert("Unable to Find Wiki Page", ex.Message);
             });
         }
 
@@ -61,6 +59,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
         public override void ViewDidDisappear(bool animated)
         {
+            _isVisible = false;
             base.ViewDidDisappear(animated);
             if (System.IO.Directory.Exists(WikiCache))
                 System.IO.Directory.Delete(WikiCache, true);
@@ -68,6 +67,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
         public override void ViewDidAppear(bool animated)
         {
+            _isVisible = true;
             base.ViewDidAppear(animated);
 
             //Delete the cache directory just incase it already exists..
@@ -75,7 +75,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 System.IO.Directory.Delete(WikiCache, true);
             System.IO.Directory.CreateDirectory(WikiCache);
 
-
+            //Load the page
             Load(_page);
         }
 

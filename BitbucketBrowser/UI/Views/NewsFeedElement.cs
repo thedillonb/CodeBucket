@@ -120,6 +120,9 @@ namespace BitbucketBrowser.UI
 
         private string repoName()
         {
+            if (Item.Repository == null)
+                return "Unknown Repository";
+
             if (!Item.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
                 return Item.Repository.Owner + "/" + Item.Repository.Name;
             return Item.Repository.Name;

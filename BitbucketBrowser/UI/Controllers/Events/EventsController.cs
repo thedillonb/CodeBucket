@@ -96,16 +96,13 @@ namespace BitbucketBrowser.UI.Controllers.Events
 
         private void AddItems(List<EventModel> events, bool prepend = true)
         {
-            if (events.Count == 0)
-                return;
-
             var sec = new Section();
             events.ForEach(e => {
                 if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
                     return;
 
                 var newsEl = new NewsFeedElement(e, ReportRepository);
-                if (e.Event == EventModel.Type.Commit) 
+                if (e.Event == EventModel.Type.Commit && e.Repository != null) 
                 {
                     newsEl.Tapped += () => { 
                         NavigationController.PushViewController(
@@ -130,7 +127,9 @@ namespace BitbucketBrowser.UI.Controllers.Events
             });
 
             if (sec.Count == 0)
+            {
                 return;
+            }
 
             InvokeOnMainThread(delegate {
                 if (Root.Count == 0)

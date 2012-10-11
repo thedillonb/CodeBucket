@@ -31,6 +31,7 @@ namespace BitbucketBrowser.Controllers
             Web = new UIWebView();
             Web.LoadFinished += OnLoadFinished;
             Web.LoadStarted += OnLoadStarted;
+            Web.LoadError += OnLoadError;
             
             ToolbarItems = new [] { 
                 (_back = new UIBarButtonItem(Images.BackNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
@@ -41,9 +42,16 @@ namespace BitbucketBrowser.Controllers
             };
         }
 
+        protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
+        {
+            MonoTouch.Utilities.PopNetworkActive();
+            _refresh.Enabled = true;
+        }
+
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
             MonoTouch.Utilities.PushNetworkActive();
+            _refresh.Enabled = false;
         }
 
         protected virtual void OnLoadFinished (object sender, EventArgs e)
@@ -51,6 +59,7 @@ namespace BitbucketBrowser.Controllers
             MonoTouch.Utilities.PopNetworkActive();
             _back.Enabled = Web.CanGoBack;
             _forward.Enabled = Web.CanGoForward;
+            _refresh.Enabled = true;
         }
         
         public override void ViewWillDisappear(bool animated)
