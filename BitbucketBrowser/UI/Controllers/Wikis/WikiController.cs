@@ -36,7 +36,6 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 var escapedUrl = Uri.EscapeUriString("file://" + url);
 
                 InvokeOnMainThread(delegate {
-                    Web.ScalesPageToFit = false;
                     Web.LoadRequest(NSUrlRequest.FromUrl(new NSUrl(escapedUrl)));
                 });
             },
@@ -53,6 +52,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             _slug = slug;
             _page = page;
             Title = "Wiki";
+            Web.ScalesPageToFit = true;
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
         }
@@ -81,11 +81,6 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
         {
-            if (request.Url.ToString().Substring(0, 7).Equals("file://"))
-                Web.ScalesPageToFit = false;
-            else
-                Web.ScalesPageToFit = true;
-
             if (navType == UIWebViewNavigationType.LinkClicked) 
             {
                 if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
@@ -113,7 +108,9 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
             //Generate the markup
             var markup = new System.Text.StringBuilder();
-            markup.Append("<html><head><title>");
+            markup.Append("<html><head>");
+            markup.Append("<meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0\"/>");
+            markup.Append("<title>");
             markup.Append(page);
             markup.Append("</title></head><body>");
             markup.Append(w.ToHTML(d.Data));
