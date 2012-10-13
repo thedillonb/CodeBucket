@@ -317,7 +317,6 @@
     <Content Include="Default-Landscape%402x.jpg" />
     <Content Include="Default-Portrait%402x.jpg" />
     <Content Include="Default-568h%402x.jpg" />
-    <Content Include="Images\Controls\barbutton-landscape.png" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\filter%402x.png" />
