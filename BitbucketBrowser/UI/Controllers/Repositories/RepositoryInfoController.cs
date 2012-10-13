@@ -68,8 +68,10 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                 size = string.Format("{0}B", Model.Size);
             else if ((Model.Size / 1024f / 1024f) < 1)
                 size = string.Format("{0:0.##}KB", Model.Size / 1024f);
-            else
+            else if ((Model.Size / 1024f / 1024f / 1024f) < 1)
                 size = string.Format("{0:0.##}MB", Model.Size / 1024f / 1024f);
+            else
+                size = string.Format("{0:0.##}GB", Model.Size / 1024f / 1024f / 1024f);
 
 
             sec1.Add(new SplitElement(new SplitElement.Row() { 
