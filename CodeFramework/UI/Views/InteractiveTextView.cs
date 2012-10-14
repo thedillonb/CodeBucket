@@ -183,6 +183,8 @@ namespace CodeFramework.UI.Views
 
                         currentBlock.Value += word + "".PadLeft(endingSpaces, ' ');
                         currentBlock.Width = StringSize(currentBlock.Value, textBlock.Font ?? DefaultFont).Width;
+                        if (currentBlock.Bounds.X + currentBlock.Width > max)
+                            currentBlock.Width = max - currentBlock.Bounds.X;
                         x = currentBlock.Bounds.X + currentBlock.Width;
                     }
                 }
@@ -190,8 +192,6 @@ namespace CodeFramework.UI.Views
 
             return y + 17f;
         }
-
-        static Random rand = new Random();
 
         public override void Draw (RectangleF rect)
         {
@@ -213,10 +213,7 @@ namespace CodeFramework.UI.Views
                     context.SetFillColor (1, 1, 1, 1);
                 }
 
-                //context.SetFillColor((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble(), 0.3f);
-                //context.FillRect(bounds);
-                //context.SetFillColor (1, 1, 1, 1);
-                DrawString (block.Value, bounds, block.Font, UILineBreakMode.Clip, UITextAlignment.Left);
+                DrawString (block.Value, bounds, block.Font, UILineBreakMode.TailTruncation, UITextAlignment.Left);
             }
         }
 
@@ -244,6 +241,7 @@ namespace CodeFramework.UI.Views
             
             highlighted = null;
             SetNeedsDisplay ();
+            base.TouchesEnded(touches, evt);
         }
 
         public override bool PointInside(PointF point, UIEvent uievent)
@@ -254,8 +252,7 @@ namespace CodeFramework.UI.Views
                 return true;
             }
 
-            return false;
-            //return base.PointInside(point, uievent);
+            return base.PointInside(point, uievent);
         }
 
         public override void TouchesBegan(NSSet touches, UIEvent evt)
