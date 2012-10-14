@@ -8,14 +8,14 @@ using CodeFramework.UI.Views;
 
 namespace CodeFramework.UI.Elements
 {
-public class NameTimeStringElement : CustomElement, IImageUpdated
+    public class NameTimeStringElement : CustomElement, IImageUpdated
     {
-        private static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
-        private static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(15);
-        private static readonly UIFont DescFont = UIFont.SystemFontOfSize(12);
+        public static readonly UIFont DateFont = UIFont.SystemFontOfSize(12);
+        public static readonly UIFont UserFont = UIFont.BoldSystemFontOfSize(15);
+        public static readonly UIFont DescFont = UIFont.SystemFontOfSize(12);
 
-        private const float LeftRightPadding = 6f;
-        private const float TopBottomPadding = 8f;
+        public const float LeftRightPadding = 6f;
+        public const float TopBottomPadding = 8f;
 
         public string Name { get; set; }
         public string Time { get; set; }

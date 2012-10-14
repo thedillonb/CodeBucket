@@ -79,6 +79,7 @@
     <Compile Include="UI\Views\SearchFilterView.cs" />
     <Compile Include="UI\Controllers\FilterController.cs" />
     <Compile Include="UI\Elements\UserElement.cs" />
+    <Compile Include="UI\Views\InteractiveTextView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SourceBrowser\index.html" />

@@ -13,6 +13,7 @@ using BitbucketBrowser.UI.Controllers.Repositories;
 using BitbucketBrowser.UI.Controllers.Issues;
 using BitbucketBrowser.UI.Controllers.Changesets;
 using MonoTouch;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI.Controllers.Events
 {
@@ -94,14 +95,131 @@ namespace BitbucketBrowser.UI.Controllers.Events
             AddItems(Model);
         }
 
+        private void RepoTapped(EventModel e)
+        {
+            if (e.Repository != null)
+            {
+                NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+            }
+        }
+        
+        private InteractiveTextView.TextBlock[] CreateDescription(EventModel eventModel, out UIImage img)
+        {
+            var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
+            img = Images.Priority;
+
+            //Drop the image
+            if (eventModel.Event == EventModel.Type.Commit)
+            {
+                img = Images.Plus;
+                if (ReportRepository)
+                {
+                    string repoName = null;
+                    RepoName(eventModel, out repoName);
+
+                    var fuckyou = UIFont.BoldSystemFontOfSize(12f);
+                    return new InteractiveTextView.TextBlock[] { 
+                        new InteractiveTextView.TextBlock("Commit to "),
+                        new InteractiveTextView.TextBlock(repoName, fuckyou, UIColor.FromRGB(0, 64, 128), () => { RepoTapped(eventModel); }),
+                        new InteractiveTextView.TextBlock(": " + desc),
+                    };
+                }
+                else
+                {
+                    return new [] { 
+                        new InteractiveTextView.TextBlock("Commited: " + desc),
+                    };
+                }
+            }
+
+            return null;
+            /*
+            else if (eventModel.Event == EventModel.Type.CreateRepo)
+            {
+                img = Images.Create;
+                if (ReportRepository)
+                    desc = "Created Repo: " + repoName();
+                else
+                    desc = "Repository Created";
+            }
+            else if (eventModel.Event == EventModel.Type.WikiUpdated)
+            {
+                img = Images.Pencil;
+                desc = "Updated the wiki page: " + desc;
+            }
+            else if (eventModel.Event == EventModel.Type.WikiCreated)
+            {
+                img = Images.Pencil;
+                desc = "Created the wiki page: " + desc;
+            }
+            else if (eventModel.Event == EventModel.Type.StartFollowUser)
+            {
+                img = Images.HeartAdd;
+                desc = "Started following a user";
+            }
+            else if (eventModel.Event == EventModel.Type.StartFollowRepo)
+            {
+                img = Images.HeartAdd;
+                desc = "Started following: " + repoName();
+            }
+            else if (eventModel.Event == EventModel.Type.StopFollowRepo)
+            {
+                img = Images.HeartDelete;
+                desc = "Stopped following: " + repoName();
+            }
+            else if (eventModel.Event == EventModel.Type.IssueComment)
+            {
+                img = Images.CommentAdd;
+                desc = "Issue commented on in " + repoName();
+            }
+            else if (eventModel.Event == EventModel.Type.IssueUpdated)
+            {
+                img = Images.ReportEdit;
+                desc = "Issue updated in " + repoName();
+            }
+            else if (eventModel.Event == EventModel.Type.IssueReported)
+            {
+                img = Images.ReportEdit;
+                desc = "Issue reported on in " + repoName();
+            }
+            else
+                img = Images.Priority;
+            */
+        }
+        
+        private bool RepoName(EventModel eventModel, out string name)
+        {
+            if (eventModel.Repository == null)
+            {
+                name = "Unknown Repository";
+                return false;
+            }
+            
+            if (!eventModel.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
+                name = eventModel.Repository.Owner + "/" + eventModel.Repository.Name;
+            else
+                name = eventModel.Repository.Name;
+            return true;
+        }
+
+
+        //Lists the supported events that we implemented so far...
+        public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
+            EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment,
+            EventModel.Type.IssueUpdated, EventModel.Type.IssueReported                   
+        };
+
         private void AddItems(List<EventModel> events, bool prepend = true)
         {
             var sec = new Section();
             events.ForEach(e => {
-                if (!NewsFeedElement.SupportedEvents.Contains(e.Event))
+                if (!SupportedEvents.Contains(e.Event))
                     return;
 
-                var newsEl = new NewsFeedElement(e, ReportRepository);
+                UIImage small;
+                var hello = CreateDescription(e, out small);
+
+                var newsEl = new NewsFeedElement(e, hello, small, ReportRepository);
                 if (e.Event == EventModel.Type.Commit && e.Repository != null) 
                 {
                     newsEl.Tapped += () => { 

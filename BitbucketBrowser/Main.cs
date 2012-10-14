@@ -189,7 +189,7 @@ namespace BitbucketBrowser
                
                 
 #if DEBUG
-                SelectView(new WikiInfoController(Application.Account.Username, "bitbucketbrowser"));
+                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif

@@ -8,24 +8,23 @@ using MonoTouch.Foundation;
 using System.Collections.Generic;
 using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Elements;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI
 {
     public class NewsFeedElement : NameTimeStringElement
     {
-        public NewsFeedElement(EventModel eventModel, bool reportRepo = true)
+        InteractiveTextView _textView;
+        InteractiveTextView.TextBlock[] _blocks;
+
+        public NewsFeedElement(EventModel eventModel, InteractiveTextView.TextBlock[] blocks, UIImage littleImage, bool reportRepo = true)
         {
             Item = eventModel;
             ReportRepository = reportRepo;
             Lines = 4;
+            _blocks = blocks;
 
-
-            string desc;
-            UIImage img;
-            CreateDescription(out desc, out img);
-
-            String = desc;
-            LittleImage = img;
+            LittleImage = littleImage;
             Time = eventModel.UtcCreatedOn;
             Image = Images.Anonymous;
 
@@ -39,6 +38,7 @@ namespace BitbucketBrowser.UI
             {
                 Name = "Unknown";
             }
+
         }
 
         public EventModel Item { get; set; }
@@ -47,85 +47,42 @@ namespace BitbucketBrowser.UI
 
         private UIImage LittleImage { get; set; }
 
-
-        public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
-                                                    EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment,
-                                                    EventModel.Type.IssueUpdated, EventModel.Type.IssueReported                   
-        };
-
-        private void CreateDescription(out string desc, out UIImage img)
+        public override UITableViewCell GetCell(UITableView tv)
         {
-            desc = string.IsNullOrEmpty(Item.Description) ? "" : Item.Description.Replace("\n", " ").Trim();
 
-            //Drop the image
-            if (Item.Event == EventModel.Type.Commit)
+            var cell = base.GetCell(tv);
+
+
+
+            foreach (var view in cell.Subviews)
             {
-                img = Images.Plus;
-                if (ReportRepository)
-                    desc = "Commit to " + repoName() + ":\n" + desc;
-                else
-                    desc = "Commited: " + desc;
+                if (view is InteractiveTextView) {
+                    view.RemoveFromSuperview();
+//                    ((InteractiveTextView)view).textBlocks = _blocks;
+//                    ((InteractiveTextView)view).DoLayout();
+//                    ((InteractiveTextView)view).SetNeedsDisplay();
+                }
             }
-            else if (Item.Event == EventModel.Type.CreateRepo)
-            {
-                img = Images.Create;
-                if (ReportRepository)
-                    desc = "Created Repo: " + repoName();
-                else
-                    desc = "Repository Created";
-            }
-            else if (Item.Event == EventModel.Type.WikiUpdated)
-            {
-                img = Images.Pencil;
-                desc = "Updated the wiki page: " + desc;
-            }
-            else if (Item.Event == EventModel.Type.WikiCreated)
-            {
-                img = Images.Pencil;
-                desc = "Created the wiki page: " + desc;
-            }
-            else if (Item.Event == EventModel.Type.StartFollowUser)
-            {
-                img = Images.HeartAdd;
-                desc = "Started following a user";
-            }
-            else if (Item.Event == EventModel.Type.StartFollowRepo)
-            {
-                img = Images.HeartAdd;
-                desc = "Started following: " + repoName();
-            }
-            else if (Item.Event == EventModel.Type.StopFollowRepo)
-            {
-                img = Images.HeartDelete;
-                desc = "Stopped following: " + repoName();
-            }
-            else if (Item.Event == EventModel.Type.IssueComment)
-            {
-                img = Images.CommentAdd;
-                desc = "Issue commented on in " + repoName();
-            }
-            else if (Item.Event == EventModel.Type.IssueUpdated)
-            {
-                img = Images.ReportEdit;
-                desc = "Issue updated in " + repoName();
-            }
-            else if (Item.Event == EventModel.Type.IssueReported)
-            {
-                img = Images.ReportEdit;
-                desc = "Issue reported on in " + repoName();
-            }
-            else
-                img = Images.Priority;
+
+            cell.AddSubview(_textView);
+
+
+            return cell;
         }
 
-        private string repoName()
+        public override float Height(RectangleF bounds)
         {
-            if (Item.Repository == null)
-                return "Unknown Repository";
+            var f =  base.Height(bounds);
 
-            if (!Item.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
-                return Item.Repository.Owner + "/" + Item.Repository.Name;
-            return Item.Repository.Name;
+            if (_textView == null)
+            {
+                var width = bounds.Width;
+                if (IsTappedAssigned)
+                    width -= 20f;
+                _textView = new InteractiveTextView(new RectangleF(LeftRightPadding, 45f, width - LeftRightPadding * 2, 200f - 40f), _blocks);
+            }
+
+            return f + _textView.Height;
         }
 
         public override void Draw(RectangleF bounds, CGContext context, UIView view)
@@ -133,7 +90,6 @@ namespace BitbucketBrowser.UI
             base.Draw(bounds, context, view);
             if (LittleImage != null)
                 LittleImage.Draw(new RectangleF(26, 26, 16f, 16f));
-
         }
     }
 }
