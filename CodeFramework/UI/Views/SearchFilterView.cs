@@ -17,25 +17,28 @@ namespace CodeFramework.UI.Views
         {
             get
             {
-                return !_button.Hidden;
+                //return !_button.Hidden;
+                return false;
             }
             set
             {
-                _button.Hidden = !value;
+                //_button.Hidden = !value;
             }
         }
 
         public SearchFilterBar()
             : base(new RectangleF(0, 0, 320, 44f))
         {
+            /*
             _button = new UIButton(UIButtonType.Custom);
             _button.SetBackgroundImage(ButtonBackground, UIControlState.Normal);
             _button.SetImage(FilterImage, UIControlState.Normal);
             _button.SizeToFit();
             this.AddSubview(_button);
-            
+            */
         }
 
+        /*
         public override void LayoutSubviews()
         {
             this.AutosizesSubviews = true;
@@ -53,6 +56,7 @@ namespace CodeFramework.UI.Views
                 searchBar.Frame = frame;
             }
         }
+        */
     }
 
 }

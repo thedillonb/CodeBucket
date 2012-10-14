@@ -43,15 +43,13 @@ namespace CodeFramework.UI.Controllers
             return item;
         }
 
-        /*
         protected override UISearchBar CreateHeaderView()
         {
             searchBar = new SearchFilterBar();
             searchBar.Delegate = new CustomSearchDelegate<T>(this);
-            searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
+            //searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
             return searchBar;
         }
-        */
 
         void FilterButtonTouched (object sender, EventArgs e)
         {
@@ -200,7 +198,6 @@ namespace CodeFramework.UI.Controllers
                 
                 if (!container.ChildViewControllers.Contains(searchController))
                 {
-                    System.Diagnostics.Debug.WriteLine("Editing started: " + new RectangleF(container.TableView.Bounds.X, 44f, container.TableView.Bounds.Width, container.TableView.Bounds.Height - 44f));
                     searchController.View.Frame = new RectangleF(container.TableView.Bounds.X, 44f, container.TableView.Bounds.Width, container.TableView.Bounds.Height - 44f);
                     container.AddChildViewController(searchController);
                     container.View.AddSubview(searchController.View);
