@@ -8,19 +8,17 @@ using CodeFramework.UI.Views;
 namespace BitbucketBrowser.UI.Controllers.Changesets
 {
     public class ChangesetDiffController : WebViewController
-    {
         private readonly string _parent;
         private readonly string _user;
         private readonly string _slug;
         private readonly string _branch;
         private readonly string _path;
+        private string _user, _slug, _branch, _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
         
         public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
             : base(false)
-        {
-            _parent = parent;
             _user = user;
             _slug = slug;
             _branch = branch;
@@ -31,7 +29,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             //Create the filename
             var fileName = System.IO.Path.GetFileName(path) ?? path.Substring(path.LastIndexOf('/') + 1);
             Title = fileName;
-        }
+                fileName = path.Substring(path.LastIndexOf('/') + 1);
 
         public override void ViewWillAppear(bool animated)
         {
@@ -54,6 +52,8 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                     Web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
                 });
             }, ex => ErrorView.Show(View, ex.Message));
+        }
+            });
         }
         
         private string RequestData()
