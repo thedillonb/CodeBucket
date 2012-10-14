@@ -8,6 +8,7 @@ namespace BitbucketBrowser.Controllers
     {
         protected UIBarButtonItem _back, _refresh, _forward;
         public UIWebView Web { get; private set; }
+        private bool _navigationToolbar;
 
         protected virtual void GoBack()
         {
@@ -25,47 +26,63 @@ namespace BitbucketBrowser.Controllers
         }
          
         public WebViewController()
+            : this(true)
+        {
+        }
+
+        public WebViewController(bool navigationToolbar)
             : base()
         {
-            Title = "Wiki";
             Web = new UIWebView();
+            Web.ScalesPageToFit = true;
             Web.LoadFinished += OnLoadFinished;
             Web.LoadStarted += OnLoadStarted;
             Web.LoadError += OnLoadError;
-            
-            ToolbarItems = new [] { 
-                (_back = new UIBarButtonItem(Images.BackNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
-                new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                (_forward = new UIBarButtonItem(Images.ForwardNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoForward(); }) { Enabled = false }),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_refresh = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { Refresh(); })),
-            };
+
+            _navigationToolbar = navigationToolbar;
+
+            if (_navigationToolbar)
+            {
+                ToolbarItems = new [] { 
+                    (_back = new UIBarButtonItem(Images.BackNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
+                    new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
+                    (_forward = new UIBarButtonItem(Images.ForwardNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoForward(); }) { Enabled = false }),
+                    new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                    (_refresh = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { Refresh(); })),
+                };
+            }
         }
 
         protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
         {
             MonoTouch.Utilities.PopNetworkActive();
-            _refresh.Enabled = true;
+            if (_refresh != null)
+                _refresh.Enabled = true;
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
             MonoTouch.Utilities.PushNetworkActive();
-            _refresh.Enabled = false;
+            if (_refresh != null)
+                _refresh.Enabled = false;
         }
 
-        protected virtual void OnLoadFinished (object sender, EventArgs e)
+        protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
             MonoTouch.Utilities.PopNetworkActive();
-            _back.Enabled = Web.CanGoBack;
-            _forward.Enabled = Web.CanGoForward;
-            _refresh.Enabled = true;
+            if (_back != null)
+            {
+                _back.Enabled = Web.CanGoBack;
+                _forward.Enabled = Web.CanGoForward;
+                _refresh.Enabled = true;
+            }
         }
         
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NavigationController.SetToolbarHidden(true, animated);
+            if (_navigationToolbar)
+                NavigationController.SetToolbarHidden(true, animated);
         }
         
         public override void ViewDidLoad()
@@ -74,21 +91,28 @@ namespace BitbucketBrowser.Controllers
             WatermarkView.AssureWatermark(this);
             this.Add(Web);
         }
+
+        public override void ViewWillLayoutSubviews()
+        {
+            base.ViewWillLayoutSubviews();
+            Web.Frame = View.Bounds;
+        }
         
         public override void ViewWillAppear(bool animated)
         {
-            NavigationController.SetToolbarHidden(false, animated);
+            if (_navigationToolbar)
+                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
             var bounds = View.Bounds;
-            bounds.Height -= NavigationController.Toolbar.Frame.Height;
+            if (_navigationToolbar)
+                bounds.Height -= NavigationController.Toolbar.Frame.Height;
             Web.Frame = bounds;
         }
         
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-            var bounds = View.Bounds;
-            Web.Frame = bounds;
+            Web.Frame = View.Bounds;
         }
     }
 }

@@ -1,22 +1,65 @@
 using System;
 using System.Text;
 using BitbucketBrowser.UI.Controllers.Source;
+using BitbucketBrowser.Controllers;
+using MonoTouch.UIKit;
+using CodeFramework.UI.Controllers;
+using MonoTouch.Foundation;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI.Controllers.Changesets
 {
-    public class ChangesetDiffController : SourceInfoController
+    public class ChangesetDiffController : WebViewController
     {
-        protected string _parent;
+        private string _parent;
+        private string _user, _slug, _branch, _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
         
         public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
-            : base(user, slug, branch, path)
+            : base(false)
         {
             _parent = parent;
+            _user = user;
+            _slug = slug;
+            _branch = branch;
+            _path = path;
+
+            Web.DataDetectorTypes = UIDataDetectorType.None;
+
+            //Create the filename
+            var fileName = System.IO.Path.GetFileName(path);
+            if (fileName == null)
+                fileName = path.Substring(path.LastIndexOf('/') + 1);
+            Title = fileName;
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            Request();
+        }
+
+        private void Request()
+        {
+            this.DoWork(() => {
+                var data = RequestData();
+                
+                InvokeOnMainThread(delegate {
+                    var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
+                    var filled = html.Replace("{DATA}", data);
+                    
+                    var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
+                    url = url.Replace("/", "//").Replace(" ", "%20");
+                    
+                    Web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
+                });
+            }, (ex) => {
+                ErrorView.Show(this.View, ex.Message);
+            });
         }
         
-        protected override string RequestData()
+        private string RequestData()
         {
             if (Removed && _parent == null)
             {

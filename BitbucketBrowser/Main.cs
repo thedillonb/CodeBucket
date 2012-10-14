@@ -21,6 +21,7 @@ using BitbucketBrowser.UI.Controllers.Accounts;
 using BitbucketBrowser.UI.Controllers.Changesets;
 using BitbucketBrowser.UI.Controllers.Wikis;
 using BitbucketBrowser.Controllers;
+using BitbucketBrowser.UI.Controllers.Branches;
 
 namespace BitbucketBrowser
 {
@@ -187,9 +188,8 @@ namespace BitbucketBrowser
             if (_previousUser == null)
             {
                
-                
 #if DEBUG
-                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+                SelectView(new BranchController(Application.Account.Username, "bitbucketbrowser"));
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif
