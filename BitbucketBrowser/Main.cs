@@ -56,17 +56,27 @@ namespace BitbucketBrowser
             //Set the theming
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
+
+            /*
             //BarButton
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 9, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            //Segmented Controller
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 9, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            
+            //iOS6 or above!
+            if (MonoTouch.Utilities.iOSVersion.Item1 >= 6)
+            {
+                UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+                UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+            }
+            */
+
 
 
             //BackButton
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
-
-            //Segmented Controller
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
 
