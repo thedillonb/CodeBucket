@@ -56,8 +56,8 @@ namespace BitbucketBrowser
             //Set the theming
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
 
             /*
             //BarButton

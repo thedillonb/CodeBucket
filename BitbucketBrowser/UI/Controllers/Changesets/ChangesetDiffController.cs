@@ -1,69 +1,77 @@
 using System;
 using System.Text;
+using BitbucketBrowser.UI.Controllers.Source;
+using BitbucketBrowser.Controllers;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Controllers;
 using MonoTouch.Foundation;
 using CodeFramework.UI.Views;
+using BitbucketSharp;
 
 namespace BitbucketBrowser.UI.Controllers.Changesets
 {
-    public class ChangesetDiffController : WebViewController
-        private readonly string _parent;
-        private readonly string _user;
-        private readonly string _slug;
-        private readonly string _branch;
-        private readonly string _path;
+    public class ChangesetDiffController : FileSourceController
+    {
+        private string _parent;
         private string _user, _slug, _branch, _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
         
         public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
-            : base(false)
+        {
+            _parent = parent;
             _user = user;
             _slug = slug;
             _branch = branch;
             _path = path;
 
-            Web.DataDetectorTypes = UIDataDetectorType.None;
-
             //Create the filename
-            var fileName = System.IO.Path.GetFileName(path) ?? path.Substring(path.LastIndexOf('/') + 1);
-            Title = fileName;
+            var fileName = System.IO.Path.GetFileName(path);
+            if (fileName == null)
                 fileName = path.Substring(path.LastIndexOf('/') + 1);
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            Request();
+            Title = fileName;
         }
 
-        private void Request()
-        {
-            this.DoWork(() => {
-                var data = RequestData();
-                
-                InvokeOnMainThread(delegate {
-                    var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
-                    var filled = html.Replace("{DATA}", data);
-                    
-                    var url = NSBundle.MainBundle.BundlePath + "/SourceBrowser";
-                    url = url.Replace("/", "//").Replace(" ", "%20");
-                    
-                    Web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
-                });
-            }, ex => ErrorView.Show(View, ex.Message));
-        }
-            });
-        }
-        
-        private string RequestData()
+        protected override void Request()
         {
             if (Removed && _parent == null)
             {
                 throw new InvalidOperationException("File does not exist!");
             }
-            
-            
+
+            try
+            {
+                RequestSourceDiff();
+                return;
+            }
+            catch (InternalServerException ex)
+            {
+                Console.WriteLine("Could not generate diff from source. Must be binary: " + ex.Message);
+            }
+
+            RequestBinary();
+        }
+
+        private void RequestBinary()
+        {
+            if (!Removed)
+            {
+                var newFile = DownloadFile(_user, _slug, _branch, _path);
+                LoadFile(newFile);
+            }
+            else if (_parent != null && !Added)
+            {
+                var newFile = DownloadFile(_user, _slug, _parent, _path);
+                LoadFile(newFile);
+            }
+            else
+            {
+                throw new InvalidOperationException("Request for file failed.");
+            }
+        }
+
+        private void RequestSourceDiff()
+        {
             var newSource = "";
             if (!Removed)
             {
@@ -74,15 +82,8 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var oldSource = "";
             if (_parent != null && !Added)
             {
-                try
-                {
-                    oldSource = System.Security.SecurityElement.Escape(
-                        Application.Client.Users[_user].Repositories[_slug].Branches[_parent].Source.GetFile(_path).Data);
-                }
-                catch (Exception e)
-                {
-                    System.Diagnostics.Debug.WriteLine("Unable to get old source (parent: " + _parent + ") - " + e.Message);
-                }
+                oldSource = System.Security.SecurityElement.Escape(
+                    Application.Client.Users[_user].Repositories[_slug].Branches[_parent].Source.GetFile(_path).Data);
             }
             
             var differ = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
@@ -102,8 +103,8 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                 
                 builder.AppendLine();
             }
-            
-            return builder.ToString();
+
+            LoadRawData(builder.ToString());
         }
     }
 }
