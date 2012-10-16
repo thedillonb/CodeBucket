@@ -32,6 +32,7 @@ namespace RedPlum
 //			set { _indicator = value; }
 //		}
 		private UIView Indicator;
+
 		private float Width { get; set; }
 		private float Height { get; set; }
 		private NSTimer GraceTimer { get; set; }
@@ -336,6 +337,8 @@ namespace RedPlum
 					this.AddSubview (DetailsLabel);
 				}
 			}
+
+            this.SetNeedsDisplay();
 		}
 
 		private static bool IsMainThread() {
