@@ -53,27 +53,17 @@ namespace BitbucketBrowser
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            //Set the status bar
+            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
+
             //Set the theming
             UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 6, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.Default);
 
-            /*
-            //BarButton
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 9, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            //Segmented Controller
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(6, 6, 9, 6)), UIControlState.Normal, UIBarMetrics.Default);
-            
-            //iOS6 or above!
-            if (MonoTouch.Utilities.iOSVersion.Item1 >= 6)
-            {
-                UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-                UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-            }
-            */
-
-
+            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 
             //BackButton
             UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
@@ -81,7 +71,7 @@ namespace BitbucketBrowser
             UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
 
             UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
-            UIBarButtonItem.Appearance.TintColor = UIColor.White;
+            //UIBarButtonItem.Appearance.TintColor = UIColor.White;
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
             var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
@@ -95,7 +85,7 @@ namespace BitbucketBrowser
             WatermarkView.Image = Images.Background;
             HeaderView.Gradient = Images.CellGradient;
             StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-            ErrorView.AlertImage = UIImage.FromBundle("/Images/warning.png");
+            ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
             UserElement.Default = Images.Anonymous;
 
             //Resize the back button only on the iPhone

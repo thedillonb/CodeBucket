@@ -78,7 +78,7 @@ namespace BitbucketBrowser.Controllers
                 new NavElement("Repositories", () => DoShit(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo),
                 new NavElement("Groups", () => DoShit(new GroupController(Application.Account.Username, false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
-                new NavElement("Help", () => DoShit(new HelpViewController()), Images.Help),
+                //new NavElement("Help", () => DoShit(new HelpViewController()), Images.Help),
             });
 
             TableView.BackgroundColor = UIColor.Clear;

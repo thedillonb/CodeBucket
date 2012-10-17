@@ -280,7 +280,6 @@
     <Content Include="Images\Tabs\person.png" />
     <Content Include="Images\change_user%402x.png" />
     <Content Include="Images\change_user.png" />
-    <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\linen.png" />
     <Content Include="Images\Controls\backbutton%402x.png" />
     <Content Include="Images\Controls\divider.png" />
@@ -318,13 +317,15 @@
     <Content Include="Default-Landscape%402x.jpg" />
     <Content Include="Default-Portrait%402x.jpg" />
     <Content Include="Default-568h%402x.jpg" />
-    <Content Include="Images\Controls\barbutton-landscape.png" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\filter%402x.png" />
     <Content Include="Images\help%402x.png" />
     <Content Include="Images\help.png" />
     <Content Include="Images\forward_button%402x.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\Controls\barbutton-land%402x.png" />
+    <Content Include="Images\Controls\barbutton-land.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

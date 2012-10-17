@@ -49,7 +49,8 @@ namespace BitbucketBrowser
         public static UIImage BackButtonLandscape = UIImage.FromBundle("/Images/Controls/backbutton-landscape");
 
         public static UIImage BarButton = UIImage.FromBundle("/Images/Controls/barbutton");
-        public static UIImage BarButtonLandscape = UIImage.FromFile("Images/Controls/barbutton-landscape.png");
+        public static UIImage BarButtonLandscape = UIImage.FromBundle("/Images/Controls/barbutton-land");
+
         public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
         public static UIImage TitlebarDark = UIImage.FromBundle("/Images/Controls/titlebar_dark");
         public static UIImage Bottombar = UIImage.FromFile("Images/Controls/bottombar.png");
@@ -86,6 +87,9 @@ namespace BitbucketBrowser
 
         public static UIImage Filter = UIImage.FromBundle("/Images/filter");
         public static UIImage Help = UIImage.FromBundle("/Images/help");
+
+        public static UIImage BackNavigationButton = UIImage.FromFile("Images/back_button@2x.png");
+        public static UIImage ForwardNavigationButton = UIImage.FromFile("Images/forward_button@2x.png");
     }
 }
 
