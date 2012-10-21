@@ -1,4 +1,3 @@
-using System;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using System.Linq;
@@ -9,94 +8,93 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
 {
     public class AccountRepositoryController : RepositoryController
     {
-        private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following" });
-        
+        private readonly UISegmentedControl _segment = new UISegmentedControl(new[] { "Owned", "Following" });
+
         public AccountRepositoryController(string username)
             : base(username)
         {
         }
-        
-        protected override void OnRefresh ()
+
+        protected override void OnRefresh()
         {
             if (Root != null)
-                InvokeOnMainThread(delegate { Root.Clear(); });
-            
+                InvokeOnMainThread(() => Root.Clear());
+
             if (Model.Count == 0)
                 return;
-            
+
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
-            
+
             var sec = new Section();
-            Model.ForEach(x => {
-                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = selected != 0 };
+            Model.ForEach(x =>
+            {
+                var sse = new RepositoryElement(x) { ShowOwner = selected != 0 };
                 sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
                 sec.Add(sse);
             });
-            
+
             //Sort them by name
             sec.Elements = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name).ToList();
 
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 Root = new RootElement(Title) { sec };
             });
         }
-        
-        protected override List<RepositoryDetailedModel> OnUpdate (bool forced)
+
+        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
         {
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
-            
+
             if (selected == 0)
                 return Application.Client.Users[Username].GetInfo(forced).Repositories;
-            else if (selected == 1)
-                return Application.Client.Account.GetRepositories(forced);
-            else
-                return new List<RepositoryDetailedModel>();
+            return selected == 1 ? Application.Client.Account.GetRepositories(forced) : new List<RepositoryDetailedModel>();
         }
-        
-        
+
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            
+
             _segment.ControlStyle = UISegmentedControlStyle.Bar;
             _segment.SelectedSegment = 0;
-            
+
             //Fucking bug in the divider
-            BeginInvokeOnMainThread(delegate {
+            BeginInvokeOnMainThread(delegate
+            {
                 _segment.SelectedSegment = 1;
                 _segment.SelectedSegment = 0;
                 _segment.ValueChanged += (sender, e) => ChangeSegment();
             });
-            
+
             Title = "Owned";
-            
+
             //The bottom bar
-            var btn = new UIBarButtonItem(_segment);
-            btn.Width = View.Frame.Width - 10f;
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+            var btn = new UIBarButtonItem(_segment) { Width = View.Frame.Width - 10f };
+            ToolbarItems = new[] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
-        
+
         public override void ViewWillAppear(bool animated)
         {
-            NavigationController.SetToolbarHidden(isSearching, animated);
+            NavigationController.SetToolbarHidden(IsSearching, animated);
             base.ViewWillAppear(animated);
         }
-        
+
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
             NavigationController.SetToolbarHidden(true, animated);
         }
-        
+
         private void ChangeSegment()
         {
-            Root.Clear(); 
+            Root.Clear();
             TableView.TableFooterView.Hidden = true;
             Model = null;
             Refresh();
-            
+
             if (_segment.SelectedSegment == 0)
                 Title = "Owned";
             else if (_segment.SelectedSegment == 1)
@@ -104,13 +102,13 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             else if (_segment.SelectedSegment == 2)
                 Title = "Viewed";
         }
-        
+
         protected override void SearchStart()
         {
             NavigationController.SetToolbarHidden(true, false);
             base.SearchStart();
         }
-        
+
         protected override void SearchEnd()
         {
             NavigationController.SetToolbarHidden(false, false);

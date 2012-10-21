@@ -1,25 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-
+using BitbucketBrowser.UI.Controllers.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-
-using BitbucketBrowser.UI;
-using MonoTouch.Dialog;
 using MonoTouch.SlideoutNavigation;
-using System.Drawing;
-using System.Threading;
-using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Elements;
 using CodeFramework.UI.Views;
-using BitbucketBrowser.UI.Controllers.Issues;
 using BitbucketBrowser.UI.Controllers.Events;
-using BitbucketBrowser.UI.Controllers.Repositories;
-using BitbucketBrowser.UI.Controllers.Groups;
-using BitbucketBrowser.UI.Controllers.Accounts;
-using BitbucketBrowser.UI.Controllers.Changesets;
-using BitbucketBrowser.UI.Controllers.Wikis;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.UI.Controllers.Branches;
 
@@ -33,7 +19,7 @@ namespace BitbucketBrowser
 	public partial class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
-		UIWindow window;
+		UIWindow _window;
         SlideoutNavigationController _nav;
 
 		// This is the main entry point of the application.
@@ -71,12 +57,12 @@ namespace BitbucketBrowser
             UIBarButtonItem.Appearance.TintColor = UIColor.White;
             UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
-            var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
+            var textAttrs = new UITextAttributes { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
             UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
             UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
 
-            CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
-            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
+            SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
+            SearchFilterBar.FilterImage = Images.Filter;
 
             DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
             WatermarkView.Image = Images.Background;
@@ -91,42 +77,35 @@ namespace BitbucketBrowser
                 UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 12, 0, 5)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
             }
 
-            window = new UIWindow(UIScreen.MainScreen.Bounds);
+            _window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             if (Application.Accounts.Count == 0)
             {
-                var login = new LoginViewController();
-                login.LoginComplete = () => {
-                    ShowMainWindow();
-                };
+                var login = new LoginViewController {LoginComplete = ShowMainWindow};
 
                 //Make it so!
-                window.RootViewController = login;
+                _window.RootViewController = login;
             }
             else
             {
                 ShowMainWindow();
             }
 
-			window.MakeKeyAndVisible();
+			_window.MakeKeyAndVisible();
 
 
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
-                UIImageView killSplash = null;
-                if (MonoTouch.Utilities.IsTall)
-                    killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "jpg"));
-                else
-                    killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default", "jpg"));
+                UIImageView killSplash;
+                killSplash = MonoTouch.Utilities.IsTall ? new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "jpg")) : 
+                                                          new UIImageView(UIImageHelper.FromFileAuto("Default", "jpg"));
 
-                window.AddSubview(killSplash);
-                window.BringSubviewToFront(killSplash);
+                _window.AddSubview(killSplash);
+                _window.BringSubviewToFront(killSplash);
 
                 UIView.Animate(0.8, () => { 
                     killSplash.Alpha = 0.0f; 
-                }, () => { 
-                    killSplash.RemoveFromSuperview(); 
-                });
+                }, () => killSplash.RemoveFromSuperview());
             }
 
 
@@ -145,10 +124,10 @@ namespace BitbucketBrowser
 
             Application.SetUser(defaultAccount);
 
-            _nav = new MySlideout() { SlideHeight = 999f };
+            _nav = new MySlideout { SlideHeight = 999f };
             _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
             _nav.MenuView = new MenuController();
-            window.RootViewController = _nav;
+            _window.RootViewController = _nav;
         }
 
         public override void ReceiveMemoryWarning(UIApplication application)
@@ -166,12 +145,6 @@ namespace BitbucketBrowser
     {
         private string _previousUser;
 
-
-        public MySlideout()
-            : base()
-        {
-        }
-        
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);

@@ -37,7 +37,8 @@ namespace CodeFramework.UI.Elements
             var leftMargin = LeftRightPadding;
 
             // Superview is the container, its superview the uitableviewcell
-            bool highlighted = (view.Superview.Superview as UITableViewCell).Highlighted & IsTappedAssigned;
+            var uiTableViewCell = view.Superview.Superview as UITableViewCell;
+            bool highlighted = uiTableViewCell != null && uiTableViewCell.Highlighted & IsTappedAssigned;
             var timeColor = highlighted ? UIColor.White : UIColor.Gray;
             var textColor = highlighted ? UIColor.White : UIColor.FromRGB(41, 41, 41);
             var nameColor = highlighted ? UIColor.White : UIColor.FromRGB(0, 64, 128);
@@ -69,17 +70,11 @@ namespace CodeFramework.UI.Elements
             var daysWidth = daysAgo.MonoStringLength(DateFont);
             RectangleF timeRect;
 
-            if (Image != null)
-                timeRect = new RectangleF(leftMargin, TopBottomPadding + UserFont.LineHeight, daysWidth, DateFont.LineHeight);
-            else
-                timeRect = new RectangleF(bounds.Width - LeftRightPadding - daysWidth,  TopBottomPadding + 1f, daysWidth, DateFont.LineHeight);
+            timeRect = Image != null ? new RectangleF(leftMargin, TopBottomPadding + UserFont.LineHeight, daysWidth, DateFont.LineHeight) : 
+                                       new RectangleF(bounds.Width - LeftRightPadding - daysWidth,  TopBottomPadding + 1f, daysWidth, DateFont.LineHeight);
 
             view.DrawString(daysAgo, timeRect, DateFont, UILineBreakMode.TailTruncation);
 
-
-            var nameWidth = contentWidth;
-            if (Image == null)
-                nameWidth -= daysWidth;
             nameColor.SetColor();
             view.DrawString(Name,
                 new RectangleF(leftMargin, TopBottomPadding, contentWidth, UserFont.LineHeight),
@@ -108,7 +103,7 @@ namespace CodeFramework.UI.Elements
             if (IsTappedAssigned)
                 contentWidth -= 20f;
 
-            var desc = this.String;
+            var desc = String;
             var descHeight = desc.MonoStringHeight(DescFont, contentWidth);
             if (descHeight > (DescFont.LineHeight) * Lines)
                 descHeight = (DescFont.LineHeight) * Lines;

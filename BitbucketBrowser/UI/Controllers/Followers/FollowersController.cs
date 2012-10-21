@@ -1,12 +1,8 @@
-using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Linq;
-using System.Threading;
-using BitbucketSharp;
 using System.Collections.Generic;
-using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 

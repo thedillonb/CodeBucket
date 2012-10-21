@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -34,9 +34,12 @@
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
   </ItemGroup>
+  <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="CodeFramework.Images\Images.cs" />
     <Compile Include="Markdown\CreoleParser.cs" />
+    <Compile Include="UI\Controllers\WebViewController.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\MbProgressHud.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
@@ -82,6 +85,8 @@
     <Compile Include="UI\Views\InteractiveTextView.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CodeFramework.Images\back_button%402x.png" />
+    <Content Include="CodeFramework.Images\forward_button%402x.png" />
     <Content Include="SourceBrowser\index.html" />
     <Content Include="SourceBrowser\lang-apollo.js" />
     <Content Include="SourceBrowser\lang-clj.js" />
@@ -104,14 +109,7 @@
     <Content Include="SourceBrowser\prettify.js" />
     <Content Include="SourceBrowser\prettify.css" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\" />
-    <Folder Include="Utils\" />
-    <Folder Include="Data\" />
-    <Folder Include="UI\Controllers\" />
-    <Folder Include="UI\Views\" />
-    <Folder Include="UI\Elements\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>

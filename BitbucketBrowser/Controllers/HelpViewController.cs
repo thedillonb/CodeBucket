@@ -1,4 +1,3 @@
-using System;
 using CodeFramework.UI.Controllers;
 
 namespace BitbucketBrowser.Controllers

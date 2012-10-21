@@ -22,10 +22,10 @@ namespace CodeFramework.UI.Elements
 
         public UIColor BackgroundColor { get; set; }
 
-        public CustomElement (UITableViewCellStyle style, string cellIdentifier) : base(null)
+        protected CustomElement (UITableViewCellStyle style, string cellIdentifier) : base(null)
         {
-            this.CellReuseIdentifier = cellIdentifier;
-            this.Style = style;
+            CellReuseIdentifier = cellIdentifier;
+            Style = style;
         }
 
         public float GetHeight (UITableView tableView, NSIndexPath indexPath)
@@ -34,8 +34,7 @@ namespace CodeFramework.UI.Elements
             {
                 if (tableView.Style == UITableViewStyle.Grouped)
                     return Height(new RectangleF(tableView.Bounds.Location, new SizeF(tableView.Bounds.Width - 20, tableView.Bounds.Height)));
-                else
-                    return Height(tableView.Bounds);
+                return Height(tableView.Bounds);
             }
             catch (Exception e)
             {
@@ -55,11 +54,11 @@ namespace CodeFramework.UI.Elements
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            OwnerDrawnCell cell = tv.DequeueReusableCell(this.CellReuseIdentifier) as OwnerDrawnCell;
+            var cell = tv.DequeueReusableCell(CellReuseIdentifier) as OwnerDrawnCell;
 
             if (cell == null)
             {
-                cell = new OwnerDrawnCell(this, this.Style, this.CellReuseIdentifier);
+                cell = new OwnerDrawnCell(this, Style, CellReuseIdentifier);
                 OnCreateCell(cell);
             }
             else
@@ -96,7 +95,7 @@ namespace CodeFramework.UI.Elements
 
         class OwnerDrawnCell : UITableViewCell
         {
-            OwnerDrawnCellView view;
+            OwnerDrawnCellView _view;
 
             public OwnerDrawnCell(CustomElement element, UITableViewCellStyle style, string cellReuseIdentifier) : base(style, cellReuseIdentifier)
             {
@@ -106,17 +105,17 @@ namespace CodeFramework.UI.Elements
             public CustomElement Element
             {
                 get {
-                    return view.Element;
+                    return _view.Element;
                 }
                 set {
-                    if (view == null)
+                    if (_view == null)
                     {
-                        view = new OwnerDrawnCellView (value);
-                        ContentView.Add (view);
+                        _view = new OwnerDrawnCellView (value);
+                        ContentView.Add (_view);
                     }
                     else
                     {
-                        view.Element = value;
+                        _view.Element = value;
                     }
                 }
             }
@@ -126,34 +125,34 @@ namespace CodeFramework.UI.Elements
             public void Update()
             {
                 SetNeedsDisplay();
-                view.SetNeedsDisplay();
+                _view.SetNeedsDisplay();
             }       
 
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
 
-                view.Frame = ContentView.Bounds;
-                view.SetNeedsDisplay();
+                _view.Frame = ContentView.Bounds;
+                _view.SetNeedsDisplay();
             }
         }
 
         class OwnerDrawnCellView : UIView
         {               
-            CustomElement element;
+            CustomElement _element;
 
             public OwnerDrawnCellView(CustomElement element)
             {
-                this.element = element;
-                this.BackgroundColor = UIColor.Clear;
+                _element = element;
+                BackgroundColor = UIColor.Clear;
             }
 
 
             public CustomElement Element
             {
-                get { return element; }
+                get { return _element; }
                 set {
-                    element = value; 
+                    _element = value; 
                 }
             }
 
@@ -169,7 +168,7 @@ namespace CodeFramework.UI.Elements
                 try
                 {
                     CGContext context = UIGraphics.GetCurrentContext();
-                    element.Draw(rect, context, this);
+                    _element.Draw(rect, context, this);
                 }
                 catch (Exception e)
                 {

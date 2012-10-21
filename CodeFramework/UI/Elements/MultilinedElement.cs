@@ -6,8 +6,8 @@ namespace CodeFramework.UI.Elements
 {
     public class MultilinedElement : CustomElement
     {
-        private static float Padding = 12f;
-        private static float PaddingX = 8f;
+        private const float Padding = 12f;
+        private const float PaddingX = 8f;
 
         public string Value { get; set; }
         public UIFont CaptionFont { get; set; }
@@ -24,7 +24,7 @@ namespace CodeFramework.UI.Elements
         public MultilinedElement(string caption)
             : base(UITableViewCellStyle.Default, "multilinedelement")
         {
-            this.Caption = caption;
+            Caption = caption;
             BackgroundColor = UIColor.FromRGB(247, 247, 247);
             CaptionFont = UIFont.BoldSystemFontOfSize(15f);
             ValueFont = UIFont.SystemFontOfSize(14f);

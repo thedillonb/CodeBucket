@@ -4,7 +4,6 @@ using BitbucketSharp.Models;
 using CodeFramework.UI.Views;
 using MonoTouch.Dialog;
 using CodeFramework.UI.Elements;
-using MonoTouch.UIKit;
 using BitbucketBrowser.UI.Controllers.Repositories;
 using System.Linq;
 
@@ -20,7 +19,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
         
         public RepositoryDetailedModel Repo { get; set; }
         
-        private HeaderView _header;
+        private readonly HeaderView _header;
         
         public ChangesetInfoController(string user, string slug, string node)
             : base(true, false)

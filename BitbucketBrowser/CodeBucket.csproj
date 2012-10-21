@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -163,37 +163,15 @@
     <Compile Include="UI\Controllers\Source\SourceController.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Controllers\HelpViewController.cs" />
-    <Compile Include="Controllers\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <InterfaceDefinition Include="UI\Controllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
+  <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Images\" />
-    <Folder Include="UI\" />
-    <Folder Include="Images\Tabs\" />
-    <Folder Include="UI\Controllers\" />
-    <Folder Include="UI\Views\" />
-    <Folder Include="Cells\" />
-    <Folder Include="Images\Controls\" />
-    <Folder Include="Images\Official\" />
-    <Folder Include="Data\" />
-    <Folder Include="UI\Controllers\Issues\" />
-    <Folder Include="UI\Controllers\Events\" />
-    <Folder Include="UI\Controllers\Wikis\" />
-    <Folder Include="UI\Controllers\Branches\" />
-    <Folder Include="UI\Controllers\Followers\" />
-    <Folder Include="UI\Controllers\Groups\" />
-    <Folder Include="UI\Controllers\Privileges\" />
-    <Folder Include="UI\Controllers\Repositories\" />
-    <Folder Include="UI\Controllers\Accounts\" />
-    <Folder Include="UI\Controllers\Changesets\" />
-    <Folder Include="UI\Controllers\Source\" />
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
@@ -318,11 +296,9 @@
     <Content Include="Default-Portrait%402x.jpg" />
     <Content Include="Default-568h%402x.jpg" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
-    <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\filter%402x.png" />
     <Content Include="Images\help%402x.png" />
     <Content Include="Images\help.png" />
-    <Content Include="Images\forward_button%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

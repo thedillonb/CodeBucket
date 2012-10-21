@@ -23,16 +23,8 @@
 //
 using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using MonoTouch.CoreLocation;
-using System.IO;
-using System.Net;
-using MonoTouch.AVFoundation;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace CodeFramework.UI.Controllers
 {
@@ -44,23 +36,23 @@ namespace CodeFramework.UI.Controllers
 	/// </summary>
 	public class Composer : UIViewController
 	{
-		ComposerView composerView;
-		UINavigationBar navigationBar;
-		UINavigationItem navItem;
-		internal UIBarButtonItem sendItem;
-		UIViewController previousController;
-        public Action returnAction;
+	    readonly ComposerView _composerView;
+	    readonly UINavigationBar _navigationBar;
+	    readonly UINavigationItem _navItem;
+		internal UIBarButtonItem SendItem;
+		UIViewController _previousController;
+        public Action ReturnAction;
 
         public bool EnableSendButton
         {
-            get { return sendItem.Enabled; }
-            set { sendItem.Enabled = value; }
+            get { return SendItem.Enabled; }
+            set { SendItem.Enabled = value; }
         }
 
         private class ComposerView : UIView 
         {
-            const UIBarButtonItemStyle style = UIBarButtonItemStyle.Bordered;
-            internal UITextView textView;
+            const UIBarButtonItemStyle Style = UIBarButtonItemStyle.Bordered;
+            internal readonly UITextView textView;
             
             public ComposerView (RectangleF bounds, Composer composer) : base (bounds)
             {
@@ -106,70 +98,64 @@ namespace CodeFramework.UI.Controllers
             Title = "New Comment";
 
 			// Navigation Bar
-            navigationBar = new UINavigationBar (new RectangleF (0, 0, UIScreen.MainScreen.Bounds.Width, 44));
-            navigationBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-            navigationBar.AutosizesSubviews = true;
-
-			navItem = new UINavigationItem ("");
+		    _navigationBar = new UINavigationBar(new RectangleF(0, 0, UIScreen.MainScreen.Bounds.Width, 44))
+		                         {AutoresizingMask = UIViewAutoresizing.FlexibleWidth, AutosizesSubviews = true};
+		    _navItem = new UINavigationItem ("");
 			var close = new UIBarButtonItem ("Close", UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
-			navItem.LeftBarButtonItem = close;
-			sendItem = new UIBarButtonItem ("Create", UIBarButtonItemStyle.Plain, PostCallback);
-			navItem.RightBarButtonItem = sendItem;
+			_navItem.LeftBarButtonItem = close;
+			SendItem = new UIBarButtonItem ("Create", UIBarButtonItemStyle.Plain, PostCallback);
+			_navItem.RightBarButtonItem = SendItem;
 
-			navigationBar.PushNavigationItem (navItem, false);
+			_navigationBar.PushNavigationItem (_navItem, false);
 			
 			// Composer
-			composerView = new ComposerView (ComputeComposerSize (RectangleF.Empty), this);
+			_composerView = new ComposerView (ComputeComposerSize (RectangleF.Empty), this);
 			
 			// Add the views
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), (n) => KeyboardWillShow(n));
+			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
 
-			View.AddSubview (composerView);
-			View.AddSubview (navigationBar);
+			View.AddSubview (_composerView);
+			View.AddSubview (_navigationBar);
 		}
 
         public string Text
         {
-            get { return composerView.Text; }
-            set { composerView.Text = value; }
+            get { return _composerView.Text; }
+            set { _composerView.Text = value; }
         }
 
         public string ActionButtonText 
         {
-            get { return navItem.RightBarButtonItem.Title; }
-            set { navItem.RightBarButtonItem.Title = value; }
+            get { return _navItem.RightBarButtonItem.Title; }
+            set { _navItem.RightBarButtonItem.Title = value; }
         }
-		
-		public override void ViewDidLoad ()
-		{
-			base.ViewDidLoad ();			
-		}
 
 		public void CloseComposer ()
 		{
-			sendItem.Enabled = true;
-			previousController.DismissModalViewControllerAnimated (true);
+			SendItem.Enabled = true;
+			_previousController.DismissModalViewControllerAnimated (true);
         }
 
 		void PostCallback (object sender, EventArgs a)
 		{
-			sendItem.Enabled = false;
+			SendItem.Enabled = false;
 
-            if (returnAction != null)
-                returnAction();
+            if (ReturnAction != null)
+                ReturnAction();
 		}
 		
 		void KeyboardWillShow (NSNotification notification)
 		{
-			var kbdBounds = (notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue).RectangleFValue;
-			
-			composerView.Frame = ComputeComposerSize (kbdBounds);
+		    var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
+		    if (nsValue == null) return;
+		    var kbdBounds = nsValue.RectangleFValue;
+		    _composerView.Frame = ComputeComposerSize (kbdBounds);
 		}
 
-		RectangleF ComputeComposerSize (RectangleF kbdBounds)
+	    RectangleF ComputeComposerSize (RectangleF kbdBounds)
 		{
 			var view = View.Bounds;
-			var nav = navigationBar.Bounds;
+			var nav = _navigationBar.Bounds;
 
 			return new RectangleF (0, nav.Height, view.Width, view.Height-kbdBounds.Height-nav.Height);
 		}
@@ -177,7 +163,7 @@ namespace CodeFramework.UI.Controllers
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
-            navigationBar.Frame = new RectangleF (0, 0, View.Bounds.Width, 44);
+            _navigationBar.Frame = new RectangleF (0, 0, View.Bounds.Width, 44);
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
@@ -188,15 +174,15 @@ namespace CodeFramework.UI.Controllers
 		public override void ViewWillAppear (bool animated)
 		{
 			base.ViewWillAppear (animated);
-			composerView.textView.BecomeFirstResponder ();
+			_composerView.textView.BecomeFirstResponder ();
 		}
 		
 		public void NewComment (UIViewController parent, Action action)
 		{
-            navItem.Title = Title;
-            returnAction = action;
-            previousController = parent;
-            composerView.textView.BecomeFirstResponder ();
+            _navItem.Title = Title;
+            ReturnAction = action;
+            _previousController = parent;
+            _composerView.textView.BecomeFirstResponder ();
             parent.PresentModalViewController (this, true);
 		}
 	}

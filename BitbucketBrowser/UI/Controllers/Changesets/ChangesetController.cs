@@ -2,14 +2,9 @@ using System;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
 using System.Linq;
-using System.Text;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.UI.Controllers.Repositories;
-using System.Threading;
 using MonoTouch;
 
 
@@ -17,7 +12,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
 {
     public class ChangesetController : Controller<List<ChangesetModel>>
     {
-        private static int RequestLimit = 30;
+        private const int RequestLimit = 30;
         private DateTime _lastUpdate = DateTime.MinValue;
         private string _lastNode;
         private LoadMoreElement _loadMore;
@@ -71,9 +66,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                     });
                 }
             }, 
-            (ex) => {
-                Utilities.ShowAlert("Failure to load!", "Unable to load additional enries! " + ex.Message);
-            },
+            ex => Utilities.ShowAlert("Failure to load!", "Unable to load additional enries! " + ex.Message),
             () => {
                 if (_loadMore != null)
                     _loadMore.Animating = false;
@@ -93,7 +86,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var sec = new Section();
             changes.ForEach(x => {
                 var desc = (x.Message ?? "").Replace("\n", " ").Trim();
-                var el = new NameTimeStringElement() { Name = x.Author, Time = x.Utctimestamp, String = desc, Lines = 4 };
+                var el = new NameTimeStringElement { Name = x.Author, Time = x.Utctimestamp, String = desc, Lines = 4 };
                 el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(User, Slug, x.Node), true);
                 sec.Add(el);
             });
@@ -108,8 +101,8 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                     r.Add(sec);
                     
                     //If there are more items to load then insert the load object
-                    _loadMore = new PaginateElement("Load More", "Loading...", (e) => GetMore());
-                    r.Add(new Section() { _loadMore });
+                    _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+                    r.Add(new Section { _loadMore });
                     Root = r;
                 }
                 else

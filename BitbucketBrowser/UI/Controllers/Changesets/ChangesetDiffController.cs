@@ -1,7 +1,5 @@
 using System;
 using System.Text;
-using BitbucketBrowser.UI.Controllers.Source;
-using BitbucketBrowser.Controllers;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Controllers;
 using MonoTouch.Foundation;
@@ -11,8 +9,11 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
 {
     public class ChangesetDiffController : WebViewController
     {
-        private string _parent;
-        private string _user, _slug, _branch, _path;
+        private readonly string _parent;
+        private readonly string _user;
+        private readonly string _slug;
+        private readonly string _branch;
+        private readonly string _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
         
@@ -28,9 +29,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             Web.DataDetectorTypes = UIDataDetectorType.None;
 
             //Create the filename
-            var fileName = System.IO.Path.GetFileName(path);
-            if (fileName == null)
-                fileName = path.Substring(path.LastIndexOf('/') + 1);
+            var fileName = System.IO.Path.GetFileName(path) ?? path.Substring(path.LastIndexOf('/') + 1);
             Title = fileName;
         }
 
@@ -54,9 +53,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                     
                     Web.LoadHtmlString(filled, NSUrl.FromString("file:/" + url + "//"));
                 });
-            }, (ex) => {
-                ErrorView.Show(this.View, ex.Message);
-            });
+            }, ex => ErrorView.Show(View, ex.Message));
         }
         
         private string RequestData()

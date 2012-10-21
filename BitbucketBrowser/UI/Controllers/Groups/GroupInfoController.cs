@@ -1,4 +1,3 @@
-using System;
 using CodeFramework.UI.Controllers;
 using BitbucketSharp.Models;
 using MonoTouch.UIKit;

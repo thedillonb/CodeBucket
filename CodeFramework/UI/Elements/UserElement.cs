@@ -1,18 +1,16 @@
 using System;
-using MonoTouch.Dialog.Utilities;
 using MonoTouch.UIKit;
-using CodeFramework.UI.Elements;
 
 namespace CodeFramework.UI.Elements
 {
-    public class UserElement : SubcaptionElement, IImageUpdated
+    public class UserElement : SubcaptionElement
     {
-        public static UIImage Default = null;
+        public static UIImage Default;
 
         public UserElement(string username, string firstName, string lastName, string avatar)
             : base (username)
         {
-            var realName = firstName ?? "" + " " + lastName ?? "";
+            var realName = firstName ?? "" + " " + (lastName ?? "");
              if (!string.IsNullOrWhiteSpace(realName))
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;

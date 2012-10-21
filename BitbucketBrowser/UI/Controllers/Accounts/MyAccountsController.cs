@@ -1,8 +1,6 @@
 using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using System.Collections.Generic;
-using BitbucketSharp.Models;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 
@@ -16,13 +14,8 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             Title = "Accounts";
             Style = UITableViewStyle.Plain;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {  
-                NavigationController.PushViewController(new LoginViewController(), true);
-            });
-            
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => {  
-                this.DismissModalViewControllerAnimated(true);
-            });
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => NavigationController.PushViewController(new LoginViewController(), true));
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissModalViewControllerAnimated(true));
         }
 
         public override void ViewWillAppear(bool animated)
@@ -36,7 +29,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                 var t = new StyledElement(thisAccount.Username);
                 t.Tapped += () => { 
                     Application.SetUser(thisAccount);
-                    this.DismissModalViewControllerAnimated(true);
+                    DismissModalViewControllerAnimated(true);
                     
                 };
                 
@@ -47,7 +40,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                 }
                 
                 s.Add(t);
-            };
+            }
 
             TableView.TableFooterView.Hidden = s.Count == 0;
             Root = new RootElement(Title) { s };
@@ -81,9 +74,9 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             }
         }
 
-        private class EditSource : DialogViewController.Source
+        private class EditSource : Source
         {
-            private MyAccountsController _parent;
+            private readonly MyAccountsController _parent;
             public EditSource(MyAccountsController dvc) 
                 : base (dvc)
             {

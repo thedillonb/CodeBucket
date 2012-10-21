@@ -1,4 +1,3 @@
-using System.Drawing;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
@@ -39,18 +38,18 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         {
             var lastUpdated = "Updated " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
 
-            _header = new HeaderView(View.Bounds.Width) { Title = Model.Name };
-            _header.Subtitle = lastUpdated;
+            _header = new HeaderView(View.Bounds.Width) { Title = Model.Name, Subtitle = lastUpdated };
 
             if (!string.IsNullOrEmpty(Model.Logo))
-                _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.Logo), this);
+                _header.Image = ImageLoader.DefaultRequestImage(new Uri(Model.Logo), this);
 
             Root.Add(new Section(_header));
             var sec1 = new Section();
-            
+
             if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
             {
-                var element = new CodeFramework.UI.Elements.MultilinedElement(Model.Description) { 
+                var element = new MultilinedElement(Model.Description)
+                {
                     BackgroundColor = UIColor.White
                 };
                 element.CaptionColor = element.ValueColor;
@@ -58,12 +57,17 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                 sec1.Add(element);
             }
 
-            sec1.Add(new SplitElement(new SplitElement.Row() { Text1 = Model.Scm, Image1 = Images.ScmType,
-                Text2 = Model.Language, Image2 = Images.Language }));
+            sec1.Add(new SplitElement(new SplitElement.Row
+                                          {
+                                              Text1 = Model.Scm,
+                                              Image1 = Images.ScmType,
+                                              Text2 = Model.Language,
+                                              Image2 = Images.Language
+                                          }));
 
 
             //Calculate the best representation of the size
-            string size = "";
+            string size;
             if (Model.Size / 1024f < 1)
                 size = string.Format("{0}B", Model.Size);
             else if ((Model.Size / 1024f / 1024f) < 1)
@@ -74,13 +78,21 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                 size = string.Format("{0:0.##}GB", Model.Size / 1024f / 1024f / 1024f);
 
 
-            sec1.Add(new SplitElement(new SplitElement.Row() { 
-                    Text1 = Model.IsPrivate ? "Private" : "Public" , Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
-                    Text2 = size, Image2 = Images.Size }));
+            sec1.Add(new SplitElement(new SplitElement.Row
+                                          {
+                                              Text1 = Model.IsPrivate ? "Private" : "Public",
+                                              Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
+                                              Text2 = size,
+                                              Image2 = Images.Size
+                                          }));
 
-            sec1.Add(new SplitElement(new SplitElement.Row() { 
-                    Text1 = DateTime.Parse(Model.UtcCreatedOn).ToString("MM/dd/yy"), Image1 = Images.Create,
-                    Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"), Image2 = Images.Fork }));
+            sec1.Add(new SplitElement(new SplitElement.Row
+                                          {
+                                              Text1 = DateTime.Parse(Model.UtcCreatedOn).ToString("MM/dd/yy"),
+                                              Image1 = Images.Create,
+                                              Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"),
+                                              Image2 = Images.Fork
+                                          }));
 
 
             var owner = new StyledElement("Owner", Model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
@@ -93,29 +105,27 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
 
             var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true), Images.Event);
 
-            var sec2 = new Section();
-            sec2.Add(events);
+            var sec2 = new Section { events };
 
-            if (Model.HasIssues) 
+            if (Model.HasIssues)
                 sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true), Images.Flag));
 
             if (Model.HasWiki)
                 sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true), Images.Pencil));
 
-            var sec3 = new Section() {
+            var sec3 = new Section
+                           {
                 new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), Images.Changes),
                 new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true), Images.Branch),
                 new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true), Images.Tag)
             };
 
-            Root.Add(new [] { sec1, sec2, sec3 });
+            Root.Add(new[] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(Model.Website))
             {
-                var web = new StyledElement("Website", () => {
-                    UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(Model.Website));
-                }, Images.Webpage);
-                Root.Add(new Section() { web });
+                var web = new StyledElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(Model.Website)), Images.Webpage);
+                Root.Add(new Section { web });
             }
         }
 
@@ -124,7 +134,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             return Model;
         }
 
-        public void UpdatedImage (Uri uri)
+        public void UpdatedImage(Uri uri)
         {
             _header.Image = ImageLoader.DefaultRequestImage(uri, this);
             if (_header.Image != null)

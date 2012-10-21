@@ -40,11 +40,12 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
             if (Primary != null)
             {
                 StyledElement primaryElement = new UserElement(Primary.Username, Primary.FirstName, Primary.LastName, Primary.Avatar);
-                primaryElement.Tapped += () => OnSelectedItem(new PrivilegeModel() { Privilege = "admin", User = Primary });
+                primaryElement.Tapped += () => OnSelectedItem(new PrivilegeModel { Privilege = "admin", User = Primary });
                 sec.Add(primaryElement);
             }
 
-            Model.ForEach(s => {
+            Model.ForEach(s =>
+            {
                 StyledElement sse = new UserElement(s.User.Username, s.User.FirstName, s.User.LastName, s.User.Avatar);
                 sse.Tapped += () => OnSelectedItem(s);
                 sec.Add(sse);
@@ -53,7 +54,8 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
             if (sec.Count == 0)
                 sec.Add(new NoItemsElement());
 
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 var root = new RootElement(Title) { sec };
                 Root = root;
             });
@@ -65,8 +67,7 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
             {
                 if (RepoSlug != null)
                     return Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges(forced);
-                else
-                    return Application.Client.Users[Username].Privileges.GetPrivileges(forced);
+                return Application.Client.Users[Username].Privileges.GetPrivileges(forced);
             }
             catch (Exception)
             {

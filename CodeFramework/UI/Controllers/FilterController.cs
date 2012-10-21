@@ -1,5 +1,3 @@
-using System;
-
 namespace CodeFramework.UI.Controllers
 {
     public class FilterController : BaseDialogViewController

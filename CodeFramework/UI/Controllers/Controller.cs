@@ -1,8 +1,6 @@
 using System;
 using MonoTouch.Dialog;
-using System.Threading;
 using MonoTouch.UIKit;
-using RedPlum;
 using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
@@ -16,15 +14,15 @@ namespace CodeFramework.UI.Controllers
     {
         public T Model { get; set; }
         public bool Loaded { get; private set; }
-        protected ErrorView _currentError;
-        private SearchFilterBar searchBar;
+        protected ErrorView CurrentError;
+        private SearchFilterBar _searchBar;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CodeFramework.UI.Controllers.Controller`1"/> class.
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
         /// <param name='refresh'>True if the data can be refreshed, false if otherwise</param>
-        public Controller(bool push = false, bool refresh = false)
+        protected Controller(bool push = false, bool refresh = false)
             : base(push)
         {
             if (refresh)
@@ -45,10 +43,9 @@ namespace CodeFramework.UI.Controllers
 
         protected override UISearchBar CreateHeaderView()
         {
-            searchBar = new SearchFilterBar();
-            searchBar.Delegate = new CustomSearchDelegate<T>(this);
+            _searchBar = new SearchFilterBar {Delegate = new CustomSearchDelegate<T>(this)};
             //searchBar.FilterButton.TouchUpInside += FilterButtonTouched;
-            return searchBar;
+            return _searchBar;
         }
 
         void FilterButtonTouched (object sender, EventArgs e)
@@ -64,9 +61,9 @@ namespace CodeFramework.UI.Controllers
         public void Refresh(bool force = false)
         {
             InvokeOnMainThread(delegate {
-                if (_currentError != null)
-                    _currentError.RemoveFromSuperview();
-                _currentError = null;
+                if (CurrentError != null)
+                    CurrentError.RemoveFromSuperview();
+                CurrentError = null;
             });
 
             if (Model != null && !force)
@@ -91,7 +88,7 @@ namespace CodeFramework.UI.Controllers
 
                 InvokeOnMainThread(delegate { 
                     if (TableView.TableFooterView != null)
-                        TableView.TableFooterView.Hidden = this.Root.Count == 0;
+                        TableView.TableFooterView.Hidden = Root.Count == 0;
 
                     ReloadComplete(); 
                 });
@@ -101,15 +98,13 @@ namespace CodeFramework.UI.Controllers
 
             if (!force)
             {
-                this.DoWork(() => UpdateAndRefresh(force), (ex) => {
-                    _currentError = ErrorView.Show(this.View.Superview, ex.Message);
+                this.DoWork(() => UpdateAndRefresh(false), ex => {
+                    CurrentError = ErrorView.Show(View.Superview, ex.Message);
                 });
             }
             else
             {
-                this.DoWorkNoHud(() => UpdateAndRefresh(force), (ex) => {
-                    Utilities.ShowAlert("Unable to refresh!", "There was an issue while attempting to refresh. " + ex.Message);
-                }, ReloadComplete);
+                this.DoWorkNoHud(() => UpdateAndRefresh(true), ex => Utilities.ShowAlert("Unable to refresh!", "There was an issue while attempting to refresh. " + ex.Message), ReloadComplete);
             }
         }
 
@@ -132,19 +127,19 @@ namespace CodeFramework.UI.Controllers
 
         protected virtual void SearchStart()
         {
-            searchBar.FilterButtonVisible = false;
+            _searchBar.FilterButtonVisible = false;
         }
         
         protected virtual void SearchEnd()
         {
-            searchBar.FilterButtonVisible = true;
+            _searchBar.FilterButtonVisible = true;
         }
         
         class CustomSearchDelegate<T> : UISearchBarDelegate where T : class
         {
-            Controller<T> container;
-            DialogViewController searchController;
-            List<ElementContainer> searchElements;
+            readonly Controller<T> _container;
+            DialogViewController _searchController;
+            List<ElementContainer> _searchElements;
             
             static UIColor NoItemColor = UIColor.FromRGBA(0.1f, 0.1f, 0.1f, 0.9f);
             
@@ -156,51 +151,51 @@ namespace CodeFramework.UI.Controllers
             
             public CustomSearchDelegate (Controller<T> container)
             {
-                this.container = container;
+                _container = container;
             }
             
             public override void OnEditingStarted (UISearchBar searchBar)
             {
-                container.SearchStart();
+                _container.SearchStart();
                 
-                if (searchController == null)
+                if (_searchController == null)
                 {
-                    searchController = new DialogViewController(UITableViewStyle.Plain, null);
-                    searchController.LoadView();
-                    searchController.TableView.TableFooterView = new DropbarView(1f);
+                    _searchController = new DialogViewController(UITableViewStyle.Plain, null);
+                    _searchController.LoadView();
+                    _searchController.TableView.TableFooterView = new DropbarView(1f);
                 }
                 
                 searchBar.ShowsCancelButton = true;
-                container.TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
-                container.NavigationController.SetNavigationBarHidden(true, true);
-                container.isSearching = true;
-                container.TableView.ScrollEnabled = false;
+                _container.TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
+                _container.NavigationController.SetNavigationBarHidden(true, true);
+                _container.IsSearching = true;
+                _container.TableView.ScrollEnabled = false;
                 
-                if (searchController.Root != null && searchController.Root.Count > 0 && searchController.Root[0].Count > 0)
+                if (_searchController.Root != null && _searchController.Root.Count > 0 && _searchController.Root[0].Count > 0)
                 {
-                    searchController.TableView.TableFooterView.Hidden = false;
-                    searchController.View.BackgroundColor = UIColor.White;
-                    searchController.TableView.ScrollEnabled = true;
+                    _searchController.TableView.TableFooterView.Hidden = false;
+                    _searchController.View.BackgroundColor = UIColor.White;
+                    _searchController.TableView.ScrollEnabled = true;
                 }
                 else
                 {
-                    searchController.TableView.TableFooterView.Hidden = true;
-                    searchController.View.BackgroundColor = NoItemColor;
-                    searchController.TableView.ScrollEnabled = false;
+                    _searchController.TableView.TableFooterView.Hidden = true;
+                    _searchController.View.BackgroundColor = NoItemColor;
+                    _searchController.TableView.ScrollEnabled = false;
                 }
                 
-                searchElements = new List<ElementContainer>();
+                _searchElements = new List<ElementContainer>();
                 
                 //Grab all the elements that we could search trhough
-                foreach (var s in container.Root)
+                foreach (var s in _container.Root)
                     foreach (var e in s.Elements)
-                        searchElements.Add(new ElementContainer() { Element = e, Parent = e.Parent });
+                        _searchElements.Add(new ElementContainer { Element = e, Parent = e.Parent });
                 
-                if (!container.ChildViewControllers.Contains(searchController))
+                if (!_container.ChildViewControllers.Contains(_searchController))
                 {
-                    searchController.View.Frame = new RectangleF(container.TableView.Bounds.X, 44f, container.TableView.Bounds.Width, container.TableView.Bounds.Height - 44f);
-                    container.AddChildViewController(searchController);
-                    container.View.AddSubview(searchController.View);
+                    _searchController.View.Frame = new RectangleF(_container.TableView.Bounds.X, 44f, _container.TableView.Bounds.Width, _container.TableView.Bounds.Height - 44f);
+                    _container.AddChildViewController(_searchController);
+                    _container.View.AddSubview(_searchController.View);
                 }
                 
                 
@@ -215,60 +210,60 @@ namespace CodeFramework.UI.Controllers
             {
                 if (string.IsNullOrEmpty(searchText))
                 {
-                    if (searchController.Root != null)
-                        searchController.Root.Clear();
-                    searchController.View.BackgroundColor = NoItemColor;
-                    searchController.TableView.TableFooterView.Hidden = true;
-                    searchController.TableView.ScrollEnabled = false;
+                    if (_searchController.Root != null)
+                        _searchController.Root.Clear();
+                    _searchController.View.BackgroundColor = NoItemColor;
+                    _searchController.TableView.TableFooterView.Hidden = true;
+                    _searchController.TableView.ScrollEnabled = false;
                     return;
                 }
                 
                 var sec = new Section();
-                foreach (var el in searchElements)
+                foreach (var el in _searchElements)
                 {
                     if (el.Element.Matches(searchText))
                     {
                         sec.Add(el.Element);
                     }
                 }
-                searchController.TableView.ScrollEnabled = true;
+                _searchController.TableView.ScrollEnabled = true;
                 
                 if (sec.Count == 0)
                 {
                     sec.Add(new NoItemsElement());
                 }
                 
-                searchController.View.BackgroundColor = UIColor.White;
-                searchController.TableView.TableFooterView.Hidden = sec.Count == 0;
+                _searchController.View.BackgroundColor = UIColor.White;
+                _searchController.TableView.TableFooterView.Hidden = sec.Count == 0;
                 var root = new RootElement("") { sec };
                 root.UnevenRows = true;
-                searchController.Root = root;
+                _searchController.Root = root;
             }
             
             public override void CancelButtonClicked (UISearchBar searchBar)
             {
                 //Reset the parent
-                foreach (var s in searchElements)
+                foreach (var s in _searchElements)
                     s.Element.Parent = s.Parent;
                 
                 searchBar.Text = "";
                 searchBar.ShowsCancelButton = false;
-                container.FinishSearch ();
+                _container.FinishSearch ();
                 searchBar.ResignFirstResponder ();
-                container.NavigationController.SetNavigationBarHidden(false, true);
-                container.isSearching = false;
-                container.TableView.ScrollEnabled = true;
+                _container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.IsSearching = false;
+                _container.TableView.ScrollEnabled = true;
                 
-                searchController.RemoveFromParentViewController();
-                searchController.View.RemoveFromSuperview();
+                _searchController.RemoveFromParentViewController();
+                _searchController.View.RemoveFromSuperview();
                 
-                if (searchController.Root != null)
-                    searchController.Root.Clear();
+                if (_searchController.Root != null)
+                    _searchController.Root.Clear();
                 
-                searchElements.Clear();
-                searchElements = null;
+                _searchElements.Clear();
+                _searchElements = null;
                 
-                container.SearchEnd();
+                _container.SearchEnd();
             }
             
             public override void SearchButtonClicked (UISearchBar searchBar)

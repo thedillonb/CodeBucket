@@ -1,15 +1,7 @@
-using System;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
-using System.Collections.Generic;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Drawing;
-using System.Threading;
-using RedPlum;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
-using CodeFramework.UI.Views;
 
 
 namespace BitbucketBrowser.UI.Controllers.Source
@@ -35,31 +27,23 @@ namespace BitbucketBrowser.UI.Controllers.Source
             AutoHideSearch = true;
             EnableSearch = true;
 
-            if (string.IsNullOrEmpty(path))
-                Title = "Source";
-            else
-            {
-                Title = path.Substring(path.LastIndexOf('/') + 1);
-            }
+            Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }
 
 
         protected override void OnRefresh()
         {
             var sec = new Section();
-            Model.Directories.ForEach(d => 
-            {
-                sec.Add(new StyledElement(d, 
-                                          () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
-                                          Images.Folder));
-            });
+            Model.Directories.ForEach(d => sec.Add(new StyledElement(d,
+                                                                     () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
+                                                                     Images.Folder)));
 
             Model.Files.ForEach(f =>
             {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
                 sec.Add(new StyledElement(p, () => NavigationController.PushViewController(
-                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true), 
+                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true),
                                           Images.File));
             });
 
@@ -68,12 +52,13 @@ namespace BitbucketBrowser.UI.Controllers.Source
                 sec.Add(new NoItemsElement());
             }
 
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 Root = new RootElement(Title) { sec };
             });
         }
 
-        protected override SourceModel OnUpdate (bool forced)
+        protected override SourceModel OnUpdate(bool forced)
         {
             return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
         }

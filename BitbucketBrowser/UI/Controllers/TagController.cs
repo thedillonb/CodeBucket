@@ -1,4 +1,3 @@
-using System;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using MonoTouch.Dialog;
@@ -6,8 +5,7 @@ using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 using BitbucketBrowser.UI.Controllers.Source;
 
-
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers
 {
     public class TagController : Controller<Dictionary<string, TagModel>>
     {
@@ -39,7 +37,8 @@ namespace BitbucketBrowser.UI
                 foreach (var k in Model.Keys)
                 {
                     var element = new StyledElement(k);
-                    element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k].Node), true);
+                    var k1 = k;
+                    element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k1].Node), true);
                     sec.Add(element);
                 }
             }

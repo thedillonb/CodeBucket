@@ -1,9 +1,7 @@
-using System;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using System.Linq;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 using BitbucketBrowser.UI.Controllers.Source;

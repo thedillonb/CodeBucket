@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.Dialog;
@@ -6,7 +7,6 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Globalization;
-using MonoTouch.CoreLocation;
 
 namespace MonoTouch
 {
@@ -25,25 +25,25 @@ namespace MonoTouch
         // searches) we need a centralized API to keep the network visibility
         // indicator state
         //
-        static object networkLock = new object ();
-        static int active;
+        static readonly object NetworkLock = new object ();
+        static int _active;
 
         public static void PushNetworkActive ()
         {
-            lock (networkLock){
-                active++;
+            lock (NetworkLock){
+                _active++;
                 MainApp.NetworkActivityIndicatorVisible = true;
             }
         }
 
         public static void PopNetworkActive ()
         {
-            lock (networkLock){
-                if (active == 0)
+            lock (NetworkLock){
+                if (_active == 0)
                     return;
 
-                active--;
-                if (active == 0)
+                _active--;
+                if (_active == 0)
                     MainApp.NetworkActivityIndicatorVisible = false;
             }
         }
@@ -54,10 +54,7 @@ namespace MonoTouch
             if (s == null)
                 return DateTime.MinValue;
             long ticks;
-            if (Int64.TryParse (s, out ticks))
-                return new DateTime (ticks, DateTimeKind.Utc);
-            else
-                return DateTime.MinValue;
+            return Int64.TryParse (s, out ticks) ? new DateTime (ticks, DateTimeKind.Utc) : DateTime.MinValue;
         }
 
         public static bool NeedsUpdate (string key, TimeSpan timeout)
@@ -72,10 +69,6 @@ namespace MonoTouch
 
 
         public static NSUserDefaults Defaults = NSUserDefaults.StandardUserDefaults;
-
-        const long TicksOneDay = 864000000000;
-        const long TicksOneHour = 36000000000;
-        const long TicksMinute = 600000000;
 
         public static string StripHtml (string str)
         {
@@ -112,13 +105,7 @@ namespace MonoTouch
             if (name.Length == 0)
                 return "";
 
-            bool clean = true;
-            foreach (char c in name){
-                if (Char.IsLetterOrDigit (c) || c == '_')
-                    continue;
-                clean = false;
-                break;
-            }
+            bool clean = name.All(c => Char.IsLetterOrDigit(c) || c == '_');
             if (clean)
                 return name;
 
@@ -135,20 +122,21 @@ namespace MonoTouch
         public static RootElement MakeProgressRoot (string caption)
         {
             return new RootElement (caption){
-                new Section (){
+                new Section
+                    {
                     new ActivityElement ()
                 }
             };
         }
 
-        static long lastTime;
+        static long _lastTime;
         [Conditional ("TRACE")]
         public static void ReportTime (string s)
         {
             long now = DateTime.UtcNow.Ticks;
 
-            Debug.WriteLine (string.Format ("[{0}] ticks since last invoke: {1}", s, now-lastTime));
-            lastTime = now;
+            Debug.WriteLine (string.Format ("[{0}] ticks since last invoke: {1}", s, now-_lastTime));
+            _lastTime = now;
         }
         
         [Conditional ("TRACE")]
@@ -159,35 +147,29 @@ namespace MonoTouch
 
         public static void LogException (string text, Exception e)
         {
-            using (var s = System.IO.File.AppendText (Utilities.BaseDir + "/Documents/crash.log")){
-                var msg = String.Format ("On {0}, message: {1}\nException:\n{2}", DateTime.Now, text, e.ToString());
+            using (var s = File.AppendText (BaseDir + "/Documents/crash.log")){
+                var msg = String.Format ("On {0}, message: {1}\nException:\n{2}", DateTime.Now, text, e);
                 s.WriteLine (msg);
                 Console.WriteLine (msg);
             }
         }
 
-        static UIActionSheet sheet;
+        static UIActionSheet _sheet;
         public static UIActionSheet GetSheet (string title)
         {
-            sheet = new UIActionSheet (title);
-            return sheet;
+            _sheet = new UIActionSheet (title);
+            return _sheet;
         }
 
-        static CultureInfo americanCulture;
+        static CultureInfo _americanCulture;
         public static CultureInfo AmericanCulture {
-            get {
-                if (americanCulture == null)
-                    americanCulture = new CultureInfo ("en-US");
-                return americanCulture;
-            }
+            get { return _americanCulture ?? (_americanCulture = new CultureInfo("en-US")); }
         }
 
 
         public static void ShowAlert(string title, string message)
         {
-            var alert = new UIAlertView();
-            alert.Title = title;
-            alert.Message = message;
+            var alert = new UIAlertView {Title = title, Message = message};
             alert.DismissWithClickedButtonIndex(alert.AddButton("Ok"), true);
             alert.Show();
         }

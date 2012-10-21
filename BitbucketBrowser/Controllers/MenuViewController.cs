@@ -1,11 +1,10 @@
-using System;
+using BitbucketBrowser.UI.Controllers;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Elements;
 using MonoTouch.Foundation;
 using System.Drawing;
 using System.Linq;
-using BitbucketBrowser;
 using BitbucketBrowser.UI.Controllers.Accounts;
 using BitbucketBrowser.UI;
 using BitbucketBrowser.UI.Controllers.Events;
@@ -38,21 +37,19 @@ namespace BitbucketBrowser.Controllers
             public override UITableViewCell GetCell(UITableView tv)
             {
                 var cell = base.GetCell(tv);
-                cell.SelectedBackgroundView = new UIView() { BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200) };
+                cell.SelectedBackgroundView = new UIView { BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200) };
                 
                 var f = cell.Subviews.Count(x => x.Tag == 1111);
                 if (f == 0)
                 {
-                    
-                    var v2 = new UIView(new RectangleF(0, cell.Frame.Height - 3, cell.Frame.Width, 1));
-                    v2.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 64);
-                    v2.Tag = 1111;
+
+                    var v2 = new UIView(new RectangleF(0, cell.Frame.Height - 3, cell.Frame.Width, 1))
+                                 {BackgroundColor = UIColor.FromRGBA(41, 41, 41, 64), Tag = 1111};
                     cell.AddSubview(v2);
-                    
-                    
-                    var v = new UIView(new RectangleF(0, cell.Frame.Height - 2, cell.Frame.Width, 1));
-                    v.BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200);
-                    v.Tag = 1111;
+
+
+                    var v = new UIView(new RectangleF(0, cell.Frame.Height - 2, cell.Frame.Width, 1))
+                                { BackgroundColor = UIColor.FromRGBA(41, 41, 41, 200), Tag = 1111};
                     cell.AddSubview(v);
                 }
                 
@@ -71,7 +68,7 @@ namespace BitbucketBrowser.Controllers
             
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
                 var n = new UINavigationController(new MyAccountsController());
-                this.PresentModalViewController(n, true);
+                PresentModalViewController(n, true);
                 
             });
             

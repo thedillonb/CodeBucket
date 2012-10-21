@@ -2,13 +2,15 @@ using System;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeFramework.UI.Controllers
 {
     public class WebViewController : UIViewController
     {
-        protected UIBarButtonItem _back, _refresh, _forward;
+        protected UIBarButtonItem BackButton;
+        protected UIBarButtonItem RefreshButton;
+        protected UIBarButtonItem ForwardButton;
         public UIWebView Web { get; private set; }
-        private bool _navigationToolbar;
+        private readonly bool _navigationToolbar;
 
         protected virtual void GoBack()
         {
@@ -31,10 +33,8 @@ namespace BitbucketBrowser.Controllers
         }
 
         public WebViewController(bool navigationToolbar)
-            : base()
         {
-            Web = new UIWebView();
-            Web.ScalesPageToFit = true;
+            Web = new UIWebView {ScalesPageToFit = true};
             Web.LoadFinished += OnLoadFinished;
             Web.LoadStarted += OnLoadStarted;
             Web.LoadError += OnLoadError;
@@ -44,37 +44,37 @@ namespace BitbucketBrowser.Controllers
             if (_navigationToolbar)
             {
                 ToolbarItems = new [] { 
-                    (_back = new UIBarButtonItem(Images.BackNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoBack(); }) { Enabled = false }),
+                    (BackButton = new UIBarButtonItem(Images.BackNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false }),
                     new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                    (_forward = new UIBarButtonItem(Images.ForwardNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => { GoForward(); }) { Enabled = false }),
+                    (ForwardButton = new UIBarButtonItem(Images.ForwardNavigationButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false }),
                     new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                    (_refresh = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) =>  { Refresh(); })),
-                };
+                    (RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()))
+                                      };
             }
         }
 
         protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
         {
             MonoTouch.Utilities.PopNetworkActive();
-            if (_refresh != null)
-                _refresh.Enabled = true;
+            if (RefreshButton != null)
+                RefreshButton.Enabled = true;
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
             MonoTouch.Utilities.PushNetworkActive();
-            if (_refresh != null)
-                _refresh.Enabled = false;
+            if (RefreshButton != null)
+                RefreshButton.Enabled = false;
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
             MonoTouch.Utilities.PopNetworkActive();
-            if (_back != null)
+            if (BackButton != null)
             {
-                _back.Enabled = Web.CanGoBack;
-                _forward.Enabled = Web.CanGoForward;
-                _refresh.Enabled = true;
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
+                RefreshButton.Enabled = true;
             }
         }
         
@@ -89,7 +89,7 @@ namespace BitbucketBrowser.Controllers
         {
             base.ViewDidLoad();
             WatermarkView.AssureWatermark(this);
-            this.Add(Web);
+            Add(Web);
         }
 
         public override void ViewWillLayoutSubviews()

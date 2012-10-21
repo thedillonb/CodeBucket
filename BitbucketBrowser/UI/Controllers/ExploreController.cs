@@ -1,19 +1,17 @@
 using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using MonoTouch.Foundation;
 using System.Threading;
 using System.Linq;
-using System.Collections.Generic;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
 using CodeFramework.UI.Views;
 using BitbucketBrowser.UI.Controllers.Repositories;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers
 {
-    public class ExploreController : DialogViewController
+    public sealed class ExploreController : DialogViewController
     {
 
         public ExploreController()
@@ -23,7 +21,7 @@ namespace BitbucketBrowser.UI
             AutoHideSearch = false;
             NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
             Autorotate = true;
-            this.SearchPlaceholder = "Search Repositories";
+            SearchPlaceholder = "Search Repositories";
         }
 
         void ShowSearch(bool value)
@@ -41,26 +39,26 @@ namespace BitbucketBrowser.UI
 
         class ExploreSearchDelegate : UISearchBarDelegate 
         {
-            ExploreController container;
+            readonly ExploreController _container;
 
             public ExploreSearchDelegate (ExploreController container)
             {
-                this.container = container;
+                _container = container;
             }
 
             public override void OnEditingStarted (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = true;
-                container.StartSearch ();
-                container.ShowSearch(true);
-                container.NavigationController.SetNavigationBarHidden(true, true);
+                _container.StartSearch ();
+                _container.ShowSearch(true);
+                _container.NavigationController.SetNavigationBarHidden(true, true);
             }
 
             public override void OnEditingStopped (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = false;
-                container.FinishSearch ();
-                container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.FinishSearch ();
+                _container.NavigationController.SetNavigationBarHidden(false, true);
             }
 
             public override void TextChanged (UISearchBar searchBar, string searchText)
@@ -70,45 +68,41 @@ namespace BitbucketBrowser.UI
             public override void CancelButtonClicked (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = false;
-                container.FinishSearch ();
+                _container.FinishSearch ();
                 searchBar.ResignFirstResponder ();
-                container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.NavigationController.SetNavigationBarHidden(false, true);
             }
 
             public override void SearchButtonClicked (UISearchBar searchBar)
             {
-                container.SearchButtonClicked (searchBar.Text);
-                container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.SearchButtonClicked (searchBar.Text);
+                _container.NavigationController.SetNavigationBarHidden(false, true);
             }
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            var search = (UISearchBar)this.TableView.TableHeaderView;
+            var search = (UISearchBar)TableView.TableHeaderView;
             search.Delegate = new ExploreSearchDelegate(this);
 
             TableView.BackgroundColor = UIColor.Clear;
             WatermarkView.AssureWatermark(this);
 
-            TableView.TableFooterView = new DropbarView(View.Bounds.Width);
-            TableView.TableFooterView.Hidden = true;
+            TableView.TableFooterView = new DropbarView(View.Bounds.Width) {Hidden = true};
         }
 
         public override void SearchButtonClicked(string text)
         {
-            this.View.EndEditing(true);
+            View.EndEditing(true);
 
 
-            MBProgressHUD hud = null;
-            hud = new MBProgressHUD(this.View.Superview); 
-            hud.Mode = MBProgressHUDMode.Indeterminate;
-            hud.TitleText = "Searching...";
+            var hud = new MBProgressHUD(View.Superview) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Searching..."};
 
             InvokeOnMainThread(delegate {
                 TableView.TableFooterView.Hidden = true;
                 Root.Clear();
-                this.View.Superview.AddSubview(hud);
+                View.Superview.AddSubview(hud);
                 hud.Show(true);
             });
 

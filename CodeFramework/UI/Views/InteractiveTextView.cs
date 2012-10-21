@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using MonoTouch.CoreGraphics;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
@@ -15,11 +14,10 @@ namespace CodeFramework.UI.Views
     {
         public float Height { get; private set; }
         
-        RectangleF lastRect;
-        List<Block> blocks;
-        public TextBlock[] textBlocks;
-        Block highlighted = null;
-        const int fontHeight = 17;
+        RectangleF _lastRect;
+        readonly List<Block> _blocks;
+        public TextBlock[] TextBlocks;
+        Block _highlighted;
 
         public UIFont DefaultFont { get; set; }
         public UIColor DefaultColor { get; set; }
@@ -49,11 +47,11 @@ namespace CodeFramework.UI.Views
 
         public InteractiveTextView (RectangleF frame, params TextBlock[] text) : base (frame)
         {
-            textBlocks = text;
+            TextBlocks = text;
             DefaultFont = UIFont.SystemFontOfSize(12f);
             DefaultColor = UIColor.Black;
-            blocks = new List<Block> ();
-            lastRect = RectangleF.Empty;
+            _blocks = new List<Block> ();
+            _lastRect = RectangleF.Empty;
             Height = Layout ();
             BackgroundColor = UIColor.Clear;
 
@@ -102,13 +100,13 @@ namespace CodeFramework.UI.Views
         float Layout()
         {
             float max = Bounds.Width, x = 0, y = 0;
-            blocks.Clear();
+            _blocks.Clear();
 
-            if (textBlocks == null)
+            if (TextBlocks == null)
                 return 0;
 
             Block currentBlock = null;
-            foreach (var textBlock in textBlocks)
+            foreach (var textBlock in TextBlocks)
             {
                 var text = textBlock.Value;
                 currentBlock = new Block() { 
@@ -119,7 +117,7 @@ namespace CodeFramework.UI.Views
                     Width = 0,
                     Height = 17,
                 };
-                blocks.Add(currentBlock);
+                _blocks.Add(currentBlock);
 
                 var lines = CreatedTokenizedString(text);
 
@@ -170,7 +168,7 @@ namespace CodeFramework.UI.Views
                             y += 17f;
                             x = 0;
 
-                            currentBlock = new Block() { 
+                            currentBlock = new Block { 
                                 Font = textBlock.Font ?? DefaultFont,
                                 Tapped = textBlock.Tapped,
                                 Bounds = new PointF(x, y),
@@ -178,7 +176,7 @@ namespace CodeFramework.UI.Views
                                 Width = 0,
                                 Height = 17,
                             };
-                            blocks.Add(currentBlock);
+                            _blocks.Add(currentBlock);
                         }
 
                         currentBlock.Value += word + "".PadLeft(endingSpaces, ' ');
@@ -195,19 +193,19 @@ namespace CodeFramework.UI.Views
 
         public override void Draw (RectangleF rect)
         {
-            if (rect != lastRect){
+            if (rect != _lastRect){
                 Layout ();
-                lastRect = rect;
+                _lastRect = rect;
             }
             
             var context = UIGraphics.GetCurrentContext ();
-            foreach (var block in blocks){
+            foreach (var block in _blocks){
                 context.SetFillColor(block.Color.CGColor);
 
                 var bounds = new RectangleF(block.Bounds, new SizeF(block.Width, block.Height));
 
                 // selected?
-                if (block == highlighted)
+                if (block == _highlighted)
                 {
                     context.FillRect (bounds);
                     context.SetFillColor (1, 1, 1, 1);
@@ -220,12 +218,12 @@ namespace CodeFramework.UI.Views
 
         bool Track (PointF pos)
         {
-            foreach (var block in blocks){
+            foreach (var block in _blocks){
                 var bounds = new RectangleF(block.Bounds, new SizeF(block.Width, block.Height));
                 if (!bounds.Contains (pos) || block.Tapped == null)
                     continue;
                 
-                highlighted = block;
+                _highlighted = block;
                 SetNeedsDisplay ();
                 return true;
             }
@@ -235,18 +233,18 @@ namespace CodeFramework.UI.Views
         
         public override void TouchesEnded (NSSet touches, UIEvent evt)
         {
-            if (highlighted != null && highlighted.Tapped != null){
-                highlighted.Tapped();
+            if (_highlighted != null && _highlighted.Tapped != null){
+                _highlighted.Tapped();
             }
             
-            highlighted = null;
+            _highlighted = null;
             SetNeedsDisplay ();
             base.TouchesEnded(touches, evt);
         }
 
         public override bool PointInside(PointF point, UIEvent uievent)
         {
-            if (this.Bounds.Contains(point))
+            if (Bounds.Contains(point))
             {
                 Track(point);
                 return true;
@@ -257,19 +255,21 @@ namespace CodeFramework.UI.Views
 
         public override void TouchesBegan(NSSet touches, UIEvent evt)
         {
-            if (!Track ((touches.AnyObject as UITouch).LocationInView (this)))
+            var uiTouch = touches.AnyObject as UITouch;
+            if (uiTouch != null && !Track (uiTouch.LocationInView (this)))
                 base.TouchesBegan(touches, evt);
         }
-        
+
         public override void TouchesCancelled (NSSet touches, UIEvent evt)
         {
-            highlighted = null;
+            _highlighted = null;
             SetNeedsDisplay ();
         }
         
         public override void TouchesMoved (NSSet touches, UIEvent evt)
         {
-            Track ((touches.AnyObject as UITouch).LocationInView (this));
+            var uiTouch = touches.AnyObject as UITouch;
+            if (uiTouch != null) Track (uiTouch.LocationInView (this));
         }
     }
 }

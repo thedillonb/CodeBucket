@@ -6,8 +6,8 @@ namespace CodeFramework.UI.Views
 {
     public class HeaderView : UIView
     {
-        private static float XPad = 14f;
-        private static float YPad = 10f;
+        private const float XPad = 14f;
+        private const float YPad = 10f;
         public static UIFont TitleFont = UIFont.BoldSystemFontOfSize(16);
         public static UIFont SubtitleFont = UIFont.SystemFontOfSize(13);
         public static UIImage Gradient;

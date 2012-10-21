@@ -1,10 +1,5 @@
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using System.Drawing;
 using BitbucketSharp.Models;
-using System.Threading;
-using BitbucketSharp;
-using MonoTouch.Foundation;
 using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
@@ -14,7 +9,7 @@ using BitbucketBrowser.UI.Controllers.Events;
 using BitbucketBrowser.UI.Controllers.Groups;
 using BitbucketBrowser.UI.Controllers.Repositories;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.UI.Controllers
 {
 	public class ProfileController : Controller<UsersModel>, IImageUpdated
 	{
@@ -44,9 +39,9 @@ namespace BitbucketBrowser.UI
 
         protected override void OnRefresh()
         {
-            _header.Subtitle = Model.User.FirstName ?? "" + " " + Model.User.LastName ?? "";
+            _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
             _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
-            BeginInvokeOnMainThread(delegate { _header.SetNeedsDisplay(); });
+            BeginInvokeOnMainThread(() => _header.SetNeedsDisplay());
         }
 
         protected override UsersModel OnUpdate(bool forced)

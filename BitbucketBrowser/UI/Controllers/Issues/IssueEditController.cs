@@ -9,7 +9,6 @@ using CodeFramework.UI.Elements;
 using MonoTouch.Foundation;
 using BitbucketBrowser.UI.Controllers.Privileges;
 using System.Collections.Generic;
-using BitbucketSharp;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {
@@ -18,14 +17,14 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private static readonly string[] Priorities = { "Trivial", "Minor", "Major", "Critical", "Blocker" };
         private static readonly string[] Statuses = { "New", "Open", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
         private static readonly string[] Kinds = { "Bug", "Enhancement", "Proposal", "Task" };
-        private static readonly string Unassigned = "Unassigned";
-        private static readonly string None = "None";
+        private const string Unassigned = "Unassigned";
+        private const string None = "None";
 
         public string Username { get; set; }
         public string RepoSlug { get; set; }
         public IssueModel ExistingIssue { get; set; }
 
-        bool _extrasDone = false;
+        bool _extrasDone;
         public List<MilestoneModel> Milestones { get; set; }
         public List<ComponentModel> Components { get; set; }
         public List<VersionModel> Versions { get; set; }
@@ -35,7 +34,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         EntryElement _title;
         StyledElement _assignedTo, _issueType, _priority, _status, _milestone, _component, _version;
         MultilinedElement _content;
-         
+
         public IssueEditController()
             : base(true)
         {
@@ -49,42 +48,43 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             if (!_extrasDone)
                 LoadExtras();
-            _extrasDone = true; 
+            _extrasDone = true;
         }
 
         private void LoadExtras()
         {
             if (Milestones == null || Components == null || Versions == null)
             {
-                this.DoWork(() => {
+                this.DoWork(() =>
+                {
                     try
                     {
                         if (Milestones == null)
                             Milestones = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetMilestones();
                     }
-                    catch
+                    catch (Exception)
                     {
                     }
-                    
+
                     try
                     {
                         if (Components == null)
                             Components = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetComponents();
                     }
-                    catch
+                    catch (Exception)
                     {
                     }
-                    
+
                     try
                     {
                         if (Versions == null)
                             Versions = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetVersions();
                     }
-                    catch
+                    catch (Exception)
                     {
                     }
-                }, 
-                (ex) => {  }, AddExtrasToRoot);
+                },
+                ex => { }, AddExtrasToRoot);
             }
             else
             {
@@ -94,12 +94,15 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private StyledElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
         {
-            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1) {
+            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1)
+            {
                 Accessory = UITableViewCellAccessory.DisclosureIndicator
             };
-            element.Tapped += () => {
+            element.Tapped += () =>
+            {
                 var en = new EnumViewController(element.Caption, values, element.Value);
-                en.ValueSelected += (obj) => {
+                en.ValueSelected += obj =>
+                {
                     element.Value = obj;
                     NavigationController.PopViewControllerAnimated(true);
                 };
@@ -114,7 +117,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             var sec = new Section();
             if (Milestones != null && Milestones.Count > 0)
             {
-                var elements = new List<string>() { None };
+                var elements = new List<string> { None };
                 elements.AddRange(from s in Milestones select s.Name);
                 string defaultValue = None;
                 if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Milestone))
@@ -125,7 +128,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             if (Components != null && Components.Count > 0)
             {
-                var elements = new List<string>() { None };
+                var elements = new List<string> { None };
                 elements.AddRange(from s in Components select s.Name);
                 string defaultValue = None;
                 if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Component))
@@ -136,7 +139,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             if (Versions != null && Versions.Count > 0)
             {
-                var elements = new List<string>() { None };
+                var elements = new List<string> { None };
                 elements.AddRange(from s in Versions select s.Name);
                 string defaultValue = None;
                 if (ExistingIssue != null && !string.IsNullOrEmpty(ExistingIssue.Metadata.Version))
@@ -153,40 +156,41 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private CreateIssueModel CreateRequest()
         {
-            var issue = new CreateIssueModel() {
-                Title = _title.Value,
-                Content = _content.Value,
-                Kind = _issueType.Value.ToLower(),
-                Priority = _priority.Value.ToLower(),
-                Responsible = _assignedTo.Value.Equals(Unassigned) ? null : _assignedTo.Value.ToLower(),
-                Status = _status == null ? null : _status.Value.ToLower(),
-                Version = (_version == null || _version.Value.Equals(None)) ? null : _version.Value,
-                Component = (_component == null || _component.Value.Equals(None)) ? null : _component.Value,
-                Milestone = (_milestone == null || _milestone.Value.Equals(None)) ? null : _milestone.Value,
-            };
+            var issue = new CreateIssueModel
+                            {
+                                Title = _title.Value,
+                                Content = _content.Value,
+                                Kind = _issueType.Value.ToLower(),
+                                Priority = _priority.Value.ToLower(),
+                                Responsible = _assignedTo.Value.Equals(Unassigned) ? null : _assignedTo.Value.ToLower(),
+                                Status = _status == null ? null : _status.Value.ToLower(),
+                                Version = (_version == null || _version.Value.Equals(None)) ? null : _version.Value,
+                                Component = (_component == null || _component.Value.Equals(None)) ? null : _component.Value,
+                                Milestone = (_milestone == null || _milestone.Value.Equals(None)) ? null : _milestone.Value,
+                            };
 
             //Nullify them if they are the same...
             if (ExistingIssue != null)
             {
-                if (object.Equals(issue.Title, ExistingIssue.Title)) issue.Title = null;
-                if (object.Equals(issue.Content, ExistingIssue.Content)) issue.Content = null;
-                if (object.Equals(issue.Kind, ExistingIssue.Metadata.Kind)) issue.Kind = null;
-                if (object.Equals(issue.Priority, ExistingIssue.Priority)) issue.Priority = null;
-                if (object.Equals(issue.Responsible, ExistingIssue.Responsible)) issue.Responsible = null;
-                if (object.Equals(issue.Status, ExistingIssue.Status)) issue.Status = null;
+                if (Equals(issue.Title, ExistingIssue.Title)) issue.Title = null;
+                if (Equals(issue.Content, ExistingIssue.Content)) issue.Content = null;
+                if (Equals(issue.Kind, ExistingIssue.Metadata.Kind)) issue.Kind = null;
+                if (Equals(issue.Priority, ExistingIssue.Priority)) issue.Priority = null;
+                if (Equals(issue.Responsible, ExistingIssue.Responsible)) issue.Responsible = null;
+                if (Equals(issue.Status, ExistingIssue.Status)) issue.Status = null;
 
                 //Component shit
-                if (object.Equals(issue.Version, ExistingIssue.Metadata.Version)) 
+                if (Equals(issue.Version, ExistingIssue.Metadata.Version))
                     issue.Version = null;
                 else if (issue.Version == null)
                     issue.Version = string.Empty;
 
-                if (object.Equals(issue.Component, ExistingIssue.Metadata.Component)) 
+                if (Equals(issue.Component, ExistingIssue.Metadata.Component))
                     issue.Component = null;
                 else if (issue.Component == null)
                     issue.Component = string.Empty;
 
-                if (object.Equals(issue.Milestone, ExistingIssue.Metadata.Milestone)) 
+                if (Equals(issue.Milestone, ExistingIssue.Metadata.Milestone))
                     issue.Milestone = null;
                 else if (issue.Milestone == null)
                     issue.Milestone = string.Empty;
@@ -198,7 +202,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private void SaveIssue()
         {
             //Stop any editing!
-            this.View.EndEditing(true);
+            View.EndEditing(true);
 
             //Check the required fields
             if (string.IsNullOrEmpty(_title.Value))
@@ -206,7 +210,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 Utilities.ShowAlert("Missing field!", "You must enter a title for this issue.");
                 return;
             }
-            
+
             var issue = CreateRequest();
 
             //Check to see if there is any change...
@@ -215,40 +219,38 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 NavigationController.PopViewControllerAnimated(true);
                 return;
             }
-            
+
             NavigationItem.RightBarButtonItem.Enabled = false;
-            this.DoWork(() => {
-                IssueModel updatedModel;
-                if (ExistingIssue == null)
-                    updatedModel = Application.Client.Users[Username].Repositories[RepoSlug].Issues.Create(issue);
-                else
-                    updatedModel = Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.LocalId].Update(issue);
-
-
-                InvokeOnMainThread(() => {
+            this.DoWork(() =>
+            {
+                var updatedModel = ExistingIssue == null ? Application.Client.Users[Username].Repositories[RepoSlug].Issues.Create(issue) : 
+                    Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.LocalId].Update(issue);
+                InvokeOnMainThread(() =>
+                {
                     if (Success != null)
                         Success(updatedModel);
 
                     if (NavigationController != null)
                         NavigationController.PopViewControllerAnimated(true);
                 });
-            }, 
-            (ex) => {
-                Utilities.ShowAlert("Unable to save issue!", ex.Message);
-            }, 
-            () => {
+            },
+            ex => Utilities.ShowAlert("Unable to save issue!", ex.Message),
+            () =>
+            {
                 NavigationItem.RightBarButtonItem.Enabled = true;
             });
         }
 
         private void DeleteIssue()
         {
-            this.View.EndEditing(true);
+            View.EndEditing(true);
             NavigationItem.RightBarButtonItem.Enabled = false;
-            this.DoWork(() => {
+            this.DoWork(() =>
+            {
                 Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.LocalId].Delete();
 
-                InvokeOnMainThread(() => {
+                InvokeOnMainThread(() =>
+                {
                     if (Success != null)
                         Success(null);
 
@@ -256,14 +258,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                         NavigationController.PopViewControllerAnimated(true);
                 });
             },
-            (ex) => {
-                Utilities.ShowAlert("Unable to delete issue!", ex.Message);
-            },
-            () => {
+            ex => Utilities.ShowAlert("Unable to delete issue!", ex.Message),
+            () =>
+            {
                 NavigationItem.RightBarButtonItem.Enabled = true;
             });
         }
-        
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -272,23 +273,28 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private void PopulateRoot()
         {
-            _title = new EntryElement("Title", string.Empty, string.Empty) { 
+            _title = new EntryElement("Title", string.Empty, string.Empty)
+            {
                 TitleFont = UIFont.BoldSystemFontOfSize(15f),
                 EntryFont = UIFont.SystemFontOfSize(14f),
                 TitleColor = UIColor.FromRGB(41, 41, 41),
             };
-            
-            _assignedTo = new StyledElement("Responsible", Unassigned, UITableViewCellStyle.Value1) {
+
+            _assignedTo = new StyledElement("Responsible", Unassigned, UITableViewCellStyle.Value1)
+            {
                 Accessory = UITableViewCellAccessory.DisclosureIndicator,
             };
-            _assignedTo.Tapped += () => {
-                var privileges = new PrivilegesController() { 
-                    Username = Username, 
-                    RepoSlug = RepoSlug, 
-                    Primary = new UserModel() { Username = Username },
-                    Title = _assignedTo.Caption,
-                };
-                privileges.SelectedItem += (obj) => {
+            _assignedTo.Tapped += () =>
+            {
+                var privileges = new PrivilegesController
+                                     {
+                                         Username = Username,
+                                         RepoSlug = RepoSlug,
+                                         Primary = new UserModel { Username = Username },
+                                         Title = _assignedTo.Caption,
+                                     };
+                privileges.SelectedItem += obj =>
+                {
                     _assignedTo.Value = obj.User.Username;
                     NavigationController.PopViewControllerAnimated(true);
                 };
@@ -297,21 +303,21 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             _issueType = CreateEnumElement("Issue Type", Kinds[0], Kinds);
             _priority = CreateEnumElement("Priority", Priorities[0], Priorities);
-            
+
             _content = new MultilinedElement("Comments");
-            _content.Tapped += () => {
-                var composer = new Composer() { Title = "Issue Comment", Text = _content.Value, ActionButtonText = "Save" };
-                composer.NewComment(this, () => {
+            _content.Tapped += () =>
+            {
+                var composer = new Composer { Title = "Issue Comment", Text = _content.Value, ActionButtonText = "Save" };
+                composer.NewComment(this, () =>
+                {
                     var text = composer.Text;
                     _content.Value = text;
                     composer.CloseComposer();
                 });
             };
-            
-            var root = new RootElement(Title);
-            root.Add(new Section() { _title, _assignedTo, _issueType, _priority });
-            root.Add(new Section() { _content });
-            
+
+            var root = new RootElement(Title) { new Section { _title, _assignedTo, _issueType, _priority }, new Section { _content } };
+
             //See if it's an existing issue or not...
             if (ExistingIssue != null)
             {
@@ -327,37 +333,41 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
                 //Insert the status thing inbetween title and assigned to elements
                 root[0].Insert(1, _status);
-                
-                var deleteButton = new StyledElement("Delete Issue", () => {
-                    var alert = new UIAlertView() { 
-                        Title = "Are you sure?",
-                        Message = "You are about to permanently delete issue #" + ExistingIssue.LocalId + "."
-                    };
+
+                var deleteButton = new StyledElement("Delete Issue", () =>
+                {
+                    var alert = new UIAlertView
+                                    {
+                                        Title = "Are you sure?",
+                                        Message = "You are about to permanently delete issue #" + ExistingIssue.LocalId + "."
+                                    };
                     alert.CancelButtonIndex = alert.AddButton("Cancel");
                     var ok = alert.AddButton("Delete");
-                    
-                    alert.Clicked += (object sender, UIButtonEventArgs e) => {
+
+                    alert.Clicked += (sender, e) =>
+                    {
                         if (e.ButtonIndex == ok)
                             DeleteIssue();
                     };
-                    
+
                     alert.Show();
-                }, Images.BinClosed) {
+                }, Images.BinClosed)
+                {
                     BackgroundColor = UIColor.FromPatternImage(Images.TableCellRed),
                     TextColor = UIColor.FromRGB(0.9f, 0.30f, 0.30f)
                 };
-                root.Add(new Section() { deleteButton });
+                root.Add(new Section { deleteButton });
             }
-            
+
             Root = root;
         }
-        
+
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             TableView.ReloadData();
         }
-        
+
         private class PopNavRadioElement : RadioElement
         {
             public PopNavRadioElement(string caption, string group) : base(caption, group) { }

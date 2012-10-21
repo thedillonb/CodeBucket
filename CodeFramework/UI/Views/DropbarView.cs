@@ -1,10 +1,5 @@
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
-using MonoTouch.Dialog;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
-using System.Collections.Generic;
 
 namespace CodeFramework.UI.Views
 {

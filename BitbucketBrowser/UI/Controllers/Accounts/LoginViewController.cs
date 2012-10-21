@@ -1,82 +1,72 @@
 using System;
-using System.Drawing;
-
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using System.Text;
-using System.Net;
 using RedPlum;
 using System.Threading;
-using BitbucketBrowser.UI;
-using CodeFramework.UI.Views;
 using MonoTouch;
 
-namespace BitbucketBrowser
+namespace BitbucketBrowser.UI.Controllers.Accounts
 {
-	public partial class LoginViewController : UIViewController
-	{
+    public partial class LoginViewController : UIViewController
+    {
 
         public Action LoginComplete;
 
-		public LoginViewController() : base ("LoginViewController", null)
-		{
-		}
-		
-		public override void DidReceiveMemoryWarning()
-		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning();
-		}
-		
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public LoginViewController()
+            : base("LoginViewController", null)
+        {
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
 
             View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
 
             Logo.Image = Images.Logo;
             Title = "Add Account";
-			
-			User.ShouldReturn = delegate {
-				Password.BecomeFirstResponder();
-				return true;
-			};
-			Password.ShouldReturn = delegate {
-				Password.ResignFirstResponder();
+
+            User.ShouldReturn = delegate
+            {
+                Password.BecomeFirstResponder();
+                return true;
+            };
+            Password.ShouldReturn = delegate
+            {
+                Password.ResignFirstResponder();
 
                 //Run this in another thread
                 ThreadPool.QueueUserWorkItem(delegate { BeginLogin(); });
-				return true;
-			};
-		}
-		
-		public override void ViewDidUnload()
-		{
-			base.ViewDidUnload();
-			
-			// Clear any references to subviews of the main view in order to
-			// allow the Garbage Collector to collect them sooner.
-			//
-			// e.g. myOutlet.Dispose (); myOutlet = null;
-			
-			ReleaseDesignerOutlets();
-		}
-		
-		private void BeginLogin()
+                return true;
+            };
+        }
+
+        [Obsolete("Deprecated in iOS 6.0")]
+        public override void ViewDidUnload()
         {
-            MBProgressHUD hud;
+            base.ViewDidUnload();
+
+            // Clear any references to subviews of the main view in order to
+            // allow the Garbage Collector to collect them sooner.
+            //
+            // e.g. myOutlet.Dispose (); myOutlet = null;
+
+            ReleaseDesignerOutlets();
+        }
+
+        private void BeginLogin()
+        {
+            MBProgressHUD hud = null;
             bool successful = false;
             string username = null, password = null;
 
             //The nice hud
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 username = User.Text;
                 password = Password.Text;
-                hud = new MBProgressHUD(this.View); 
-                hud.Mode = MBProgressHUDMode.Indeterminate;
-                hud.TitleText = "Logging In...";
-                this.View.AddSubview(hud);
+                hud = new MBProgressHUD(View) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Logging In..."};
+                View.AddSubview(hud);
                 hud.Show(true);
             });
 
@@ -92,7 +82,8 @@ namespace BitbucketBrowser
             }
 
 
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 //Dismiss the hud
                 hud.Hide(true);
                 hud.RemoveFromSuperview();
@@ -103,7 +94,7 @@ namespace BitbucketBrowser
                     return;
                 }
 
-                var newAccount = new Account() { Username = User.Text, Password = Password.Text };
+                var newAccount = new Account { Username = User.Text, Password = Password.Text };
 
                 if (Application.Accounts.Exists(newAccount))
                 {
@@ -121,10 +112,10 @@ namespace BitbucketBrowser
                 if (LoginComplete != null)
                     LoginComplete();
             });
-		}
-		
-		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-		{
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
                 if (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
@@ -132,12 +123,12 @@ namespace BitbucketBrowser
             }
             else
             {
-    			// Return true for supported orientations
+                // Return true for supported orientations
                 return true;
             }
 
             return false;
-		}
-	}
+        }
+    }
 }
 

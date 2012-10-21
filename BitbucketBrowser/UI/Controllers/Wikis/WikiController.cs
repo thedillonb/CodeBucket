@@ -1,14 +1,8 @@
 using System;
-using BitbucketSharp.Models;
-using System.Collections.Generic;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using RedPlum;
-using System.Threading;
 using MonoTouch.Foundation;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Views;
-using BitbucketBrowser.Controllers;
 using MonoTouch;
 
 
@@ -16,10 +10,12 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 {
     public class WikiInfoController : WebViewController
     {
-        private static string WikiCache = Utilities.BaseDir + "/Documents/WikiCache/";
-        private string _user, _slug, _page;
+        private static readonly string WikiCache = Utilities.BaseDir + "/Documents/WikiCache/";
+        private readonly string _user;
+        private readonly string _slug;
+        private readonly string _page;
         private ErrorView _errorView;
-        private bool _isVisible = false;
+        private bool _isVisible;
 
         private void Load(string page, bool push = true, bool forceInvalidation = false)
         {
@@ -35,18 +31,15 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                 var url = RequestAndSave(page, forceInvalidation);
                 var escapedUrl = Uri.EscapeUriString("file://" + url);
 
-                InvokeOnMainThread(delegate {
-                    Web.LoadRequest(NSUrlRequest.FromUrl(new NSUrl(escapedUrl)));
-                });
+                InvokeOnMainThread(() => Web.LoadRequest(NSUrlRequest.FromUrl(new NSUrl(escapedUrl))));
             },
-            (ex) => {
+            ex => {
                 if (_isVisible)
                     Utilities.ShowAlert("Unable to Find Wiki Page", ex.Message);
             });
         }
 
         public WikiInfoController(string user, string slug, string page = "Home")
-            : base()
         {
             _user = user;
             _slug = slug;

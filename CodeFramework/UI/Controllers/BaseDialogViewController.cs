@@ -1,24 +1,20 @@
-using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Views;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using CodeFramework.UI.Elements;
 
 namespace CodeFramework.UI.Controllers
 {
     public class BaseDialogViewController : DialogViewController
     {
-        protected bool isSearching = false;
+        protected bool IsSearching;
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            if (NavigationController != null && isSearching)
+            if (NavigationController != null && IsSearching)
                 NavigationController.SetNavigationBarHidden(true, true);
-            if (isSearching)
+            if (IsSearching)
             {
                 TableView.ScrollRectToVisible(new RectangleF(0, 0, 1, 1), false);
             }
@@ -30,7 +26,7 @@ namespace CodeFramework.UI.Controllers
             if (NavigationController != null && NavigationController.NavigationBarHidden)
                 NavigationController.SetNavigationBarHidden(false, true);
             
-            if (isSearching)
+            if (IsSearching)
             {
                 View.EndEditing(true);
                 var searchBar = TableView.TableHeaderView as UISearchBar;
@@ -73,21 +69,20 @@ namespace CodeFramework.UI.Controllers
         public override void ViewDidLoad()
         {
             if (Title != null && Root != null)
-                Root.Caption = this.Title;
+                Root.Caption = Title;
 
             TableView.BackgroundColor = UIColor.Clear;
             TableView.BackgroundView = null;
             if (Style != UITableViewStyle.Grouped)
             {
-                TableView.TableFooterView = new DropbarView(View.Bounds.Width);
-                TableView.TableFooterView.Hidden = true;
+                TableView.TableFooterView = new DropbarView(View.Bounds.Width) {Hidden = true};
             }
 
             WatermarkView.AssureWatermark(this);
             base.ViewDidLoad();
         }
-        
-        class RefreshView : RefreshTableHeaderView
+
+        sealed class RefreshView : RefreshTableHeaderView
         {
             public RefreshView(RectangleF rect)
                 : base(rect)

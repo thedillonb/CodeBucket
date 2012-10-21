@@ -1,4 +1,3 @@
-using System;
 using BitbucketSharp.Models;
 
 namespace BitbucketBrowser.UI.Controllers.Events
@@ -13,7 +12,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
             Slug = slug;
         }
         
-        protected override EventsModel OnGetData(int start, int limit)
+        protected override EventsModel OnGetData(int start = 0, int limit = 30)
         {
             return Application.Client.Users[Username].Repositories[Slug].GetEvents(start, limit);
         }

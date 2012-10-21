@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading;
-using BitbucketSharp;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
@@ -20,15 +18,15 @@ namespace BitbucketBrowser.UI.Controllers.Events
     public class EventsController : Controller<List<EventModel>>
     {
         private DateTime _lastUpdate = DateTime.MinValue;
-        private int _firstIndex = 0;
-        private int _lastIndex = 0;
+        private int _firstIndex;
+        private int _lastIndex;
         private LoadMoreElement _loadMore;
 
         public string Username { get; private set; }
 
         public bool ReportRepository { get; set; }
 
-        public EventsController(string username, bool push = true) 
+        public EventsController(string username, bool push = true)
             : base(push, true)
         {
             Title = "Events";
@@ -45,7 +43,8 @@ namespace BitbucketBrowser.UI.Controllers.Events
 
         private void GetMore()
         {
-            this.DoWorkNoHud(() => {
+            this.DoWorkNoHud(() =>
+            {
                 var currentCount = OnGetData(0, 0).Count;
                 var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
                 _firstIndex = currentCount;
@@ -54,21 +53,21 @@ namespace BitbucketBrowser.UI.Controllers.Events
                                  orderby DateTime.Parse(s.UtcCreatedOn) descending
                                  select s).ToList();
                 AddItems(newEvents, false);
-                
+
                 //Should never happen. Sanity check..
                 if (_loadMore != null && _firstIndex == _lastIndex)
                 {
-                    InvokeOnMainThread(() => {
+                    InvokeOnMainThread(() =>
+                    {
                         Root.Remove(_loadMore.Parent as Section);
                         _loadMore.Dispose();
                         _loadMore = null;
                     });
                 }
             },
-            (ex) => {
-                Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
-            },
-            () => {
+            ex => Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message),
+            () =>
+            {
                 if (_loadMore != null)
                     _loadMore.Animating = false;
             });
@@ -80,13 +79,13 @@ namespace BitbucketBrowser.UI.Controllers.Events
             _firstIndex = events.Count;
             _lastIndex = events.Events.Count;
 
-             var newEvents =
-                 (from s in events.Events
-                  where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
-                  orderby DateTime.Parse(s.UtcCreatedOn) descending
-                  select s).ToList();
-             if (newEvents.Count > 0)
-                 _lastUpdate = (from r in newEvents select DateTime.Parse(r.UtcCreatedOn)).Max();
+            var newEvents =
+                (from s in events.Events
+                 where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
+                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                 select s).ToList();
+            if (newEvents.Count > 0)
+                _lastUpdate = (from r in newEvents select DateTime.Parse(r.UtcCreatedOn)).Max();
             return newEvents;
         }
 
@@ -102,7 +101,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
             }
         }
-        
+
         private InteractiveTextView.TextBlock[] CreateDescription(EventModel eventModel, out UIImage img)
         {
             var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
@@ -114,22 +113,17 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 img = Images.Plus;
                 if (ReportRepository)
                 {
-                    string repoName = null;
+                    string repoName;
                     RepoName(eventModel, out repoName);
 
                     var fuckyou = UIFont.BoldSystemFontOfSize(12f);
-                    return new InteractiveTextView.TextBlock[] { 
+                    return new[] { 
                         new InteractiveTextView.TextBlock("Commit to "),
-                        new InteractiveTextView.TextBlock(repoName, fuckyou, UIColor.FromRGB(0, 64, 128), () => { RepoTapped(eventModel); }),
-                        new InteractiveTextView.TextBlock(": " + desc),
+                        new InteractiveTextView.TextBlock(repoName, fuckyou, UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
+                        new InteractiveTextView.TextBlock(": " + desc)
                     };
                 }
-                else
-                {
-                    return new [] { 
-                        new InteractiveTextView.TextBlock("Commited: " + desc),
-                    };
-                }
+                return new[] { new InteractiveTextView.TextBlock("Commited: " + desc) };
             }
 
             return null;
@@ -186,7 +180,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 img = Images.Priority;
             */
         }
-        
+
         private bool RepoName(EventModel eventModel, out string name)
         {
             if (eventModel.Repository == null)
@@ -194,7 +188,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 name = "Unknown Repository";
                 return false;
             }
-            
+
             if (!eventModel.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
                 name = eventModel.Repository.Owner + "/" + eventModel.Repository.Name;
             else
@@ -212,7 +206,8 @@ namespace BitbucketBrowser.UI.Controllers.Events
         private void AddItems(List<EventModel> events, bool prepend = true)
         {
             var sec = new Section();
-            events.ForEach(e => {
+            events.ForEach(e =>
+            {
                 if (!SupportedEvents.Contains(e.Event))
                     return;
 
@@ -220,15 +215,16 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 var hello = CreateDescription(e, out small);
 
                 var newsEl = new NewsFeedElement(e, hello, small, ReportRepository);
-                if (e.Event == EventModel.Type.Commit && e.Repository != null) 
+                if (e.Event == EventModel.Type.Commit && e.Repository != null)
                 {
-                    newsEl.Tapped += () => { 
-                        NavigationController.PushViewController(
-                            new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node)
-                            { Repo = e.Repository }, true);
+                    newsEl.Tapped += () =>
+                    {
+                        if (NavigationController != null)
+                            NavigationController.PushViewController(
+                                new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node) { Repo = e.Repository }, true);
                     };
-                } 
-                else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated) 
+                }
+                else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated)
                 {
                     newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
                 }
@@ -249,7 +245,8 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 return;
             }
 
-            InvokeOnMainThread(delegate {
+            InvokeOnMainThread(delegate
+            {
                 if (Root.Count == 0)
                 {
                     var r = new RootElement(Title) { sec };
@@ -257,8 +254,8 @@ namespace BitbucketBrowser.UI.Controllers.Events
                     //If there are more items to load then insert the load object
                     if (_lastIndex != _firstIndex)
                     {
-                        _loadMore = new PaginateElement("Load More", "Loading...", (e) => GetMore());
-                        r.Add(new Section() { _loadMore });
+                        _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+                        r.Add(new Section { _loadMore });
                     }
 
                     Root = r;

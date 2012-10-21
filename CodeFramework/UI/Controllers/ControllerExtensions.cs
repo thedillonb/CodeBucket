@@ -11,9 +11,7 @@ namespace CodeFramework.UI.Controllers
         public static void DoWork(this UIViewController controller, Action work, Action<Exception> error = null, Action final = null)
         {
             MBProgressHUD hud = null;
-            hud = new MBProgressHUD(controller.View.Superview); 
-            hud.Mode = MBProgressHUDMode.Indeterminate;
-            hud.TitleText = "Loading...";
+            hud = new MBProgressHUD(controller.View.Superview) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Loading..."};
             controller.View.Superview.AddSubview(hud);
             hud.Show(true);
 

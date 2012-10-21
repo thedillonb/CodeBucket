@@ -1,4 +1,3 @@
-using System;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 
@@ -57,10 +56,10 @@ namespace CodeFramework.UI.Elements
         {
             Font = DefaultTitleFont;
             SubtitleFont = DefaultDetailFont;
-            this.BackgroundColor = BgColor;
-            this.TextColor = DefaultTitleColor;
-            this.DetailColor = DefaultDetailColor;
-            LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;
+            BackgroundColor = BgColor;
+            TextColor = DefaultTitleColor;
+            DetailColor = DefaultDetailColor;
+            LineBreakMode = UILineBreakMode.TailTruncation;
             Lines = 1;
         }
     }

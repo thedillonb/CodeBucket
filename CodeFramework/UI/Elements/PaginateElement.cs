@@ -9,14 +9,14 @@ namespace CodeFramework.UI.Elements
     {
         static PaginateElement()
         {
-            LoadMoreElement.Padding = 20;
+            Padding = 20;
         }
 
         public PaginateElement(string normal, string loading, Action<LoadMoreElement> tap)
             : base(normal, loading, tap)
         {
             Font = StyledElement.DefaultTitleFont;
-            this.TextColor = StyledElement.DefaultTitleColor;
+            TextColor = StyledElement.DefaultTitleColor;
         }
 
         protected override void CellCreated(UITableViewCell cell, UIView view)

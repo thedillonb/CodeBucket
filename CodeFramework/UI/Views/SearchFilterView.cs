@@ -1,7 +1,5 @@
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
-using System.Linq;
 
 namespace CodeFramework.UI.Views
 {

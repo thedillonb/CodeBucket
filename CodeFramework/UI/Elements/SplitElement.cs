@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
@@ -8,7 +6,7 @@ namespace CodeFramework.UI.Elements
 {
   public class SplitElement : CustomElement
     {
-        private static UIFont Font = UIFont.SystemFontOfSize(12f);
+        private static readonly UIFont Font = UIFont.SystemFontOfSize(12f);
 
         public Row Value { get; set; }
 

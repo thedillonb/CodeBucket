@@ -30,9 +30,7 @@ namespace CodeFramework.UI.Controllers
             foreach (var s in values)
             {
                 var copy = s;
-                sec.Add(new StyledElement(s, () => {
-                    OnValueSelected(copy);
-                }) { 
+                sec.Add(new StyledElement(s, () => OnValueSelected(copy)) { 
                     Accessory = s.Equals(selected, StringComparison.InvariantCultureIgnoreCase) ? 
                         MonoTouch.UIKit.UITableViewCellAccessory.Checkmark : MonoTouch.UIKit.UITableViewCellAccessory.None 
                 });

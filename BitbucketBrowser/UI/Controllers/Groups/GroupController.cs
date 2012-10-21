@@ -1,4 +1,3 @@
-using System;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
