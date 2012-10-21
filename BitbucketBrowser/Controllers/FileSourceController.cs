@@ -9,7 +9,6 @@ namespace BitbucketBrowser.Controllers
     public abstract class FileSourceController : WebViewController
     {
         protected  static string TempDir = System.IO.Path.Combine(MonoTouch.Utilities.BaseDir, "tmp", "source");
-        protected string _user, _slug, _branch, _path;
         
         public FileSourceController()
             : base(false)
@@ -27,7 +26,7 @@ namespace BitbucketBrowser.Controllers
                 System.IO.Directory.CreateDirectory(TempDir);
 
             //Do the request
-            this.DoWork(Request, (ex) => ErrorView.Show(this.View, ex.Message));
+            this.DoWork(Request, ex => ErrorView.Show(this.View, ex.Message));
         }
         
         public override void ViewWillDisappear(bool animated)

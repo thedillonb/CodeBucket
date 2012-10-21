@@ -83,7 +83,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         
         public override void ViewWillAppear(bool animated)
         {
-            NavigationController.SetToolbarHidden(isSearching, animated);
+            NavigationController.SetToolbarHidden(IsSearching, animated);
             base.ViewWillAppear(animated);
         }
         
