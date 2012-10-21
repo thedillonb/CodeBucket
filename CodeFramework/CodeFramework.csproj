@@ -78,7 +78,6 @@
     <Compile Include="UI\Controllers\BaseDialogViewController.cs" />
     <Compile Include="UI\Controllers\EnumViewController.cs" />
     <Compile Include="UI\Controllers\ControllerExtensions.cs" />
-    <Compile Include="Data\IAccount.cs" />
     <Compile Include="UI\Views\SearchFilterView.cs" />
     <Compile Include="UI\Controllers\FilterController.cs" />
     <Compile Include="UI\Elements\UserElement.cs" />
