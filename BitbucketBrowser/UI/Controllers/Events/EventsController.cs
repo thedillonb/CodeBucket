@@ -214,7 +214,10 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 UIImage small;
                 var hello = CreateDescription(e, out small);
 
-                var newsEl = new NewsFeedElement(e, hello, small, ReportRepository);
+                //Get the user
+                var username = e.User != null ? e.User.Username : null;
+                var avatar = e.User != null ? e.User.Avatar : null;
+                var newsEl = new NewsFeedElement(username, avatar, DateTime.Parse(e.UtcCreatedOn), hello, small);
                 if (e.Event == EventModel.Type.Commit && e.Repository != null)
                 {
                     newsEl.Tapped += () =>

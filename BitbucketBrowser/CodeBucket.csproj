@@ -117,7 +117,6 @@
     <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Views\NewsFeedElement.cs" />
     <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="Images\Images.cs" />
@@ -176,7 +175,6 @@
     <Folder Include="UI\" />
     <Folder Include="Images\Tabs\" />
     <Folder Include="UI\Controllers\" />
-    <Folder Include="UI\Views\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Official\" />

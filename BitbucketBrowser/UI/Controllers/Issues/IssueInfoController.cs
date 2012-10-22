@@ -178,7 +178,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     comments.Add(new CommentElement
                                      {
                                          Name = x.AuthorInfo.Username,
-                                         Time = x.UtcCreatedOn,
+                                         Time = DateTime.Parse(x.UtcCreatedOn),
                                          String = x.Content,
                                          Image = Images.Anonymous,
                                          ImageUri = new Uri(x.AuthorInfo.Avatar),

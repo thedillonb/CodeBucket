@@ -86,7 +86,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var sec = new Section();
             changes.ForEach(x => {
                 var desc = (x.Message ?? "").Replace("\n", " ").Trim();
-                var el = new NameTimeStringElement { Name = x.Author, Time = x.Utctimestamp, String = desc, Lines = 4 };
+                var el = new NameTimeStringElement { Name = x.Author, Time = DateTime.Parse(x.Utctimestamp), String = desc, Lines = 4 };
                 el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(User, Slug, x.Node), true);
                 sec.Add(el);
             });

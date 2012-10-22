@@ -87,6 +87,7 @@ namespace BitbucketBrowser
             StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
             UserElement.Default = Images.Anonymous;
+            NewsFeedElement.DefaultImage = Images.Anonymous;
 
             //Resize the back button only on the iPhone
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
