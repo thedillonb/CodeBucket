@@ -1,0 +1,12 @@
+[submodule "bitbucketsharp"]
+	path = bitbucketsharp
+	url = https://thedillonb@bitbucket.org/thedillonb/bitbucketsharp.git
+[submodule "monotouch.slideoutnavigation"]
+	path = monotouch.slideoutnavigation
+	url = https://thedillonb@bitbucket.org/thedillonb/monotouch.slideoutnavigation.git
+[submodule "MonoTouch.Dialog"]
+	path = MonoTouch.Dialog
+	url = https://github.com/thedillonb/MonoTouch.Dialog.git
+[submodule "RestSharp"]
+	path = RestSharp
+	url = https://github.com/restsharp/RestSharp.git
