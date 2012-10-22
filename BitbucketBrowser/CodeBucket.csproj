@@ -310,6 +310,10 @@
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\codeframework\CodeFramework\CodeFramework.csproj">
+      <Project>{3E01B962-FE29-4992-8140-34465C86418F}</Project>
+      <Name>CodeFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\monotouch.slideoutnavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
@@ -317,10 +321,6 @@
     <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
-      <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
-      <Name>RestSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

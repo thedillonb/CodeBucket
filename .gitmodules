@@ -10,3 +10,6 @@
 [submodule "RestSharp"]
 	path = RestSharp
 	url = https://github.com/restsharp/RestSharp.git
+[submodule "codeframework"]
+	path = codeframework
+	url = https://thedillonb@bitbucket.org/thedillonb/codeframework.git
