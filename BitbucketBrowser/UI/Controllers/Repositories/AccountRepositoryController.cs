@@ -11,6 +11,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
     {
         private static string SavedSelection = "REPO_SELECTION";
         private UISegmentedControl _segment = new UISegmentedControl(new [] { "Owned", "Following" });
+        private UIBarButtonItem _segmentBarButton;
         
         public AccountRepositoryController(string username)
             : base(username)
@@ -63,7 +64,9 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             
             _segment.ControlStyle = UISegmentedControlStyle.Bar;
             _segment.SelectedSegment = 0;
-            
+            _segment.AutosizesSubviews = true;
+            _segment.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+
             //Fucking bug in the divider
             BeginInvokeOnMainThread(delegate {
                 _segment.SelectedSegment = 1;
@@ -76,9 +79,16 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             Title = "Owned";
             
             //The bottom bar
-            var btn = new UIBarButtonItem(_segment);
-            btn.Width = View.Frame.Width - 10f;
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), btn, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+            _segmentBarButton = new UIBarButtonItem(_segment);
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+        }
+
+        public override void ViewDidLayoutSubviews()
+        {
+            //Resize and refresh the toolbar items by assigning it to itself!
+            _segmentBarButton.Width = View.Bounds.Width - 16f;
+            ToolbarItems = ToolbarItems;
+            base.ViewDidLayoutSubviews();
         }
         
         public override void ViewWillAppear(bool animated)

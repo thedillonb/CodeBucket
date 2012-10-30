@@ -57,7 +57,7 @@ namespace BitbucketBrowser.Controllers
             }
         }
         
-        private void DoShit(UIViewController controller)
+        protected virtual void DoShit(UIViewController controller)
         {
             NavigationController.PushViewController(controller, false);
         }
