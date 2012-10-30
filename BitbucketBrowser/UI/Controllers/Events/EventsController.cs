@@ -94,16 +94,9 @@ namespace BitbucketBrowser.UI.Controllers.Events
             AddItems(Model);
         }
 
-        private void RepoTapped(EventModel e)
+        private IEnumerable<InteractiveTextView.TextBlock> CreateDescription(EventModel eventModel, out UIImage img)
         {
-            if (e.Repository != null)
-            {
-                NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
-            }
-        }
-
-        private InteractiveTextView.TextBlock[] CreateDescription(EventModel eventModel, out UIImage img)
-        {
+            var blocks = new List<InteractiveTextView.TextBlock>(10);
             var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
             img = Images.Priority;
 
@@ -113,87 +106,116 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 img = Images.Plus;
                 if (ReportRepository)
                 {
-                    string repoName;
-                    RepoName(eventModel, out repoName);
-
-                    var fuckyou = UIFont.BoldSystemFontOfSize(12f);
-                    return new[] { 
-                        new InteractiveTextView.TextBlock("Commit to "),
-                        new InteractiveTextView.TextBlock(repoName, fuckyou, UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
-                        new InteractiveTextView.TextBlock(": " + desc)
-                    };
+                    blocks.Add(new InteractiveTextView.TextBlock("Commited to "));
+                    blocks.AddRange(RepoName(eventModel));
+                    blocks.Add(new InteractiveTextView.TextBlock(": " + desc));
                 }
-                return new[] { new InteractiveTextView.TextBlock("Commited: " + desc) };
+                else
+                    blocks.Add(new InteractiveTextView.TextBlock("Commited: " + desc));
             }
-
-            return null;
-            /*
             else if (eventModel.Event == EventModel.Type.CreateRepo)
             {
                 img = Images.Create;
                 if (ReportRepository)
-                    desc = "Created Repo: " + repoName();
+                {
+                    blocks.Add(new InteractiveTextView.TextBlock("Created repository "));
+                    blocks.AddRange(RepoName(eventModel));
+                }
                 else
-                    desc = "Repository Created";
+                    blocks.Add(new InteractiveTextView.TextBlock("Repository created"));
             }
             else if (eventModel.Event == EventModel.Type.WikiUpdated)
             {
                 img = Images.Pencil;
-                desc = "Updated the wiki page: " + desc;
+                blocks.Add(new InteractiveTextView.TextBlock("Updated wiki page "));
+                blocks.Add(new InteractiveTextView.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+
+                if (ReportRepository)
+                {
+                    blocks.Add(new InteractiveTextView.TextBlock(" in "));
+                    blocks.AddRange(RepoName(eventModel));
+                }
             }
             else if (eventModel.Event == EventModel.Type.WikiCreated)
             {
                 img = Images.Pencil;
-                desc = "Created the wiki page: " + desc;
+                blocks.Add(new InteractiveTextView.TextBlock("Created wiki page "));
+                blocks.Add(new InteractiveTextView.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+
+                if (ReportRepository)
+                {
+                    blocks.Add(new InteractiveTextView.TextBlock(" in "));
+                    blocks.AddRange(RepoName(eventModel));
+                }
             }
             else if (eventModel.Event == EventModel.Type.StartFollowUser)
             {
                 img = Images.HeartAdd;
-                desc = "Started following a user";
+                blocks.Add(new InteractiveTextView.TextBlock("Started following a user"));
             }
             else if (eventModel.Event == EventModel.Type.StartFollowRepo)
             {
                 img = Images.HeartAdd;
-                desc = "Started following: " + repoName();
+                blocks.Add(new InteractiveTextView.TextBlock("Started following "));
+                blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.StopFollowRepo)
             {
                 img = Images.HeartDelete;
-                desc = "Stopped following: " + repoName();
+                blocks.Add(new InteractiveTextView.TextBlock("Stopped following "));
+                blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueComment)
             {
                 img = Images.CommentAdd;
-                desc = "Issue commented on in " + repoName();
+                blocks.Add(new InteractiveTextView.TextBlock("Issue commented on in "));
+                blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueUpdated)
             {
                 img = Images.ReportEdit;
-                desc = "Issue updated in " + repoName();
+                blocks.Add(new InteractiveTextView.TextBlock("Issue updated in "));
+                blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueReported)
             {
                 img = Images.ReportEdit;
-                desc = "Issue reported on in " + repoName();
+                blocks.Add(new InteractiveTextView.TextBlock("Issue reported on in "));
+                blocks.AddRange(RepoName(eventModel));
             }
             else
                 img = Images.Priority;
-            */
+
+            return blocks;
+        }
+        
+        private void RepoTapped(EventModel e)
+        {
+            if (e.Repository != null)
+            {
+                NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+            }
         }
 
-        private bool RepoName(EventModel eventModel, out string name)
+        private IEnumerable<InteractiveTextView.TextBlock> RepoName(EventModel eventModel)
         {
+            //Most likely indicates a deleted repository
             if (eventModel.Repository == null)
+                return new [] { new InteractiveTextView.TextBlock("Unknown Repository") };
+
+            var repoOwner = eventModel.Repository.Owner;
+            var repoName = eventModel.Repository.Name;
+            if (!repoOwner.ToLower().Equals(Application.Account.Username.ToLower()))
             {
-                name = "Unknown Repository";
-                return false;
+                return new [] {
+                    new InteractiveTextView.TextBlock(repoOwner, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
+                    new InteractiveTextView.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
+                    new InteractiveTextView.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
+                };
             }
 
-            if (!eventModel.Repository.Owner.ToLower().Equals(Application.Account.Username.ToLower()))
-                name = eventModel.Repository.Owner + "/" + eventModel.Repository.Name;
-            else
-                name = eventModel.Repository.Name;
-            return true;
+            //Just return the name
+            return new [] { new InteractiveTextView.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)) };
         }
 
 
@@ -229,15 +251,18 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 }
                 else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated)
                 {
-                    newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
+                    if (e.Repository != null)
+                        newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
                 }
                 else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
                 {
-                    newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+                    if (e.Repository != null)
+                        newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
                 }
                 else if (e.Event == EventModel.Type.IssueComment || e.Event == EventModel.Type.IssueUpdated || e.Event == EventModel.Type.IssueReported)
                 {
-                    newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
+                    if (e.Repository != null)
+                        newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
                 }
 
                 sec.Add(newsEl);

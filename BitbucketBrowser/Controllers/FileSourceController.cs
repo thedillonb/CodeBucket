@@ -8,7 +8,7 @@ namespace BitbucketBrowser.Controllers
 {
     public abstract class FileSourceController : WebViewController
     {
-        protected  static string TempDir = System.IO.Path.Combine(MonoTouch.Utilities.BaseDir, "tmp", "source");
+        protected static string TempDir = System.IO.Path.Combine(MonoTouch.Utilities.BaseDir, "tmp", "source");
         
         public FileSourceController()
             : base(false)

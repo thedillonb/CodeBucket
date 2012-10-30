@@ -92,26 +92,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             }
         }
 
-        private StyledElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
-        {
-            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1)
-            {
-                Accessory = UITableViewCellAccessory.DisclosureIndicator
-            };
-            element.Tapped += () =>
-            {
-                var en = new EnumViewController(element.Caption, values, element.Value);
-                en.ValueSelected += obj =>
-                {
-                    element.Value = obj;
-                    NavigationController.PopViewControllerAnimated(true);
-                };
-                NavigationController.PushViewController(en, true);
-            };
-
-            return element;
-        }
-
         private void AddExtrasToRoot()
         {
             var sec = new Section();
@@ -263,6 +243,26 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             {
                 NavigationItem.RightBarButtonItem.Enabled = true;
             });
+        }
+
+        private StyledElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
+        {
+            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1)
+            {
+                Accessory = UITableViewCellAccessory.DisclosureIndicator
+            };
+            element.Tapped += () =>
+            {
+                var en = new EnumViewController(element.Caption, values, element.Value);
+                en.ValueSelected += obj =>
+                {
+                    element.Value = obj;
+                    NavigationController.PopViewControllerAnimated(true);
+                };
+                NavigationController.PushViewController(en, true);
+            };
+            
+            return element;
         }
 
         public override void ViewDidLoad()
