@@ -112,7 +112,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             var url = WikiCache + page + ".html";
             using (var file = System.IO.File.Create(url))
             {
-                using (var writer = new System.IO.StreamWriter(file))
+                using (var writer = new System.IO.StreamWriter(file, System.Text.Encoding.UTF8))
                 {
                     writer.Write(markup.ToString());
                 }
