@@ -10,12 +10,14 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 {
     public class WikiInfoController : WebViewController
     {
-        private static readonly string WikiCache = Utilities.BaseDir + "/Documents/WikiCache/";
+        private static readonly string WikiCache = Utilities.BaseDir + "/tmp/WikiCache/";
         private readonly string _user;
         private readonly string _slug;
         private readonly string _page;
+        private readonly UIBarButtonItem _editButton;
         private ErrorView _errorView;
         private bool _isVisible;
+        private bool _isLoaded;
 
         private void Load(string page, bool push = true, bool forceInvalidation = false)
         {
@@ -30,8 +32,9 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
                 var url = RequestAndSave(page, forceInvalidation);
                 var escapedUrl = Uri.EscapeUriString("file://" + url);
-
-                InvokeOnMainThread(() => Web.LoadRequest(NSUrlRequest.FromUrl(new NSUrl(escapedUrl))));
+                var request = NSUrlRequest.FromUrl(new NSUrl(escapedUrl));
+                NSUrlCache.SharedCache.RemoveCachedResponse(request);
+                InvokeOnMainThread(() => Web.LoadRequest(request));
             },
             ex => {
                 if (_isVisible)
@@ -48,14 +51,47 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             Web.ScalesPageToFit = true;
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
+
+            NavigationItem.RightBarButtonItem = (_editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, HandleEditButton));
+            _editButton.Enabled = false;
+        }
+
+        private void HandleEditButton(object sender, EventArgs args)
+        {
+            try
+            {
+                var page = CurrentWikiPage(Web.Request);
+                var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page].GetInfo();
+
+
+                var composer = new Composer { Title = "Edit " + Title, Text = wiki.Data, ActionButtonText = "Save" };
+                composer.NewComment(this, () => {
+                    var text = composer.Text;
+
+                    composer.DoWork(() => {
+                        Application.Client.Users[_user].Repositories[_slug].Wikis[page].Update(text, Uri.UnescapeDataString(page));
+                        
+                        InvokeOnMainThread(() => {
+                            composer.CloseComposer();
+                            Refresh();
+                        });
+                    }, ex =>
+                    {
+                        Utilities.ShowAlert("Unable to update page!", ex.Message);
+                        composer.EnableSendButton = true;
+                    });
+                });
+            }
+            catch (Exception e)
+            {
+                Utilities.ShowAlert("Error", e.Message);
+            }
         }
 
         public override void ViewDidDisappear(bool animated)
         {
             _isVisible = false;
             base.ViewDidDisappear(animated);
-            if (System.IO.Directory.Exists(WikiCache))
-                System.IO.Directory.Delete(WikiCache, true);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -63,17 +99,25 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             _isVisible = true;
             base.ViewDidAppear(animated);
 
+            //Load the page
+            if (!_isLoaded)
+                Load(_page);
+            _isLoaded = true;
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
             //Delete the cache directory just incase it already exists..
             if (System.IO.Directory.Exists(WikiCache))
                 System.IO.Directory.Delete(WikiCache, true);
             System.IO.Directory.CreateDirectory(WikiCache);
-
-            //Load the page
-            Load(_page);
         }
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
         {
+            Console.WriteLine("Should load: " + navType);
             if (navType == UIWebViewNavigationType.LinkClicked) 
             {
                 if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
@@ -86,10 +130,55 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             return true;
         }
 
+        protected override void Refresh()
+        {
+            var page = CurrentWikiPage(Web.Request);
+            if (page != null)
+            {
+                if (RefreshButton != null)
+                    RefreshButton.Enabled = false;
+                this.DoWork(() => { 
+                    RequestAndSave(page, true);
+                    InvokeOnMainThread(base.Refresh);
+                }, ex => {
+                    if (_isVisible)
+                        Utilities.ShowAlert("Unable to Find Wiki Page", ex.Message);
+                    if (RefreshButton != null)
+                        RefreshButton.Enabled = true;
+                });
+            }
+            else
+                base.Refresh();
+        }
+
+        protected override void OnLoadStarted(object sender, EventArgs e)
+        {
+            base.OnLoadStarted(sender, e);
+            _editButton.Enabled = false;
+        }
+
         protected override void OnLoadFinished(object sender, EventArgs e)
         {
             base.OnLoadFinished(sender, e);
-            Title = Web.EvaluateJavascript("document.title");
+            Title = Uri.UnescapeDataString(Web.EvaluateJavascript("document.title"));
+
+            if (CurrentWikiPage(Web.Request) != null)
+                _editButton.Enabled = true;
+        }
+
+        private string CurrentWikiPage(NSUrlRequest request)
+        {
+            var url = request.Url.AbsoluteString;
+            if (!url.StartsWith("file://"))
+                return null;
+            var s = url.LastIndexOf('/');
+            if (s < 0)
+                return null;
+            if (url.Length < s + 1)
+                return null;
+
+            url = url.Substring(s + 1);
+            return url.Substring(0, url.LastIndexOf(".html")); //Get rid of ".html"
         }
 
         private string RequestAndSave(string page, bool forceInvalidation)
@@ -109,7 +198,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             markup.Append(w.ToHTML(d.Data));
             markup.Append("</body></html>");
 
-            var url = WikiCache + page + ".html";
+            var url = WikiCache + Uri.UnescapeDataString(page) + ".html";
             using (var file = System.IO.File.Create(url))
             {
                 using (var writer = new System.IO.StreamWriter(file, System.Text.Encoding.UTF8))
