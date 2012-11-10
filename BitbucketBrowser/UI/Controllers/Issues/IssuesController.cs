@@ -33,21 +33,44 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             AutoHideSearch = true;
             Root.UnevenRows = true;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) =>
-            {
+            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
                 var b = new IssueEditController
-                            {
-                                Username = User,
-                                RepoSlug = Slug,
-                                Success = issue => { _needsUpdate = true; }
-                            };
+                {
+                    Username = User,
+                    RepoSlug = Slug,
+                    Success = issue => { _needsUpdate = true; }
+                };
                 NavigationController.PushViewController(b, true);
             });
+
+            var filterButton = new UIBarButtonItem(UIBarButtonSystemItem.Bookmarks, (s, e) => {
+
+
+            });
+
+            ToolbarItems = new UIBarButtonItem[] {
+                addButton,
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                filterButton
+            };
         }
 
         private IssuesModel OnGetData(int start = 0, int limit = 30)
         {
             return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit);
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationController.SetToolbarHidden(IsSearching, animated);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationController.SetToolbarHidden(true, animated);
+            
         }
 
         public override void ViewDidAppear(bool animated)
