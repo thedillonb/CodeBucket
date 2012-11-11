@@ -10,6 +10,7 @@ using BitbucketBrowser.UI;
 using BitbucketBrowser.UI.Controllers.Events;
 using BitbucketBrowser.UI.Controllers.Repositories;
 using BitbucketBrowser.UI.Controllers.Groups;
+using System.Threading;
 
 namespace BitbucketBrowser.Controllers
 {
@@ -97,6 +98,22 @@ namespace BitbucketBrowser.Controllers
             base.ViewWillAppear(animated);
             Root.Caption = Application.Account.Username;
             Title = Root.Caption;
+
+            //Grab the avatar!
+            if (Application.Account.AvatarUrl == null)
+            {
+                ThreadPool.QueueUserWorkItem(delegate {
+                    try 
+                    {
+                        var userInfo = Application.Client.Account.GetInfo();
+                        Application.Account.AvatarUrl = userInfo.User.Avatar;
+                        BeginInvokeOnMainThread(() => Application.Account.Update());
+                    }
+                    catch
+                    {
+                    }
+                });
+            }
         }
         
     }

@@ -50,7 +50,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Events.Count;
                 var newEvents = (from s in moreEvents.Events
-                                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                                 orderby (s.UtcCreatedOn) descending
                                  select s).ToList();
                 AddItems(newEvents, false);
 
@@ -81,11 +81,11 @@ namespace BitbucketBrowser.UI.Controllers.Events
 
             var newEvents =
                 (from s in events.Events
-                 where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
-                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                 where (s.UtcCreatedOn) > _lastUpdate
+                 orderby (s.UtcCreatedOn) descending
                  select s).ToList();
             if (newEvents.Count > 0)
-                _lastUpdate = (from r in newEvents select DateTime.Parse(r.UtcCreatedOn)).Max();
+                _lastUpdate = (from r in newEvents select (r.UtcCreatedOn)).Max();
             return newEvents;
         }
 
@@ -239,7 +239,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 //Get the user
                 var username = e.User != null ? e.User.Username : null;
                 var avatar = e.User != null ? e.User.Avatar : null;
-                var newsEl = new NewsFeedElement(username, avatar, DateTime.Parse(e.UtcCreatedOn), hello, small);
+                var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small);
                 if (e.Event == EventModel.Type.Commit && e.Repository != null)
                 {
                     newsEl.Tapped += () =>

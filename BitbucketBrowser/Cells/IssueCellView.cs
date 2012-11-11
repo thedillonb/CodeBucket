@@ -65,7 +65,7 @@ namespace BitbucketBrowser.UI
             Label1.Text = model.Status;
             Label2.Text = model.Priority;
             Label3.Text = assigned;
-            Label4.Text = DateTime.Parse(model.UtcLastUpdated).ToDaysAgo();
+            Label4.Text = model.UtcLastUpdated.ToDaysAgo();
             Number.Text = "#" + model.LocalId;
 
 

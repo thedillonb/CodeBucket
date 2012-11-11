@@ -44,13 +44,18 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             });
         }
         
-        protected override List<RepositoryDetailedModel> OnUpdate (bool forced)
+        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
         {
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
             
             if (selected == 0)
-                return Application.Client.Users[Username].GetInfo(forced).Repositories;
+            {
+                var userInfo = Application.Client.Users[Username].GetInfo(forced);
+                Application.Account.AvatarUrl = userInfo.User.Avatar;
+                BeginInvokeOnMainThread(() => Application.Account.Update());
+                return userInfo.Repositories;
+            }
             else if (selected == 1)
                 return Application.Client.Account.GetRepositories(forced);
             else

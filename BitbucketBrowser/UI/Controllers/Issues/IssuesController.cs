@@ -8,6 +8,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.UI.Controllers.Privileges;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {
@@ -22,6 +23,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private int _lastIndex;
         private LoadMoreElement _loadMore;
 
+        //The filter for this view
+        private FilterModel _filterModel = new FilterModel();
+        
+
         public IssuesController(string user, string slug)
             : base(true, true)
         {
@@ -30,10 +35,11 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             Style = UITableViewStyle.Plain;
             Title = "Issues";
             EnableSearch = true;
+            EnableFilter = true;
             AutoHideSearch = true;
             Root.UnevenRows = true;
 
-            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
                 var b = new IssueEditController
                 {
                     Username = User,
@@ -42,35 +48,34 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 };
                 NavigationController.PushViewController(b, true);
             });
+        }
 
-            var filterButton = new UIBarButtonItem(UIBarButtonSystemItem.Bookmarks, (s, e) => {
-
-
-            });
-
-            ToolbarItems = new UIBarButtonItem[] {
-                addButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                filterButton
-            };
+        private IEnumerable<Tuple<string, string>> FieldToUrl(string name, object o)
+        {
+            var ret = new LinkedList<Tuple<string, string>>();
+            foreach (var f in o.GetType().GetFields())
+                if ((bool)f.GetValue(o))
+                    ret.AddLast(new Tuple<string, string>(name, f.Name.ToLower()));
+            return ret;
         }
 
         private IssuesModel OnGetData(int start = 0, int limit = 30)
         {
-            return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit);
-        }
+            LinkedList<Tuple<string, string>> filter = null;
+            if (_filterModel != null)
+            {
+                filter = new LinkedList<Tuple<string, string>>();
+                if (_filterModel.Status != null && !_filterModel.Status.IsDefault())
+                {
+                    foreach (var a in FieldToUrl("status", _filterModel.Status)) filter.AddLast(a);
+                }
+                if (_filterModel.Kind != null && !_filterModel.Kind.IsDefault())
+                {
+                    foreach (var a in FieldToUrl("kind", _filterModel.Kind)) filter.AddLast(a);
+                }
+            }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationController.SetToolbarHidden(IsSearching, animated);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.SetToolbarHidden(true, animated);
-            
+           return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit, filter);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -130,7 +135,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Issues.Count;
                 var newEvents = (from s in moreEvents.Issues
-                                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                                 orderby s.UtcCreatedOn descending
                                  select s).ToList();
                 AddItems(newEvents, false);
 
@@ -206,14 +211,177 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             var newChanges =
                 (from s in issues.Issues
-                 where DateTime.Parse(s.UtcCreatedOn) > _lastUpdate
-                 orderby DateTime.Parse(s.UtcCreatedOn) descending
+                 where (s.UtcCreatedOn) > _lastUpdate
+                 orderby (s.UtcCreatedOn) descending
                  select s).ToList();
             if (newChanges.Count > 0)
-                _lastUpdate = (from r in newChanges select DateTime.Parse(r.UtcCreatedOn)).Max();
+                _lastUpdate = (from r in newChanges select (r.UtcCreatedOn)).Max();
 
             issues.Issues = newChanges;
             return issues;
+        }
+
+        private void ApplyFilter()
+        {
+            _firstIndex = _lastIndex = 0;
+            _lastUpdate = DateTime.MinValue;
+            Model = null;
+            Root[0].Clear();
+            Refresh(true);
+        }
+
+        protected override FilterController CreateFilterController()
+        {
+            return new Filter(this);
+        }
+
+        private class FilterModel
+        {
+            public string AssignedTo { get; set; }
+            public StatusModel Status { get; set; }
+            public KindModel Kind { get; set; }
+            public Order OrderBy { get; set; }
+            public bool Ascending { get; set; }
+
+            public FilterModel()
+            {
+                AssignedTo = "Anyone";
+                Kind = new KindModel();
+                Status = new StatusModel();
+                OrderBy = Order.Number;
+                Ascending = true;
+            }
+
+            public enum Order : byte { Number, Title, Version, Milestone, Component, Kind, Status };
+
+            public class StatusModel
+            {
+                public StatusModel Clone()
+                {
+                    return (StatusModel)this.MemberwiseClone();
+                }
+
+                public bool IsDefault()
+                {
+                    return New && Open && Resolved && OnHold && Invalid && Duplicate && Wontfix;
+                }
+
+                public bool New = true, Open = true, Resolved = true, OnHold = true, Invalid = true, Duplicate = true, Wontfix = true;
+            }
+
+            public class KindModel
+            {
+                public KindModel Clone()
+                {
+                    return (KindModel)this.MemberwiseClone();
+                }
+
+                public bool IsDefault()
+                {
+                    return Bug && Enhancement && Proposal && Task;
+                }
+
+                public bool Bug = true, Enhancement = true, Proposal = true, Task = true;
+            }
+
+            public class PriorityModel
+            {
+                public PriorityModel Clone()
+                {
+                    return (PriorityModel)this.MemberwiseClone();
+                }
+                
+                public bool IsDefault()
+                {
+                    return Trivial && Minor && Major && Critical && Blocker;
+                }
+
+                public bool Trivial = true, Minor = true, Major = true, Critical = true, Blocker = true;
+            }
+        }
+
+        private class Filter : FilterController
+        {
+            private IssuesController _parent;
+            private bool _descending = true;
+
+            private StyledElement _assignedTo;
+            private MultipleChoiceElement<FilterModel.StatusModel> _statusChoice;
+            private MultipleChoiceElement<FilterModel.KindModel> _kindChoice;
+            private StyledElement _orderby;
+            
+            public Filter(IssuesController parent)
+            {
+                _parent = parent;
+            }
+
+            public override void ApplyFilter()
+            {
+                var model = _parent._filterModel = new FilterModel();
+                model.AssignedTo = _assignedTo.Value;
+                model.Ascending = !_descending;
+                model.Status = _statusChoice.Obj;
+                model.Kind = _kindChoice.Obj;
+
+                _parent.ApplyFilter();
+            }
+
+            public override void ViewDidLoad()
+            {
+                base.ViewDidLoad();
+
+                _assignedTo = new StyledElement("Responsible", _parent._filterModel.AssignedTo, UITableViewCellStyle.Value1)
+                {
+                    Accessory = UITableViewCellAccessory.DisclosureIndicator,
+                };
+                _assignedTo.Tapped += () =>
+                {
+                    var privileges = new PrivilegesController
+                    {
+                        Username = _parent.User,
+                        RepoSlug = _parent.Slug,
+                        Primary = new UserModel { Username = _parent.User },
+                        Title = _assignedTo.Caption,
+                    };
+                    privileges.SelectedItem += obj =>
+                    {
+                        _assignedTo.Value = obj.User.Username;
+                        NavigationController.PopViewControllerAnimated(true);
+                    };
+                    NavigationController.PushViewController(privileges, true);
+                };
+                
+                //Load the root
+                var root = new RootElement(Title) {
+                    new Section("Filter") {
+                        _assignedTo,
+                        (_kindChoice = CreateMultipleChoiceElement("Kind", _parent._filterModel.Kind.Clone())),
+                        (_statusChoice = CreateMultipleChoiceElement("Status", _parent._filterModel.Status.Clone())),
+                    },
+                    new Section("Order By") {
+                        CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order)),
+                        (_orderby = new StyledElement("Type", _parent._filterModel.Ascending ? "Ascending" : "Descending", UITableViewCellStyle.Value1)),
+                    }
+                };
+                
+                //Assign the tapped event
+                _orderby.Tapped += ChangeDescendingAscending;
+                
+                Root = root;
+            }
+            
+            public override void ViewWillAppear(bool animated)
+            {
+                base.ViewWillAppear(animated);
+                TableView.ReloadData();
+            }
+            
+            private void ChangeDescendingAscending()
+            {
+                _descending = !_descending;
+                _orderby.Value = _descending ? "Descending" : "Ascending";
+                Root.Reload(_orderby, UITableViewRowAnimation.None);
+            }
         }
     }
 }

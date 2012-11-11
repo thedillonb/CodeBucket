@@ -36,7 +36,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
 
         protected override void OnRefresh()
         {
-            var lastUpdated = "Updated " + DateTime.Parse(Model.UtcLastUpdated).ToDaysAgo();
+            var lastUpdated = "Updated " + (Model.UtcLastUpdated).ToDaysAgo();
 
             _header = new HeaderView(View.Bounds.Width) { Title = Model.Name, Subtitle = lastUpdated };
 
@@ -88,7 +88,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
 
             sec1.Add(new SplitElement(new SplitElement.Row
                                           {
-                                              Text1 = DateTime.Parse(Model.UtcCreatedOn).ToString("MM/dd/yy"),
+                                              Text1 = (Model.UtcCreatedOn).ToString("MM/dd/yy"),
                                               Image1 = Images.Create,
                                               Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"),
                                               Image2 = Images.Fork

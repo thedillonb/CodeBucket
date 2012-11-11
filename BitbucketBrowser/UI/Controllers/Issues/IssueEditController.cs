@@ -253,7 +253,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             };
             element.Tapped += () =>
             {
-                var en = new EnumViewController(element.Caption, values, element.Value);
+                var en = new RadioChoiceViewController(element.Caption, values, element.Value);
                 en.ValueSelected += obj =>
                 {
                     element.Value = obj;

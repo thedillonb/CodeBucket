@@ -79,6 +79,13 @@ namespace BitbucketBrowser
 
         public string Password { get; set; }
 
+        public string AvatarUrl { get; set; }
+
+        public void Update()
+        {
+            Database.Main.Update(this);
+        }
+
         public override string ToString()
         {
             return Username;

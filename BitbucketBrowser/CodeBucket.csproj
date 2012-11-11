@@ -156,13 +156,13 @@
     <Compile Include="UI\Controllers\Changesets\ChangesetInfoController.cs" />
     <Compile Include="UI\Controllers\Changesets\ChangesetController.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="UI\Controllers\Accounts\MyAccountsController.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
     <Compile Include="UI\Controllers\Source\SourceInfoController.cs" />
     <Compile Include="UI\Controllers\Source\SourceController.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Controllers\HelpViewController.cs" />
     <Compile Include="Controllers\FileSourceController.cs" />
+    <Compile Include="UI\Controllers\Accounts\SettingsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />

@@ -58,11 +58,10 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
         {
             MBProgressHUD hud = null;
             bool successful = false;
-            string username = null, password = null;
+            string username = null, password = null, avatarUrl = null;
 
             //The nice hud
-            InvokeOnMainThread(delegate
-            {
+            InvokeOnMainThread(delegate {
                 username = User.Text;
                 password = Password.Text;
                 hud = new MBProgressHUD(View) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Logging In..."};
@@ -75,12 +74,14 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                 var client = new BitbucketSharp.Client(username, password);
                 client.Account.SSHKeys.GetKeys();
                 successful = true;
+                
+                var userInfo = client.Account.GetInfo();
+                avatarUrl = userInfo.User.Avatar;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error = " + e.Message);
             }
-
 
             InvokeOnMainThread(delegate
             {
@@ -94,7 +95,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                     return;
                 }
 
-                var newAccount = new Account { Username = User.Text, Password = Password.Text };
+                var newAccount = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
 
                 if (Application.Accounts.Exists(newAccount))
                 {

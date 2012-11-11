@@ -38,7 +38,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
         protected override void OnRefresh()
         {
             var sec = new Section();
-            _header.Subtitle = "Commited " + DateTime.Parse(Model.Utctimestamp).ToDaysAgo();
+            _header.Subtitle = "Commited " + (Model.Utctimestamp).ToDaysAgo();
             
             var d = new MultilinedElement(Model.Author, Model.Message);
             sec.Add(d);

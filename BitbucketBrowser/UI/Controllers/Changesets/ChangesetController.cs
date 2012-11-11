@@ -42,7 +42,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
                 var moreEvents = OnGetData(_lastNode);
                 var newChanges =
                     (from s in moreEvents.Changesets
-                     orderby DateTime.Parse(s.Utctimestamp) descending
+                     orderby (s.Utctimestamp) descending
                      select s).ToList();
                 
                 //Always remove the first node since it should already be listed...
@@ -86,7 +86,7 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var sec = new Section();
             changes.ForEach(x => {
                 var desc = (x.Message ?? "").Replace("\n", " ").Trim();
-                var el = new NameTimeStringElement { Name = x.Author, Time = DateTime.Parse(x.Utctimestamp), String = desc, Lines = 4 };
+                var el = new NameTimeStringElement { Name = x.Author, Time = (x.Utctimestamp), String = desc, Lines = 4 };
                 el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoController(User, Slug, x.Node), true);
                 sec.Add(el);
             });
@@ -120,11 +120,11 @@ namespace BitbucketBrowser.UI.Controllers.Changesets
             var changes = OnGetData();
             var newChanges =
                          (from s in changes.Changesets
-                          where DateTime.Parse(s.Utctimestamp) > _lastUpdate
-                          orderby DateTime.Parse(s.Utctimestamp) descending
+                          where (s.Utctimestamp) > _lastUpdate
+                          orderby (s.Utctimestamp) descending
                           select s).ToList();
             if (newChanges.Count > 0)
-                _lastUpdate = (from r in newChanges select DateTime.Parse(r.Utctimestamp)).Max();
+                _lastUpdate = (from r in newChanges select (r.Utctimestamp)).Max();
 
             if (_lastNode == null)
             {

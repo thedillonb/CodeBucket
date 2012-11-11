@@ -42,6 +42,12 @@ namespace BitbucketBrowser.UI.Controllers
             _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
             _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
             BeginInvokeOnMainThread(() => _header.SetNeedsDisplay());
+
+            if (Username.Equals(Application.Account.Username, System.StringComparison.OrdinalIgnoreCase))
+            {
+                Application.Account.AvatarUrl = Model.User.Avatar;
+                BeginInvokeOnMainThread(() => Application.Account.Update());
+            }
         }
 
         protected override UsersModel OnUpdate(bool forced)

@@ -21,7 +21,6 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             Username = username;
             AutoHideSearch = true;
             EnableSearch = true;
-            EnableFilter = true;
             ShowOwner = true;
         }
 
@@ -53,11 +52,12 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             return Application.Client.Users[Username].GetInfo(forced).Repositories;
         }
 
-        protected override FilterController CreateFilterController()
-        {
-            return new Filter();
-        }
+//        protected override FilterController CreateFilterController()
+//        {
+//            return new Filter();
+//        }
 
+        /*
         public class Filter : FilterController
         {
             private StyledElement _orderby;
@@ -95,5 +95,6 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                 Root.Reload(_orderby, UITableViewRowAnimation.None);
             }
         }
+        */
     }
 }

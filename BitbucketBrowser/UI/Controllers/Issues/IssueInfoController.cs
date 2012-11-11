@@ -150,7 +150,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             BeginInvokeOnMainThread(() => { NavigationItem.RightBarButtonItem.Enabled = true; });
 
             _header.Title = Model.Issue.Title;
-            _header.Subtitle = "Updated " + DateTime.Parse(Model.Issue.UtcLastUpdated).ToDaysAgo();
+            _header.Subtitle = "Updated " + (Model.Issue.UtcLastUpdated).ToDaysAgo();
             _split1.Value.Text1 = Model.Issue.Status;
             _split1.Value.Text2 = Model.Issue.Priority;
             _split2.Value.Text1 = Model.Issue.Metadata.Kind;
@@ -172,13 +172,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             }
 
             var comments = new List<Element>(Model.Comments.Count);
-            Model.Comments.OrderBy(x => DateTime.Parse(x.UtcCreatedOn)).ToList().ForEach(x =>
+            Model.Comments.OrderBy(x => (x.UtcCreatedOn)).ToList().ForEach(x =>
             {
                 if (!string.IsNullOrEmpty(x.Content))
                     comments.Add(new CommentElement
                                      {
                                          Name = x.AuthorInfo.Username,
-                                         Time = DateTime.Parse(x.UtcCreatedOn),
+                                         Time = (x.UtcCreatedOn),
                                          String = x.Content,
                                          Image = Images.Anonymous,
                                          ImageUri = new Uri(x.AuthorInfo.Avatar),
