@@ -66,7 +66,6 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             aboutSection.Add(new StyledElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))));
             aboutSection.Add(new StyledElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString()));
 
-            //TableView.TableFooterView.Hidden = s.Count == 0;
             Root = new RootElement(Title) { accountSection, supportSection, aboutSection };
         }
 
@@ -83,11 +82,6 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 
             var username = styledElement.Caption;
             Application.Accounts.Remove(username);
-
-            if (Application.Accounts.Count == 0)
-            {
-                TableView.TableFooterView.Hidden = true;
-            }
 
             if ((Application.Accounts.Count == 0) ||
                 (String.Compare(Application.Account.Username, username, true) == 0))
