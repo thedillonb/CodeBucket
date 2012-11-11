@@ -52,8 +52,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
 
-            NavigationItem.RightBarButtonItem = (_editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, HandleEditButton));
-            _editButton.Enabled = false;
+            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, HandleEditButton) { Enabled = false };
         }
 
         private void HandleEditButton(object sender, EventArgs args)
@@ -163,7 +162,13 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
             Title = Uri.UnescapeDataString(Web.EvaluateJavascript("document.title"));
 
             if (CurrentWikiPage(Web.Request) != null)
+            {
                 _editButton.Enabled = true;
+                if (NavigationItem.RightBarButtonItem == null)
+                    NavigationItem.SetRightBarButtonItem(_editButton, true);
+            }
+            else
+                NavigationItem.SetRightBarButtonItem(null, true);
         }
 
         private string CurrentWikiPage(NSUrlRequest request)
