@@ -18,6 +18,14 @@ namespace BitbucketBrowser
 
         public static void SetUser(Account account)
         {
+            if (account == null)
+            {
+                Account = null;
+                Client = null;
+                Accounts.SetDefault(null);
+                return;
+            }
+
             Account = account;
             Accounts.SetDefault(Account);
             Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 

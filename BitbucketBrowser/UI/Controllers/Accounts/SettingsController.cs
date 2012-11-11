@@ -35,11 +35,10 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                 t.Tapped += () => { 
                     Application.SetUser(thisAccount);
                     DismissModalViewControllerAnimated(true);
-                    
                 };
                 
                 
-                if (string.Compare(account.Username, Application.Account.Username, true) == 0)
+                if (Application.Account != null && string.Compare(account.Username, Application.Account.Username, true) == 0)
                 {
                     t.Accessory = UITableViewCellAccessory.Checkmark;
                 }
@@ -53,8 +52,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 
             var supportSection = new Section("Support");
             supportSection.Add(new StyledElement("Technical Support", () => {
-                var web = new WebViewController(true) { Title = "Help" };
-                web.Web.LoadRequest(new NSUrlRequest(new NSUrl("http://support.codebucket.dillonbuchanan.com")));
+                var web = new BitbucketBrowser.Controllers.HelpViewController();
                 NavigationController.PushViewController(web, true);
             }));
 
@@ -88,6 +86,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             {
                 //Block the ability to go back!
                 NavigationItem.LeftBarButtonItem.Enabled = false;
+                Application.SetUser(null);
                 return;
             }
         }

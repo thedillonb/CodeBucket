@@ -59,7 +59,10 @@ namespace BitbucketBrowser
 
         public void SetDefault(Account a)
         {
-            Utilities.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
+            if (a == null)
+                Utilities.Defaults.RemoveObject("DEFAULT_ACCOUNT");
+            else
+                Utilities.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
             Utilities.Defaults.Synchronize();
         }
 

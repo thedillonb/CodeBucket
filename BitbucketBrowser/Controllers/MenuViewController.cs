@@ -78,7 +78,6 @@ namespace BitbucketBrowser.Controllers
                 new NavElement("Repositories", () => DoShit(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo),
                 new NavElement("Groups", () => DoShit(new GroupController(Application.Account.Username, false) { Title = "Groups" }), Images.Group),
                 new NavElement("Explore", () => DoShit(new ExploreController() { Title = "Explore" }), UIImage.FromBundle("/Images/Tabs/search")),
-                //new NavElement("Help", () => DoShit(new HelpViewController()), Images.Help),
             });
 
             TableView.BackgroundColor = UIColor.Clear;
@@ -103,7 +102,7 @@ namespace BitbucketBrowser.Controllers
             Title = Root.Caption;
 
             //Grab the avatar!
-            if (Application.Account.AvatarUrl == null)
+            if (string.IsNullOrEmpty(Application.Account.AvatarUrl))
             {
                 ThreadPool.QueueUserWorkItem(delegate {
                     try 
@@ -114,6 +113,7 @@ namespace BitbucketBrowser.Controllers
                     }
                     catch
                     {
+                        //Swallow this exception...
                     }
                 });
             }
