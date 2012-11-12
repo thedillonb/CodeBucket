@@ -27,15 +27,17 @@ namespace BitbucketBrowser.UI.Controllers.Followers
 
         protected override void OnRefresh()
         {
-            if (Model.Count == 0)
-                return;
-
             var sec = new Section();
-            Model.ForEach(s => {
-                StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
-                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
-                sec.Add(sse);
-            });
+            if (Model.Count == 0)
+                sec.Add(new NoItemsElement("No Followers"));
+            else
+            {
+                Model.ForEach(s => {
+                    StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
+                    sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+                    sec.Add(sse);
+                });
+            }
 
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };

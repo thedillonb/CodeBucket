@@ -29,16 +29,11 @@ namespace BitbucketBrowser.UI.Controllers.Groups
 		
         protected override void OnRefresh()
         {
-            if (Model.Count == 0)
-                return;
-
             var sec = new Section();
-            Model.ForEach(g =>
-            {
-                var el = new StyledElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))
-                { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-                sec.Add(el);
-            });
+            if (Model.Count == 0)
+                sec.Add(new NoItemsElement("No Groups"));
+            else
+                Model.ForEach(g => sec.Add(new StyledElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))));
 
             InvokeOnMainThread(delegate {
                 var root = new RootElement(Title) { sec };

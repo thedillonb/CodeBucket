@@ -27,19 +27,10 @@ namespace BitbucketBrowser.UI.Controllers.Branches
         protected override void OnRefresh()
         {
             var sec = new Section();
-
             if (Model.Count == 0)
-            {
                 sec.Add(new NoItemsElement("No Branches"));
-            }
             else
-            {
-                Model.ForEach(x => {
-                    var element = new StyledElement(x.Branch);
-                    element.Tapped += () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true);
-                    sec.Add(element);
-                });
-            }
+                Model.ForEach(x => sec.Add(new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))));
            
             InvokeOnMainThread(delegate {
                 var root = new RootElement(Title) { sec };

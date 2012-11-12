@@ -22,14 +22,21 @@ namespace BitbucketBrowser.UI.Controllers.Groups
             AutoHideSearch = true;
         }
         
-        protected override void OnRefresh ()
+        protected override void OnRefresh()
         {
             var sec = new Section();
-            Model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
-                StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
-                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
-                sec.Add(sse);
-            });
+            if (Model.Members.Count == 0)
+            {
+                sec.Add(new NoItemsElement("No Members"));
+            }
+            else
+            {
+                Model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
+                    StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
+                    sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+                    sec.Add(sse);
+                });
+            }
             
             InvokeOnMainThread(delegate {
                 var root = new RootElement(Title) { sec };

@@ -35,7 +35,8 @@ namespace BitbucketBrowser.UI.Controllers.Source
         {
             var sec = new Section();
             Model.Directories.ForEach(d => sec.Add(new StyledElement(d,
-                                                                     () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + d), true),
+                                                                     () => NavigationController.PushViewController(
+                                                                            new SourceController(Username, Slug, Branch, Path + "/" + d), true),
                                                                      Images.Folder)));
 
             Model.Files.ForEach(f =>

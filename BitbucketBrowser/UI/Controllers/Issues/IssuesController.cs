@@ -22,10 +22,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private int _firstIndex;
         private int _lastIndex;
         private LoadMoreElement _loadMore;
+        private List<IssueModel> _loadedIssues = new List<IssueModel>(50);
 
         //The filter for this view
         private FilterModel _filterModel = new FilterModel();
-        
 
         public IssuesController(string user, string slug)
             : base(true, true)
@@ -50,6 +50,19 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             });
         }
 
+        private IssueElement CreateElement(IssueModel model)
+        {
+            var el = new IssueElement(model);
+            el.Tapped += () =>
+            {
+                //Make sure the first responder is gone.
+                View.EndEditing(true);
+                var info = new IssueInfoController(User, Slug, model.LocalId) { ModelChanged = newModel => ChildChangedModel(el, newModel) };
+                NavigationController.PushViewController(info, true);
+            };
+            return el;
+        }
+
         private IEnumerable<Tuple<string, string>> FieldToUrl(string name, object o)
         {
             var ret = new LinkedList<Tuple<string, string>>();
@@ -59,7 +72,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             return ret;
         }
 
-        private IssuesModel OnGetData(int start = 0, int limit = 30)
+        private IssuesModel OnGetData(int start = 0, int limit = 50)
         {
             LinkedList<Tuple<string, string>> filter = null;
             if (_filterModel != null)
@@ -73,6 +86,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 {
                     foreach (var a in FieldToUrl("kind", _filterModel.Kind)) filter.AddLast(a);
                 }
+
+                filter.AddLast(new Tuple<string, string>("sort", _filterModel.OrderBy.ToString().ToLower()));
+                Console.WriteLine("Sorting: " + _filterModel.OrderBy.ToString());
             }
 
            return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit, filter);
@@ -95,18 +111,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             }
         }
 
-        private IssueElement CreateElement(IssueModel model)
-        {
-            var el = new IssueElement(model);
-            el.Tapped += () =>
-            {
-                //Make sure the first responder is gone.
-                View.EndEditing(true);
-                var info = new IssueInfoController(User, Slug, model.LocalId) { ModelChanged = newModel => ChildChangedModel(el, newModel) };
-                NavigationController.PushViewController(info, true);
-            };
-            return el;
-        }
 
         private void ChildChangedModel(IssueElement element, IssueModel changedModel)
         {
@@ -134,9 +138,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Issues.Count;
-                var newEvents = (from s in moreEvents.Issues
-                                 orderby s.UtcCreatedOn descending
-                                 select s).ToList();
+                var newEvents = (from s in moreEvents.Issues select s).ToList();
                 AddItems(newEvents, false);
 
                 //Should never happen. Sanity check..
@@ -164,6 +166,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         protected override void OnRefresh()
         {
+            InvokeOnMainThread(() => Root.Clear());
             AddItems(Model.Issues);
         }
 
@@ -205,20 +208,9 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         protected override IssuesModel OnUpdate(bool forced)
         {
-            var issues = OnGetData();
-            _firstIndex = issues.Count;
-            _lastIndex = issues.Issues.Count;
-
-            var newChanges =
-                (from s in issues.Issues
-                 where (s.UtcCreatedOn) > _lastUpdate
-                 orderby (s.UtcCreatedOn) descending
-                 select s).ToList();
-            if (newChanges.Count > 0)
-                _lastUpdate = (from r in newChanges select (r.UtcCreatedOn)).Max();
-
-            issues.Issues = newChanges;
-            return issues;
+            //forced doesnt matter. Never cached.
+            //Update everything we have here!
+            return OnGetData();
         }
 
         private void ApplyFilter()
@@ -226,8 +218,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             _firstIndex = _lastIndex = 0;
             _lastUpdate = DateTime.MinValue;
             Model = null;
-            Root[0].Clear();
-            Refresh(true);
+            Root.Clear();
+            Refresh();
         }
 
         protected override FilterController CreateFilterController()
@@ -240,19 +232,35 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             public string AssignedTo { get; set; }
             public StatusModel Status { get; set; }
             public KindModel Kind { get; set; }
+            public PriorityModel Priority { get; set; }
             public Order OrderBy { get; set; }
-            public bool Ascending { get; set; }
+            //public bool Ascending { get; set; }
 
             public FilterModel()
             {
                 AssignedTo = "Anyone";
                 Kind = new KindModel();
                 Status = new StatusModel();
-                OrderBy = Order.Number;
-                Ascending = true;
+                Priority = new PriorityModel();
+                OrderBy = Order.Local_Id;
+                //Ascending = true;
             }
 
-            public enum Order : byte { Number, Title, Version, Milestone, Component, Kind, Status };
+            public enum Order : byte 
+            { 
+                [EnumDescription("Number")]
+                Local_Id, 
+                Title,
+                [EnumDescription("Last Updated")]
+                Utc_Last_Updated, 
+                [EnumDescription("Created Date")]
+                Created_On, 
+                Version, 
+                Milestone, 
+                Component, 
+                Status, 
+                Priority 
+            };
 
             public class StatusModel
             {
@@ -303,12 +311,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private class Filter : FilterController
         {
             private IssuesController _parent;
-            private bool _descending = true;
+            //private bool _descending = true;
 
             private StyledElement _assignedTo;
             private MultipleChoiceElement<FilterModel.StatusModel> _statusChoice;
             private MultipleChoiceElement<FilterModel.KindModel> _kindChoice;
-            private StyledElement _orderby;
+            private MultipleChoiceElement<FilterModel.PriorityModel> _priorityChoice;
+            private EnumChoiceElement _orderby;
             
             public Filter(IssuesController parent)
             {
@@ -319,9 +328,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             {
                 var model = _parent._filterModel = new FilterModel();
                 model.AssignedTo = _assignedTo.Value;
-                model.Ascending = !_descending;
+                //model.Ascending = !_descending;
                 model.Status = _statusChoice.Obj;
                 model.Kind = _kindChoice.Obj;
+                model.OrderBy = (FilterModel.Order)_orderby.Obj;
 
                 _parent.ApplyFilter();
             }
@@ -357,15 +367,12 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                         _assignedTo,
                         (_kindChoice = CreateMultipleChoiceElement("Kind", _parent._filterModel.Kind.Clone())),
                         (_statusChoice = CreateMultipleChoiceElement("Status", _parent._filterModel.Status.Clone())),
+                        (_priorityChoice = CreateMultipleChoiceElement("Priority", _parent._filterModel.Priority.Clone())),
                     },
                     new Section("Order By") {
-                        CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order)),
-                        (_orderby = new StyledElement("Type", _parent._filterModel.Ascending ? "Ascending" : "Descending", UITableViewCellStyle.Value1)),
+                        (_orderby = CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order))),
                     }
                 };
-                
-                //Assign the tapped event
-                _orderby.Tapped += ChangeDescendingAscending;
                 
                 Root = root;
             }
@@ -375,13 +382,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 base.ViewWillAppear(animated);
                 TableView.ReloadData();
             }
-            
-            private void ChangeDescendingAscending()
-            {
-                _descending = !_descending;
-                _orderby.Value = _descending ? "Descending" : "Ascending";
-                Root.Reload(_orderby, UITableViewRowAnimation.None);
-            }
+//            
+//            private void ChangeDescendingAscending()
+//            {
+//                _descending = !_descending;
+//                _orderby.Value = _descending ? "Descending" : "Ascending";
+//                Root.Reload(_orderby, UITableViewRowAnimation.None);
+//            }
         }
     }
 }
