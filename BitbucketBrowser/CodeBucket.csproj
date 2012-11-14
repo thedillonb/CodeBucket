@@ -163,6 +163,7 @@
     <Compile Include="Controllers\HelpViewController.cs" />
     <Compile Include="Controllers\FileSourceController.cs" />
     <Compile Include="UI\Controllers\Accounts\SettingsController.cs" />
+    <Compile Include="UI\Controllers\Issues\SingleItemSelectViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -319,6 +320,10 @@
     <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
+      <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
+      <Name>RestSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

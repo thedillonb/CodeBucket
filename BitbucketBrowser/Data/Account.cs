@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using MonoTouch;
+using BitbucketBrowser.UI.Controllers.Issues;
+using BitbucketBrowser.UI.Controllers.Repositories;
 
 namespace BitbucketBrowser 
 {
@@ -44,7 +46,7 @@ namespace BitbucketBrowser
 
         public void Remove(Account a)
         {
-            Database.Main.Delete(a);
+            a.Delete();
         }
 
         public void Remove(string username)
@@ -83,6 +85,53 @@ namespace BitbucketBrowser
         public string Password { get; set; }
 
         public string AvatarUrl { get; set; }
+
+
+        #region Filters
+
+        private IssuesController.FilterModel _issueFilterModel;
+        [Ignore]
+        public IssuesController.FilterModel IssueFilterObject
+        {
+            get
+            {
+                if (_issueFilterModel == null)
+                    _issueFilterModel = MonoTouch.Configurations.Load<IssuesController.FilterModel>(Username, "IssueFilter");
+                return _issueFilterModel;
+            }
+            set
+            {
+                _issueFilterModel = value;
+                MonoTouch.Configurations.Save(Username, "IssueFilter", _issueFilterModel);
+            }
+        }
+
+        private RepositoryController.FilterModel _repoFilterModel;
+        [Ignore]
+        public RepositoryController.FilterModel RepoFilterObject
+        {
+            get
+            {
+                if (_repoFilterModel == null)
+                    _repoFilterModel = MonoTouch.Configurations.Load<RepositoryController.FilterModel>(Username, "RepoFilter");
+                return _repoFilterModel;
+            }
+            set
+            {
+                _repoFilterModel = value;
+                MonoTouch.Configurations.Save(Username, "RepoFilter", _repoFilterModel);
+            }
+        }
+
+        #endregion
+
+        public void Delete()
+        {
+            //Delete configurations
+            MonoTouch.Configurations.Delete(Username);
+
+            Database.Main.Delete(this);
+        }
 
         public void Update()
         {

@@ -62,6 +62,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!");
             aboutSection.Add(new StyledElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))));
+            aboutSection.Add(new StyledElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))));
             aboutSection.Add(new StyledElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString()));
 
             Root = new RootElement(Title) { accountSection, supportSection, aboutSection };

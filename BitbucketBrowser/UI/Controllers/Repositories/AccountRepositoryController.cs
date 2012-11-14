@@ -37,7 +37,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             });
             
             //Sort them by name
-            sec.Elements = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name).ToList();
+            OrderElements(sec);
 
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };

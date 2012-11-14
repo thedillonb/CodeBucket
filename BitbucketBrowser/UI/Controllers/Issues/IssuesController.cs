@@ -17,15 +17,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         public string User { get; private set; }
         public string Slug { get; private set; }
 
-        private DateTime _lastUpdate = DateTime.MinValue;
-        private bool _needsUpdate;
+        private IssueModel _updateIssue;
         private int _firstIndex;
         private int _lastIndex;
         private LoadMoreElement _loadMore;
-        private List<IssueModel> _loadedIssues = new List<IssueModel>(50);
 
         //The filter for this view
-        private FilterModel _filterModel = new FilterModel();
+        private FilterModel _filterModel = Application.Account.IssueFilterObject;
 
         public IssuesController(string user, string slug)
             : base(true, true)
@@ -44,7 +42,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 {
                     Username = User,
                     RepoSlug = Slug,
-                    Success = issue => { _needsUpdate = true; }
+                    Success = issue => { _updateIssue = issue; }
                 };
                 NavigationController.PushViewController(b, true);
             });
@@ -72,42 +70,68 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             return ret;
         }
 
-        private IssuesModel OnGetData(int start = 0, int limit = 50)
+        private IssuesModel OnGetData(int start = 0, int limit = 50, IEnumerable<Tuple<string, string>> additionalFilters = null)
         {
-            LinkedList<Tuple<string, string>> filter = null;
+            LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();
             if (_filterModel != null)
             {
-                filter = new LinkedList<Tuple<string, string>>();
                 if (_filterModel.Status != null && !_filterModel.Status.IsDefault())
-                {
                     foreach (var a in FieldToUrl("status", _filterModel.Status)) filter.AddLast(a);
-                }
                 if (_filterModel.Kind != null && !_filterModel.Kind.IsDefault())
-                {
                     foreach (var a in FieldToUrl("kind", _filterModel.Kind)) filter.AddLast(a);
+                if (_filterModel.Priority != null && !_filterModel.Priority.IsDefault())
+                    foreach (var a in FieldToUrl("priority", _filterModel.Priority)) filter.AddLast(a);
+                if (!string.IsNullOrEmpty(_filterModel.AssignedTo))
+                {
+                    if (_filterModel.AssignedTo.Equals("unassigned"))
+                        filter.AddLast(new Tuple<string, string>("responsible", ""));
+                    else
+                        filter.AddLast(new Tuple<string, string>("responsible", _filterModel.AssignedTo));
                 }
+                if (!string.IsNullOrEmpty(_filterModel.ReportedBy))
+                    filter.AddLast(new Tuple<string, string>("reported_by", _filterModel.ReportedBy));
 
-                filter.AddLast(new Tuple<string, string>("sort", _filterModel.OrderBy.ToString().ToLower()));
+                filter.AddLast(new Tuple<string, string>("sort", ((FilterModel.Order)_filterModel.OrderBy).ToString().ToLower()));
                 Console.WriteLine("Sorting: " + _filterModel.OrderBy.ToString());
             }
 
+            if (additionalFilters != null)
+                foreach (var f in additionalFilters)
+                    filter.AddLast(f);
+
            return Application.Client.Users[User].Repositories[Slug].Issues.GetIssues(start, limit, filter);
+        }
+
+        private bool DoesIssueBelong(IssueModel model)
+        {
+            if (_filterModel == null)
+                return true;
+
+            if (_filterModel.Status != null && !_filterModel.Status.IsDefault())
+                if (!FieldToUrl(null, _filterModel.Status).Any(x => x.Item2.Equals(model.Status)))
+                    return false;
+            if (_filterModel.Kind != null && !_filterModel.Kind.IsDefault())
+                if (!FieldToUrl(null, _filterModel.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
+                    return false;
+            if (_filterModel.Priority != null && !_filterModel.Priority.IsDefault())
+                if (!FieldToUrl(null, _filterModel.Priority).Any(x => x.Item2.Equals(model.Priority)))
+                    return false;
+
+
+            return true;
         }
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            if (_needsUpdate)
+            if (_updateIssue != null)
             {
-                //Item successfully added. We'll just refresh
-                if (Root != null && Root.Count > 0 && Root[0].Count > 0)
+                if (DoesIssueBelong(_updateIssue))
                 {
-                    TableView.ScrollToRow(NSIndexPath.FromRowSection(0, 0), UITableViewScrollPosition.Top, true);
+                    AddItems(new List<IssueModel>(1) { _updateIssue }, true);
+                    TableView.ScrollToRow(NSIndexPath.FromRowSection(0, 0), UITableViewScrollPosition.Middle, true);
                 }
-
-                Model = null;
-                Refresh();
-                _needsUpdate = false;
+                _updateIssue = null;
             }
         }
 
@@ -139,7 +163,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 _firstIndex = currentCount;
                 _lastIndex += moreEvents.Issues.Count;
                 var newEvents = (from s in moreEvents.Issues select s).ToList();
-                AddItems(newEvents, false);
+                AddItems(newEvents);
 
                 //Should never happen. Sanity check..
                 if (_loadMore != null && _firstIndex == _lastIndex)
@@ -170,15 +194,29 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             AddItems(Model.Issues);
         }
 
-        private void AddItems(List<IssueModel> issues, bool prepend = true)
+        private void AddItems(List<IssueModel> issues, bool prepend = false)
         {
             if (issues.Count == 0)
                 return;
 
-            var sec = new Section();
-            issues.ForEach(x => sec.Add(CreateElement(x)));
+            Section sec;
+            if (Root != null && Root.Count > 0)
+                sec = Root[0];
+            else
+                sec = new Section();
 
-            if (sec.Count == 0)
+            int inserts = 0;
+            issues.ForEach(x => {
+                if (sec.Elements.Any(y => ((IssueElement)y).Model.LocalId == x.LocalId))
+                    return;
+                if (prepend)
+                    sec.Insert(0, CreateElement(x));
+                else
+                    sec.Add(CreateElement(x));
+                inserts++;
+            });
+
+            if (sec.Count == 0 || inserts == 0)
                 return;
 
             InvokeOnMainThread(delegate
@@ -196,13 +234,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
                     Root = r;
                 }
-                else
-                {
-                    if (prepend)
-                        Root.Insert(0, sec);
-                    else
-                        Root.Insert(Root.Count - 1, sec);
-                }
             });
         }
 
@@ -210,13 +241,16 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         {
             //forced doesnt matter. Never cached.
             //Update everything we have here!
-            return OnGetData();
+            var currentCount = OnGetData(0, 0).Count;
+            var moreEvents = OnGetData();
+            _firstIndex = currentCount;
+            _lastIndex = moreEvents.Issues.Count;
+            return moreEvents;
         }
 
         private void ApplyFilter()
         {
             _firstIndex = _lastIndex = 0;
-            _lastUpdate = DateTime.MinValue;
             Model = null;
             Root.Clear();
             Refresh();
@@ -227,26 +261,27 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             return new Filter(this);
         }
 
-        private class FilterModel
+        public class FilterModel
         {
             public string AssignedTo { get; set; }
+            public string ReportedBy { get; set; }
             public StatusModel Status { get; set; }
             public KindModel Kind { get; set; }
             public PriorityModel Priority { get; set; }
-            public Order OrderBy { get; set; }
-            //public bool Ascending { get; set; }
+            public List<string> Components { get; set; }
+            public List<string> Versions { get; set; }
+            public List<string> Milestones { get; set; }
+            public int OrderBy { get; set; }
 
             public FilterModel()
             {
-                AssignedTo = "Anyone";
                 Kind = new KindModel();
                 Status = new StatusModel();
                 Priority = new PriorityModel();
-                OrderBy = Order.Local_Id;
-                //Ascending = true;
+                OrderBy = (int)Order.Local_Id;
             }
 
-            public enum Order : byte 
+            public enum Order : int
             { 
                 [EnumDescription("Number")]
                 Local_Id, 
@@ -313,7 +348,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             private IssuesController _parent;
             //private bool _descending = true;
 
-            private StyledElement _assignedTo;
+            private EntryElement _assignedTo;
+            private EntryElement _reportedBy;
             private MultipleChoiceElement<FilterModel.StatusModel> _statusChoice;
             private MultipleChoiceElement<FilterModel.KindModel> _kindChoice;
             private MultipleChoiceElement<FilterModel.PriorityModel> _priorityChoice;
@@ -324,53 +360,47 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 _parent = parent;
             }
 
+            private FilterModel CreateFilterModel()
+            {
+                var model = new FilterModel();
+                model.AssignedTo = _assignedTo.Value;
+                model.ReportedBy = _reportedBy.Value;
+                model.Status = _statusChoice.Obj;
+                model.Priority = _priorityChoice.Obj;
+                model.Kind = _kindChoice.Obj;
+                model.OrderBy = _orderby.Obj;
+                return model;
+            }
+
             public override void ApplyFilter()
             {
-                var model = _parent._filterModel = new FilterModel();
-                model.AssignedTo = _assignedTo.Value;
-                //model.Ascending = !_descending;
-                model.Status = _statusChoice.Obj;
-                model.Kind = _kindChoice.Obj;
-                model.OrderBy = (FilterModel.Order)_orderby.Obj;
-
+                _parent._filterModel = CreateFilterModel();
                 _parent.ApplyFilter();
             }
 
             public override void ViewDidLoad()
             {
                 base.ViewDidLoad();
-
-                _assignedTo = new StyledElement("Responsible", _parent._filterModel.AssignedTo, UITableViewCellStyle.Value1)
-                {
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator,
-                };
-                _assignedTo.Tapped += () =>
-                {
-                    var privileges = new PrivilegesController
-                    {
-                        Username = _parent.User,
-                        RepoSlug = _parent.Slug,
-                        Primary = new UserModel { Username = _parent.User },
-                        Title = _assignedTo.Caption,
-                    };
-                    privileges.SelectedItem += obj =>
-                    {
-                        _assignedTo.Value = obj.User.Username;
-                        NavigationController.PopViewControllerAnimated(true);
-                    };
-                    NavigationController.PushViewController(privileges, true);
-                };
                 
                 //Load the root
                 var root = new RootElement(Title) {
                     new Section("Filter") {
-                        _assignedTo,
+                        (_assignedTo = new InputElement("Assigned To", "Anybody", _parent._filterModel.AssignedTo) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
+                        (_reportedBy = new InputElement("Reported By", "Anybody", _parent._filterModel.ReportedBy) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                         (_kindChoice = CreateMultipleChoiceElement("Kind", _parent._filterModel.Kind.Clone())),
                         (_statusChoice = CreateMultipleChoiceElement("Status", _parent._filterModel.Status.Clone())),
                         (_priorityChoice = CreateMultipleChoiceElement("Priority", _parent._filterModel.Priority.Clone())),
                     },
                     new Section("Order By") {
                         (_orderby = CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order))),
+                    },
+                    new Section() {
+                        new StyledElement("Save as Default", () => {  
+                            var model = CreateFilterModel();
+                            Application.Account.IssueFilterObject = model;
+                            this.DismissModalViewControllerAnimated(true); 
+                            this.ApplyFilter();
+                        }),
                     }
                 };
                 
@@ -382,13 +412,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 base.ViewWillAppear(animated);
                 TableView.ReloadData();
             }
-//            
-//            private void ChangeDescendingAscending()
-//            {
-//                _descending = !_descending;
-//                _orderby.Value = _descending ? "Descending" : "Ascending";
-//                Root.Reload(_orderby, UITableViewRowAnimation.None);
-//            }
         }
     }
 }

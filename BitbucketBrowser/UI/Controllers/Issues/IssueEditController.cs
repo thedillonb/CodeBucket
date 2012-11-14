@@ -273,12 +273,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private void PopulateRoot()
         {
-            _title = new EntryElement("Title", string.Empty, string.Empty)
-            {
-                TitleFont = UIFont.BoldSystemFontOfSize(15f),
-                EntryFont = UIFont.SystemFontOfSize(14f),
-                TitleColor = UIColor.FromRGB(41, 41, 41),
-            };
+            _title = new InputElement("Title", string.Empty, string.Empty);
 
             _assignedTo = new StyledElement("Responsible", Unassigned, UITableViewCellStyle.Value1)
             {
@@ -304,10 +299,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             _issueType = CreateEnumElement("Issue Type", Kinds[0], Kinds);
             _priority = CreateEnumElement("Priority", Priorities[0], Priorities);
 
-            _content = new MultilinedElement("Comments");
+            _content = new MultilinedElement("Description");
             _content.Tapped += () =>
             {
-                var composer = new Composer { Title = "Issue Comment", Text = _content.Value, ActionButtonText = "Save" };
+                var composer = new Composer { Title = "Issue Description", Text = _content.Value, ActionButtonText = "Save" };
                 composer.NewComment(this, () =>
                 {
                     var text = composer.Text;
