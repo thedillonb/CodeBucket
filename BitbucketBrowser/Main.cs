@@ -226,6 +226,11 @@ namespace BitbucketBrowser
             : base()
         {
         }
+
+        protected override UIBarButtonItem CreateMenuButton()
+        {
+            return new UIBarButtonItem(Images.ThreeLines, UIBarButtonItemStyle.Plain, (s, e) => Show());
+        }
         
         public override void ViewDidAppear(bool animated)
         {
@@ -244,7 +249,8 @@ namespace BitbucketBrowser
             {
                
 #if DEBUG
-                SelectView(new IssuesController(Application.Account.Username, "bitbucketbrowser"));
+                //SelectView(new IssuesController(Application.Account.Username, "bitbucketbrowser"));
+                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif

@@ -8,18 +8,19 @@ using System.Drawing;
 using MonoTouch;
 using CodeFramework.UI.Views;
 using BitbucketBrowser.UI.Controllers.Repositories;
+using System.Collections.Generic;
+using BitbucketSharp.Models;
 
 namespace BitbucketBrowser.UI.Controllers
 {
-    public sealed class ExploreController : DialogViewController
+    public sealed class ExploreController : RepositoryController
     {
 
         public ExploreController()
-            : base(UITableViewStyle.Plain, new RootElement("Explore"), false)
+            : base(Application.Account.Username, true, false)
         {
             EnableSearch = true;
             AutoHideSearch = false;
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
             Autorotate = true;
             SearchPlaceholder = "Search Repositories";
         }
@@ -49,7 +50,7 @@ namespace BitbucketBrowser.UI.Controllers
             public override void OnEditingStarted (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = true;
-                _container.StartSearch ();
+                _container.SearchStart ();
                 _container.ShowSearch(true);
                 _container.NavigationController.SetNavigationBarHidden(true, true);
             }
@@ -59,6 +60,7 @@ namespace BitbucketBrowser.UI.Controllers
                 searchBar.ShowsCancelButton = false;
                 _container.FinishSearch ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.SearchEnd();
             }
 
             public override void TextChanged (UISearchBar searchBar, string searchText)
@@ -71,6 +73,7 @@ namespace BitbucketBrowser.UI.Controllers
                 _container.FinishSearch ();
                 searchBar.ResignFirstResponder ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.SearchEnd();
             }
 
             public override void SearchButtonClicked (UISearchBar searchBar)
@@ -85,17 +88,16 @@ namespace BitbucketBrowser.UI.Controllers
             base.ViewDidLoad();
             var search = (UISearchBar)TableView.TableHeaderView;
             search.Delegate = new ExploreSearchDelegate(this);
+        }
 
-            TableView.BackgroundColor = UIColor.Clear;
-            WatermarkView.AssureWatermark(this);
-
-            TableView.TableFooterView = new DropbarView(View.Bounds.Width) {Hidden = true};
+        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
+        {
+            return Model;
         }
 
         public override void SearchButtonClicked(string text)
         {
             View.EndEditing(true);
-
 
             var hud = new MBProgressHUD(View.Superview) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Searching..."};
 
@@ -113,29 +115,12 @@ namespace BitbucketBrowser.UI.Controllers
                 try
                 {
                     var l = Application.Client.Repositories.Search(text);
-                    var sec = new Section();
-
-                    foreach (var repo in l.Repositories.OrderByDescending(x => x.FollowersCount))
-                    {
-                        var r = repo;
-                        var el = new RepositoryElement(r);
-                        el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r), true);
-                        sec.Add(el);
-                    }
+                    Model = l.Repositories;
+                    OnRefresh();
 
 
                     InvokeOnMainThread(delegate {
-                        TableView.TableFooterView.Hidden = sec.Elements.Count == 0;
-                        Root = new RootElement(Title) { sec };
-
-
-                        if (hud != null)
-                        {
-                            hud.Hide(true);
-                            hud.RemoveFromSuperview();
-                        }
-
-                        ShowSearch(sec.Count == 0);
+                        ShowSearch(Root.Count > 0 && Root[0].Count == 0);
                     });
 
                 }

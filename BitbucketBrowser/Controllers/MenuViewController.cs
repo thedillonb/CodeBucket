@@ -67,10 +67,11 @@ namespace BitbucketBrowser.Controllers
         {
             base.ViewDidLoad();
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem("\u2699", UIBarButtonItemStyle.Bordered, (s, e) => {
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Bordered, (s, e) => {
                 var n = new UINavigationController(new SettingsController());
                 this.PresentModalViewController(n, true);
             });
+
             
             Root.Add(new Section() {
                 new NavElement("Profile", () => DoShit(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person),
@@ -89,10 +90,6 @@ namespace BitbucketBrowser.Controllers
             var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
             view.BackgroundColor = UIColor.Clear;
             TableView.TableFooterView = view;
-
-            //The code below apparently calls ViewDidAppear... Make sure all this shit is done before this line
-            var attr = new UITextAttributes() { Font = UIFont.FromName("Helvetica", 24f) };
-            NavigationItem.LeftBarButtonItem.SetTitleTextAttributes(attr, UIControlState.Normal);
         }
         
         public override void ViewWillAppear(bool animated)

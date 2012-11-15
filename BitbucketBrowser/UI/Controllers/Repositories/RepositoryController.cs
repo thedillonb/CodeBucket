@@ -16,7 +16,12 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         public bool ShowOwner { get; set; }
 
         public RepositoryController(string username, bool push = true)
-            : base(push, true)
+            : this(username, push, true)
+        {
+        }
+
+        public RepositoryController(string username, bool push = true, bool refresh = true)
+            : base(push, refresh)
         {
             Title = "Repositories";
             Style = UITableViewStyle.Plain;
@@ -25,29 +30,48 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             EnableSearch = true;
             ShowOwner = true;
             EnableFilter = true;
+            SearchPlaceholder = "Search Repositories";
+        }
+
+        private RepositoryElement CreateElement(RepositoryDetailedModel x)
+        {
+            var sse = new RepositoryElement(x) { ShowOwner = ShowOwner };
+            sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
+            return sse;
         }
 
         protected override void OnRefresh()
         {
-            if (Model.Count == 0)
+            if (Model == null)
                 return;
 
-            var sec = new Section();
-            Model.ForEach(x =>
-            {
-                var sse = new RepositoryElement(x) { ShowOwner = ShowOwner };
-                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
-                sec.Add(sse);
-            });
+            var order = (FilterModel.Order)_filterModel.OrderBy;
+            IEnumerable<RepositoryDetailedModel> results;
+            if (order == FilterModel.Order.Forks)
+                results = Model.OrderBy(x => x.ForkCount);
+            else if (order == FilterModel.Order.LastUpdated)
+                results = Model.OrderBy(x => x.UtcLastUpdated);
+            else if (order == FilterModel.Order.CreatedOn)
+                results = Model.OrderBy(x => x.UtcCreatedOn);
+            else if (order == FilterModel.Order.Followers)
+                results = Model.OrderBy(x => x.FollowersCount);
+            else if (order == FilterModel.Order.Owner)
+                results = Model.OrderBy(x => x.Owner);
+            else
+                results = Model.OrderBy(x => x.Name);
 
-            //Sort them by name
-            OrderElements(sec);
+            if (!_filterModel.Ascending)
+                results = results.Reverse();
 
-            InvokeOnMainThread(delegate
-            {
-                var root = new RootElement(Title) { sec };
-                Root = root;
-            });
+            var section = new Section();
+            foreach (var x in results)
+                section.Add(CreateElement(x));
+
+
+            if (section.Count == 0)
+                section.Add(new NoItemsElement("No Repositories"));
+
+            InvokeOnMainThread(() => { Root = new RootElement(Title) { section }; });
         }
 
         protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
@@ -55,33 +79,9 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             return Application.Client.Users[Username].GetInfo(forced).Repositories;
         }
 
-        protected void OrderElements(Section sec)
-        {
-            var order = (FilterModel.Order)_filterModel.OrderBy;
-            IEnumerable<Element> results;
-            if (order == FilterModel.Order.Name)
-                results = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.Name);
-            else if (order == FilterModel.Order.Forks)
-                results = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.ForkCount);
-            else if (order == FilterModel.Order.LastUpdated)
-                results = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.UtcLastUpdated);
-            else if (order == FilterModel.Order.CreatedOn)
-                results = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.UtcCreatedOn);
-            else if (order == FilterModel.Order.Followers)
-                results = sec.Elements.OrderBy(x => ((RepositoryElement)x).Model.FollowersCount);
-
-            if (!_filterModel.Ascending)
-                results = results.Reverse();
-            sec.Elements = results.ToList();
-        }
-
         private void ApplyFilter()
         {
-            if (Root.Count == 0)
-                return;
-
-            OrderElements(Root[0]);
-            Root.Reload(Root[0], UITableViewRowAnimation.Fade);
+            OnRefresh();
         }
 
         protected override FilterController CreateFilterController()
@@ -103,6 +103,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             public enum Order : int
             { 
                 Name, 
+                Owner,
                 [EnumDescription("Last Updated")]
                 LastUpdated,
                 Followers,
@@ -138,7 +139,7 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
                             Application.Account.RepoFilterObject = CreateFilterModel();
                             this.DismissModalViewControllerAnimated(true); 
                             this.ApplyFilter();
-                        }),
+                        }, Images.Size) { Accessory = UITableViewCellAccessory.None },
                     }
                 };
 

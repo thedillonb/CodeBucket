@@ -22,6 +22,7 @@ namespace BitbucketBrowser.UI.Controllers
             Repo = repo;
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Tags";
         }
 
         protected override void OnRefresh()

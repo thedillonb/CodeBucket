@@ -20,6 +20,7 @@ namespace BitbucketBrowser.UI.Controllers.Groups
             Title = group.Name;
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Memebers";
         }
         
         protected override void OnRefresh()

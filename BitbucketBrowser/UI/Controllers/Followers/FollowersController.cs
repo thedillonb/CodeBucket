@@ -18,15 +18,13 @@ namespace BitbucketBrowser.UI.Controllers.Followers
             Title = "Followers";
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Followers";
 		}
-
-        protected override List<FollowerModel> OnOrder(List<FollowerModel> item)
-        {
-            return item.OrderBy(a => a.Username).ToList();
-        }
 
         protected override void OnRefresh()
         {
+            Model = Model.OrderBy(a => a.Username).ToList();
+
             var sec = new Section();
             if (Model.Count == 0)
                 sec.Add(new NoItemsElement("No Followers"));

@@ -38,7 +38,6 @@
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchUseThumb>True</MtouchUseThumb>
     <MtouchI18n />
-    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -52,6 +51,8 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
     <MtouchProfiling>True</MtouchProfiling>
+    <MtouchI18n />
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -117,7 +118,6 @@
     <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Controllers\ExploreController.cs" />
     <Compile Include="UI\Controllers\TagController.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
@@ -164,6 +164,7 @@
     <Compile Include="Controllers\FileSourceController.cs" />
     <Compile Include="UI\Controllers\Accounts\SettingsController.cs" />
     <Compile Include="UI\Controllers\Issues\SingleItemSelectViewController.cs" />
+    <Compile Include="UI\Controllers\Repositories\ExploreController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -294,12 +295,11 @@
     <Content Include="Default-Portrait%402x.jpg" />
     <Content Include="Default-568h%402x.jpg" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
-    <Content Include="Images\filter%402x.png" />
-    <Content Include="Images\help%402x.png" />
-    <Content Include="Images\help.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\Controls\barbutton-land%402x.png" />
     <Content Include="Images\Controls\barbutton-land.png" />
+    <Content Include="Images\filter.png" />
+    <Content Include="Images\three_lines.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

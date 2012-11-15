@@ -9,7 +9,7 @@
 	url = https://github.com/thedillonb/MonoTouch.Dialog.git
 [submodule "RestSharp"]
 	path = RestSharp
-	url = https://github.com/restsharp/RestSharp.git
+	url = https://github.com/thedillonb/RestSharp.git
 [submodule "codeframework"]
 	path = codeframework
 	url = https://thedillonb@bitbucket.org/thedillonb/codeframework.git

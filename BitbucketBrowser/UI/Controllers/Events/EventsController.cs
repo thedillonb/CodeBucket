@@ -201,7 +201,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
         {
             //Most likely indicates a deleted repository
             if (eventModel.Repository == null)
-                return new [] { new InteractiveTextView.TextBlock("Unknown Repository") };
+                return new [] { new InteractiveTextView.TextBlock("<Not Found>") };
 
             var repoOwner = eventModel.Repository.Owner;
             var repoName = eventModel.Repository.Name;

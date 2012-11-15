@@ -22,6 +22,7 @@ namespace BitbucketBrowser.UI.Controllers.Branches
             Title = "Branches";
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Branches";
 		}
 		
         protected override void OnRefresh()

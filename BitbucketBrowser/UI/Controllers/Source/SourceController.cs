@@ -26,6 +26,7 @@ namespace BitbucketBrowser.UI.Controllers.Source
             Path = path;
             AutoHideSearch = true;
             EnableSearch = true;
+            SearchPlaceholder = "Search Files & Folders";
 
             Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }

@@ -14,34 +14,19 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
         private UIBarButtonItem _segmentBarButton;
         
         public AccountRepositoryController(string username)
-            : base(username)
+            : base(username, true)
         {
         }
         
         protected override void OnRefresh ()
         {
-            if (Root != null)
-                InvokeOnMainThread(delegate { Root.Clear(); });
-            
-            if (Model.Count == 0)
-                return;
-            
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
-            
-            var sec = new Section();
-            Model.ForEach(x => {
-                RepositoryElement sse = new RepositoryElement(x) { ShowOwner = selected != 0 };
-                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
-                sec.Add(sse);
-            });
-            
-            //Sort them by name
-            OrderElements(sec);
 
-            InvokeOnMainThread(delegate {
-                Root = new RootElement(Title) { sec };
-            });
+            //Set the show property based on what is selected
+            ShowOwner = selected != 0;
+
+            base.OnRefresh();
         }
         
         protected override List<RepositoryDetailedModel> OnUpdate(bool forced)

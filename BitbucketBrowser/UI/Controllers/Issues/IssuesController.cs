@@ -21,6 +21,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private int _firstIndex;
         private int _lastIndex;
         private LoadMoreElement _loadMore;
+        private NoItemsElement _noItems;
 
         //The filter for this view
         private FilterModel _filterModel = Application.Account.IssueFilterObject;
@@ -36,6 +37,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             EnableFilter = true;
             AutoHideSearch = true;
             Root.UnevenRows = true;
+            SearchPlaceholder = "Search Issues";
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
                 var b = new IssueEditController
@@ -142,10 +144,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             if (changedModel == null)
             {
                 Root[0].Remove(element);
-                if (Root[0].Count == 0)
-                {
-                    TableView.TableFooterView.Hidden = true;
-                }
+                NeedNoItems(Root[0]);
             }
             else
             {
@@ -196,34 +195,34 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
         private void AddItems(List<IssueModel> issues, bool prepend = false)
         {
-            if (issues.Count == 0)
-                return;
-
             Section sec;
             if (Root != null && Root.Count > 0)
                 sec = Root[0];
             else
-                sec = new Section();
+            {
+                if (_filterModel.IsFiltering())
+                    sec = new Section("Results Filtered");
+                else
+                    sec = new Section();
+            }
 
-            int inserts = 0;
             issues.ForEach(x => {
-                if (sec.Elements.Any(y => ((IssueElement)y).Model.LocalId == x.LocalId))
+                if (sec.Elements.Any(y => (y is IssueElement) &&((IssueElement)y).Model.LocalId == x.LocalId))
                     return;
                 if (prepend)
                     sec.Insert(0, CreateElement(x));
                 else
                     sec.Add(CreateElement(x));
-                inserts++;
             });
 
-            if (sec.Count == 0 || inserts == 0)
-                return;
+            NeedNoItems(sec);
 
             InvokeOnMainThread(delegate
             {
                 if (Root.Count == 0)
                 {
                     var r = new RootElement(Title) { sec };
+                    r.UnevenRows = true;
 
                     //If there are more items to load then insert the load object
                     if (_lastIndex != _firstIndex)
@@ -234,7 +233,22 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
                     Root = r;
                 }
+
             });
+        }
+
+        private void NeedNoItems(Section sec)
+        {
+            if (sec.Count == 0)
+            {
+                if (_noItems == null)
+                    sec.Add(_noItems = new NoItemsElement("No Issues"));
+            }
+            else if (_noItems != null)
+            {
+                sec.Remove(_noItems);
+                _noItems = null;
+            }
         }
 
         protected override IssuesModel OnUpdate(bool forced)
@@ -253,6 +267,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             _firstIndex = _lastIndex = 0;
             Model = null;
             Root.Clear();
+            _noItems = null;
             Refresh();
         }
 
@@ -268,9 +283,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             public StatusModel Status { get; set; }
             public KindModel Kind { get; set; }
             public PriorityModel Priority { get; set; }
-            public List<string> Components { get; set; }
-            public List<string> Versions { get; set; }
-            public List<string> Milestones { get; set; }
             public int OrderBy { get; set; }
 
             public FilterModel()
@@ -279,6 +291,11 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 Status = new StatusModel();
                 Priority = new PriorityModel();
                 OrderBy = (int)Order.Local_Id;
+            }
+
+            public bool IsFiltering()
+            {
+                return !(AssignedTo == null && ReportedBy == null && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
             }
 
             public enum Order : int
@@ -353,6 +370,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             private MultipleChoiceElement<FilterModel.StatusModel> _statusChoice;
             private MultipleChoiceElement<FilterModel.KindModel> _kindChoice;
             private MultipleChoiceElement<FilterModel.PriorityModel> _priorityChoice;
+
             private EnumChoiceElement _orderby;
             
             public Filter(IssuesController parent)
@@ -400,13 +418,13 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                             Application.Account.IssueFilterObject = model;
                             this.DismissModalViewControllerAnimated(true); 
                             this.ApplyFilter();
-                        }),
+                        }, Images.Size) { Accessory = UITableViewCellAccessory.None },
                     }
                 };
                 
                 Root = root;
             }
-            
+
             public override void ViewWillAppear(bool animated)
             {
                 base.ViewWillAppear(animated);

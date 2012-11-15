@@ -32,6 +32,7 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
             Title = "Privileges";
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Users";
         }
 
         protected override void OnRefresh()

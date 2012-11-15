@@ -348,6 +348,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     alert.Show();
                 }, Images.BinClosed)
                 {
+                    Accessory = UITableViewCellAccessory.None,
                     BackgroundColor = UIColor.FromPatternImage(Images.TableCellRed),
                     TextColor = UIColor.FromRGB(0.9f, 0.30f, 0.30f)
                 };

@@ -20,13 +20,9 @@ namespace BitbucketBrowser.UI.Controllers.Groups
             Title = "Groups";
             EnableSearch = true;
             AutoHideSearch = true;
+            SearchPlaceholder = "Search Groups";
 		}
 
-        protected override List<GroupModel> OnOrder(List<GroupModel> item)
-        {
-            return item.OrderBy(a => a.Name).ToList();
-        }
-		
         protected override void OnRefresh()
         {
             var sec = new Section();
@@ -43,7 +39,8 @@ namespace BitbucketBrowser.UI.Controllers.Groups
 
         protected override List<GroupModel> OnUpdate(bool forced)
         {
-            return Application.Client.Users[Username].Groups.GetGroups(forced);
+            var items = Application.Client.Users[Username].Groups.GetGroups(forced);
+            return items.OrderBy(a => a.Name).ToList();
         }
 	}
 }
