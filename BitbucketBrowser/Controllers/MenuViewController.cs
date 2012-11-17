@@ -20,6 +20,7 @@ namespace BitbucketBrowser.Controllers
         public MenuController()
             : base(UITableViewStyle.Plain, new RootElement("CodeBucket"))
         {
+            Autorotate = true;
             if (Application.Account != null && !string.IsNullOrEmpty(Application.Account.Username))
                 Root.Caption = Application.Account.Username;
         }

@@ -32,8 +32,7 @@ namespace BitbucketBrowser.UI.Controllers.Groups
                 Model.ForEach(g => sec.Add(new StyledElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))));
 
             InvokeOnMainThread(delegate {
-                var root = new RootElement(Title) { sec };
-                Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
 

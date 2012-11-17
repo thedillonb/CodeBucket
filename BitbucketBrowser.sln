@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.MonoTouch", "Rest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework", "codeframework\CodeFramework\CodeFramework.csproj", "{3E01B962-FE29-4992-8140-34465C86418F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OHAttributedLabel", "codeframework\OHAttributedLabel\OHAttributedLabel.csproj", "{1FD1BA85-25F8-460D-B588-0E753CFF578D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -30,6 +32,24 @@ Global
 		AppStore|iPhoneSimulator = AppStore|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AdHoc|iPhone.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Release|iPhone.Build.0 = Release|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{3E01B962-FE29-4992-8140-34465C86418F}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
 		{3E01B962-FE29-4992-8140-34465C86418F}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{3E01B962-FE29-4992-8140-34465C86418F}.AdHoc|iPhone.Build.0 = Debug|Any CPU
@@ -145,6 +165,7 @@ Global
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
 		{E9A9D1C5-4E06-4D31-9809-A97188C70B2C} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
 		{3E01B962-FE29-4992-8140-34465C86418F} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
+		{1FD1BA85-25F8-460D-B588-0E753CFF578D} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = BitbucketBrowser\CodeBucket.csproj

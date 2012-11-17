@@ -40,8 +40,7 @@ namespace BitbucketBrowser.UI.Controllers.Groups
             }
             
             InvokeOnMainThread(delegate {
-                var root = new RootElement(Title) { sec };
-                Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
         

@@ -295,7 +295,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
 
             public bool IsFiltering()
             {
-                return !(AssignedTo == null && ReportedBy == null && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
+                return !(string.IsNullOrEmpty(AssignedTo) && string.IsNullOrEmpty(ReportedBy) && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
             }
 
             public enum Order : int

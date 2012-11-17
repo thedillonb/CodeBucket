@@ -150,26 +150,26 @@ namespace BitbucketBrowser
             Application.SetUser(defaultAccount);
 
             //This supports the split view configuration of the iPad
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
-            {
-                _nav = new MySlideout() { SlideHeight = 999f };
-                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-
-                var menuNav = new UINavigationController(new iPadMenuViewController { Slideout = _nav });
-                menuNav.NavigationBar.SetBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-
-                _nav.MenuView = new MenuController();
-
-                var split = new iPadSplitView { Slideout = _nav };
-
-                split.ViewControllers = new UIViewController[] {
-                    menuNav,
-                    _nav,
-                };
-
-                window.RootViewController = split;
-            }
-            else
+//            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+//            {
+//                _nav = new MySlideout() { SlideHeight = 999f };
+//                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
+//
+//                var menuNav = new UINavigationController(new iPadMenuViewController { Slideout = _nav });
+//                menuNav.NavigationBar.SetBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
+//
+//                _nav.MenuView = new MenuController();
+//
+//                var split = new iPadSplitView { Slideout = _nav };
+//
+//                split.ViewControllers = new UIViewController[] {
+//                    menuNav,
+//                    _nav,
+//                };
+//
+//                window.RootViewController = split;
+//            }
+//            else
             {
                 _nav = new MySlideout() { SlideHeight = 999f };
                 _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
@@ -188,33 +188,33 @@ namespace BitbucketBrowser
                 _nav.TopView.NavigationController.PopToRootViewController(false);
         }
 
-        #region Stupid classes for the iPad
-        private class iPadSplitView : UISplitViewController
-        {
-            public SlideoutNavigationController Slideout;
-            public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
-            {
-                Slideout.Hide(false);
-                Slideout.MenuEnabled = (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
-                base.WillRotate(toInterfaceOrientation, duration);
-            }
-
-            public override void ViewWillAppear(bool animated)
-            {
-                Slideout.MenuEnabled = (this.InterfaceOrientation == UIInterfaceOrientation.Portrait || this.InterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
-                base.ViewWillAppear(animated);
-            }
-        }
-
-        private class iPadMenuViewController : MenuController
-        {
-            public SlideoutNavigationController Slideout;
-            protected override void DoShit(UIViewController controller)
-            {
-                Slideout.MenuView.NavigationController.PushViewController(controller, true);
-            }
-        }
-        #endregion
+//        #region Stupid classes for the iPad
+//        private class iPadSplitView : UISplitViewController
+//        {
+//            public SlideoutNavigationController Slideout;
+//            public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+//            {
+//                Slideout.Hide(false);
+//                Slideout.MenuEnabled = (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
+//                base.WillRotate(toInterfaceOrientation, duration);
+//            }
+//
+//            public override void ViewWillAppear(bool animated)
+//            {
+//                Slideout.MenuEnabled = (this.InterfaceOrientation == UIInterfaceOrientation.Portrait || this.InterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
+//                base.ViewWillAppear(animated);
+//            }
+//        }
+//
+//        private class iPadMenuViewController : MenuController
+//        {
+//            public SlideoutNavigationController Slideout;
+//            protected override void DoShit(UIViewController controller)
+//            {
+//                Slideout.MenuView.NavigationController.PushViewController(controller, true);
+//            }
+//        }
+//        #endregion
 	}
 
     public class MySlideout : SlideoutNavigationController

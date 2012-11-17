@@ -34,8 +34,7 @@ namespace BitbucketBrowser.UI.Controllers.Branches
                 Model.ForEach(x => sec.Add(new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))));
            
             InvokeOnMainThread(delegate {
-                var root = new RootElement(Title) { sec };
-                Root = root;
+                Root = new RootElement(Title) { sec };
             });
         }
 

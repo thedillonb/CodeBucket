@@ -94,9 +94,9 @@ namespace BitbucketBrowser.UI.Controllers.Events
             AddItems(Model);
         }
 
-        private IEnumerable<InteractiveTextView.TextBlock> CreateDescription(EventModel eventModel, out UIImage img)
+        private IEnumerable<NewsFeedElement.TextBlock> CreateDescription(EventModel eventModel, out UIImage img)
         {
-            var blocks = new List<InteractiveTextView.TextBlock>(10);
+            var blocks = new List<NewsFeedElement.TextBlock>(10);
             var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
             img = Images.Priority;
 
@@ -106,81 +106,81 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 img = Images.Plus;
                 if (ReportRepository)
                 {
-                    blocks.Add(new InteractiveTextView.TextBlock("Commited to "));
+                    blocks.Add(new NewsFeedElement.TextBlock("Commited to "));
                     blocks.AddRange(RepoName(eventModel));
-                    blocks.Add(new InteractiveTextView.TextBlock(": " + desc));
+                    blocks.Add(new NewsFeedElement.TextBlock(": " + desc));
                 }
                 else
-                    blocks.Add(new InteractiveTextView.TextBlock("Commited: " + desc));
+                    blocks.Add(new NewsFeedElement.TextBlock("Commited: " + desc));
             }
             else if (eventModel.Event == EventModel.Type.CreateRepo)
             {
                 img = Images.Create;
                 if (ReportRepository)
                 {
-                    blocks.Add(new InteractiveTextView.TextBlock("Created repository "));
+                    blocks.Add(new NewsFeedElement.TextBlock("Created repository "));
                     blocks.AddRange(RepoName(eventModel));
                 }
                 else
-                    blocks.Add(new InteractiveTextView.TextBlock("Repository created"));
+                    blocks.Add(new NewsFeedElement.TextBlock("Repository created"));
             }
             else if (eventModel.Event == EventModel.Type.WikiUpdated)
             {
                 img = Images.Pencil;
-                blocks.Add(new InteractiveTextView.TextBlock("Updated wiki page "));
-                blocks.Add(new InteractiveTextView.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+                blocks.Add(new NewsFeedElement.TextBlock("Updated wiki page "));
+                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
 
                 if (ReportRepository)
                 {
-                    blocks.Add(new InteractiveTextView.TextBlock(" in "));
+                    blocks.Add(new NewsFeedElement.TextBlock(" in "));
                     blocks.AddRange(RepoName(eventModel));
                 }
             }
             else if (eventModel.Event == EventModel.Type.WikiCreated)
             {
                 img = Images.Pencil;
-                blocks.Add(new InteractiveTextView.TextBlock("Created wiki page "));
-                blocks.Add(new InteractiveTextView.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+                blocks.Add(new NewsFeedElement.TextBlock("Created wiki page "));
+                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
 
                 if (ReportRepository)
                 {
-                    blocks.Add(new InteractiveTextView.TextBlock(" in "));
+                    blocks.Add(new NewsFeedElement.TextBlock(" in "));
                     blocks.AddRange(RepoName(eventModel));
                 }
             }
             else if (eventModel.Event == EventModel.Type.StartFollowUser)
             {
                 img = Images.HeartAdd;
-                blocks.Add(new InteractiveTextView.TextBlock("Started following a user"));
+                blocks.Add(new NewsFeedElement.TextBlock("Started following a user"));
             }
             else if (eventModel.Event == EventModel.Type.StartFollowRepo)
             {
                 img = Images.HeartAdd;
-                blocks.Add(new InteractiveTextView.TextBlock("Started following "));
+                blocks.Add(new NewsFeedElement.TextBlock("Started following "));
                 blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.StopFollowRepo)
             {
                 img = Images.HeartDelete;
-                blocks.Add(new InteractiveTextView.TextBlock("Stopped following "));
+                blocks.Add(new NewsFeedElement.TextBlock("Stopped following "));
                 blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueComment)
             {
                 img = Images.CommentAdd;
-                blocks.Add(new InteractiveTextView.TextBlock("Issue commented on in "));
+                blocks.Add(new NewsFeedElement.TextBlock("Issue commented on in "));
                 blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueUpdated)
             {
                 img = Images.ReportEdit;
-                blocks.Add(new InteractiveTextView.TextBlock("Issue updated in "));
+                blocks.Add(new NewsFeedElement.TextBlock("Issue updated in "));
                 blocks.AddRange(RepoName(eventModel));
             }
             else if (eventModel.Event == EventModel.Type.IssueReported)
             {
                 img = Images.ReportEdit;
-                blocks.Add(new InteractiveTextView.TextBlock("Issue reported on in "));
+                blocks.Add(new NewsFeedElement.TextBlock("Issue reported on in "));
                 blocks.AddRange(RepoName(eventModel));
             }
             else
@@ -197,25 +197,25 @@ namespace BitbucketBrowser.UI.Controllers.Events
             }
         }
 
-        private IEnumerable<InteractiveTextView.TextBlock> RepoName(EventModel eventModel)
+        private IEnumerable<NewsFeedElement.TextBlock> RepoName(EventModel eventModel)
         {
             //Most likely indicates a deleted repository
             if (eventModel.Repository == null)
-                return new [] { new InteractiveTextView.TextBlock("<Not Found>") };
+                return new [] { new NewsFeedElement.TextBlock("<Not Found>") };
 
             var repoOwner = eventModel.Repository.Owner;
             var repoName = eventModel.Repository.Name;
             if (!repoOwner.ToLower().Equals(Application.Account.Username.ToLower()))
             {
                 return new [] {
-                    new InteractiveTextView.TextBlock(repoOwner, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
-                    new InteractiveTextView.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
-                    new InteractiveTextView.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
+                    new NewsFeedElement.TextBlock(repoOwner, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
+                    new NewsFeedElement.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
+                    new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
                 };
             }
 
             //Just return the name
-            return new [] { new InteractiveTextView.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)) };
+            return new [] { new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)) };
         }
 
 
@@ -239,7 +239,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 //Get the user
                 var username = e.User != null ? e.User.Username : null;
                 var avatar = e.User != null ? e.User.Avatar : null;
-                var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small);
+                var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small) { LinkColor = UIColor.FromRGB(0, 64, 128) };
                 if (e.Event == EventModel.Type.Commit && e.Repository != null)
                 {
                     newsEl.Tapped += () =>
