@@ -237,7 +237,10 @@ namespace BitbucketBrowser
         {
             base.ViewDidAppear(animated);
             if (!(_previousUser ?? "").Equals(Application.Account.Username))
+            {
+                Application.Cache.DeleteAll();
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+            }
             _previousUser = Application.Account.Username;
         }
 
@@ -255,6 +258,7 @@ namespace BitbucketBrowser
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif
+                Application.Cache.DeleteAll();
                 _previousUser = Application.Account.Username;
             }
 

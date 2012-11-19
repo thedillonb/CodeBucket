@@ -55,7 +55,7 @@
     <MtouchProfiling>True</MtouchProfiling>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
+    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -70,7 +70,7 @@
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
     <MtouchUseThumb>True</MtouchUseThumb>
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
+    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -81,7 +81,7 @@
     <ConsolePause>False</ConsolePause>
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
+    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
@@ -99,7 +99,7 @@
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
     <MtouchUseThumb>True</MtouchUseThumb>
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
+    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <CodesignProvision>42656791-5455-44DD-B4F2-0F7C99F9381E</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
@@ -108,7 +108,7 @@
     <OutputPath>bin\iPhone\Distribution</OutputPath>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Distribution: Dillon Buchanan</CodesignKey>
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
+    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>

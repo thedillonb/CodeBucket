@@ -21,7 +21,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         private int _totalCount;
         private int _lastIndex;
         private LoadMoreElement _loadMore;
-        private NoItemsElement _noItems;
+        private TitleView _titleView;
 
         //The filter for this view
         private FilterModel _filterModel = Application.Account.IssueFilterObject;
@@ -49,11 +49,23 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 NavigationController.PushViewController(b, true);
             });
 
+            _titleView = new TitleView();
+            RefreshCaption();
+            NavigationItem.TitleView = _titleView;
+
             _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+        }
+
+        private void RefreshCaption()
+        {
+            _titleView.SetCaption("Issues", _filterModel.IsFiltering() ? "Filter Enabled" : null);
         }
 
         private void OnCreateIssue(IssueModel issue)
         {
+            if (!DoesIssueBelong(issue))
+                return;
+
             AddItems(new List<IssueModel>() { issue });
             ScrollToModel(issue);
         }
@@ -125,7 +137,12 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             if (_filterModel.Priority != null && !_filterModel.Priority.IsDefault())
                 if (!FieldToUrl(null, _filterModel.Priority).Any(x => x.Item2.Equals(model.Priority)))
                     return false;
-
+            if (!string.IsNullOrEmpty(_filterModel.AssignedTo))
+                if (!object.Equals(_filterModel.AssignedTo, (model.Responsible == null ? "unassigned" : model.Responsible.Username)))
+                    return false;
+            if (!string.IsNullOrEmpty(_filterModel.ReportedBy))
+                if (model.ReportedBy == null || !object.Equals(_filterModel.ReportedBy, model.ReportedBy.Username))
+                    return false;
 
             return true;
         }
@@ -161,13 +178,25 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             //If null then it's been deleted!
             if (changedModel == null)
             {
+                var c = TableView.ContentOffset;
                 Model.RemoveAll(a => a.LocalId == oldModel.LocalId);
                 Refresh(false);
+                TableView.ContentOffset = c;
             }
             else
             {
-                AddItems(new List<IssueModel>(1) { changedModel });
-                ScrollToModel(oldModel);
+                if (DoesIssueBelong(changedModel))
+                {
+                    AddItems(new List<IssueModel>(1) { changedModel });
+                    ScrollToModel(oldModel);
+                }
+                else
+                {
+                    var c = TableView.ContentOffset;
+                    Model.RemoveAll(a => a.LocalId == changedModel.LocalId);
+                    Refresh(false);
+                    TableView.ContentOffset = c;
+                }
             }
         }
 
@@ -201,10 +230,10 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
         }
 
-        static int[] _ceilings = new[] { 5, 10, 25, 50, 75, 100, 200, 400, 600, 1000, 2000, 8000, int.MaxValue };
+        static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
         {
-            return ranges.LastOrDefault(x => x < key) + ".." + (key - 1);
+            return ranges.LastOrDefault(x => x < key) + " to " + (key - 1);
         }
         
         private List<Section> CreateSection(IEnumerable<IGrouping<int, IssueModel>> results, string title, string prefix = null)
@@ -340,8 +369,8 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         {
             _totalCount = _lastIndex = 0;
             Model = null;
+            RefreshCaption();
             Root.Clear();
-            _noItems = null;
             Refresh();
         }
 

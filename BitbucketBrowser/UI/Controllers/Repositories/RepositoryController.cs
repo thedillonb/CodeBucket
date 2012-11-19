@@ -42,10 +42,10 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             return sse;
         }
 
-        static int[] _ceilings = new[] { 5, 10, 25, 50, 75, 100, 200, 400, 600, 1000, 2000, 8000, int.MaxValue };
+        static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
         {
-            return ranges.LastOrDefault(x => x < key) + ".." + (key - 1);
+            return ranges.LastOrDefault(x => x < key) + " to " + (key - 1);
         }
 
         private List<Section> CreateSection(IEnumerable<IGrouping<int, RepositoryDetailedModel>> results, string title, string prefix = null)
