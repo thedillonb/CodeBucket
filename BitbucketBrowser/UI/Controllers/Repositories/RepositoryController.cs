@@ -6,6 +6,8 @@ using System.Linq;
 using CodeFramework.UI.Controllers;
 using CodeFramework.UI.Elements;
 using System;
+using System.Drawing;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI.Controllers.Repositories
 {
@@ -40,38 +42,93 @@ namespace BitbucketBrowser.UI.Controllers.Repositories
             return sse;
         }
 
+        static int[] _ceilings = new[] { 5, 10, 25, 50, 75, 100, 200, 400, 600, 1000, 2000, 8000, int.MaxValue };
+        private static string CreateRangeString(int key, IEnumerable<int> ranges)
+        {
+            return ranges.LastOrDefault(x => x < key) + ".." + (key - 1);
+        }
+
+        private List<Section> CreateSection(IEnumerable<IGrouping<int, RepositoryDetailedModel>> results, string title, string prefix = null)
+        {
+            var sections = new List<Section>();
+            InvokeOnMainThread(() => {
+                foreach (var groups in results)
+                {
+                    var text = (prefix != null ? prefix + " " : "") + CreateRangeString(groups.Key, _ceilings) + " " + title;
+                    var sec = new Section(new TableViewSectionView(text));
+                    sections.Add(sec);
+                    foreach (var y in groups)
+                        sec.Add(CreateElement(y));
+                }
+            });
+            return sections;
+        }
+
+        private List<Section> CreateSection(IEnumerable<IGrouping<string, RepositoryDetailedModel>> results)
+        {
+            var sections = new List<Section>();
+            InvokeOnMainThread(() => {
+                foreach (var groups in results)
+                {
+                    var sec = new Section(new TableViewSectionView(groups.Key));
+                    sections.Add(sec);
+                    foreach (var y in groups)
+                        sec.Add(CreateElement(y));
+                }
+            });
+            return sections;
+        }
+
         protected override void OnRefresh()
         {
             if (Model == null)
                 return;
 
             var order = (FilterModel.Order)_filterModel.OrderBy;
-            IEnumerable<RepositoryDetailedModel> results;
+            List<Section> sections = null;
+
             if (order == FilterModel.Order.Forks)
-                results = Model.OrderBy(x => x.ForkCount);
+            {
+                var a = Model.OrderBy(x => x.ForkCount).GroupBy(x => _ceilings.First(r => r > x.ForkCount));
+                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                sections = CreateSection(a, "Forks");
+            }
             else if (order == FilterModel.Order.LastUpdated)
-                results = Model.OrderBy(x => x.UtcLastUpdated);
+            {
+                var a = Model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                sections = CreateSection(a, "Days Ago", "Updated");
+            }
             else if (order == FilterModel.Order.CreatedOn)
-                results = Model.OrderBy(x => x.UtcCreatedOn);
+            {
+                var a = Model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                sections = CreateSection(a, "Days Ago", "Created");
+            }
             else if (order == FilterModel.Order.Followers)
-                results = Model.OrderBy(x => x.FollowersCount);
+            {
+                var a = Model.OrderBy(x => x.FollowersCount).GroupBy(x => _ceilings.First(r => r > x.FollowersCount));
+                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                sections = CreateSection(a, "Followers");
+            }
             else if (order == FilterModel.Order.Owner)
-                results = Model.OrderBy(x => x.Owner);
+            {
+                var a = Model.OrderBy(x => x.Name).GroupBy(x => x.Owner);
+                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                sections = CreateSection(a);
+            }
             else
-                results = Model.OrderBy(x => x.Name);
+            {
+                var a = _filterModel.Ascending ? Model.OrderBy(x => x.Name) : Model.OrderByDescending(x => x.Name);
+                sections = new List<Section>() { new Section() };
+                foreach (var y in a)
+                    sections[0].Add(CreateElement(y));
+            }
 
-            if (!_filterModel.Ascending)
-                results = results.Reverse();
+            if (sections == null || sections.Count == 0)
+                sections.Add(new Section() { new NoItemsElement("No Repositories") });
 
-            var section = new Section();
-            foreach (var x in results)
-                section.Add(CreateElement(x));
-
-
-            if (section.Count == 0)
-                section.Add(new NoItemsElement("No Repositories"));
-
-            InvokeOnMainThread(() => { Root = new RootElement(Title) { section }; });
+            InvokeOnMainThread(() => { Root = new RootElement(Title) { sections }; });
         }
 
         protected override List<RepositoryDetailedModel> OnUpdate(bool forced)

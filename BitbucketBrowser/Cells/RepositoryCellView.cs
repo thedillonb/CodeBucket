@@ -60,11 +60,13 @@ namespace BitbucketBrowser
             Label3.Text = name3;
             Description.Text = description ?? "";
 
+            RepoName.Frame = new RectangleF(8, 6, 71, 21);
+            Caption.Frame = new RectangleF(72, 4, 179, 21);
+
             RepoName.Text = repoOwner != null ? repoOwner + "/" : string.Empty;
             RepoName.SizeToFit();
 
             Caption.Frame = new RectangleF(RepoName.Frame.Right, Caption.Frame.Y, this.Description.Frame.Width - RepoName.Frame.Right + RepoName.Frame.Left, Caption.Frame.Height);
-
 
             if (string.IsNullOrEmpty(Description.Text))
             {
@@ -80,15 +82,11 @@ namespace BitbucketBrowser
                     RepoName.Frame = new RectangleF(RepoName.Frame.X, RepoName.Frame.Y + 8f, RepoName.Frame.Width, RepoName.Frame.Height);
                 }
             }
-
-
         }
     }
 
     public class RepositoryElement : Element, IElementSizing, IColorizeBackground
     {       
-        private string CellReuseIdentifier { get; set; }
-
         public UITableViewCellStyle Style { get; set;}
 
         public UIColor BackgroundColor { get; set; }
@@ -99,7 +97,6 @@ namespace BitbucketBrowser
 
         public RepositoryElement(RepositoryDetailedModel m) : base(null)
         {
-            this.CellReuseIdentifier = "repositoryelement";
             this.Style = UITableViewCellStyle.Default;
             Model = m;
             ShowOwner = true;
@@ -110,19 +107,20 @@ namespace BitbucketBrowser
             return 67f;
         }
 
+        protected override NSString CellKey {
+            get {
+                return new NSString("RepositoryCellView");
+            }
+        }
+
         
         public event NSAction Tapped;
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(this.CellReuseIdentifier) as RepositoryCellView;
-
+            var cell = tv.DequeueReusableCell(CellKey) as RepositoryCellView;
             if (cell == null)
-            {
                 cell = RepositoryCellView.Create();
-
-            }
-
             return cell;
         }
 
@@ -130,7 +128,6 @@ namespace BitbucketBrowser
         {
             return Model.Name.ToLower().Contains(text.ToLower());
         }
-
 
         public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
         {

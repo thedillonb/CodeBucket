@@ -9,16 +9,16 @@ using MonoTouch.Foundation;
 using MonoTouch;
 using CodeFramework.UI.Elements;
 using BitbucketBrowser.UI.Controllers.Privileges;
+using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.UI.Controllers.Issues
 {
-    public class IssuesController : Controller<IssuesModel>
+    public class IssuesController : Controller<List<IssueModel>>
     {
         public string User { get; private set; }
         public string Slug { get; private set; }
 
-        private IssueModel _updateIssue;
-        private int _firstIndex;
+        private int _totalCount;
         private int _lastIndex;
         private LoadMoreElement _loadMore;
         private NoItemsElement _noItems;
@@ -44,10 +44,18 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                 {
                     Username = User,
                     RepoSlug = Slug,
-                    Success = issue => { _updateIssue = issue; }
+                    Success = OnCreateIssue
                 };
                 NavigationController.PushViewController(b, true);
             });
+
+            _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+        }
+
+        private void OnCreateIssue(IssueModel issue)
+        {
+            AddItems(new List<IssueModel>() { issue });
+            ScrollToModel(issue);
         }
 
         private IssueElement CreateElement(IssueModel model)
@@ -57,7 +65,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             {
                 //Make sure the first responder is gone.
                 View.EndEditing(true);
-                var info = new IssueInfoController(User, Slug, model.LocalId) { ModelChanged = newModel => ChildChangedModel(el, newModel) };
+                var info = new IssueInfoController(User, Slug, model.LocalId) { ModelChanged = newModel => ChildChangedModel(newModel, model) };
                 NavigationController.PushViewController(info, true);
             };
             return el;
@@ -94,7 +102,6 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                     filter.AddLast(new Tuple<string, string>("reported_by", _filterModel.ReportedBy));
 
                 filter.AddLast(new Tuple<string, string>("sort", ((FilterModel.Order)_filterModel.OrderBy).ToString().ToLower()));
-                Console.WriteLine("Sorting: " + _filterModel.OrderBy.ToString());
             }
 
             if (additionalFilters != null)
@@ -123,33 +130,44 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             return true;
         }
 
-        public override void ViewDidAppear(bool animated)
+        private void ScrollToModel(IssueModel issue, bool animate = false)
         {
-            base.ViewDidAppear(animated);
-            if (_updateIssue != null)
+            int s, r = 0;
+            bool done = false;
+            for (s = 0; s < Root.Count; s++)
             {
-                if (DoesIssueBelong(_updateIssue))
+                for (r = 0; r < Root[s].Count; r++)
                 {
-                    AddItems(new List<IssueModel>(1) { _updateIssue }, true);
-                    TableView.ScrollToRow(NSIndexPath.FromRowSection(0, 0), UITableViewScrollPosition.Middle, true);
+                    var el = Root[s][r] as IssueElement;
+                    if (el != null && el.Model.LocalId == issue.LocalId)
+                    {
+                        done = true;
+                        break;
+                    }
                 }
-                _updateIssue = null;
+                if (done)
+                    break;
             }
+            
+            try 
+            {
+                TableView.ScrollToRow(NSIndexPath.FromRowSection(r, s), UITableViewScrollPosition.Top, animate);
+            }
+            catch { }
         }
 
-
-        private void ChildChangedModel(IssueElement element, IssueModel changedModel)
+        private void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
         {
             //If null then it's been deleted!
             if (changedModel == null)
             {
-                Root[0].Remove(element);
-                NeedNoItems(Root[0]);
+                Model.RemoveAll(a => a.LocalId == oldModel.LocalId);
+                Refresh(false);
             }
             else
             {
-                element.Model = changedModel;
-                Root.Reload(element, UITableViewRowAnimation.None);
+                AddItems(new List<IssueModel>(1) { changedModel });
+                ScrollToModel(oldModel);
             }
         }
 
@@ -157,23 +175,19 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         {
             this.DoWorkNoHud(() =>
             {
-                var currentCount = OnGetData(0, 0).Count;
-                var moreEvents = OnGetData(currentCount - _firstIndex + _lastIndex);
-                _firstIndex = currentCount;
+                var totalCount = OnGetData(0, 0).Count;
+                var moreEvents = OnGetData(totalCount - _totalCount + _lastIndex);
+                _totalCount = totalCount;
                 _lastIndex += moreEvents.Issues.Count;
                 var newEvents = (from s in moreEvents.Issues select s).ToList();
-                AddItems(newEvents);
+                if (newEvents.Count == 0)
+                    return;
 
-                //Should never happen. Sanity check..
-                if (_loadMore != null && _firstIndex == _lastIndex)
-                {
-                    InvokeOnMainThread(() =>
-                    {
-                        Root.Remove(_loadMore.Parent as Section);
-                        _loadMore.Dispose();
-                        _loadMore = null;
-                    });
-                }
+                InvokeOnMainThread(() => {
+                    var t = TableView.ContentOffset;
+                    AddItems(newEvents);
+                    TableView.ContentOffset = t;
+                });
             },
             OnError, () =>
             {
@@ -187,84 +201,144 @@ namespace BitbucketBrowser.UI.Controllers.Issues
             Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
         }
 
+        static int[] _ceilings = new[] { 5, 10, 25, 50, 75, 100, 200, 400, 600, 1000, 2000, 8000, int.MaxValue };
+        private static string CreateRangeString(int key, IEnumerable<int> ranges)
+        {
+            return ranges.LastOrDefault(x => x < key) + ".." + (key - 1);
+        }
+        
+        private List<Section> CreateSection(IEnumerable<IGrouping<int, IssueModel>> results, string title, string prefix = null)
+        {
+            var sections = new List<Section>();
+            InvokeOnMainThread(() => {
+                foreach (var groups in results)
+                {
+                    var text = (prefix != null ? prefix + " " : "") + CreateRangeString(groups.Key, _ceilings) + " " + title;
+                    var sec = new Section(new TableViewSectionView(text));
+                    sections.Add(sec);
+                    foreach (var y in groups)
+                        sec.Add(CreateElement(y));
+                }
+            });
+            return sections;
+        }
+
+        private List<Section> CreateSection(IEnumerable<IGrouping<string, IssueModel>> results)
+        {
+            var sections = new List<Section>();
+            InvokeOnMainThread(() => {
+                foreach (var groups in results)
+                {
+                    var sec = new Section(new TableViewSectionView(groups.Key));
+                    sections.Add(sec);
+                    foreach (var y in groups)
+                        sec.Add(CreateElement(y));
+                }
+            });
+            return sections;
+        }
+
         protected override void OnRefresh()
         {
             InvokeOnMainThread(() => Root.Clear());
-            AddItems(Model.Issues);
-        }
 
-        private void AddItems(List<IssueModel> issues, bool prepend = false)
-        {
-            Section sec;
-            if (Root != null && Root.Count > 0)
-                sec = Root[0];
+            var order = (FilterModel.Order)_filterModel.OrderBy;
+            List<Section> sections = null;
+
+            if (order == FilterModel.Order.Status)
+            {
+                var a = Model.GroupBy(x => x.Status);
+                sections = CreateSection(a);
+            }
+            else if (order == FilterModel.Order.Priority)
+            {
+                var a = Model.GroupBy(x => x.Priority);
+                sections = CreateSection(a);
+            }
+            else if (order == FilterModel.Order.Utc_Last_Updated)
+            {
+                var a = Model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+                sections = CreateSection(a, "Days Ago", "Updated");
+            }
+            else if (order == FilterModel.Order.Created_On)
+            {
+                var a = Model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+                sections = CreateSection(a, "Days Ago", "Created");
+            }
+            else if (order == FilterModel.Order.Version)
+            {
+                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Version)) ? x.Metadata.Version : "No Version");
+                sections = CreateSection(a);
+            }
+            else if (order == FilterModel.Order.Component)
+            {
+                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Component)) ? x.Metadata.Component : "No Component");
+                sections = CreateSection(a);
+            }
+            else if (order == FilterModel.Order.Milestone)
+            {
+                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Milestone)) ? x.Metadata.Milestone : "No Milestone");
+                sections = CreateSection(a);
+            }
             else
             {
-                if (_filterModel.IsFiltering())
-                    sec = new Section("Results Filtered");
+                IEnumerable<IssueModel> a;
+                if (order == FilterModel.Order.Local_Id)
+                    a = Model.OrderBy(x => x.LocalId);
                 else
-                    sec = new Section();
+                    a = Model.OrderBy(x => x.Title);
+                sections = new List<Section>() { new Section() };
+                foreach (var y in a)
+                    sections[0].Add(CreateElement(y));
             }
 
-            issues.ForEach(x => {
-                if (sec.Elements.Any(y => (y is IssueElement) &&((IssueElement)y).Model.LocalId == x.LocalId))
-                    return;
-                if (prepend)
-                    sec.Insert(0, CreateElement(x));
-                else
-                    sec.Add(CreateElement(x));
-            });
 
-            NeedNoItems(sec);
+            if (sections == null || sections.Count == 0)
+                sections.Add(new Section() { new NoItemsElement("No Issues") });
 
-            InvokeOnMainThread(delegate
-            {
-                if (Root.Count == 0)
-                {
-                    var r = new RootElement(Title) { sec };
-                    r.UnevenRows = true;
 
-                    //If there are more items to load then insert the load object
-                    if (_lastIndex != _firstIndex)
-                    {
-                        _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
-                        r.Add(new Section { _loadMore });
-                    }
+            InvokeOnMainThread(() => { 
+                var root = new RootElement(Title);
+                root.UnevenRows = true;
+                
+                //If there are more items to load then insert the load object
+                if (_lastIndex != _totalCount)
+                    sections.Add(new Section { _loadMore });
 
-                    Root = r;
-                }
-
+                root.Add(sections);
+                Root = root;
             });
         }
 
-        private void NeedNoItems(Section sec)
+        private void AddItems(List<IssueModel> issues)
         {
-            if (sec.Count == 0)
+            if (Model == null)
+                Model = issues;
+            else
             {
-                if (_noItems == null)
-                    sec.Add(_noItems = new NoItemsElement("No Issues"));
+                //Remove any duplicates
+                Model.RemoveAll(x => issues.Any(y => y.LocalId == x.LocalId));
+                Model.AddRange(issues);
             }
-            else if (_noItems != null)
-            {
-                sec.Remove(_noItems);
-                _noItems = null;
-            }
+
+            //Refresh this 
+            Refresh(false);
         }
 
-        protected override IssuesModel OnUpdate(bool forced)
+        protected override List<IssueModel> OnUpdate(bool forced)
         {
             //forced doesnt matter. Never cached.
             //Update everything we have here!
-            var currentCount = OnGetData(0, 0).Count;
+            var totalCount = OnGetData(0, 0).Count;
             var moreEvents = OnGetData();
-            _firstIndex = currentCount;
+            _totalCount = totalCount;
             _lastIndex = moreEvents.Issues.Count;
-            return moreEvents;
+            return moreEvents.Issues;
         }
 
         private void ApplyFilter()
         {
-            _firstIndex = _lastIndex = 0;
+            _totalCount = _lastIndex = 0;
             Model = null;
             Root.Clear();
             _noItems = null;

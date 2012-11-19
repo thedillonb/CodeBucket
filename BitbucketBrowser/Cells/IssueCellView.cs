@@ -153,15 +153,7 @@ namespace BitbucketBrowser.UI
 
     public class IssueElement : Element, IElementSizing, IColorizeBackground
     {       
-        public string CellReuseIdentifier
-        {
-            get;set;    
-        }
-
-        public UITableViewCellStyle Style
-        {
-            get;set;    
-        }
+        public UITableViewCellStyle Style { get; set; }
 
         public UIColor BackgroundColor { get; set; }
 
@@ -170,7 +162,6 @@ namespace BitbucketBrowser.UI
         public IssueElement(IssueModel m) 
             : base(null)
         {
-            this.CellReuseIdentifier = "issueelement";
             this.Style = UITableViewCellStyle.Default;
             Model = m;
         }
@@ -180,19 +171,21 @@ namespace BitbucketBrowser.UI
             return 69f;
         }
 
+        protected override NSString CellKey {
+            get {
+                return new NSString("IssueCellView");
+            }
+        }
         
         public event NSAction Tapped;
 
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(this.CellReuseIdentifier) as IssueCellView;
+            var cell = tv.DequeueReusableCell(CellKey) as IssueCellView;
 
             if (cell == null)
-            {
                 cell = IssueCellView.Create();
-
-            }
 
             cell.Bind(Model);
 

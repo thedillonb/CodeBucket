@@ -88,6 +88,7 @@ namespace BitbucketBrowser
             ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
             UserElement.Default = Images.Anonymous;
             NewsFeedElement.DefaultImage = Images.Anonymous;
+            TableViewSectionView.BackgroundImage = Images.Searchbar;
 
             //Resize the back button only on the iPhone
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
@@ -250,7 +251,7 @@ namespace BitbucketBrowser
                
 #if DEBUG
                 //SelectView(new IssuesController(Application.Account.Username, "bitbucketbrowser"));
-                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+                SelectView(new AccountRepositoryController(Application.Account.Username));
 #else
                 SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 #endif
