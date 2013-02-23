@@ -87,8 +87,16 @@ namespace BitbucketBrowser.UI.Controllers.Issues
         {
             var ret = new LinkedList<Tuple<string, string>>();
             foreach (var f in o.GetType().GetFields())
+            {
                 if ((bool)f.GetValue(o))
-                    ret.AddLast(new Tuple<string, string>(name, f.Name.ToLower()));
+                {
+                    //Special case for "on hold"
+                    var objectName = f.Name.ToLower();
+                    if (objectName.Equals("onhold"))
+                        objectName = "on hold";
+                    ret.AddLast(new Tuple<string, string>(name, objectName));
+                }
+            }
             return ret;
         }
 
