@@ -50,6 +50,11 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             //addAccount.Image = Images.CommentAdd;
             accountSection.Add(addAccount);
 
+            var configSection = new Section("Configuration");
+            var autoSigninElement = new BooleanElement("Auto Sign-in", Application.AutoSignin);
+            autoSigninElement.ValueChanged += (sender, e) => { Application.AutoSignin = autoSigninElement.Value; };
+            configSection.Add(autoSigninElement);
+
             var supportSection = new Section("Support");
             supportSection.Add(new StyledElement("Technical Support", () => {
                 var web = new BitbucketBrowser.Controllers.HelpViewController();
@@ -65,7 +70,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             aboutSection.Add(new StyledElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))));
             aboutSection.Add(new StyledElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString()));
 
-            Root = new RootElement(Title) { accountSection, supportSection, aboutSection };
+            Root = new RootElement(Title) { accountSection, configSection, supportSection, aboutSection };
         }
 
         public override Source CreateSizingSource(bool unevenRows)

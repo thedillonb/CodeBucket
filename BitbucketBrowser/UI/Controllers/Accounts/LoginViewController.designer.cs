@@ -16,7 +16,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 		MonoTouch.UIKit.UITextField Password { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextField User { get; set; }
+		public MonoTouch.UIKit.UITextField User { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView Logo { get; set; }

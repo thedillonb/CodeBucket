@@ -10,6 +10,7 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
     {
 
         public Action LoginComplete;
+        public string Username;
 
         public LoginViewController()
             : base("LoginViewController", null)
@@ -25,6 +26,10 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 
             Logo.Image = Images.Logo;
             Title = "Add Account";
+            if (Username != null)
+            {
+                User.Text = Username;
+            }
 
             User.ShouldReturn = delegate
             {
@@ -95,17 +100,19 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                     return;
                 }
 
-                var newAccount = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
+                var account = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
 
-                if (Application.Accounts.Exists(newAccount))
+                if (!Application.Accounts.Exists(account))
                 {
-                    Utilities.ShowAlert("Unable to Add User", "That user already exists!");
-                    return;
+                    //Logged in correctly!
+                    //Go back to the other view and add the username
+                    Application.Accounts.Insert(account);
+                }
+                else
+                {
+                    Application.SetUser(account);
                 }
 
-                //Logged in correctly!
-                //Go back to the other view and add the username
-                Application.Accounts.Insert(newAccount);
 
                 if (NavigationController != null)
                     NavigationController.PopViewControllerAnimated(true);

@@ -98,9 +98,18 @@ namespace BitbucketBrowser
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            if (Application.Accounts.Count == 0)
+
+            var accountCount = Application.Accounts.Count;
+            if (accountCount == 0 || !Application.AutoSignin)
             {
                 var login = new LoginViewController();
+                if (accountCount > 0)
+                {
+                    var account = GetDefaultAccount();
+                    if (account != null) 
+                        login.Username = account.Username;
+                }
+
                 login.LoginComplete = () => {
                     ShowMainWindow();
                 };
@@ -139,7 +148,7 @@ namespace BitbucketBrowser
 			return true;
 		}
 
-        private void ShowMainWindow()
+        private Account GetDefaultAccount()
         {
             var defaultAccount = Application.Accounts.GetDefault();
             if (defaultAccount == null)
@@ -147,7 +156,12 @@ namespace BitbucketBrowser
                 defaultAccount = Application.Accounts.First();
                 Application.Accounts.SetDefault(defaultAccount);
             }
+            return defaultAccount;
+        }
 
+        private void ShowMainWindow()
+        {
+            var defaultAccount = GetDefaultAccount();
             Application.SetUser(defaultAccount);
 
             //This supports the split view configuration of the iPad

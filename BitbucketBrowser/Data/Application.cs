@@ -1,3 +1,5 @@
+using MonoTouch;
+
 namespace BitbucketBrowser
 {
     /// <summary>
@@ -32,6 +34,27 @@ namespace BitbucketBrowser
                 Timeout = 1000 * 30,
                 CacheProvider = Cache,
             };
+        }
+
+        public static bool AutoSignin
+        {
+            get
+            {
+                //If it's never been set.
+                if (Utilities.Defaults.ValueForKey(new MonoTouch.Foundation.NSString("AUTO_SIGN_IN")) == null)
+                {
+                    AutoSignin = true;
+                    return true;
+                }
+
+                var b = Utilities.Defaults.BoolForKey("AUTO_SIGN_IN");
+                return b;
+            }
+            set
+            {
+                Utilities.Defaults.SetBool(value, "AUTO_SIGN_IN");
+                Utilities.Defaults.Synchronize();
+            }
         }
     }
 }
