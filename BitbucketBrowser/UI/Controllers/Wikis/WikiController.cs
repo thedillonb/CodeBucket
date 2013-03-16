@@ -46,7 +46,10 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
         {
             _user = user;
             _slug = slug;
-            _page = page;
+            if (page.StartsWith("/"))
+                _page = page.Substring(1);
+            else
+                _page = page;
             Title = "Wiki";
             Web.ScalesPageToFit = true;
             Web.DataDetectorTypes = UIDataDetectorType.None;

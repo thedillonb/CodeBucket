@@ -148,6 +148,18 @@ namespace BitbucketBrowser.UI.Controllers.Events
                     blocks.AddRange(RepoName(eventModel));
                 }
             }
+            else if (eventModel.Event == EventModel.Type.WikiDeleted)
+            {
+                img = Images.BinClosed;
+                blocks.Add(new NewsFeedElement.TextBlock("Deleted wiki page "));
+                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+                
+                if (ReportRepository)
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock(" in "));
+                    blocks.AddRange(RepoName(eventModel));
+                }
+            }
             else if (eventModel.Event == EventModel.Type.StartFollowUser)
             {
                 img = Images.HeartAdd;
@@ -184,7 +196,7 @@ namespace BitbucketBrowser.UI.Controllers.Events
                 blocks.AddRange(RepoName(eventModel));
             }
             else
-                img = Images.Priority;
+                return null;
 
             return blocks;
         }
@@ -217,24 +229,16 @@ namespace BitbucketBrowser.UI.Controllers.Events
             //Just return the name
             return new [] { new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)) };
         }
-
-
-        //Lists the supported events that we implemented so far...
-        public static List<string> SupportedEvents = new List<string> { EventModel.Type.Commit, EventModel.Type.CreateRepo, EventModel.Type.WikiUpdated, EventModel.Type.WikiCreated,
-            EventModel.Type.StartFollowRepo, EventModel.Type.StartFollowUser, EventModel.Type.StopFollowRepo, EventModel.Type.IssueComment,
-            EventModel.Type.IssueUpdated, EventModel.Type.IssueReported                   
-        };
-
+       
         private void AddItems(List<EventModel> events, bool prepend = true)
         {
             var sec = new Section();
             events.ForEach(e =>
             {
-                if (!SupportedEvents.Contains(e.Event))
-                    return;
-
                 UIImage small;
                 var hello = CreateDescription(e, out small);
+                if (hello == null)
+                    return;
 
                 //Get the user
                 var username = e.User != null ? e.User.Username : null;
