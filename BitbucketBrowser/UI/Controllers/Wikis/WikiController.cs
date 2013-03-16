@@ -68,7 +68,7 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
                     var text = composer.Text;
 
                     composer.DoWork(() => {
-                        Application.Client.Users[_user].Repositories[_slug].Wikis[page].Update(text, Uri.UnescapeDataString(page));
+                        Application.Client.Users[_user].Repositories[_slug].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page));
                         
                         InvokeOnMainThread(() => {
                             composer.CloseComposer();
@@ -116,14 +116,18 @@ namespace BitbucketBrowser.UI.Controllers.Wikis
 
         private bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navType)
         {
-            Console.WriteLine("Should load: " + navType);
-            if (navType == UIWebViewNavigationType.LinkClicked) 
-            {
-                if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
+            try {
+                if (navType == UIWebViewNavigationType.LinkClicked) 
                 {
-                    Load(request.Url.ToString().Substring(7));
-                    return false;
+                    if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
+                    {
+                        Load(request.Url.ToString().Substring(7));
+                        return false;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
             }
 
             return true;
