@@ -39,20 +39,20 @@ namespace BitbucketBrowser.UI.Controllers.Privileges
         protected override void OnRefresh()
         {
             var sec = new Section();
-            if (Primary != null)
-            {
-                StyledElement primaryElement = new UserElement(Primary.Username, Primary.FirstName, Primary.LastName, Primary.Avatar);
-                primaryElement.Tapped += () => OnSelectedItem(Primary);
-                sec.Add(primaryElement);
-            }
-
             HashSet<UserModel> users = new HashSet<UserModel>();
+
             Model.ForEach(s => {
                 if (s.User != null)
                     users.Add(s.User);
             });
 
-            foreach (var u in users)
+            //Make sure this comes last. If the user already exists in the list, this will 
+            //get rejected. The primary is only here because we KNOW this user is the owner
+            //of this resource. If all else fails, we should atleast be able to assign to it.
+            if (Primary != null)
+                users.Add(Primary);
+
+            foreach (var u in users.OrderBy(x => x.Username))
             {
                 var user = u;
                 StyledElement sse = new UserElement(user.Username, user.FirstName, user.LastName, user.Avatar);
