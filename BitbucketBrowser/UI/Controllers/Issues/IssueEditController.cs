@@ -290,7 +290,7 @@ namespace BitbucketBrowser.UI.Controllers.Issues
                                      };
                 privileges.SelectedItem += obj =>
                 {
-                    _assignedTo.Value = obj.User.Username;
+                    _assignedTo.Value = obj.Username;
                     NavigationController.PopViewControllerAnimated(true);
                 };
                 NavigationController.PushViewController(privileges, true);
