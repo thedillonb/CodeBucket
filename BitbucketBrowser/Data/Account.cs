@@ -74,17 +74,50 @@ namespace BitbucketBrowser
             return query.Count > 0;
         }
 
+		public Account Find(string username)
+		{
+			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", username);
+			if (query.Count > 0)
+				return query[0];
+			return null;
+		}
     }
 
 
     public class Account
     {
+		/// <summary>
+		/// Gets or sets the username.
+		/// </summary>
+		/// <value>The username.</value>
         [PrimaryKey]
         public string Username { get; set; }
 
+		/// <summary>
+		/// Gets or sets the password.
+		/// </summary>
+		/// <value>The password.</value>
         public string Password { get; set; }
 
+		/// <summary>
+		/// Gets or sets the avatar URL.
+		/// </summary>
+		/// <value>The avatar URL.</value>
         public string AvatarUrl { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="BitbucketBrowser.Account"/> dont remember.
+		/// THIS HAS TO BE A NEGATIVE STATEMENT SINCE IT DEFAULTS TO 'FALSE' WHEN RETRIEVING A NULL VIA SQLITE
+		/// </summary>
+		public bool DontRemember { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BitbucketBrowser.Account"/> class.
+		/// </summary>
+		public Account()
+		{
+			DontRemember = true;
+		}
 
 
         #region Filters
@@ -125,6 +158,9 @@ namespace BitbucketBrowser
 
         #endregion
 
+		/// <summary>
+		/// Delete this instance in the database
+		/// </summary>
         public void Delete()
         {
             //Delete configurations
@@ -133,11 +169,18 @@ namespace BitbucketBrowser
             Database.Main.Delete(this);
         }
 
+		/// <summary>
+		/// Update this instance in the database
+		/// </summary>
         public void Update()
         {
             Database.Main.Update(this);
         }
 
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.</returns>
         public override string ToString()
         {
             return Username;

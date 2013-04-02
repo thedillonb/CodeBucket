@@ -8,9 +8,20 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
 {
     public partial class LoginViewController : UIViewController
     {
-
         public Action LoginComplete;
-        public string Username;
+        private string _username;
+
+		public string Username
+		{
+			get { return _username; }
+			set
+			{
+				_username = value;
+				if (User != null)
+					User.Text = _username;
+			}
+		}
+
 
         public LoginViewController()
             : base("LoginViewController", null)
@@ -25,11 +36,9 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
             View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
 
             Logo.Image = Images.Logo;
-            Title = "Add Account";
+            Title = "Login";
             if (Username != null)
-            {
                 User.Text = Username;
-            }
 
             User.ShouldReturn = delegate
             {
@@ -100,19 +109,21 @@ namespace BitbucketBrowser.UI.Controllers.Accounts
                     return;
                 }
 
-                var account = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
+				var account = Application.Accounts.Find (User.Text);
 
-                if (!Application.Accounts.Exists(account))
-                {
-                    //Logged in correctly!
-                    //Go back to the other view and add the username
-                    Application.Accounts.Insert(account);
-                }
-                else
-                {
+				//Account does not exist! Add it!
+				if (account == null)
+			    {
+               		account = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
+					Application.Accounts.Insert(account);
+				}
+				//Account already exists. Update the password just incase it changed...
+				else
+				{
+					account.Password = Password.Text;
+					account.Update();
                     Application.SetUser(account);
-                }
-
+				}
 
                 if (NavigationController != null)
                     NavigationController.PopViewControllerAnimated(true);

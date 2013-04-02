@@ -177,6 +177,7 @@
     <Compile Include="UI\Controllers\Repositories\ExploreController.cs" />
     <Compile Include="UI\Controllers\Branches\TagController.cs" />
     <Compile Include="UI\Controllers\Accounts\ProfileController.cs" />
+    <Compile Include="UI\Controllers\Accounts\AccountsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
@@ -317,10 +318,6 @@
     <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bitbucketsharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
-      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
-      <Name>BitbucketSharp.MonoTouch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\codeframework\CodeFramework\CodeFramework.csproj">
       <Project>{3E01B962-FE29-4992-8140-34465C86418F}</Project>
       <Name>CodeFramework</Name>
@@ -333,13 +330,13 @@
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\codeframework\OHAttributedLabel\OHAttributedLabel.csproj">
-      <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
-      <Name>OHAttributedLabel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
       <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
       <Name>RestSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\bitbucketsharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
+      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
+      <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

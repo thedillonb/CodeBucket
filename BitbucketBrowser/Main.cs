@@ -98,54 +98,86 @@ namespace BitbucketBrowser
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-
-            var accountCount = Application.Accounts.Count;
-            if (accountCount == 0 || !Application.AutoSignin)
-            {
-                var login = new LoginViewController();
-                if (accountCount > 0)
-                {
-                    var account = GetDefaultAccount();
-                    if (account != null) 
-                        login.Username = account.Username;
-                }
-
-                login.LoginComplete = () => {
-                    ShowMainWindow();
-                };
-
-                //Make it so!
-                window.RootViewController = login;
-            }
-            else
-            {
-                ShowMainWindow();
-            }
-
+			//Process the accounts
+			ProcessAccounts(window);
+            
+			//Make what ever window visible.
 			window.MakeKeyAndVisible();
 
+			//Fade the splash screen
+			BeginSplashFade();
 
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-            {
-                UIImageView killSplash = null;
-                if (MonoTouch.Utilities.IsTall)
-                    killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "jpg"));
-                else
-                    killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default", "jpg"));
-
-                window.AddSubview(killSplash);
-                window.BringSubviewToFront(killSplash);
-
-                UIView.Animate(0.8, () => { 
-                    killSplash.Alpha = 0.0f; 
-                }, () => { 
-                    killSplash.RemoveFromSuperview(); 
-                });
-            }
-
-
-			
+			//Always return true
 			return true;
+		}
+
+		private void ProcessAccounts(UIWindow window)
+		{
+			var accountCount = Application.Accounts.Count;
+			var defaultAccount = GetDefaultAccount();
+
+			//There's no accounts...
+			if (GetDefaultAccount() == null)
+			{
+				var login = new LoginViewController();
+				login.LoginComplete = () => {
+					ShowMainWindow();
+				};
+				
+				//Make it so!
+				window.RootViewController = login;
+			}
+			else
+			{
+				//Don't remember, prompt for password
+				if (defaultAccount.DontRemember)
+				{
+					var accountsController = new AccountsController();
+					accountsController.AccountSelected += (Account obj) => {
+						Application.SetUser(obj);
+						ShowMainWindow();
+					};
+
+					var loginController = new LoginViewController() { Username = defaultAccount.Username };
+					loginController.LoginComplete = () => {
+						ShowMainWindow();
+					};
+
+					var navigationController = new UINavigationController(accountsController);
+					navigationController.PushViewController(loginController, false);
+
+					window.RootViewController = navigationController;
+				}
+				//If the user wanted to remember the account
+				else
+				{
+					ShowMainWindow();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Fade the splash screen
+		/// </summary>
+		private void BeginSplashFade()
+		{
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			{
+				UIImageView killSplash = null;
+				if (MonoTouch.Utilities.IsTall)
+					killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "jpg"));
+				else
+					killSplash = new UIImageView(UIImageHelper.FromFileAuto("Default", "jpg"));
+				
+				window.AddSubview(killSplash);
+				window.BringSubviewToFront(killSplash);
+				
+				UIView.Animate(0.8, () => { 
+					killSplash.Alpha = 0.0f; 
+				}, () => { 
+					killSplash.RemoveFromSuperview(); 
+				});
+			}
 		}
 
         private Account GetDefaultAccount()
