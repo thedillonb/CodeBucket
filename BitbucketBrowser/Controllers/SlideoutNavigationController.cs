@@ -46,6 +46,7 @@ namespace BitbucketBrowser.Controllers
 			{
 				#if DEBUG
 				//SelectView(new IssuesController(Application.Account.Username, "bitbucketbrowser"));
+				SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 				#else
 				SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 				#endif
