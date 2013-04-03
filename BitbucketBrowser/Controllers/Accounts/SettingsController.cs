@@ -74,7 +74,7 @@ namespace BitbucketBrowser.Controllers.Accounts
 			{
 	            var configSection = new Section("Account Options");
 				root.Add(configSection);
-	            var autoSigninElement = new CodeFramework.UI.Elements.BooleanElement("Remember Credentials", !currentAccount.DontRemember);
+	            var autoSigninElement = new CodeFramework.UI.Elements.TrueFalseElement("Remember Credentials", !currentAccount.DontRemember);
 	            autoSigninElement.ValueChanged += (sender, e) => { 
 					currentAccount.DontRemember = !autoSigninElement.Value; 
 					currentAccount.Update();
