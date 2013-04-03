@@ -1,4 +1,5 @@
 using MonoTouch;
+using BitbucketBrowser.Data;
 
 namespace BitbucketBrowser
 {

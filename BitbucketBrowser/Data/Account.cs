@@ -7,83 +7,8 @@ using MonoTouch;
 using BitbucketBrowser.Controllers.Issues;
 using BitbucketBrowser.Controllers.Repositories;
 
-namespace BitbucketBrowser 
+namespace BitbucketBrowser.Data
 {
-    public class Accounts : IEnumerable<Account>
-    {
-
-        public int Count 
-        {
-            get { return Database.Main.Table<Account>().Count(); }
-        }
-
-        public Account GetDefault()
-        {
-            var name = Utilities.Defaults.StringForKey("DEFAULT_ACCOUNT");
-            if (name == null)
-                return null;
-
-            foreach (Account a in this)
-                if (a.Username.ToLower().Equals(name.ToLower()))
-                    return a;
-            return null;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator ()
-        {
-            return GetEnumerator();
-        }
-
-        public IEnumerator<Account> GetEnumerator ()
-        {
-            return Database.Main.Table<Account>().GetEnumerator();
-        }
-
-        public void Insert(Account a)
-        {
-            Database.Main.Insert(a);
-        }
-
-        public void Remove(Account a)
-        {
-            a.Delete();
-        }
-
-        public void Remove(string username)
-        {
-            var q = from f in Database.Main.Table<Account>()
-                    where f.Username == username
-                    select f;
-            var account = q.FirstOrDefault();
-            if (account != null)
-                Remove(account);
-        }
-
-        public void SetDefault(Account a)
-        {
-            if (a == null)
-                Utilities.Defaults.RemoveObject("DEFAULT_ACCOUNT");
-            else
-                Utilities.Defaults.SetString(a.Username, "DEFAULT_ACCOUNT");
-            Utilities.Defaults.Synchronize();
-        }
-
-        public bool Exists(Account a)
-        {
-            var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", a.Username);
-            return query.Count > 0;
-        }
-
-		public Account Find(string username)
-		{
-			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", username);
-			if (query.Count > 0)
-				return query[0];
-			return null;
-		}
-    }
-
-
     public class Account
     {
 		/// <summary>
@@ -119,6 +44,34 @@ namespace BitbucketBrowser
 			DontRemember = true;
 		}
 
+		
+		/// <summary>
+		/// Delete this instance in the database
+		/// </summary>
+		public void Delete()
+		{
+			//Delete configurations
+			MonoTouch.Configurations.Delete(Username);
+			
+			Database.Main.Delete(this);
+		}
+		
+		/// <summary>
+		/// Update this instance in the database
+		/// </summary>
+		public void Update()
+		{
+			Database.Main.Update(this);
+		}
+		
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.</returns>
+		public override string ToString()
+		{
+			return Username;
+		}
 
         #region Filters
 
@@ -157,34 +110,6 @@ namespace BitbucketBrowser
         }
 
         #endregion
-
-		/// <summary>
-		/// Delete this instance in the database
-		/// </summary>
-        public void Delete()
-        {
-            //Delete configurations
-            MonoTouch.Configurations.Delete(Username);
-
-            Database.Main.Delete(this);
-        }
-
-		/// <summary>
-		/// Update this instance in the database
-		/// </summary>
-        public void Update()
-        {
-            Database.Main.Update(this);
-        }
-
-		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.
-		/// </summary>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="BitbucketBrowser.Account"/>.</returns>
-        public override string ToString()
-        {
-            return Username;
-        }
     }
 }
 

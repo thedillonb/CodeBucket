@@ -3,6 +3,7 @@ using CodeFramework.UI.Controllers;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using CodeFramework.UI.Elements;
+using BitbucketBrowser.Data;
 
 namespace BitbucketBrowser.Controllers.Accounts
 {
@@ -36,7 +37,11 @@ namespace BitbucketBrowser.Controllers.Accounts
 			Title = "Accounts";
 			Style = UITableViewStyle.Grouped;
 		}
-		
+
+		/// <summary>
+		/// Views the will appear.
+		/// </summary>
+		/// <param name="animated">If set to <c>true</c> animated.</param>
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);

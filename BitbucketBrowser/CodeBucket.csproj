@@ -140,7 +140,6 @@
       <DependentUpon>RepositoryCellView.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
@@ -178,6 +177,9 @@
     <Compile Include="Controllers\Source\SourceInfoController.cs" />
     <Compile Include="Controllers\Source\SourceController.cs" />
     <Compile Include="Controllers\Wikis\WikiController.cs" />
+    <Compile Include="Controllers\SlideoutNavigationController.cs" />
+    <Compile Include="Data\Accounts.cs" />
+    <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />

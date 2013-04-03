@@ -37,9 +37,9 @@ namespace BitbucketBrowser.Controllers
             {
                 foreach (var k in Model.Keys)
                 {
-                    var element = new StyledElement(k);
-                    var k1 = k;
-                    element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[k1].Node), true);
+                    var key = k;
+					var element = new StyledElement(key);
+					element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[key].Node), true);
                     sec.Add(element);
                 }
             }

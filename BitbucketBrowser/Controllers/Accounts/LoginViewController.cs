@@ -3,6 +3,7 @@ using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch;
+using BitbucketBrowser.Data;
 
 namespace BitbucketBrowser.Controllers.Accounts
 {

@@ -8,7 +8,7 @@ using BitbucketBrowser.Controllers.Source;
 
 namespace BitbucketBrowser.Controllers.Branches
 {
-	public class BranchController : Controller<List<BranchModel>>
+	public class BranchController : Controller<Dictionary<string, BranchModel>>
 	{
         public string Username { get; private set; }
         public string Slug { get; private set; }
@@ -31,17 +31,22 @@ namespace BitbucketBrowser.Controllers.Branches
             if (Model.Count == 0)
                 sec.Add(new NoItemsElement("No Branches"));
             else
-                Model.ForEach(x => sec.Add(new StyledElement(x.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, x.Branch), true))));
+			{
+				foreach (var entry in Model)
+				{
+					var branch = entry;
+					sec.Add(new StyledElement(branch.Key, () => NavigationController.PushViewController(new SourceController(Username, Slug, branch.Key), true)));
+				}
+			}
            
             InvokeOnMainThread(delegate {
                 Root = new RootElement(Title) { sec };
             });
         }
 
-        protected override List<BranchModel> OnUpdate(bool forced)
+		protected override Dictionary<string, BranchModel> OnUpdate(bool forced)
         {
-            var branches = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced);
-            return new List<BranchModel>(branches.Values);
+            return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced);
         }
 	}
 }

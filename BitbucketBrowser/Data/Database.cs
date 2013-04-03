@@ -2,7 +2,7 @@ using System;
 using SQLite;
 using MonoTouch;
 
-namespace BitbucketBrowser
+namespace BitbucketBrowser.Data
 {
     public class Database : SQLiteConnection
     {

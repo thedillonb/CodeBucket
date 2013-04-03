@@ -22,6 +22,7 @@ using BitbucketBrowser.Controllers.Changesets;
 using BitbucketBrowser.Controllers.Wikis;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Controllers.Branches;
+using BitbucketBrowser.Data;
 
 namespace BitbucketBrowser
 {
@@ -34,7 +35,7 @@ namespace BitbucketBrowser
 	{
 		// class-level declarations
 		UIWindow window;
-        SlideoutNavigationController _nav;
+        BitbucketBrowser.Controllers.SlideoutNavigationController _nav;
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -53,53 +54,14 @@ namespace BitbucketBrowser
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            //Set the status bar
-            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
+			//Set the theme
+			SetTheme();
 
-            //Set the theming
-            UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
-
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
-
-            UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-            UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-
-            //BackButton
-            UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
-
-            UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
-
-            UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
-            //UIBarButtonItem.Appearance.TintColor = UIColor.White;
-            UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
-
-            var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
-            UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
-            UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
-
-            CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
-            CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
-
-            DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
-            WatermarkView.Image = Images.Background;
-            HeaderView.Gradient = Images.CellGradient;
-            StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-            ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
-            UserElement.Default = Images.Anonymous;
-            NewsFeedElement.DefaultImage = Images.Anonymous;
-            TableViewSectionView.BackgroundImage = Images.Searchbar;
-
-            //Resize the back button only on the iPhone
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-            {
-                UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-            }
-
+			//Create the window
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
 			//Process the accounts
-			ProcessAccounts(window);
+			ProcessAccounts();
             
 			//Make what ever window visible.
 			window.MakeKeyAndVisible();
@@ -111,7 +73,60 @@ namespace BitbucketBrowser
 			return true;
 		}
 
-		private void ProcessAccounts(UIWindow window)
+		/// <summary>
+		/// Sets the theme of the application.
+		/// </summary>
+		private void SetTheme()
+		{
+			//Set the status bar
+			UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
+			
+			//Set the theming
+			UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
+			
+			UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
+			UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
+			
+			UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+			UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+			
+			//BackButton
+			UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
+			
+			UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
+			
+			UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
+			//UIBarButtonItem.Appearance.TintColor = UIColor.White;
+			UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
+			
+			var textAttrs = new UITextAttributes() { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
+			UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
+			UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
+			
+			CodeFramework.UI.Views.SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
+			CodeFramework.UI.Views.SearchFilterBar.FilterImage = Images.Filter;
+			
+			DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
+			WatermarkView.Image = Images.Background;
+			HeaderView.Gradient = Images.CellGradient;
+			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
+			ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
+			UserElement.Default = Images.Anonymous;
+			NewsFeedElement.DefaultImage = Images.Anonymous;
+			TableViewSectionView.BackgroundImage = Images.Searchbar;
+			
+			//Resize the back button only on the iPhone
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			{
+				UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+			}
+		}
+
+		/// <summary>
+		/// Processes the accounts.
+		/// </summary>
+		/// <param name="window">Window.</param>
+		private void ProcessAccounts()
 		{
 			var defaultAccount = GetDefaultAccount();
 
@@ -179,6 +194,11 @@ namespace BitbucketBrowser
 			}
 		}
 
+		/// <summary>
+		/// Gets the default account. If there is not one assigned it will pick the first in the account list.
+		/// If there isn't one, it'll just return null.
+		/// </summary>
+		/// <returns>The default account.</returns>
         private Account GetDefaultAccount()
         {
             var defaultAccount = Application.Accounts.GetDefault();
@@ -217,7 +237,7 @@ namespace BitbucketBrowser
 //            }
 //            else
             {
-                _nav = new MySlideout() { SlideHeight = 999f };
+				_nav = new BitbucketBrowser.Controllers.SlideoutNavigationController();
                 _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
                 _nav.MenuView = new MenuController();
                 window.RootViewController = _nav;
@@ -263,51 +283,6 @@ namespace BitbucketBrowser
 //        #endregion
 	}
 
-    public class MySlideout : SlideoutNavigationController
-    {
-        private string _previousUser;
 
-
-        public MySlideout()
-            : base()
-        {
-        }
-
-        protected override UIBarButtonItem CreateMenuButton()
-        {
-            return new UIBarButtonItem(Images.ThreeLines, UIBarButtonItemStyle.Plain, (s, e) => Show());
-        }
-        
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            if (!(_previousUser ?? "").Equals(Application.Account.Username))
-            {
-                Application.Cache.DeleteAll();
-                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
-            }
-            _previousUser = Application.Account.Username;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            //First time appear
-            if (_previousUser == null)
-            {
-               
-#if DEBUG
-                //SelectView(new IssuesController(Application.Account.Username, "bitbucketbrowser"));
-                SelectView(new AccountRepositoryController(Application.Account.Username));
-#else
-                SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
-#endif
-                Application.Cache.DeleteAll();
-                _previousUser = Application.Account.Username;
-            }
-
-        }
-    }
 }
 
