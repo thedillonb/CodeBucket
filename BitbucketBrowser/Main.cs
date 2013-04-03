@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-using BitbucketBrowser.UI;
+
 using MonoTouch.Dialog;
 using MonoTouch.SlideoutNavigation;
 using System.Drawing;
@@ -13,15 +13,15 @@ using System.Threading;
 using MonoTouch.Dialog.Utilities;
 using CodeFramework.UI.Elements;
 using CodeFramework.UI.Views;
-using BitbucketBrowser.UI.Controllers.Issues;
-using BitbucketBrowser.UI.Controllers.Events;
-using BitbucketBrowser.UI.Controllers.Repositories;
-using BitbucketBrowser.UI.Controllers.Groups;
-using BitbucketBrowser.UI.Controllers.Accounts;
-using BitbucketBrowser.UI.Controllers.Changesets;
-using BitbucketBrowser.UI.Controllers.Wikis;
+using BitbucketBrowser.Controllers.Issues;
+using BitbucketBrowser.Controllers.Events;
+using BitbucketBrowser.Controllers.Repositories;
+using BitbucketBrowser.Controllers.Groups;
+using BitbucketBrowser.Controllers.Accounts;
+using BitbucketBrowser.Controllers.Changesets;
+using BitbucketBrowser.Controllers.Wikis;
 using BitbucketBrowser.Controllers;
-using BitbucketBrowser.UI.Controllers.Branches;
+using BitbucketBrowser.Controllers.Branches;
 
 namespace BitbucketBrowser
 {
@@ -113,7 +113,6 @@ namespace BitbucketBrowser
 
 		private void ProcessAccounts(UIWindow window)
 		{
-			var accountCount = Application.Accounts.Count;
 			var defaultAccount = GetDefaultAccount();
 
 			//There's no accounts...

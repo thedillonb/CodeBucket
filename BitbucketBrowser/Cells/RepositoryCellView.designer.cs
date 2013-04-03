@@ -6,7 +6,7 @@
 //
 using MonoTouch.Foundation;
 
-namespace BitbucketBrowser
+namespace BitbucketBrowser.Cells
 {
 	[Register ("RepositoryCellView")]
 	partial class RepositoryCellView

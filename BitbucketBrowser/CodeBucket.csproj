@@ -142,69 +142,56 @@
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Application.cs" />
     <Compile Include="Data\Database.cs" />
-    <Compile Include="UI\Controllers\Issues\IssuesController.cs" />
-    <Compile Include="UI\Controllers\Issues\IssueEditController.cs" />
-    <Compile Include="UI\Controllers\Issues\IssueInfoController.cs" />
-    <Compile Include="UI\Controllers\Events\RepoEventsController.cs" />
-    <Compile Include="UI\Controllers\Events\EventsController.cs" />
-    <Compile Include="UI\Controllers\Wikis\WikiController.cs" />
-    <Compile Include="UI\Controllers\Branches\BranchController.cs" />
-    <Compile Include="UI\Controllers\Followers\UserFollowersController.cs" />
-    <Compile Include="UI\Controllers\Followers\RepoFollowersController.cs" />
-    <Compile Include="UI\Controllers\Followers\FollowersController.cs" />
-    <Compile Include="UI\Controllers\Groups\GroupInfoController.cs" />
-    <Compile Include="UI\Controllers\Groups\GroupController.cs" />
-    <Compile Include="UI\Controllers\Privileges\PrivilegesController.cs" />
-    <Compile Include="UI\Controllers\Repositories\RepositoryInfoController.cs" />
-    <Compile Include="UI\Controllers\Repositories\AccountRepositoryController.cs" />
-    <Compile Include="UI\Controllers\Repositories\RepositoryController.cs" />
-    <Compile Include="UI\Controllers\Accounts\LoginViewController.cs" />
-    <Compile Include="UI\Controllers\Accounts\LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controllers\Changesets\ChangesetDiffController.cs" />
-    <Compile Include="UI\Controllers\Changesets\ChangesetInfoController.cs" />
-    <Compile Include="UI\Controllers\Changesets\ChangesetController.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
-    <Compile Include="UI\Controllers\Source\SourceInfoController.cs" />
-    <Compile Include="UI\Controllers\Source\SourceController.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Controllers\HelpViewController.cs" />
     <Compile Include="Controllers\FileSourceController.cs" />
-    <Compile Include="UI\Controllers\Accounts\SettingsController.cs" />
-    <Compile Include="UI\Controllers\Issues\SingleItemSelectViewController.cs" />
-    <Compile Include="UI\Controllers\Repositories\ExploreController.cs" />
-    <Compile Include="UI\Controllers\Branches\TagController.cs" />
-    <Compile Include="UI\Controllers\Accounts\ProfileController.cs" />
-    <Compile Include="UI\Controllers\Accounts\AccountsController.cs" />
+    <Compile Include="Controllers\Accounts\LoginViewController.cs" />
+    <Compile Include="Controllers\Accounts\LoginViewController.designer.cs">
+      <DependentUpon>..\..\UI\Controllers\Accounts\LoginViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Accounts\SettingsController.cs" />
+    <Compile Include="Controllers\Accounts\ProfileController.cs" />
+    <Compile Include="Controllers\Accounts\AccountsController.cs" />
+    <Compile Include="Controllers\Branches\BranchController.cs" />
+    <Compile Include="Controllers\Branches\TagController.cs" />
+    <Compile Include="Controllers\Changesets\ChangesetDiffController.cs" />
+    <Compile Include="Controllers\Changesets\ChangesetInfoController.cs" />
+    <Compile Include="Controllers\Changesets\ChangesetController.cs" />
+    <Compile Include="Controllers\Events\RepoEventsController.cs" />
+    <Compile Include="Controllers\Events\EventsController.cs" />
+    <Compile Include="Controllers\Followers\UserFollowersController.cs" />
+    <Compile Include="Controllers\Followers\RepoFollowersController.cs" />
+    <Compile Include="Controllers\Followers\FollowersController.cs" />
+    <Compile Include="Controllers\Groups\GroupInfoController.cs" />
+    <Compile Include="Controllers\Groups\GroupController.cs" />
+    <Compile Include="Controllers\Issues\IssuesController.cs" />
+    <Compile Include="Controllers\Issues\IssueEditController.cs" />
+    <Compile Include="Controllers\Issues\IssueInfoController.cs" />
+    <Compile Include="Controllers\Issues\SingleItemSelectViewController.cs" />
+    <Compile Include="Controllers\Privileges\PrivilegesController.cs" />
+    <Compile Include="Controllers\Repositories\RepositoryInfoController.cs" />
+    <Compile Include="Controllers\Repositories\AccountRepositoryController.cs" />
+    <Compile Include="Controllers\Repositories\RepositoryController.cs" />
+    <Compile Include="Controllers\Repositories\ExploreController.cs" />
+    <Compile Include="Controllers\Source\SourceInfoController.cs" />
+    <Compile Include="Controllers\Source\SourceController.cs" />
+    <Compile Include="Controllers\Wikis\WikiController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <InterfaceDefinition Include="UI\Controllers\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="Controllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="UI\" />
     <Folder Include="Images\Tabs\" />
-    <Folder Include="UI\Controllers\" />
     <Folder Include="Cells\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Official\" />
     <Folder Include="Data\" />
-    <Folder Include="UI\Controllers\Issues\" />
-    <Folder Include="UI\Controllers\Events\" />
-    <Folder Include="UI\Controllers\Wikis\" />
-    <Folder Include="UI\Controllers\Branches\" />
-    <Folder Include="UI\Controllers\Followers\" />
-    <Folder Include="UI\Controllers\Groups\" />
-    <Folder Include="UI\Controllers\Privileges\" />
-    <Folder Include="UI\Controllers\Repositories\" />
-    <Folder Include="UI\Controllers\Accounts\" />
-    <Folder Include="UI\Controllers\Changesets\" />
-    <Folder Include="UI\Controllers\Source\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>

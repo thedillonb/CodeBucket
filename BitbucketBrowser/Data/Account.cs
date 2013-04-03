@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using MonoTouch;
-using BitbucketBrowser.UI.Controllers.Issues;
-using BitbucketBrowser.UI.Controllers.Repositories;
+using BitbucketBrowser.Controllers.Issues;
+using BitbucketBrowser.Controllers.Repositories;
 
 namespace BitbucketBrowser 
 {

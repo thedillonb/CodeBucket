@@ -10,7 +10,7 @@ using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
 using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.UI
+namespace BitbucketBrowser.Cells
 {
     public partial class IssueCellView : UITableViewCell
     {

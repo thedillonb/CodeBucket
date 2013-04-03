@@ -5,12 +5,11 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
-using BitbucketBrowser.UI;
 using CodeFramework.UI.Views;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 
-namespace BitbucketBrowser
+namespace BitbucketBrowser.Cells
 {
     public partial class RepositoryCellView : UITableViewCell
     {

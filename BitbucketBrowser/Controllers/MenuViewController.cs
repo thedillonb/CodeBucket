@@ -1,15 +1,14 @@
-using BitbucketBrowser.UI.Controllers;
+using BitbucketBrowser.Controllers;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeFramework.UI.Elements;
 using MonoTouch.Foundation;
 using System.Drawing;
 using System.Linq;
-using BitbucketBrowser.UI.Controllers.Accounts;
-using BitbucketBrowser.UI;
-using BitbucketBrowser.UI.Controllers.Events;
-using BitbucketBrowser.UI.Controllers.Repositories;
-using BitbucketBrowser.UI.Controllers.Groups;
+using BitbucketBrowser.Controllers.Accounts;
+using BitbucketBrowser.Controllers.Events;
+using BitbucketBrowser.Controllers.Repositories;
+using BitbucketBrowser.Controllers.Groups;
 using System.Threading;
 
 namespace BitbucketBrowser.Controllers
