@@ -11,6 +11,8 @@ namespace BitbucketBrowser.Controllers.Accounts
 {
     public class SettingsController : BaseDialogViewController
     {
+		private Section _accountOptionsSection;
+
         public SettingsController()
             : base(false)
         {
@@ -72,14 +74,14 @@ namespace BitbucketBrowser.Controllers.Accounts
 			var currentAccount = Application.Account;
 			if (currentAccount != null)
 			{
-	            var configSection = new Section("Account Options");
-				root.Add(configSection);
+				_accountOptionsSection = new Section("Account Options");
+				root.Add(_accountOptionsSection);
 	            var autoSigninElement = new CodeFramework.UI.Elements.TrueFalseElement("Remember Credentials", !currentAccount.DontRemember);
 	            autoSigninElement.ValueChanged += (sender, e) => { 
 					currentAccount.DontRemember = !autoSigninElement.Value; 
 					currentAccount.Update();
 				};
-	            configSection.Add(autoSigninElement);
+				_accountOptionsSection.Add(autoSigninElement);
 			}
 
             var supportSection = new Section("Support");
@@ -115,16 +117,19 @@ namespace BitbucketBrowser.Controllers.Accounts
                 return;
 
             var username = styledElement.Caption;
+			string currentUsername = null;
+			if (Application.Account != null)
+				currentUsername = Application.Account.Username;
+
+			//Remove the designated username
             Application.Accounts.Remove(username);
 
-            if ((Application.Accounts.Count == 0) ||
-                (String.Compare(Application.Account.Username, username, true) == 0))
-            {
-                //Block the ability to go back!
+			if ((Application.Account != null && String.Compare(currentUsername, username, true) == 0) || Application.Accounts.Count == 0) 
+			{
                 NavigationItem.LeftBarButtonItem.Enabled = false;
-                Application.SetUser(null);
-                return;
-            }
+				Root.Remove(_accountOptionsSection);
+				Application.SetUser(null);
+			}
         }
 
         private void OpenMailer()

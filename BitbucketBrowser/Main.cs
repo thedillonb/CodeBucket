@@ -204,7 +204,7 @@ namespace BitbucketBrowser
             var defaultAccount = Application.Accounts.GetDefault();
             if (defaultAccount == null)
             {
-                defaultAccount = Application.Accounts.First();
+				defaultAccount = Application.Accounts.FirstOrDefault();
                 Application.Accounts.SetDefault(defaultAccount);
             }
             return defaultAccount;

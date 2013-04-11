@@ -101,7 +101,7 @@ namespace BitbucketBrowser.Controllers.Events
             img = Images.Priority;
 
             //Drop the image
-            if (eventModel.Event == EventModel.Type.Commit)
+            if (eventModel.Event == EventModel.Type.Commit || eventModel.Event == EventModel.Type.Pushed)
             {
                 img = Images.Plus;
                 if (ReportRepository)
@@ -128,7 +128,7 @@ namespace BitbucketBrowser.Controllers.Events
             {
                 img = Images.Pencil;
                 blocks.Add(new NewsFeedElement.TextBlock("Updated wiki page "));
-                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+                blocks.Add(new NewsFeedElement.TextBlock(desc.TrimStart('/'), UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
 
                 if (ReportRepository)
                 {
@@ -140,7 +140,7 @@ namespace BitbucketBrowser.Controllers.Events
             {
                 img = Images.Pencil;
                 blocks.Add(new NewsFeedElement.TextBlock("Created wiki page "));
-                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+				blocks.Add(new NewsFeedElement.TextBlock(desc.TrimStart('/'), UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
 
                 if (ReportRepository)
                 {
@@ -152,7 +152,7 @@ namespace BitbucketBrowser.Controllers.Events
             {
                 img = Images.BinClosed;
                 blocks.Add(new NewsFeedElement.TextBlock("Deleted wiki page "));
-                blocks.Add(new NewsFeedElement.TextBlock(desc, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
+				blocks.Add(new NewsFeedElement.TextBlock(desc.TrimStart('/'), UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)));
                 
                 if (ReportRepository)
                 {
@@ -233,7 +233,45 @@ namespace BitbucketBrowser.Controllers.Events
         private void AddItems(List<EventModel> events, bool prepend = true)
         {
             var sec = new Section();
-            events.ForEach(e =>
+
+			//This is a cheap hack to seperate out events that contain more than one peice of information
+			var newEvents = new List<EventModel>();
+			events.ForEach(x => {
+				if (x.Event == EventModel.Type.Pushed)
+				{
+					//Break down the description
+					try
+					{
+						var deserializer = new RestSharp.Deserializers.JsonDeserializer();
+						var obj = deserializer.Deserialize<PushedEventDescriptionModel>(x.Description);
+						if (obj != null)
+						{
+							obj.Commits.ForEach(y =>  {
+								newEvents.Add(new EventModel() {
+									Node = y.Hash,
+									Description = y.Description,
+									Repository = x.Repository,
+									CreatedOn = x.CreatedOn,
+									Event = x.Event,
+									User = x.User,
+									UtcCreatedOn = x.UtcCreatedOn,
+								});
+
+							});
+						}
+					}
+					catch (Exception e) 
+					{
+						Utilities.LogException("Unable to deserialize a 'pushed' event description!", e);
+					}
+				}
+				else
+				{
+					newEvents.Add(x);
+				}
+			});
+
+			newEvents.ForEach(e =>
             {
                 UIImage small;
                 var hello = CreateDescription(e, out small);
@@ -244,7 +282,7 @@ namespace BitbucketBrowser.Controllers.Events
                 var username = e.User != null ? e.User.Username : null;
                 var avatar = e.User != null ? e.User.Avatar : null;
                 var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small) { LinkColor = UIColor.FromRGB(0, 64, 128) };
-                if (e.Event == EventModel.Type.Commit && e.Repository != null)
+                if ((e.Event == EventModel.Type.Commit || e.Event == EventModel.Type.Pushed) && e.Repository != null)
                 {
                     newsEl.Tapped += () =>
                     {

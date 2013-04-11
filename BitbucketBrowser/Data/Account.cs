@@ -41,7 +41,7 @@ namespace BitbucketBrowser.Data
 		/// </summary>
 		public Account()
 		{
-			DontRemember = true;
+			DontRemember = false;
 		}
 
 		

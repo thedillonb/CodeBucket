@@ -52,7 +52,6 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchProfiling>True</MtouchProfiling>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
@@ -111,6 +110,8 @@
     <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
