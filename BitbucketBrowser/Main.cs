@@ -11,7 +11,7 @@ using MonoTouch.SlideoutNavigation;
 using System.Drawing;
 using System.Threading;
 using MonoTouch.Dialog.Utilities;
-using CodeFramework.UI.Elements;
+using BitbucketBrowser.Elements;
 using CodeFramework.UI.Views;
 using BitbucketBrowser.Controllers.Issues;
 using BitbucketBrowser.Controllers.Events;

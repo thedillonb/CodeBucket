@@ -9,6 +9,8 @@ namespace BitbucketBrowser
     public static class Application
     {
         public static BitbucketSharp.Client Client { get; private set; }
+		public static GitHubSharp.Client GitHubClient { get; private set; }
+
         public static Account Account { get; private set; }
         public static Accounts Accounts { get; private set; }
         public static Data.WebCacheProvider Cache { get; private set; }

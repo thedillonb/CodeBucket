@@ -1,4 +1,4 @@
-using CodeFramework.UI.Controllers;
+using BitbucketBrowser.Controllers;
 
 namespace BitbucketBrowser.Controllers
 {

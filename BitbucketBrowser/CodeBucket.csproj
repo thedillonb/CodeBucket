@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -144,49 +144,132 @@
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
-    <Compile Include="Controllers\MenuViewController.cs" />
-    <Compile Include="Controllers\HelpViewController.cs" />
-    <Compile Include="Controllers\FileSourceController.cs" />
-    <Compile Include="Controllers\Accounts\LoginViewController.cs" />
-    <Compile Include="Controllers\Accounts\LoginViewController.designer.cs">
-      <DependentUpon>..\..\UI\Controllers\Accounts\LoginViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controllers\Accounts\SettingsController.cs" />
-    <Compile Include="Controllers\Accounts\ProfileController.cs" />
-    <Compile Include="Controllers\Accounts\AccountsController.cs" />
-    <Compile Include="Controllers\Branches\BranchController.cs" />
-    <Compile Include="Controllers\Branches\TagController.cs" />
-    <Compile Include="Controllers\Changesets\ChangesetDiffController.cs" />
-    <Compile Include="Controllers\Changesets\ChangesetInfoController.cs" />
-    <Compile Include="Controllers\Changesets\ChangesetController.cs" />
-    <Compile Include="Controllers\Events\RepoEventsController.cs" />
-    <Compile Include="Controllers\Events\EventsController.cs" />
-    <Compile Include="Controllers\Followers\UserFollowersController.cs" />
-    <Compile Include="Controllers\Followers\RepoFollowersController.cs" />
-    <Compile Include="Controllers\Followers\FollowersController.cs" />
-    <Compile Include="Controllers\Groups\GroupInfoController.cs" />
-    <Compile Include="Controllers\Groups\GroupController.cs" />
-    <Compile Include="Controllers\Issues\IssuesController.cs" />
-    <Compile Include="Controllers\Issues\IssueEditController.cs" />
-    <Compile Include="Controllers\Issues\IssueInfoController.cs" />
-    <Compile Include="Controllers\Issues\SingleItemSelectViewController.cs" />
-    <Compile Include="Controllers\Privileges\PrivilegesController.cs" />
-    <Compile Include="Controllers\Repositories\RepositoryInfoController.cs" />
-    <Compile Include="Controllers\Repositories\AccountRepositoryController.cs" />
-    <Compile Include="Controllers\Repositories\RepositoryController.cs" />
-    <Compile Include="Controllers\Repositories\ExploreController.cs" />
-    <Compile Include="Controllers\Source\SourceInfoController.cs" />
-    <Compile Include="Controllers\Source\SourceController.cs" />
-    <Compile Include="Controllers\Wikis\WikiController.cs" />
-    <Compile Include="Controllers\SlideoutNavigationController.cs" />
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Application.cs" />
+    <Compile Include="Bitbucket\Controllers\FileSourceController.cs" />
+    <Compile Include="Bitbucket\Controllers\MenuViewController.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\AccountsController.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\ProfileController.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\SettingsController.cs" />
+    <Compile Include="Bitbucket\Controllers\Branches\BranchController.cs" />
+    <Compile Include="Bitbucket\Controllers\Branches\TagController.cs" />
+    <Compile Include="Bitbucket\Controllers\Changesets\ChangesetController.cs" />
+    <Compile Include="Bitbucket\Controllers\Changesets\ChangesetDiffController.cs" />
+    <Compile Include="Bitbucket\Controllers\Changesets\ChangesetInfoController.cs" />
+    <Compile Include="Bitbucket\Controllers\Events\EventsController.cs" />
+    <Compile Include="Bitbucket\Controllers\Events\RepoEventsController.cs" />
+    <Compile Include="Bitbucket\Controllers\Followers\FollowersController.cs" />
+    <Compile Include="Bitbucket\Controllers\Followers\RepoFollowersController.cs" />
+    <Compile Include="Bitbucket\Controllers\Followers\UserFollowersController.cs" />
+    <Compile Include="Bitbucket\Controllers\Groups\GroupController.cs" />
+    <Compile Include="Bitbucket\Controllers\Groups\GroupInfoController.cs" />
+    <Compile Include="Bitbucket\Controllers\Issues\IssueEditController.cs" />
+    <Compile Include="Bitbucket\Controllers\Issues\IssueInfoController.cs" />
+    <Compile Include="Bitbucket\Controllers\Issues\IssuesController.cs" />
+    <Compile Include="Bitbucket\Controllers\Issues\SingleItemSelectViewController.cs" />
+    <Compile Include="Bitbucket\Controllers\Privileges\PrivilegesController.cs" />
+    <Compile Include="Bitbucket\Controllers\Repositories\AccountRepositoryController.cs" />
+    <Compile Include="Bitbucket\Controllers\Repositories\ExploreController.cs" />
+    <Compile Include="Bitbucket\Controllers\Repositories\RepositoryController.cs" />
+    <Compile Include="Bitbucket\Controllers\Repositories\RepositoryInfoController.cs" />
+    <Compile Include="Bitbucket\Controllers\Source\SourceController.cs" />
+    <Compile Include="Bitbucket\Controllers\Source\SourceInfoController.cs" />
+    <Compile Include="Bitbucket\Controllers\Wikis\WikiController.cs" />
+    <Compile Include="Controllers\SlideoutNavigationController.cs" />
+    <Compile Include="Controllers\HelpViewController.cs" />
+    <Compile Include="Controllers\BaseDialogViewController.cs" />
+    <Compile Include="Controllers\Composer.cs" />
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controllers\ControllerExtensions.cs" />
+    <Compile Include="Controllers\FilterController.cs" />
+    <Compile Include="Controllers\ListController.cs" />
+    <Compile Include="Controllers\MultipleChoiceViewController.cs" />
+    <Compile Include="Controllers\RadioChoiceViewController.cs" />
+    <Compile Include="Controllers\WebViewController.cs" />
+    <Compile Include="Elements\CustomElement.cs" />
+    <Compile Include="Elements\InputElement.cs" />
+    <Compile Include="Elements\MultilinedElement.cs" />
+    <Compile Include="Elements\NameTimeStringElement.cs" />
+    <Compile Include="Elements\NewsFeedElement.cs" />
+    <Compile Include="Elements\NoItemsElement.cs" />
+    <Compile Include="Elements\PaginateElement.cs" />
+    <Compile Include="Elements\SplitElement.cs" />
+    <Compile Include="Elements\StyledElement.cs" />
+    <Compile Include="Elements\SubcaptionElement.cs" />
+    <Compile Include="Elements\TrueFalseElement.cs" />
+    <Compile Include="Elements\UserElement.cs" />
+    <Compile Include="Views\ErrorView.cs" />
+    <Compile Include="Views\CellBackgroundView.cs" />
+    <Compile Include="Views\DropbarView.cs" />
+    <Compile Include="Views\WatermarkView.cs" />
+    <Compile Include="Views\HeaderView.cs" />
+    <Compile Include="Views\SearchFilterView.cs" />
+    <Compile Include="Views\TitleView.cs" />
+    <Compile Include="Views\TableViewSectionView.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
+    <Compile Include="Utils\MbProgressHud.cs" />
+    <Compile Include="Utils\StringExtensions.cs" />
+    <Compile Include="Utils\UIImageExtensions.cs" />
+    <Compile Include="Utils\Util.cs" />
+    <Compile Include="Utils\EnumExtensions.cs" />
+    <Compile Include="Utils\Configurations.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Markdown\CreoleParser.cs" />
+    <Compile Include="DiffPlex\Model\DiffBlock.cs" />
+    <Compile Include="DiffPlex\Model\DiffResult.cs" />
+    <Compile Include="DiffPlex\Model\EditLengthResult.cs" />
+    <Compile Include="DiffPlex\Model\ModificationData.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\IInlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\InlineDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPaneModel.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPiece.cs" />
+    <Compile Include="DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs" />
+    <Compile Include="DiffPlex\Differ.cs" />
+    <Compile Include="DiffPlex\IDiffer.cs" />
+    <Compile Include="DiffPlex\Log.cs" />
+    <Compile Include="GitHub\Controllers\ExploreController.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\LoginViewController.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\MyAccountsController.cs" />
+    <Compile Include="GitHub\Controllers\Branches\BranchController.cs" />
+    <Compile Include="GitHub\Controllers\Changesets\ChangesetController.cs" />
+    <Compile Include="GitHub\Controllers\Changesets\ChangesetDiffController.cs" />
+    <Compile Include="GitHub\Controllers\Changesets\ChangesetInfoController.cs" />
+    <Compile Include="GitHub\Controllers\Events\EventsController.cs" />
+    <Compile Include="GitHub\Controllers\Events\RepoEventsController.cs" />
+    <Compile Include="GitHub\Controllers\Followers\FollowersController.cs" />
+    <Compile Include="GitHub\Controllers\Followers\RepoFollowersController.cs" />
+    <Compile Include="GitHub\Controllers\Followers\UserFollowersController.cs" />
+    <Compile Include="GitHub\Controllers\Repositories\AccountRepositoryController.cs" />
+    <Compile Include="GitHub\Controllers\Repositories\RepositoryController.cs" />
+    <Compile Include="GitHub\Controllers\Repositories\RepositoryInfoController.cs" />
+    <Compile Include="GitHub\Controllers\Source\SourceController.cs" />
+    <Compile Include="GitHub\Controllers\Source\SourceInfoController.cs" />
+    <Compile Include="GitHub\Controllers\Readme\ReadmeController.cs" />
+    <Compile Include="GitHub\Controllers\Branches\TagController.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\ProfileController.cs" />
+    <Compile Include="GitHub\Controllers\Organizations\OrganizationsController.cs" />
+    <Compile Include="GitHub\Controllers\Organizations\OrganizationInfoController.cs" />
+    <Compile Include="GitHub\Controllers\Notifications\NotificationsController.cs" />
+    <Compile Include="GitHub\Controllers\Gists\GistInfoController.cs" />
+    <Compile Include="GitHub\Controllers\Gists\GistFileController.cs" />
+    <Compile Include="GitHub\Controllers\Gists\AccountGistsController.cs" />
+    <Compile Include="GitHub\Controllers\Gists\GistsController.cs" />
+    <Compile Include="GitHub\Controllers\FileViewController.cs" />
+    <Compile Include="GitHub\Controllers\MenuViewController.cs" />
+    <Compile Include="Elements\RepositoryElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <InterfaceDefinition Include="Controllers\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="Bitbucket\Controllers\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="GitHub\Controllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
+  <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Images\" />
@@ -195,7 +278,12 @@
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Official\" />
     <Folder Include="Data\" />
+    <Folder Include="Bitbucket\" />
+    <Folder Include="GitHub\" />
+    <Folder Include="GitHub\Controllers\" />
+    <Folder Include="Bitbucket\Controllers\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Elements\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\plus.png" />
@@ -292,7 +380,9 @@
     <Content Include="Images\anonymous.png" />
     <Content Include="Default.jpg" />
     <Content Include="Default%402x.jpg" />
-    <Content Include="Default-Landscape.jpg" />
+    <Content Include="Default-Landscape.jpg">
+      <DependentUpon>Default-Portrait%402x.jpg</DependentUpon>
+    </Content>
     <Content Include="Default-Portrait.jpg" />
     <Content Include="Default-Landscape%402x.jpg" />
     <Content Include="Default-Portrait%402x.jpg" />
@@ -303,15 +393,45 @@
     <Content Include="Images\Controls\barbutton-land.png" />
     <Content Include="Images\three_lines.png" />
     <Content Include="Images\filter_results.png" />
+    <Content Include="SourceBrowser\index.html" />
+    <Content Include="SourceBrowser\lang-apollo.js" />
+    <Content Include="SourceBrowser\lang-basic.js" />
+    <Content Include="SourceBrowser\lang-clj.js" />
+    <Content Include="SourceBrowser\lang-css.js" />
+    <Content Include="SourceBrowser\lang-dart.js" />
+    <Content Include="SourceBrowser\lang-erlang.js" />
+    <Content Include="SourceBrowser\lang-go.js" />
+    <Content Include="SourceBrowser\lang-hs.js" />
+    <Content Include="SourceBrowser\lang-lisp.js" />
+    <Content Include="SourceBrowser\lang-llvm.js" />
+    <Content Include="SourceBrowser\lang-lua.js" />
+    <Content Include="SourceBrowser\lang-matlab.js" />
+    <Content Include="SourceBrowser\lang-ml.js" />
+    <Content Include="SourceBrowser\lang-mumps.js" />
+    <Content Include="SourceBrowser\lang-n.js" />
+    <Content Include="SourceBrowser\lang-pascal.js" />
+    <Content Include="SourceBrowser\lang-proto.js" />
+    <Content Include="SourceBrowser\lang-r.js" />
+    <Content Include="SourceBrowser\lang-rd.js" />
+    <Content Include="SourceBrowser\lang-scala.js" />
+    <Content Include="SourceBrowser\lang-sql.js" />
+    <Content Include="SourceBrowser\lang-tcl.js" />
+    <Content Include="SourceBrowser\lang-tex.js" />
+    <Content Include="SourceBrowser\lang-vb.js" />
+    <Content Include="SourceBrowser\lang-vhdl.js" />
+    <Content Include="SourceBrowser\lang-wiki.js" />
+    <Content Include="SourceBrowser\lang-xq.js" />
+    <Content Include="SourceBrowser\lang-yaml.js" />
+    <Content Include="SourceBrowser\prettify.css" />
+    <Content Include="SourceBrowser\prettify.js" />
+    <Content Include="SourceBrowser\run_prettify.js" />
+    <Content Include="Images\back_button%402x.png" />
+    <Content Include="Images\forward_button%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\codeframework\CodeFramework\CodeFramework.csproj">
-      <Project>{3E01B962-FE29-4992-8140-34465C86418F}</Project>
-      <Name>CodeFramework</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
@@ -327,6 +447,14 @@
     <ProjectReference Include="..\bitbucketsharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\githubsharp\GitHubSharp\GitHubSharp.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OHAttributedLabel\OHAttributedLabel.csproj">
+      <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
+      <Name>OHAttributedLabel</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

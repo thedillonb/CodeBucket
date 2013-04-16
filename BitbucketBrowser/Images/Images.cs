@@ -60,6 +60,9 @@ namespace BitbucketBrowser
         public static UIImage TableCell = UIImage.FromBundle("/Images/TableCell");
         public static UIImage TableCellRed = UIImage.FromBundle("/Images/tablecell_red");
 
+		public static UIImage BackNavigationButton = UIImage.FromFile("Images/back_button@2x.png");
+		public static UIImage ForwardNavigationButton = UIImage.FromFile("Images/forward_button@2x.png");
+
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
         public static UIImage LogoBehind 
         { 

@@ -13,3 +13,6 @@
 [submodule "codeframework"]
 	path = codeframework
 	url = https://thedillonb@bitbucket.org/thedillonb/codeframework.git
+[submodule "githubsharp"]
+	path = githubsharp
+	url = https://thedillonb@bitbucket.org/thedillonb/githubsharp.git

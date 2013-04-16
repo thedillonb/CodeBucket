@@ -11,6 +11,7 @@ using BitbucketSharp.Models;
 
 namespace BitbucketBrowser.Cells
 {
+
     public partial class RepositoryCellView : UITableViewCell
     {
         private static UIImage Commit;
@@ -81,66 +82,6 @@ namespace BitbucketBrowser.Cells
                     RepoName.Frame = new RectangleF(RepoName.Frame.X, RepoName.Frame.Y + 8f, RepoName.Frame.Width, RepoName.Frame.Height);
                 }
             }
-        }
-    }
-
-    public class RepositoryElement : Element, IElementSizing, IColorizeBackground
-    {       
-        public UITableViewCellStyle Style { get; set;}
-
-        public UIColor BackgroundColor { get; set; }
-
-        public RepositoryDetailedModel Model { get; set; }
-
-        public bool ShowOwner { get; set; }
-
-        public RepositoryElement(RepositoryDetailedModel m) : base(null)
-        {
-            this.Style = UITableViewCellStyle.Default;
-            Model = m;
-            ShowOwner = true;
-        }
-
-        public float GetHeight (UITableView tableView, NSIndexPath indexPath)
-        {
-            return 67f;
-        }
-
-        protected override NSString CellKey {
-            get {
-                return new NSString("RepositoryCellView");
-            }
-        }
-
-        
-        public event NSAction Tapped;
-
-        public override UITableViewCell GetCell (UITableView tv)
-        {
-            var cell = tv.DequeueReusableCell(CellKey) as RepositoryCellView;
-            if (cell == null)
-                cell = RepositoryCellView.Create();
-            return cell;
-        }
-
-        public override bool Matches(string text)
-        {
-            return Model.Name.ToLower().Contains(text.ToLower());
-        }
-
-        public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-        {
-            base.Selected(dvc, tableView, path);
-            if (Tapped != null)
-                Tapped();
-            tableView.DeselectRow (path, true);
-        }
-
-        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-        {
-            var c = cell as RepositoryCellView;
-            if (c != null)
-                c.Bind(Model.Name, Model.Scm, Model.FollowersCount.ToString(), Model.ForkCount.ToString(), Model.Description, ShowOwner ? Model.Owner : null);
         }
     }
 }
