@@ -5,6 +5,7 @@ using MonoTouch.UIKit;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 using BitbucketBrowser.Controllers.Source;
+using System.Linq;
 
 namespace BitbucketBrowser.Controllers.Branches
 {
@@ -32,10 +33,9 @@ namespace BitbucketBrowser.Controllers.Branches
                 sec.Add(new NoItemsElement("No Branches"));
             else
 			{
-				foreach (var entry in Model)
+				foreach (var branchName in Model.Keys.OrderBy(x => x))
 				{
-					var branch = entry;
-					sec.Add(new StyledElement(branch.Key, () => NavigationController.PushViewController(new SourceController(Username, Slug, branch.Key), true)));
+					sec.Add(new StyledElement(branchName, () => NavigationController.PushViewController(new SourceController(Username, Slug, branchName), true)));
 				}
 			}
            

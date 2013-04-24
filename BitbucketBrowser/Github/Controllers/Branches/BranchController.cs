@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
+using System.Linq;
 
 namespace BitbucketBrowser.GitHub.Controllers.Branches
 {
@@ -26,7 +27,7 @@ namespace BitbucketBrowser.GitHub.Controllers.Branches
         {
             var d = Application.GitHubClient.API.GetBranches(Username, Slug);
             nextPage = -1;
-            return d.Data;
+            return d.Data.OrderByDescending(x => x.Name).ToList();
         }
 
         protected override Element CreateElement(BranchModel obj)

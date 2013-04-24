@@ -4,6 +4,7 @@ using MonoTouch.Dialog;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 using BitbucketBrowser.Controllers.Source;
+using System.Linq;
 
 namespace BitbucketBrowser.Controllers
 {
@@ -35,11 +36,10 @@ namespace BitbucketBrowser.Controllers
             }
             else
             {
-                foreach (var k in Model.Keys)
+                foreach (var tagName in Model.Keys.OrderBy(x => x))
                 {
-                    var key = k;
-					var element = new StyledElement(key);
-					element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[key].Node), true);
+					var element = new StyledElement(tagName);
+					element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, Model[tagName].Node), true);
                     sec.Add(element);
                 }
             }
