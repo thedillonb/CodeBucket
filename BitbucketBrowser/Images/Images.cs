@@ -91,6 +91,10 @@ namespace BitbucketBrowser
         public static UIImage Filter = UIImage.FromFile("Images/filter_results.png");
 
         public static UIImage ThreeLines = UIImage.FromFile("Images/three_lines.png");
+
+		public static UIImage BitbucketLogo = UIImage.FromFile("Images/Logos/logoBitBucketPNG.png");
+		public static UIImage GitHubLogo = UIImage.FromFile("Images/Logos/GitHub-Logo.png");
+		
     }
 }
 

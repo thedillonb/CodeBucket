@@ -283,6 +283,7 @@
     <Folder Include="Bitbucket\Controllers\" />
     <Folder Include="Controllers\" />
     <Folder Include="Elements\" />
+    <Folder Include="Images\Logos\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\plus.png" />
@@ -455,5 +456,9 @@
       <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
       <Name>OHAttributedLabel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Logos\logoBitBucketPNG.png" />
+    <BundleResource Include="Images\Logos\GitHub-Logo.png" />
   </ItemGroup>
 </Project>

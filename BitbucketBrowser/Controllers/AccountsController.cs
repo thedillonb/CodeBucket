@@ -60,7 +60,10 @@ namespace BitbucketBrowser.Controllers.Accounts
 						if (thisAccount.AccountType == Account.Type.Bitbucket)
 						{
 							var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-							loginController.LoginComplete = (a) => { OnAccountSelected(a); };
+							loginController.LoginComplete = (a) => {
+								NavigationController.PopToViewController(this, true);
+								OnAccountSelected(a); 
+							};
 							NavigationController.PushViewController(loginController, true);
 						}
 					}
@@ -74,7 +77,11 @@ namespace BitbucketBrowser.Controllers.Accounts
 			}
 
 			var addSection = new Section();
-			var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new AddAccountController(), true));
+			var addAccount = new StyledElement("Add Account", () => {
+				var ctrl = new AddAccountController();
+				ctrl.AccountAdded = (a) => NavigationController.PopToViewController(this, true);
+				NavigationController.PushViewController(ctrl, true);
+			});
 			//addAccount.Image = Images.CommentAdd;
 			addSection.Add(addAccount);
 

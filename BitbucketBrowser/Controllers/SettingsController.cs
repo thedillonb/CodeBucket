@@ -72,7 +72,11 @@ namespace BitbucketBrowser.Controllers
                 accountSection.Add(t);
             }
 
-            var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new AddAccountController(), true));
+            var addAccount = new StyledElement("Add Account", () => {
+				var ctrl = new AddAccountController();
+				ctrl.AccountAdded = (a) => NavigationController.PopToViewController(this, true);
+				NavigationController.PushViewController(ctrl, true);
+			});
             //addAccount.Image = Images.CommentAdd;
             accountSection.Add(addAccount);
 
