@@ -12,6 +12,15 @@ namespace BitbucketBrowser.Data
     public class Account
     {
 		/// <summary>
+		/// The account type
+		/// </summary>
+		public enum Type : int
+		{
+			Bitbucket = 0,
+			GitHub = 1
+		}
+
+		/// <summary>
 		/// Gets or sets the username.
 		/// </summary>
 		/// <value>The username.</value>
@@ -37,13 +46,20 @@ namespace BitbucketBrowser.Data
 		public bool DontRemember { get; set; }
 
 		/// <summary>
+		/// Gets or sets the type of the account.
+		/// </summary>
+		/// <value>The type of the account.</value>
+		public Type AccountType { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="BitbucketBrowser.Account"/> class.
 		/// </summary>
 		public Account()
 		{
+			//Set some default values
 			DontRemember = false;
+			AccountType = Type.Bitbucket;
 		}
-
 		
 		/// <summary>
 		/// Delete this instance in the database

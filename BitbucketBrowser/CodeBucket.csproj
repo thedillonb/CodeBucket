@@ -148,11 +148,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="Bitbucket\Controllers\FileSourceController.cs" />
     <Compile Include="Bitbucket\Controllers\MenuViewController.cs" />
-    <Compile Include="Bitbucket\Controllers\Accounts\AccountsController.cs" />
-    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.cs" />
-    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.designer.cs" />
     <Compile Include="Bitbucket\Controllers\Accounts\ProfileController.cs" />
-    <Compile Include="Bitbucket\Controllers\Accounts\SettingsController.cs" />
     <Compile Include="Bitbucket\Controllers\Branches\BranchController.cs" />
     <Compile Include="Bitbucket\Controllers\Branches\TagController.cs" />
     <Compile Include="Bitbucket\Controllers\Changesets\ChangesetController.cs" />
@@ -232,9 +228,6 @@
     <Compile Include="DiffPlex\IDiffer.cs" />
     <Compile Include="DiffPlex\Log.cs" />
     <Compile Include="GitHub\Controllers\ExploreController.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\LoginViewController.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\LoginViewController.designer.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\MyAccountsController.cs" />
     <Compile Include="GitHub\Controllers\Branches\BranchController.cs" />
     <Compile Include="GitHub\Controllers\Changesets\ChangesetController.cs" />
     <Compile Include="GitHub\Controllers\Changesets\ChangesetDiffController.cs" />
@@ -262,12 +255,18 @@
     <Compile Include="GitHub\Controllers\FileViewController.cs" />
     <Compile Include="GitHub\Controllers\MenuViewController.cs" />
     <Compile Include="Elements\RepositoryElement.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\AddAccountController.cs" />
+    <Compile Include="Controllers\AddAccountController.designer.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.cs" />
+    <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+    <InterfaceDefinition Include="Controllers\AddAccountController.xib" />
     <InterfaceDefinition Include="Bitbucket\Controllers\Accounts\LoginViewController.xib" />
-    <InterfaceDefinition Include="GitHub\Controllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

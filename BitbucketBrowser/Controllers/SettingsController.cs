@@ -6,8 +6,10 @@ using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
 using MonoTouch.MessageUI;
 using MonoTouch;
+using BitbucketBrowser.Controllers.Accounts;
+using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.Controllers.Accounts
+namespace BitbucketBrowser.Controllers
 {
     public class SettingsController : BaseDialogViewController
     {
@@ -32,29 +34,32 @@ namespace BitbucketBrowser.Controllers.Accounts
             foreach (var account in Application.Accounts)
             {
                 var thisAccount = account;
-                var t = new StyledElement(thisAccount.Username) { Image = Images.Anonymous };
+                var t = new StyledElement(thisAccount.Username, thisAccount.AccountType.ToString(), UITableViewCellStyle.Subtitle) { Image = Images.Anonymous };
                 if (!string.IsNullOrEmpty(thisAccount.AvatarUrl))
                     t.ImageUri = new Uri(thisAccount.AvatarUrl);
 
                 t.Tapped += () => { 
 
 					//Change the user delegate
-					Action changeUserAction = () => {
-						Application.SetUser(thisAccount);
+					Action<Account> changeUserAction = (a) => {
+						Application.SetUser(a);
 						DismissModalViewControllerAnimated(true);
 					};
 
 					//If the account doesn't remember the password we need to prompt
 					if (thisAccount.DontRemember)
 					{
-						var loginController = new LoginViewController() { Username = thisAccount.Username };
-						loginController.LoginComplete = changeUserAction;
-						NavigationController.PushViewController(loginController, true);
+						if (thisAccount.AccountType == BitbucketBrowser.Data.Account.Type.Bitbucket)
+						{
+							var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
+							loginController.LoginComplete = changeUserAction;
+							NavigationController.PushViewController(loginController, true);
+						}
 					}
 					//Change the user!
 					else
 					{
-						changeUserAction();
+						changeUserAction(thisAccount);
 					}
                 };
                 
@@ -67,7 +72,7 @@ namespace BitbucketBrowser.Controllers.Accounts
                 accountSection.Add(t);
             }
 
-            var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new LoginViewController(), true));
+            var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new AddAccountController(), true));
             //addAccount.Image = Images.CommentAdd;
             accountSection.Add(addAccount);
 

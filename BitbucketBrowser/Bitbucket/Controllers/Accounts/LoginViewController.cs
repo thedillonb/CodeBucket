@@ -5,11 +5,11 @@ using System.Threading;
 using MonoTouch;
 using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.Controllers.Accounts
+namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
 {
     public partial class LoginViewController : UIViewController
     {
-        public Action LoginComplete;
+        public Action<Account> LoginComplete;
         private string _username;
 
 		public string Username
@@ -23,7 +23,6 @@ namespace BitbucketBrowser.Controllers.Accounts
 			}
 		}
 
-
         public LoginViewController()
             : base("LoginViewController", null)
         {
@@ -32,12 +31,10 @@ namespace BitbucketBrowser.Controllers.Accounts
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-
             View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
 
-            Logo.Image = Images.Logo;
             Title = "Login";
+			Logo.Image = Images.Logo;
             if (Username != null)
                 User.Text = Username;
 
@@ -69,11 +66,27 @@ namespace BitbucketBrowser.Controllers.Accounts
             ReleaseDesignerOutlets();
         }
 
+		/// <summary>
+		/// Login the specified username and password.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="password">Password.</param>
+		protected Account Login(string username, string password)
+		{
+			var client = new BitbucketSharp.Client(username, password);
+			client.Account.SSHKeys.GetKeys();
+			var userInfo = client.Account.GetInfo();
+			return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar, AccountType = Account.Type.Bitbucket };
+		}
+
+		/// <summary>
+		/// Begins the login process.
+		/// </summary>
         private void BeginLogin()
         {
             MBProgressHUD hud = null;
-            bool successful = false;
-            string username = null, password = null, avatarUrl = null;
+            string username = null, password = null;
+			Account loggedInAccount = null;
 
             //The nice hud
             InvokeOnMainThread(delegate {
@@ -84,19 +97,14 @@ namespace BitbucketBrowser.Controllers.Accounts
                 hud.Show(true);
             });
 
-            try
-            {
-                var client = new BitbucketSharp.Client(username, password);
-                client.Account.SSHKeys.GetKeys();
-                successful = true;
-                
-                var userInfo = client.Account.GetInfo();
-                avatarUrl = userInfo.User.Avatar;
-            }
-            catch (Exception e)
-            {
+			try
+			{
+				loggedInAccount = Login (username, password);
+			}
+			catch (Exception e)
+			{
                 Console.WriteLine("Error = " + e.Message);
-            }
+			}
 
             InvokeOnMainThread(delegate
             {
@@ -104,18 +112,18 @@ namespace BitbucketBrowser.Controllers.Accounts
                 hud.Hide(true);
                 hud.RemoveFromSuperview();
 
-                if (!successful)
+				if (loggedInAccount == null)
                 {
                     Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
                     return;
                 }
 
-				var account = Application.Accounts.Find (User.Text);
+				var account = Application.Accounts.Find(loggedInAccount.Username);
 
 				//Account does not exist! Add it!
 				if (account == null)
 			    {
-               		account = new Account { Username = User.Text, Password = Password.Text, AvatarUrl = avatarUrl };
+					account = loggedInAccount;
 					Application.Accounts.Insert(account);
 				}
 				//Account already exists. Update the password just incase it changed...
@@ -123,14 +131,11 @@ namespace BitbucketBrowser.Controllers.Accounts
 				{
 					account.Password = Password.Text;
 					account.Update();
-                    Application.SetUser(account);
+					Application.SetUser(account);
 				}
 
-                if (NavigationController != null)
-                    NavigationController.PopViewControllerAnimated(true);
-
                 if (LoginComplete != null)
-                    LoginComplete();
+                    LoginComplete(account);
             });
         }
 

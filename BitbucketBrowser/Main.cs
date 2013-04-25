@@ -133,13 +133,13 @@ namespace BitbucketBrowser
 			//There's no accounts...
 			if (GetDefaultAccount() == null)
 			{
-				var login = new LoginViewController();
-				login.LoginComplete = () => {
+				var login = new AddAccountController();
+				login.AccountAdded = (a) => {
 					ShowMainWindow();
 				};
 				
 				//Make it so!
-				window.RootViewController = login;
+				window.RootViewController = new UINavigationController(login);
 			}
 			else
 			{
@@ -152,8 +152,8 @@ namespace BitbucketBrowser
 						ShowMainWindow();
 					};
 
-					var loginController = new LoginViewController() { Username = defaultAccount.Username };
-					loginController.LoginComplete = () => {
+					var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = defaultAccount.Username };
+					loginController.LoginComplete = (account) => {
 						ShowMainWindow();
 					};
 

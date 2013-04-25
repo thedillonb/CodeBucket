@@ -50,18 +50,19 @@ namespace BitbucketBrowser.Controllers.Accounts
 			foreach (var account in Application.Accounts)
 			{
 				var thisAccount = account;
-				var t = new StyledElement(thisAccount.Username) { Image = Images.Anonymous };
+				var t = new StyledElement(thisAccount.Username, thisAccount.AccountType.ToString(), UITableViewCellStyle.Subtitle) { Image = Images.Anonymous };
 				if (!string.IsNullOrEmpty(thisAccount.AvatarUrl))
 					t.ImageUri = new Uri(thisAccount.AvatarUrl);
 				
 				t.Tapped += () => { 
 					if (thisAccount.DontRemember)
 					{
-						var loginController = new LoginViewController() { Username = thisAccount.Username };
-						loginController.LoginComplete = () => {
-							OnAccountSelected(thisAccount);
-						};
-						NavigationController.PushViewController(loginController, true);
+						if (thisAccount.AccountType == Account.Type.Bitbucket)
+						{
+							var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
+							loginController.LoginComplete = (a) => { OnAccountSelected(a); };
+							NavigationController.PushViewController(loginController, true);
+						}
 					}
 					else
 					{
@@ -73,7 +74,7 @@ namespace BitbucketBrowser.Controllers.Accounts
 			}
 
 			var addSection = new Section();
-			var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new LoginViewController(), true));
+			var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(new AddAccountController(), true));
 			//addAccount.Image = Images.CommentAdd;
 			addSection.Add(addAccount);
 

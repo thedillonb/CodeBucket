@@ -1,6 +1,5 @@
 using BitbucketBrowser.Data;
 using BitbucketBrowser.GitHub.Controllers;
-using BitbucketBrowser.GitHub.Controllers.Accounts;
 using BitbucketBrowser.GitHub.Controllers.Events;
 using BitbucketBrowser.GitHub.Controllers.Groups;
 using BitbucketBrowser.GitHub.Controllers.Repositories;
@@ -70,7 +69,7 @@ namespace BitbucketBrowser.GitHub.Controllers
             TableView.ScrollsToTop = false;
             
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.ChangeUser, UIBarButtonItemStyle.Plain, (s, e) => {
-                var n = new UINavigationController(new MyAccountsController());
+                var n = new UINavigationController(new BitbucketBrowser.Controllers.SettingsController());
                 PresentModalViewController(n, true);
             });
             
