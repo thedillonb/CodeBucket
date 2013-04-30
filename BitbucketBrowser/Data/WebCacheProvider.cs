@@ -6,7 +6,7 @@ using MonoTouch;
 
 namespace BitbucketBrowser.Data
 {
-    public class WebCacheProvider : ICacheProvider
+    public class WebCacheProvider : BitbucketSharp.ICacheProvider, GitHubSharp.ICacheProvider
     {
         private static int MAX_CACHED_ITEMS = 50;
         private readonly Dictionary<string, CachedObject> _cache = new Dictionary<string, CachedObject>(MAX_CACHED_ITEMS);

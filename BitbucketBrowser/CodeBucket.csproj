@@ -261,12 +261,16 @@
     <Compile Include="Controllers\AddAccountController.designer.cs" />
     <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.cs" />
     <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\GitHubLoginController.cs" />
+    <Compile Include="GitHub\Controllers\Accounts\GitHubLoginController.designer.cs" />
+    <Compile Include="Controllers\MenuBaseController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Controllers\AddAccountController.xib" />
     <InterfaceDefinition Include="Bitbucket\Controllers\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="GitHub\Controllers\Accounts\GitHubLoginController.xib" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

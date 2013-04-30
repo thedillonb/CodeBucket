@@ -5,9 +5,9 @@ using System.Threading;
 using MonoTouch;
 using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
+namespace BitbucketBrowser.GitHub.Controllers.Accounts
 {
-    public partial class LoginViewController : UIViewController
+	public partial class GitHubLoginController : UIViewController
     {
         public Action<Account> LoginComplete;
         private string _username;
@@ -23,8 +23,8 @@ namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
 			}
 		}
 
-        public LoginViewController()
-            : base("LoginViewController", null)
+		public GitHubLoginController()
+			: base("GitHubLoginController", null)
         {
         }
 
@@ -34,7 +34,7 @@ namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
             View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
 
             Title = "Login";
-			Logo.Image = Images.BitbucketLogo;
+			Logo.Image = Images.GitHubLogo;
             if (Username != null)
                 User.Text = Username;
 
@@ -57,12 +57,6 @@ namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
         public override void ViewDidUnload()
         {
             base.ViewDidUnload();
-
-            // Clear any references to subviews of the main view in order to
-            // allow the Garbage Collector to collect them sooner.
-            //
-            // e.g. myOutlet.Dispose (); myOutlet = null;
-
             ReleaseDesignerOutlets();
         }
 
@@ -73,10 +67,9 @@ namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
 		/// <param name="password">Password.</param>
 		protected Account Login(string username, string password)
 		{
-			var client = new BitbucketSharp.Client(username, password);
-			client.Account.SSHKeys.GetKeys();
-			var userInfo = client.Account.GetInfo();
-			return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar, AccountType = Account.Type.Bitbucket };
+			var client = new GitHubSharp.Client(username, password);
+			var user = client.API.GetAuthenticatedUser();
+			return new Account { Username = username, Password = password, AvatarUrl = user.Data.AvatarUrl, AccountType = Account.Type.GitHub };
 		}
 
 		/// <summary>
@@ -118,7 +111,7 @@ namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
                     return;
                 }
 
-				var account = Application.Accounts.Find(loggedInAccount.Username, Account.Type.Bitbucket);
+				var account = Application.Accounts.Find(loggedInAccount.Username, Account.Type.GitHub);
 
 				//Account does not exist! Add it!
 				if (account == null)

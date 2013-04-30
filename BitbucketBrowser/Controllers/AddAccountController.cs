@@ -65,8 +65,6 @@ namespace BitbucketBrowser.Controllers.Accounts
         {
         }
 
-
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -92,7 +90,9 @@ namespace BitbucketBrowser.Controllers.Accounts
 
         void GitHubButtonTouch (object sender, EventArgs e)
         {
-
+			var login = new GitHub.Controllers.Accounts.GitHubLoginController();
+			login.LoginComplete = AccountAdded;
+			NavigationController.PushViewController(login, true);
         }
 
         void BitbucketButtonTouch (object sender, EventArgs e)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MonoTouch;
 using System.Collections;
+using System.Linq;
 
 namespace BitbucketBrowser.Data
 {
@@ -23,14 +24,8 @@ namespace BitbucketBrowser.Data
 		/// </summary>
 		public Account GetDefault()
 		{
-			var name = Utilities.Defaults.StringForKey("DEFAULT_ACCOUNT");
-			if (name == null)
-				return null;
-			
-			foreach (Account a in this)
-				if (a.Username.ToLower().Equals(name.ToLower()))
-					return a;
-			return null;
+			var id = Utilities.Defaults.IntForKey("DEFAULT_ACCOUNT");
+			return Database.Main.Table<Account>().SingleOrDefault(x => x.Id == id);
 		}
 
 		/// <summary>
@@ -41,7 +36,7 @@ namespace BitbucketBrowser.Data
 			if (account == null)
 				Utilities.Defaults.RemoveObject("DEFAULT_ACCOUNT");
 			else
-				Utilities.Defaults.SetString(account.Username, "DEFAULT_ACCOUNT");
+				Utilities.Defaults.SetInt(account.Id, "DEFAULT_ACCOUNT");
 			Utilities.Defaults.Synchronize();
 		}
 
@@ -80,10 +75,10 @@ namespace BitbucketBrowser.Data
 		/// <summary>
 		/// Remove the specified username.
 		/// </summary>
-		public void Remove(string username)
+		public void Remove(string username, Account.Type type)
 		{
 			var q = from f in Database.Main.Table<Account>()
-				where f.Username == username
+				where f.Username == username && f.AccountType == type
 					select f;
 			var account = q.FirstOrDefault();
 			if (account != null)
@@ -95,16 +90,15 @@ namespace BitbucketBrowser.Data
 		/// </summary>
 		public bool Exists(Account account)
 		{
-			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", account.Username);
-			return query.Count > 0;
+			return Find(account.Username, account.AccountType) != null;
 		}
 
 		/// <summary>
 		/// Find the specified account via it's username
 		/// </summary>
-		public Account Find(string username)
+		public Account Find(string username, Account.Type type)
 		{
-			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", username);
+			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?) and AccountType = ?", username, type);
 			if (query.Count > 0)
 				return query[0];
 			return null;

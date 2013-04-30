@@ -26,17 +26,31 @@ namespace BitbucketBrowser
             if (account == null)
             {
                 Account = null;
-                Client = null;
+				Client = null;
+				GitHubClient = null;
                 Accounts.SetDefault(null);
                 return;
             }
 
             Account = account;
             Accounts.SetDefault(Account);
-            Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
-                Timeout = 1000 * 30,
-                CacheProvider = Cache,
-            };
+
+			if (account.AccountType == Account.Type.Bitbucket)
+			{
+				GitHubClient = null;
+				Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
+					Timeout = 1000 * 30, //30 seconds
+					CacheProvider = Cache,
+				};
+			}
+			else if (account.AccountType == Account.Type.GitHub)
+			{
+				Client = null;
+				GitHubClient = new GitHubSharp.Client(Account.Username, Account.Password) {
+					Timeout = 1000 * 30, //30 seconds
+					CacheProvider = Cache,
+				};
+			}
         }
     }
 }

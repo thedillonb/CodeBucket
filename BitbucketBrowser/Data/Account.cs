@@ -20,11 +20,14 @@ namespace BitbucketBrowser.Data
 			GitHub = 1
 		}
 
+		[PrimaryKey]
+		[AutoIncrement]
+		public int Id { get; set; }
+
 		/// <summary>
 		/// Gets or sets the username.
 		/// </summary>
 		/// <value>The username.</value>
-        [PrimaryKey]
         public string Username { get; set; }
 
 		/// <summary>
@@ -87,6 +90,20 @@ namespace BitbucketBrowser.Data
 		public override string ToString()
 		{
 			return Username;
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="BitbucketBrowser.Data.Account"/>.
+		/// </summary>
+		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="BitbucketBrowser.Data.Account"/>.</param>
+		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
+		/// <see cref="BitbucketBrowser.Data.Account"/>; otherwise, <c>false</c>.</returns>
+		public override bool Equals (object obj)
+		{
+			if (obj == null) return false;
+			var a = obj as Account;
+			if (a == null) return false;
+			return string.Equals(Username, a.Username) && AccountType == a.AccountType;
 		}
 
         #region Filters

@@ -34,7 +34,7 @@ namespace BitbucketBrowser.Controllers
             foreach (var account in Application.Accounts)
             {
                 var thisAccount = account;
-                var t = new StyledElement(thisAccount.Username, thisAccount.AccountType.ToString(), UITableViewCellStyle.Subtitle) { Image = Images.Anonymous };
+				var t = new AccountElement(thisAccount);
                 if (!string.IsNullOrEmpty(thisAccount.AvatarUrl))
                     t.ImageUri = new Uri(thisAccount.AvatarUrl);
 
@@ -63,12 +63,10 @@ namespace BitbucketBrowser.Controllers
 					}
                 };
                 
-                
-                if (Application.Account != null && string.Compare(account.Username, Application.Account.Username, true) == 0)
-                {
+				//Check to see if this account is the active account. Application.Account could be null 
+				//so make it the target of the equals, not the source.
+                if (thisAccount.Equals(Application.Account))
                     t.Accessory = UITableViewCellAccessory.Checkmark;
-                }
-                
                 accountSection.Add(t);
             }
 
@@ -121,19 +119,20 @@ namespace BitbucketBrowser.Controllers
 
         private void Delete(Element element)
         {
-            var styledElement = element as StyledElement;
-            if (styledElement == null)
+			var accountElement = element as AccountElement;
+			if (accountElement == null)
                 return;
 
-            var username = styledElement.Caption;
+			var account = accountElement.Account;
+			var username = account.Username;
 			string currentUsername = null;
 			if (Application.Account != null)
 				currentUsername = Application.Account.Username;
 
 			//Remove the designated username
-            Application.Accounts.Remove(username);
+            Application.Accounts.Remove(account);
 
-			if ((Application.Account != null && String.Compare(currentUsername, username, true) == 0) || Application.Accounts.Count == 0) 
+			if (Application.Account.Equals(account))
 			{
                 NavigationItem.LeftBarButtonItem.Enabled = false;
 				Root.Remove(_accountOptionsSection);
@@ -185,6 +184,17 @@ namespace BitbucketBrowser.Controllers
                 }
             }
         }
+
+		private class AccountElement : StyledElement
+		{
+			public Account Account { get; private set; }
+			public AccountElement(Account account)
+				: base(account.Username, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
+			{
+				Account = account;
+				Image = Images.Anonymous;
+			}
+		}
     }
 }
 

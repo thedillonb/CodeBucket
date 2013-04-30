@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-
-
 using MonoTouch.Dialog;
 using MonoTouch.SlideoutNavigation;
 using System.Drawing;
@@ -239,7 +236,6 @@ namespace BitbucketBrowser
             {
 				_nav = new BitbucketBrowser.Controllers.SlideoutNavigationController();
                 _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-                _nav.MenuView = new MenuController();
                 window.RootViewController = _nav;
             }
         }
