@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBucket", "BitbucketBrowser\CodeBucket.csproj", "{88AEDD05-831D-474F-B598-CF08C0836C24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBucket", "CodeBucket\CodeBucket.csproj", "{88AEDD05-831D-474F-B598-CF08C0836C24}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{354B15FE-757D-4C6C-B7AF-0BFECC12AEEF}"
 EndProject
@@ -387,7 +387,7 @@ Global
 		{8913502E-CDFB-4FD8-855A-5D6177B60B42} = {5960BAF2-EDEC-4AEF-8532-8EC5F97C6179}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = BitbucketBrowser\CodeBucket.csproj
+		StartupItem = CodeBucket\CodeBucket.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 180
