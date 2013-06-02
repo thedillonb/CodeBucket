@@ -2,3 +2,5 @@
 */obj
 *.DS_Store
 *.userprefs
+_ReSharper*
+*ReSharper.user

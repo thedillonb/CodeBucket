@@ -1,18 +1,15 @@
 [submodule "bitbucketsharp"]
 	path = bitbucketsharp
-	url = https://thedillonb@bitbucket.org/thedillonb/bitbucketsharp.git
+	url = https://bitbucket.org/thedillonb/bitbucketsharp.git
 [submodule "monotouch.slideoutnavigation"]
 	path = monotouch.slideoutnavigation
-	url = https://thedillonb@bitbucket.org/thedillonb/monotouch.slideoutnavigation.git
+	url = https://github.com/thedillonb/MonoTouch.SlideoutNavigation.git
 [submodule "MonoTouch.Dialog"]
 	path = MonoTouch.Dialog
 	url = https://github.com/thedillonb/MonoTouch.Dialog.git
 [submodule "RestSharp"]
 	path = RestSharp
 	url = https://github.com/thedillonb/RestSharp.git
-[submodule "codeframework"]
-	path = codeframework
-	url = https://thedillonb@bitbucket.org/thedillonb/codeframework.git
 [submodule "githubsharp"]
 	path = githubsharp
-	url = https://thedillonb@bitbucket.org/thedillonb/githubsharp.git
+	url = https://bitbucket.org/thedillonb/githubsharp.git
