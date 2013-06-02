@@ -1,6 +1,6 @@
 [submodule "bitbucketsharp"]
 	path = bitbucketsharp
-	url = https://bitbucket.org/thedillonb/bitbucketsharp.git
+	url = https://github.com/thedillonb/BitbucketSharp.git
 [submodule "monotouch.slideoutnavigation"]
 	path = monotouch.slideoutnavigation
 	url = https://github.com/thedillonb/MonoTouch.SlideoutNavigation.git
@@ -12,4 +12,4 @@
 	url = https://github.com/thedillonb/RestSharp.git
 [submodule "githubsharp"]
 	path = githubsharp
-	url = https://bitbucket.org/thedillonb/githubsharp.git
+	url = https://github.com/thedillonb/GitHubSharp.git
