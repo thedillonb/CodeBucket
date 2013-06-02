@@ -1,11 +1,12 @@
 using System;
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Views;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Bitbucket.Controllers
 {
     public abstract class FileSourceController : WebViewController
     {

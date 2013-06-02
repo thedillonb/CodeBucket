@@ -1,8 +1,8 @@
 using MonoTouch.Dialog;
 using GitHubSharp.Models;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
 using ProfileController = CodeBucket.GitHub.Controllers.Accounts.ProfileController;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
 namespace CodeBucket.GitHub.Controllers.Followers
 {

@@ -1,5 +1,4 @@
 using System;
-using BitbucketBrowser.Elements;
 using MonoTouch.UIKit;
 using System.Drawing;
 

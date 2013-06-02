@@ -1,11 +1,11 @@
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
 
-namespace BitbucketBrowser.Controllers.Source
+namespace CodeBucket.Bitbucket.Controllers.Source
 {
     public class SourceController : Controller<SourceModel>
     {

@@ -1,19 +1,19 @@
-using BitbucketBrowser.Data;
-using BitbucketBrowser.GitHub.Controllers;
-using BitbucketBrowser.GitHub.Controllers.Events;
-using BitbucketBrowser.GitHub.Controllers.Groups;
-using BitbucketBrowser.GitHub.Controllers.Repositories;
+using CodeBucket.Data;
+using CodeBucket.GitHub.Controllers;
+using CodeBucket.GitHub.Controllers.Events;
+using CodeBucket.GitHub.Controllers.Repositories;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
 using System.Drawing;
 using System.Linq;
-using BitbucketBrowser.GitHub.Controllers.Notifications;
-using BitbucketBrowser.GitHub.Controllers.Gists;
-using BitbucketBrowser.Controllers;
+using CodeBucket.GitHub.Controllers.Notifications;
+using CodeBucket.GitHub.Controllers.Gists;
+using CodeBucket.Controllers;
+using CodeBucket.GitHub.Controllers.Accounts;
+using CodeBucket.GitHub.Controllers.Organizations;
 
-namespace BitbucketBrowser.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers
 {
     public class MenuController : MenuBaseController
     {

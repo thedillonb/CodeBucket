@@ -1,6 +1,6 @@
 using MonoTouch.UIKit;
 
-namespace CodeBucket.Images
+namespace CodeBucket
 {
     public static class Images
     {

@@ -1,13 +1,13 @@
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
 using System.Linq;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Groups
+namespace CodeBucket.Bitbucket.Controllers.Groups
 {
 	public class GroupController : Controller<List<GroupModel>>
 	{

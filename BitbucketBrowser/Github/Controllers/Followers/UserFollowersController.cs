@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 using GitHubSharp.Models;
+using CodeBucket.GitHub.Controllers.Followers;
+using CodeBucket;
 
-namespace BitbucketBrowser.GitHub.Controllers.Followers
+namespace CodeBucket.GitHub.Controllers.Followers
 {
     public class UserFollowersController : FollowersController
     {

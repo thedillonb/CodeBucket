@@ -1,9 +1,8 @@
 using System;
-using BitbucketBrowser;
-using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 
 namespace CodeBucket.GitHub.Controllers.Changesets
 {

@@ -1,19 +1,19 @@
 using System;
 using System.Linq;
 using BitbucketSharp.Models;
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers.Wikis;
-using BitbucketBrowser.Controllers.Repositories;
-using BitbucketBrowser.Controllers.Issues;
-using BitbucketBrowser.Controllers.Changesets;
+using CodeBucket.Bitbucket.Controllers.Wikis;
+using CodeBucket.Bitbucket.Controllers.Repositories;
+using CodeBucket.Bitbucket.Controllers.Issues;
+using CodeBucket.Bitbucket.Controllers.Changesets;
 using MonoTouch;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
-namespace BitbucketBrowser.Controllers.Events
+namespace CodeBucket.Bitbucket.Controllers.Events
 {
     public class EventsController : Controller<List<EventModel>>
     {

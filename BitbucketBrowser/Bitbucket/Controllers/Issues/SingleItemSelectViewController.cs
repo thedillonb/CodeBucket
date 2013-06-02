@@ -1,10 +1,11 @@
 using System;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using System.Collections.Generic;
 using System.Linq;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Issues
+namespace CodeBucket.Bitbucket.Controllers.Issues
 {
 
     public class ComponentSelectViewController : SingleItemSelectViewController

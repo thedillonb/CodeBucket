@@ -1,16 +1,16 @@
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Views;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog.Utilities;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers.Followers;
-using BitbucketBrowser.Controllers.Events;
-using BitbucketBrowser.Controllers.Groups;
-using BitbucketBrowser.Controllers.Repositories;
+using CodeBucket.Bitbucket.Controllers.Followers;
+using CodeBucket.Bitbucket.Controllers.Events;
+using CodeBucket.Bitbucket.Controllers.Groups;
+using CodeBucket.Bitbucket.Controllers.Repositories;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Bitbucket.Controllers
 {
 	public class ProfileController : Controller<UsersModel>, IImageUpdated
 	{

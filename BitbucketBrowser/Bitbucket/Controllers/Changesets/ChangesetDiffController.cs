@@ -1,13 +1,13 @@
 using System;
 using System.Text;
-using BitbucketBrowser.Controllers.Source;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers.Source;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Foundation;
 using BitbucketSharp;
 
-namespace BitbucketBrowser.Controllers.Changesets
+namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
     public class ChangesetDiffController : FileSourceController
     {

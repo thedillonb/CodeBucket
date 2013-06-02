@@ -1,5 +1,4 @@
 using System;
-using BitbucketBrowser;
 using CodeBucket.Elements;
 using CodeBucket.GitHub.Controllers.Repositories;
 using CodeBucket.Views;

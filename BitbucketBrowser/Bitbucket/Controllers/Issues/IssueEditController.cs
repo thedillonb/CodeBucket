@@ -4,14 +4,14 @@ using BitbucketSharp.Models;
 using CodeBucket.Elements;
 using MonoTouch;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Controllers.Privileges;
+using CodeBucket.Bitbucket.Controllers.Privileges;
 using System.Collections.Generic;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Issues
+namespace CodeBucket.Bitbucket.Controllers.Issues
 {
     public class IssueEditController : BaseDialogViewController
     {

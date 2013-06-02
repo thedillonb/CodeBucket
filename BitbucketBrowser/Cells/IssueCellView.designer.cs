@@ -6,7 +6,7 @@
 //
 using MonoTouch.Foundation;
 
-namespace BitbucketBrowser.Cells
+namespace CodeBucket.Cells
 {
 	[Register ("IssueCellView")]
 	partial class IssueCellView

@@ -1,11 +1,11 @@
 using System;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp;
 
-namespace BitbucketBrowser.Controllers.Source
+namespace CodeBucket.Bitbucket.Controllers.Source
 {
     public class SourceInfoController : FileSourceController
     {

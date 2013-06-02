@@ -2,13 +2,12 @@ using System;
 using CodeBucket.Controllers;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using BitbucketBrowser.Controllers;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
+using CodeBucket.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers.Gists
+namespace CodeBucket.GitHub.Controllers.Gists
 {
     public class GistsController : ListController<GistModel>
     {

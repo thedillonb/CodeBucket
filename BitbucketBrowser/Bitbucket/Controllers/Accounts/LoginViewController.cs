@@ -3,9 +3,9 @@ using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 
-namespace BitbucketBrowser.Bitbucket.Controllers.Accounts
+namespace CodeBucket.Bitbucket.Controllers.Accounts
 {
     public partial class LoginViewController : UIViewController
     {

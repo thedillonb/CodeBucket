@@ -6,11 +6,11 @@ using System.Linq;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
-using BitbucketBrowser.Controllers.Repositories;
+using CodeBucket.Bitbucket.Controllers.Repositories;
 using System.Collections.Generic;
 using BitbucketSharp.Models;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Bitbucket.Controllers
 {
     public sealed class ExploreController : RepositoryController
     {

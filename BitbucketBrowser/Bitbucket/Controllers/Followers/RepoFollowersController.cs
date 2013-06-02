@@ -1,8 +1,9 @@
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
+using CodeBucket.Bitbucket.Controllers.Followers;
 
-namespace BitbucketBrowser.Controllers.Followers
+namespace CodeBucket.Bitbucket.Controllers.Followers
 {
     public class RepoFollowersController : FollowersController
     {

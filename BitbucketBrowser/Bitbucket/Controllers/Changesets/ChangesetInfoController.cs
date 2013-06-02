@@ -1,14 +1,14 @@
 using System;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
 using CodeBucket.Elements;
-using CodeFramework.UI.Views;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers.Repositories;
+using CodeBucket.Bitbucket.Controllers.Repositories;
 using System.Linq;
+using CodeBucket.Views;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Changesets
+namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
     public class ChangesetInfoController : Controller<ChangesetModel>
     {

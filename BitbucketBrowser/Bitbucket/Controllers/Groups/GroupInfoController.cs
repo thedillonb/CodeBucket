@@ -1,12 +1,12 @@
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
-using CodeBucket.Controllers;
 using CodeBucket.Elements;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using System.Linq;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Groups
+namespace CodeBucket.Bitbucket.Controllers.Groups
 {
     public class GroupInfoController : Controller<GroupModel>
     {

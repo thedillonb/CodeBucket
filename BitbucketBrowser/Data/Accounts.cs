@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using BitbucketBrowser.Data;
 using MonoTouch;
 using System.Collections;
 using System.Linq;

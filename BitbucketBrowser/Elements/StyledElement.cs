@@ -1,7 +1,7 @@
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class StyledElement : MonoTouch.Dialog.StyledStringElement
     {

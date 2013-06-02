@@ -1,8 +1,8 @@
-using BitbucketBrowser.Data;
-using BitbucketBrowser.GitHub.Controllers.Branches;
-using BitbucketBrowser.GitHub.Controllers.Changesets;
-using BitbucketBrowser.GitHub.Controllers.Events;
-using BitbucketBrowser.GitHub.Controllers.Followers;
+using CodeBucket.Data;
+using CodeBucket.GitHub.Controllers.Branches;
+using CodeBucket.GitHub.Controllers.Changesets;
+using CodeBucket.GitHub.Controllers.Events;
+using CodeBucket.GitHub.Controllers.Followers;
 using CodeBucket.Elements;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
@@ -10,12 +10,12 @@ using MonoTouch.UIKit;
 using System;
 using MonoTouch.Foundation;
 using MonoTouch.Dialog.Utilities;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.GitHub.Controllers.Readme;
+using CodeBucket.GitHub.Controllers.Readme;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
+using CodeBucket.GitHub.Controllers.Accounts;
 
-namespace BitbucketBrowser.GitHub.Controllers.Repositories
+namespace CodeBucket.GitHub.Controllers.Repositories
 {
     public class RepositoryInfoController : Controller<RepositoryModel>, IImageUpdated
     {

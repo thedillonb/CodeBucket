@@ -1,15 +1,14 @@
-using BitbucketBrowser;
-using BitbucketBrowser.GitHub.Controllers.Events;
-using BitbucketBrowser.GitHub.Controllers.Followers;
-using BitbucketBrowser.GitHub.Controllers.Groups;
-using BitbucketBrowser.GitHub.Controllers.Repositories;
+using CodeBucket.GitHub.Controllers.Events;
+using CodeBucket.GitHub.Controllers.Followers;
+using CodeBucket.GitHub.Controllers.Repositories;
 using MonoTouch.Dialog;
 using GitHubSharp.Models;
 using MonoTouch.Dialog.Utilities;
-using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.GitHub.Controllers.Gists;
+using CodeBucket.GitHub.Controllers.Gists;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
+using CodeBucket.Elements;
+using CodeBucket.GitHub.Controllers.Organizations;
 
 namespace CodeBucket.GitHub.Controllers.Accounts
 {

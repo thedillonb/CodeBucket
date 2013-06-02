@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using BitbucketBrowser.GitHub.Controllers;
+using CodeBucket.GitHub.Controllers;
 using GitHubSharp;
 
 namespace CodeBucket.GitHub.Controllers.Changesets

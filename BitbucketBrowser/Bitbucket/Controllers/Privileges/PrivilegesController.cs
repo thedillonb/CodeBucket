@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using System.Collections.Generic;
 using BitbucketSharp.Models;
-using CodeBucket.Controllers;
 using CodeBucket.Elements;
 using MonoTouch.Dialog;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers.Privileges
+namespace CodeBucket.Bitbucket.Controllers.Privileges
 {
     public class PrivilegesController : Controller<List<PrivilegeModel>>
     {

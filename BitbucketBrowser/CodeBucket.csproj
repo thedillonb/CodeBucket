@@ -110,8 +110,8 @@
     <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
-    <MtouchUseLlvm>true</MtouchUseLlvm>
-    <MtouchUseThumb>true</MtouchUseThumb>
+    <MtouchUseLlvm>True</MtouchUseLlvm>
+    <MtouchUseThumb>True</MtouchUseThumb>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -212,7 +212,6 @@
     <Compile Include="Utils\EnumExtensions.cs" />
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Data\SQLite.cs" />
-    <Compile Include="Markdown\CreoleParser.cs" />
     <Compile Include="GitHub\Controllers\ExploreController.cs" />
     <Compile Include="GitHub\Controllers\Branches\BranchController.cs" />
     <Compile Include="GitHub\Controllers\Changesets\ChangesetController.cs" />
@@ -408,10 +407,6 @@
     <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
-      <Project>{559E4B25-CBC1-4615-BBED-A7C43B35FFAA}</Project>
-      <Name>DiffPlex</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
@@ -435,6 +430,14 @@
     <ProjectReference Include="..\OHAttributedLabel\OHAttributedLabel.csproj">
       <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
       <Name>OHAttributedLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Markdown\Markdown.csproj">
+      <Project>{B6ED00F3-206B-4A94-A109-0A97F2E68F60}</Project>
+      <Name>Markdown</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
+      <Project>{8913502E-CDFB-4FD8-855A-5D6177B60B42}</Project>
+      <Name>DiffPlex</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -3,9 +3,9 @@ using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 
-namespace BitbucketBrowser.Controllers.Accounts
+namespace CodeBucket.Controllers
 {
 	[MonoTouch.Foundation.Register("AccountTypeButton")]
 	public class AccountTypeButton : UIButton

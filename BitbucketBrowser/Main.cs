@@ -65,43 +65,43 @@ namespace CodeBucket
 			UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
 			
 			//Set the theming
-			UINavigationBar.Appearance.SetBackgroundImage(Images.Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
+			UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 			
-			UIBarButtonItem.Appearance.SetBackgroundImage(Images.Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
-			UISegmentedControl.Appearance.SetBackgroundImage(Images.Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
+			UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
+			UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
 			
-			UIBarButtonItem.Appearance.SetBackgroundImage(Images.Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
-			UISegmentedControl.Appearance.SetBackgroundImage(Images.Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+			UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+			UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButtonLandscape.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 			
 			//BackButton
-			UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
+			UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButton.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 5)), UIControlState.Normal, UIBarMetrics.Default);
 			
-			UISegmentedControl.Appearance.SetDividerImage(Images.Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
+			UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
 			
-			UIToolbar.Appearance.SetBackgroundImage(Images.Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
+			UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
 			//UIBarButtonItem.Appearance.TintColor = UIColor.White;
-			UISearchBar.Appearance.BackgroundImage = Images.Images.Searchbar;
+			UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 			
 			var textAttrs = new UITextAttributes { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
 			UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
 			UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
 			
-			SearchFilterBar.ButtonBackground = Images.Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
-			SearchFilterBar.FilterImage = Images.Images.Filter;
+			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
+			SearchFilterBar.FilterImage = Images.Filter;
 			
 			DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
-			WatermarkView.Image = Images.Images.Background;
-			HeaderView.Gradient = Images.Images.CellGradient;
-			StyledElement.BgColor = UIColor.FromPatternImage(Images.Images.TableCell);
+			WatermarkView.Image = Images.Background;
+			HeaderView.Gradient = Images.CellGradient;
+			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
 			ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
-			UserElement.Default = Images.Images.Anonymous;
-			NewsFeedElement.DefaultImage = Images.Images.Anonymous;
-			TableViewSectionView.BackgroundImage = Images.Images.Searchbar;
+			UserElement.Default = Images.Anonymous;
+			NewsFeedElement.DefaultImage = Images.Anonymous;
+			TableViewSectionView.BackgroundImage = Images.Searchbar;
 			
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 			{
-				UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
+				UIBarButtonItem.Appearance.SetBackButtonBackgroundImage(Images.BackButtonLandscape.CreateResizableImage(new UIEdgeInsets(0, 14, 0, 6)), UIControlState.Normal, UIBarMetrics.LandscapePhone);
 			}
 		}
 
@@ -212,7 +212,7 @@ namespace CodeBucket
 //            else
             {
 				_nav = new SlideoutNavigationController();
-                _nav.SetMenuNavigationBackgroundImage(Images.Images.TitlebarDark, UIBarMetrics.Default);
+                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
                 _window.RootViewController = _nav;
             }
         }

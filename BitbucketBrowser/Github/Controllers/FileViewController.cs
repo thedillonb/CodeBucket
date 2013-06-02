@@ -1,5 +1,4 @@
 using System;
-using BitbucketBrowser;
 using CodeBucket.Bitbucket.Controllers;
 
 namespace CodeBucket.GitHub.Controllers

@@ -2,12 +2,13 @@ using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers.Source;
+using CodeBucket.Bitbucket.Controllers;
+using CodeBucket.Bitbucket.Controllers.Source;
 using System.Linq;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
-namespace BitbucketBrowser.Controllers.Branches
+namespace CodeBucket.Bitbucket.Controllers.Branches
 {
 	public class BranchController : Controller<Dictionary<string, BranchModel>>
 	{

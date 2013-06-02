@@ -1,13 +1,12 @@
 using System;
 using System.Drawing;
-using BitbucketBrowser;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
-using CodeFramework.UI.Views;
+using CodeBucket.Views;
 
 namespace CodeBucket.Cells
 {

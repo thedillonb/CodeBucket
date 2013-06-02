@@ -6,7 +6,7 @@
 //
 using MonoTouch.Foundation;
 
-namespace BitbucketBrowser.GitHub.Controllers.Accounts
+namespace CodeBucket.GitHub.Controllers.Accounts
 {
 	[Register ("GitHubLoginController")]
 	partial class GitHubLoginController

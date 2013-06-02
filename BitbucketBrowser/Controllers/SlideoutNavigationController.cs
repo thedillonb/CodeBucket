@@ -1,16 +1,15 @@
 using System;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers.Events;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
 	public class SlideoutNavigationController : MonoTouch.SlideoutNavigation.SlideoutNavigationController
 	{
 		private Account _previousUser;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BitbucketBrowser.Controllers.SlideoutNavigationController"/> class.
+		/// Initializes a new instance of the <see cref="CodeBucket.Controllers.SlideoutNavigationController"/> class.
 		/// </summary>
 		public SlideoutNavigationController()
 		{
@@ -44,11 +43,11 @@ namespace BitbucketBrowser.Controllers
 			Application.Cache.DeleteAll();
 
 			//Select a view based on the account type
-			if (Application.Account.AccountType == BitbucketBrowser.Data.Account.Type.Bitbucket)
+			if (Application.Account.AccountType == Account.Type.Bitbucket)
 			{
-				SelectView(new EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+				SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
 			}
-			else if (Application.Account.AccountType == BitbucketBrowser.Data.Account.Type.GitHub)
+			else if (Application.Account.AccountType == Account.Type.GitHub)
 			{
 				SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false));
 			}

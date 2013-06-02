@@ -1,6 +1,7 @@
 using BitbucketSharp.Models;
+using CodeBucket.Bitbucket.Controllers.Events;
 
-namespace BitbucketBrowser.Controllers.Events
+namespace CodeBucket.Bitbucket.Controllers.Events
 {
     public class RepoEventsController : EventsController
     {

@@ -1,5 +1,5 @@
 using System;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
@@ -7,12 +7,13 @@ using MonoTouch.Dialog;
 using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Controllers.Privileges;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.Cells;
+using CodeBucket.Bitbucket.Controllers.Privileges;
+using CodeBucket.Cells;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
+using CodeBucket.Elements;
 
-namespace BitbucketBrowser.Controllers.Issues
+namespace CodeBucket.Bitbucket.Controllers.Issues
 {
     public class IssuesController : Controller<List<IssueModel>>
     {

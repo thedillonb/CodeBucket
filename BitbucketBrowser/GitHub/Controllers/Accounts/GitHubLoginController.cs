@@ -1,10 +1,9 @@
 using System;
-using BitbucketBrowser;
 using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 
 namespace CodeBucket.GitHub.Controllers.Accounts
 {

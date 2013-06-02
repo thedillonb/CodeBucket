@@ -1,4 +1,3 @@
-using BitbucketBrowser;
 using CodeBucket.Controllers;
 using CodeBucket.Elements;
 using GitHubSharp.Models;

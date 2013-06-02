@@ -1,18 +1,18 @@
 using System;
-using BitbucketBrowser.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using CodeBucket.Elements;
-using CodeFramework.UI.Views;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Foundation;
 using System.Linq;
 using MonoTouch;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 
-namespace BitbucketBrowser.Controllers.Issues
+namespace CodeBucket.Bitbucket.Controllers.Issues
 {
     public class InternalIssueInfoModel
     {

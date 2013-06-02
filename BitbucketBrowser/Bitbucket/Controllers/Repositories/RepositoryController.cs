@@ -3,14 +3,16 @@ using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
+using CodeBucket.Bitbucket.Controllers;
 using System;
 using System.Drawing;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.Cells;
 
-namespace BitbucketBrowser.Controllers.Repositories
+using CodeBucket.Cells;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
+using CodeBucket.Elements;
+
+namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
     public class RepositoryController : Controller<List<RepositoryDetailedModel>>
     {

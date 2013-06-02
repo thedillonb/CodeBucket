@@ -1,4 +1,3 @@
-using BitbucketBrowser;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 

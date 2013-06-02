@@ -1,4 +1,3 @@
-using BitbucketBrowser;
 using GitHubSharp.Models;
 
 namespace CodeBucket.GitHub.Controllers.Gists

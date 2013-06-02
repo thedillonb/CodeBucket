@@ -1,4 +1,3 @@
-using BitbucketBrowser;
 using CodeBucket.Controllers;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;

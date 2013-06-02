@@ -1,10 +1,9 @@
-using BitbucketBrowser;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using BitbucketBrowser.GitHub.Controllers.Source;
+using CodeBucket.GitHub.Controllers.Source;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
 namespace CodeBucket.GitHub.Controllers.Branches
 {

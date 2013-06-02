@@ -5,7 +5,7 @@ using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 
-namespace BitbucketBrowser.Controllers.Repositories
+namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
     public class AccountRepositoryController : RepositoryController
     {

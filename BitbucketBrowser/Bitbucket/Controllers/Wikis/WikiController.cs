@@ -1,13 +1,13 @@
 using System;
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Views;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Controllers;
 using MonoTouch;
+using CodeBucket.Controllers;
 
 
-namespace BitbucketBrowser.Controllers.Wikis
+namespace CodeBucket.Bitbucket.Controllers.Wikis
 {
     public class WikiInfoController : WebViewController
     {

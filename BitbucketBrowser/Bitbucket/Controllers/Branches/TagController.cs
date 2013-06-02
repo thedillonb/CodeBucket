@@ -1,13 +1,13 @@
 using BitbucketSharp.Models;
 using System.Collections.Generic;
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Elements;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Controllers.Source;
+using CodeBucket.Bitbucket.Controllers.Source;
 using System.Linq;
+using CodeBucket.Controllers;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Bitbucket.Controllers
 {
     public class TagController : Controller<Dictionary<string, TagModel>>
     {

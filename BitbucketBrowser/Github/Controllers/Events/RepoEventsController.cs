@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using BitbucketBrowser;
 using GitHubSharp.Models;
 
 namespace CodeBucket.GitHub.Controllers.Events

@@ -1,6 +1,6 @@
 using SQLite;
-using BitbucketBrowser.Controllers.Issues;
-using BitbucketBrowser.Controllers.Repositories;
+using CodeBucket.Bitbucket.Controllers.Issues;
+using CodeBucket.Bitbucket.Controllers.Repositories;
 
 namespace CodeBucket.Data
 {

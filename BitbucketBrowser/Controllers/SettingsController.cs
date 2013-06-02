@@ -1,12 +1,10 @@
 using System;
-using BitbucketBrowser;
-using BitbucketBrowser.Bitbucket.Controllers.Accounts;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
 using MonoTouch.MessageUI;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
+using CodeBucket.Elements;
 
 namespace CodeBucket.Controllers
 {
@@ -48,9 +46,9 @@ namespace CodeBucket.Controllers
 					//If the account doesn't remember the password we need to prompt
 					if (thisAccount.DontRemember)
 					{
-						if (thisAccount.AccountType == BitbucketBrowser.Data.Account.Type.Bitbucket)
+						if (thisAccount.AccountType == CodeBucket.Data.Account.Type.Bitbucket)
 						{
-							var loginController = new LoginViewController() { Username = thisAccount.Username };
+							var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
 							loginController.LoginComplete = changeUserAction;
 							NavigationController.PushViewController(loginController, true);
 						}
@@ -82,7 +80,7 @@ namespace CodeBucket.Controllers
 			{
 				_accountOptionsSection = new Section("Account Options");
 				root.Add(_accountOptionsSection);
-	            var autoSigninElement = new BitbucketBrowser.Elements.TrueFalseElement("Remember Credentials", !currentAccount.DontRemember);
+	            var autoSigninElement = new TrueFalseElement("Remember Credentials", !currentAccount.DontRemember);
 	            autoSigninElement.ValueChanged += (sender, e) => { 
 					currentAccount.DontRemember = !autoSigninElement.Value; 
 					currentAccount.Update();

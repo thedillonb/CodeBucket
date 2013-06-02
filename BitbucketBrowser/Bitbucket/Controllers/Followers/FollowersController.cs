@@ -1,11 +1,12 @@
 using CodeBucket.Bitbucket.Controllers.Accounts;
-using CodeBucket.Controllers;
+using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Linq;
 using System.Collections.Generic;
+using CodeBucket.Controllers;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {

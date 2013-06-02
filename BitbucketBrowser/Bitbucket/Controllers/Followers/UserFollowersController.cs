@@ -2,7 +2,7 @@ using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BitbucketBrowser.Controllers.Followers
+namespace CodeBucket.Bitbucket.Controllers.Followers
 {
     public class UserFollowersController : FollowersController
     {

@@ -3,9 +3,9 @@ using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Cells;
+using CodeBucket.Cells;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
 	
 	public class RepositoryElement : Element, IElementSizing, IColorizeBackground

@@ -1,12 +1,8 @@
 using System;
-using BitbucketBrowser;
-using BitbucketBrowser.Bitbucket.Controllers.Accounts;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Controllers.Accounts;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
+using CodeBucket.Elements;
 
 namespace CodeBucket.Controllers
 {
@@ -62,7 +58,7 @@ namespace CodeBucket.Controllers
 					{
 						if (thisAccount.AccountType == Account.Type.Bitbucket)
 						{
-							var loginController = new LoginViewController { Username = thisAccount.Username };
+							var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController { Username = thisAccount.Username };
 							loginController.LoginComplete = a => {
 								NavigationController.PopToViewController(this, true);
 								OnAccountSelected(a); 

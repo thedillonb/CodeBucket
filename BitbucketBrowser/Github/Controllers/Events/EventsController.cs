@@ -1,16 +1,15 @@
 using System;
-using BitbucketBrowser;
-using BitbucketBrowser.GitHub.Controllers.Repositories;
+using CodeBucket.GitHub.Controllers.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
 using MonoTouch;
-using BitbucketBrowser.GitHub.Controllers.Gists;
+using CodeBucket.GitHub.Controllers.Gists;
 using MonoTouch.Foundation;
 using ProfileController = CodeBucket.GitHub.Controllers.Accounts.ProfileController;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 
 namespace CodeBucket.GitHub.Controllers.Events
 {

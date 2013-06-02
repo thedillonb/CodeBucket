@@ -50,7 +50,7 @@ using System.Text;
 namespace Wiki
 {
     public delegate void LinkEventHandler(object sender, LinkEventArgs e);
-
+    
     #region LinkEventArgs
     /// <summary>
     /// Event fired when a link is processed, giving the caller the ability to translate
@@ -61,9 +61,9 @@ namespace Wiki
         private string _href;
         private string _text;
         private TargetEnum _target;
-
+        
         public enum TargetEnum { Internal, External, Unknown };
-
+        
         public LinkEventArgs(string link, string href, string text, TargetEnum target)
         {
             _link = link;
@@ -71,7 +71,7 @@ namespace Wiki
             _text = text;
             _target = target;
         }
-
+        
         /// <summary>
         /// Original Link
         /// </summary>
@@ -80,7 +80,7 @@ namespace Wiki
             get { return _link; }
             set { _link = value; }
         }
-
+        
         /// <summary>
         /// Mapped Link (in case of interwiki) 
         /// This is where the link will actually target
@@ -90,13 +90,13 @@ namespace Wiki
             get { return _href; }
             set { _href = value; }
         }
-
+        
         public string Text
         {
             get { return _text; }
             set { _text = value; }
         }
-
+        
         /// <summary>
         /// internal or external window
         /// </summary>
@@ -106,9 +106,9 @@ namespace Wiki
             set { _target = value; }
         }
     }
-    #endregion
-
-
+#endregion
+    
+    
     /// <summary>
     /// 
     ///  The Creole Parser is a .NET class which will translate Wiki Creole 1.0 (see http://wikicreole.org into HTML 
@@ -133,26 +133,26 @@ namespace Wiki
     {
         private string _tabStop;
         private int _nTabSpaces;
-
+        
         public CreoleParser()
         {
             HTMLAttributes = new Dictionary<string, string>();
             InterWiki = new Dictionary<string, string>();
             TabStop = 7; // default to 7 char tabstop
         }
-
+        
         /// <summary>
         /// Event Handler fired when a link is processed
         /// </summary>
         public event LinkEventHandler OnLink;
-
+        
         /// <summary>
         /// This collection allows you to substitute markup with your own custom markup
         /// Example:
         /// HTMLAttributes.Add("<h1>", "<h1 classid=myH1Class>");
         /// </summary>
         public Dictionary<string, string> HTMLAttributes;
-
+        
         /// <summary>
         /// Interwiki dictionary
         /// You can add interwiki links by adding the prefix to url mappings 
@@ -162,8 +162,8 @@ namespace Wiki
         /// [[wikipedia:Microsoft]] 
         /// </summary>
         public Dictionary<string, string> InterWiki;
-
-
+        
+        
         /// <summary>
         /// Map \t into &nbsp; 
         /// If you set this to 0 there will be no substitution.
@@ -183,8 +183,8 @@ namespace Wiki
                 return _nTabSpaces;
             }
         }
-
-
+        
+        
         /// <summary>
         /// Convert creole markup to HTML
         /// </summary>
@@ -194,9 +194,9 @@ namespace Wiki
         {
             return _processAllMarkup(markup);
         }
-
+        
         #region internal Process Creole methods
-
+        
         private string _processAllMarkup(string markup)
         {
             // all of the syntax of flowing formatting markup across "soft" paragraph breaks gets a lot easier if we just merge soft breaks together.
@@ -204,22 +204,22 @@ namespace Wiki
             List<int> originalLineNumbers;
             List<string> lines = _breakMarkupIntoLines(markup, out originalLineNumbers);
             StringBuilder htmlMarkup = new StringBuilder();
-
+            
             htmlMarkup.Append(_getStartTag("<p>").Replace("<p", "<p id='CreoleLine0'")); // start with paragraph
-
+            
             int iBullet = 0;    // bullet indentation level
             int iNumber = 0;    // ordered list indentation level
             bool InTable = false;  // are in a table definition
             bool InEscape = false; // we are in an escaped section
             int idParagraph = 1;  // id for paragraphs
-
+            
             // process each line of the markup, since bullets, numbers and tables depend on start of line
             foreach (string l in lines)
             {
                 // make a copy as we will modify line into HTML as we go
                 string line = l.Trim('\r');
                 string lineTrimmed = line.TrimStart(' ');
-
+                
                 // if we aren't in an escaped section
                 if (!InEscape)
                 {
@@ -230,18 +230,18 @@ namespace Wiki
                         htmlMarkup.Append("</table>");
                         InTable = false;
                     }
-
+                    
                     // process line based commands (aka, starts with a ** --> bulleted list) 
-
+                    
                     // ---  if we found a line completely empty, translate it as end of paragraph
                     if (lineTrimmed.Trim().Length == 0)
                     {
                         // close any pending lists
                         _closeLists(ref htmlMarkup, ref iBullet, ref iNumber, lineTrimmed);
-
+                        
                         // end of paragraph (NOTE: we id paragraphs for conveinence sake
                         htmlMarkup.Append(String.Format("</p>\n{0}",
-                                          _getStartTag("<p>").Replace("<p", String.Format("<p id='CreoleLine{0}'", originalLineNumbers[idParagraph]))));
+                                                        _getStartTag("<p>").Replace("<p", String.Format("<p id='CreoleLine{0}'", originalLineNumbers[idParagraph]))));
                     }
                     // --- process bullets
                     else if (lineTrimmed[0] == '*')
@@ -256,7 +256,7 @@ namespace Wiki
                             // if we were doing an ordered list and this isn't one, we need to close the previous list down
                             if ((iNumber > 0) && lineTrimmed[0] != '#')
                                 htmlMarkup.Append(_closeList(ref iNumber, "</ol>"));
-
+                            
                             // generate correct indentation for bullets given current state of iBullet
                             htmlMarkup.Append(_processListIndentations(lineTrimmed, '*', ref iBullet, _getStartTag("<ul>"), "</ul>"));
                         }
@@ -267,7 +267,7 @@ namespace Wiki
                         // if we were doing an bullet list and this isn't one, we need to close the previous list down
                         if ((iBullet > 0) && lineTrimmed[0] != '*')
                             htmlMarkup.Append(_closeList(ref iBullet, "</ul>"));
-
+                        
                         // generate correct indentation for bullets given current state of iNumber
                         htmlMarkup.Append(_processListIndentations(lineTrimmed, '#', ref iNumber, _getStartTag("<ol>"), "</ol>"));
                     }
@@ -276,7 +276,7 @@ namespace Wiki
                     {
                         // close any pending lists
                         _closeLists(ref htmlMarkup, ref iBullet, ref iNumber, lineTrimmed);
-
+                        
                         // process = as headers only on start of lines
                         htmlMarkup.Append(_processCreoleFragment(_processHeadersCreole(line)));
                     }
@@ -284,10 +284,10 @@ namespace Wiki
                     else if (!InTable && lineTrimmed.StartsWith("|="))
                     {
                         // start a new table
-
+                        
                         // close any pending lists
                         _closeLists(ref htmlMarkup, ref iBullet, ref iNumber, lineTrimmed);
-
+                        
                         InTable = true;
                         htmlMarkup.Append(_processTableHeaderRow(lineTrimmed));
                     }
@@ -308,7 +308,7 @@ namespace Wiki
                     {
                         // we didn't find a special "start of line" command, 
                         // namely ordered list, unordered list or table definition
-
+                        
                         // just add it, processing any markup on it.
                         htmlMarkup.Append(String.Format("{0}\n", _processCreoleFragment(line)));
                     }
@@ -328,16 +328,16 @@ namespace Wiki
             }
             // close out paragraph
             htmlMarkup.Append("</p>");
-
+            
             // lastly, we want to expand tabs out into hard spaces so that the creole tabs are preserved 
             // NOTE: this is non-standard CREOLE...
             htmlMarkup = htmlMarkup.Replace("\t", this._tabStop);
-
+            
             // return the HTML we have generated 
             return htmlMarkup.ToString();
         }
-
-
+        
+        
         private static List<string> _breakMarkupIntoLines(string markup, out List<int> originalLineNumbers)
         {
             originalLineNumbers = new List<int>();
@@ -352,7 +352,7 @@ namespace Wiki
             {
                 string line = tempLines[iLine];
                 int i = iLine + 1;
-
+                
                 if ((line.Length > 0) && (line != "\r") && line[0] != '=')
                 {
                     if (!InEscape)
@@ -371,7 +371,7 @@ namespace Wiki
                                     iLine = i - 1;
                                     break;
                                 }
-
+                                
                                 string trimmedLine = tempLines[i].Trim();
                                 if ((trimmedLine.Length == 0) ||
                                     trimmedLine[0] == '\r' ||
@@ -409,7 +409,7 @@ namespace Wiki
                 return HTMLAttributes[tag];
             return tag;
         }
-
+        
         private void _closeLists(ref StringBuilder htmlMarkup, ref int iBullet, ref int iNumber, string lineTrimmed)
         {
             if (lineTrimmed.Length > 0)
@@ -417,7 +417,7 @@ namespace Wiki
                 // if we were doing an ordered list and this isn't one, we need to close the previous list down
                 if ((iNumber > 0) && lineTrimmed[0] != '#')
                     htmlMarkup.Append(_closeList(ref iNumber, "</ol>"));
-
+                
                 // if we were doing an bullet list and this isn't one, we need to close the previous list down
                 if ((iBullet > 0) && lineTrimmed[0] != '*')
                     htmlMarkup.Append(_closeList(ref iBullet, "</ul>"));
@@ -427,13 +427,13 @@ namespace Wiki
                 // if we were doing an ordered list and this isn't one, we need to close the previous list down
                 if (iNumber > 0)
                     htmlMarkup.Append(_closeList(ref iNumber, "</ol>"));
-
+                
                 // if we were doing an bullet list and this isn't one, we need to close the previous list down
                 if (iBullet > 0)
                     htmlMarkup.Append(_closeList(ref iBullet, "</ul>"));
             }
         }
-
+        
         private string _processTableRow(string line)
         {
             string markup = _getStartTag("<tr>");
@@ -456,7 +456,7 @@ namespace Wiki
             markup += "</tr>";
             return markup;
         }
-
+        
         /// <summary>
         /// passed a table definition line which starts with "|=" it outputs the start of a table definition
         /// </summary>
@@ -468,7 +468,7 @@ namespace Wiki
             markup += _getStartTag("<table>");
             // add header
             markup += String.Format("{0}\n{1}\n", _getStartTag("<thead>"), _getStartTag("<tr>"));
-
+            
             // process each |= cell section
             int iPos = _indexOfWithSkip(line, "|=", 0);
             while (iPos >= 0)
@@ -493,7 +493,7 @@ namespace Wiki
                 if (cell.Length == 0)
                     // forces the table cell to always be rendered
                     cell = "&nbsp;";
-
+                
                 // create cell entry
                 markup += String.Format("{0}{1}</td>", _getStartTag("<td>"), _processCreoleFragment(cell));
             }
@@ -501,7 +501,7 @@ namespace Wiki
             markup += "</tr>\n</thead>\n";
             return markup;
         }
-
+        
         private string _processListIndentations(string line, char indentMarker, ref int iCurrentIndent, string indentTag, string outdentTag)
         {
             string markup = "";
@@ -515,14 +515,14 @@ namespace Wiki
             }
             // strip off counters
             line = line.Substring(iNewIndent);
-
+            
             // close down bullets if we have fewer *s
             while (iNewIndent < iCurrentIndent)
             {
                 markup += String.Format("{0}\n", outdentTag);
                 iCurrentIndent--;
             }
-
+            
             // add bullets if we have more *s
             while (iNewIndent > iCurrentIndent)
             {
@@ -533,7 +533,7 @@ namespace Wiki
             markup += String.Format("{0}{1}</li>\n", _getStartTag("<li>"), _processCreoleFragment(line));
             return markup;
         }
-
+        
         /// <summary>
         /// Given the current indentation level, close out the list
         /// </summary>
@@ -548,7 +548,7 @@ namespace Wiki
             }
             return html;
         }
-
+        
         private string _processFreeLink(string schema, string markup)
         {
             int iPos = _indexOfWithSkip(markup, schema, 0);
@@ -573,7 +573,7 @@ namespace Wiki
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Process http:, https: ftp: links automatically into a hrefs
         /// </summary>
@@ -585,7 +585,7 @@ namespace Wiki
             markup = _processFreeLink("http:", markup);
             return _processFreeLink("https:", markup);
         }
-
+        
         private string _stripTildeEscapeCreole(string markup)
         {
             int iPos = markup.IndexOf('~');
@@ -609,7 +609,7 @@ namespace Wiki
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Process a fragment of markup
         /// </summary>
@@ -632,7 +632,7 @@ namespace Wiki
             fragment = _stripTildeEscapeCreole(fragment);
             return fragment;
         }
-
+        
         /// <summary>
         /// Helper function to get the index of a match but skipping the content of 
         /// bracketed tags which can have creole inside it.  
@@ -653,7 +653,7 @@ namespace Wiki
             bool fSkipLink = (match != "[[") && (match != "]]");
             bool fSkipEscape = (match != "{{{") && (match != "}}}");
             bool fSkipImage = (match != "{{") && (match != "}}");
-
+            
             int tokenLength = match.Length;
             if (tokenLength < 3)
                 tokenLength = 3; // so we can match on {{{
@@ -701,7 +701,7 @@ namespace Wiki
                         if ((tildeCheck != "~~") && (tildeCheck[1] == '~'))
                             continue; // then we don't want to match this...it's been escaped
                     }
-
+                    
                     // only if it starts past our starting point
                     if (i >= iPos)
                         return i;
@@ -709,7 +709,7 @@ namespace Wiki
             }
             return -1;
         }
-
+        
         /// <summary>
         /// Processes bracketing creole markup into HTML
         /// **foo** into <b>foo</b> etc..
@@ -727,14 +727,14 @@ namespace Wiki
                 // special case for italics and urls, if match = // we don't match if previous char is a url
                 if ((match == "//") &&
                     (((iPos >= 6) && (markup.Substring(iPos - 6, 6).ToLower() == "https:")) ||
-                     ((iPos >= 5) && (markup.Substring(iPos - 5, 5).ToLower() == "http:")) ||
-                     ((iPos >= 4) && (markup.Substring(iPos - 4, 4).ToLower() == "ftp:"))))
+                 ((iPos >= 5) && (markup.Substring(iPos - 5, 5).ToLower() == "http:")) ||
+                 ((iPos >= 4) && (markup.Substring(iPos - 4, 4).ToLower() == "ftp:"))))
                 {
                     // skip it, it's a url (I think)
                     iPos = _indexOfWithSkip(markup, match, iPos + 1); ;
                     continue;
                 }
-
+                
                 int iEnd = _indexOfWithSkip(markup, match, iPos + match.Length);
                 if (iEnd > 0)
                 {
@@ -744,9 +744,9 @@ namespace Wiki
                         // add previous + start tag + markedText + end Tag + end
                         markup = markup.Substring(0, iPos)
                             + startTag
-                            + markedText
-                            + endTag
-                            + markup.Substring(iEnd + match.Length);
+                                + markedText
+                                + endTag
+                                + markup.Substring(iEnd + match.Length);
                     }
                     iPos = _indexOfWithSkip(markup, match, iEnd + 1);
                 }
@@ -756,14 +756,14 @@ namespace Wiki
                     // treat end of line as end of bracketing
                     markup = markup.Substring(0, iPos)
                         + startTag
-                        + markedText
-                        + endTag;
+                            + markedText
+                            + endTag;
                     break;
                 }
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Process Headers Creole into HTML
         /// </summary>
@@ -779,37 +779,37 @@ namespace Wiki
             markup = _processBracketingCreole("=", _getStartTag("<h1>"), "</h1>", markup);
             return markup;
         }
-
+        
         private string _processBoldCreole(string markup)
         {
             return _processBracketingCreole("**", _getStartTag("<strong>"), "</strong>", markup);
         }
-
+        
         private string _processItalicCreole(string markup)
         {
             return _processBracketingCreole("//", _getStartTag("<em>"), "</em>", markup);
         }
-
+        
         private string _processUnderlineCreole(string markup)
         {
             return _processBracketingCreole("__", _getStartTag("<u>"), "</u>", markup);
         }
-
+        
         private string _processSuperscriptCreole(string markup)
         {
             return _processBracketingCreole("^^", _getStartTag("<sup>"), "</sup>", markup);
         }
-
+        
         private string _processSubscriptCreole(string markup)
         {
             return _processBracketingCreole(",,", _getStartTag("<sub>"), "</sub>", markup);
         }
-
+        
         private string _processStrikethroughCreole(string markup)
         {
             return _processBracketingCreole("--", _getStartTag("<del>"), "</del>", markup);
         }
-
+        
         /// <summary>
         /// Processes link markup into HTML
         /// </summary>
@@ -835,11 +835,11 @@ namespace Wiki
                         // href is the front
                         href = cell.Substring(0, iSplit);
                         link = href;
-
+                        
                         // text is the creole processed fragment left over
                         text = _processCreoleFragment(cell.Substring(iSplit + 1));
                     }
-
+                    
                     // handle interwiki links
                     iSplit = href.IndexOf(':');
                     if (iSplit > 0)
@@ -854,13 +854,13 @@ namespace Wiki
                     LinkEventArgs linkEventArgs = new LinkEventArgs(link, href, text, LinkEventArgs.TargetEnum.External);
                     if (OnLink != null)
                         OnLink(this, linkEventArgs);
-
+                    
                     markup = markup.Substring(0, iPos - 2)
                         + String.Format("<a href='{0}' {2} {3}>{1}</a>",
-                                            linkEventArgs.Href,
-                                            linkEventArgs.Text,
-                                            (linkEventArgs.Target == LinkEventArgs.TargetEnum.External) ? "target=_blank " : "",
-                                            (linkEventArgs.Target == LinkEventArgs.TargetEnum.Unknown) ? "style='border-bottom:1px dashed #000000; text-decoration:none'" : "")
+                                        linkEventArgs.Href,
+                                        linkEventArgs.Text,
+                                        (linkEventArgs.Target == LinkEventArgs.TargetEnum.External) ? "target=_blank " : "",
+                                        (linkEventArgs.Target == LinkEventArgs.TargetEnum.Unknown) ? "style='border-bottom:1px dashed #000000; text-decoration:none'" : "")
                             + markup.Substring(iEnd + 2);
                 }
                 else
@@ -869,7 +869,7 @@ namespace Wiki
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Process line break creole into <br/>
         /// </summary>
@@ -885,7 +885,7 @@ namespace Wiki
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Process horz rulle creole into <hr/>
         /// </summary>
@@ -897,7 +897,7 @@ namespace Wiki
                 return _getStartTag("<hr/>") + markup.Substring(4);
             return markup;
         }
-
+        
         /// <summary>
         /// Process image creole into <img> </img>
         /// </summary>
@@ -921,9 +921,9 @@ namespace Wiki
                         href = innards.Substring(0, iSplit);
                         text = _processCreoleFragment(innards.Substring(iSplit + 1));
                     }
-
+                    
                     markup = markup.Substring(0, iPos - 2)
-                            + String.Format("<img src='{0}' alt='{1}'/>", href, text)
+                        + String.Format("<img src='{0}' alt='{1}'/>", href, text)
                             + markup.Substring(iEnd + 2);
                 }
                 else
@@ -932,7 +932,7 @@ namespace Wiki
             }
             return markup;
         }
-
+        
         /// <summary>
         /// Remove escape creole (no longer needed after all other transforms are done
         /// </summary>
@@ -948,9 +948,9 @@ namespace Wiki
                 {
                     markup = markup.Substring(0, iPos) + _getStartTag("<tt>") +
                         markup.Substring(iPos + 3, iEnd - (iPos + 3)) +
-                        String.Format("</tt>") +
-                        markup.Substring(iEnd + 3);
-
+                            String.Format("</tt>") +
+                            markup.Substring(iEnd + 3);
+                    
                     iPos = markup.IndexOf("{{{", iPos);
                 }
                 else
@@ -958,7 +958,7 @@ namespace Wiki
             }
             return markup;
         }
-        #endregion
-
+#endregion
+        
     }
 }

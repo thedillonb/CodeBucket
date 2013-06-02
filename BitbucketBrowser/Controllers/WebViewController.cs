@@ -1,5 +1,4 @@
 using System;
-using BitbucketBrowser;
 using CodeBucket.Views;
 using MonoTouch.UIKit;
 
