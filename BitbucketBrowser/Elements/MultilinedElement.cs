@@ -1,8 +1,9 @@
 using System;
+using BitbucketBrowser.Elements;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class MultilinedElement : CustomElement
     {

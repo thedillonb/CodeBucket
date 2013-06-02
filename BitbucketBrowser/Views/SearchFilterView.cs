@@ -1,13 +1,13 @@
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class SearchFilterBar : UISearchBar
     {
         public static UIImage ButtonBackground;
         public static UIImage FilterImage;
-        private UIButton _button;
+        private readonly UIButton _button;
 
         public UIButton FilterButton { get { return _button; } }
 
@@ -46,16 +46,16 @@ namespace CodeFramework.UI.Views
             var bounds = this.Bounds;
             base.LayoutSubviews();
 
-            if (FilterButtonVisible)
-            {
-                var buttonWidth = 44f;
-                _button.Frame = new RectangleF(bounds.Width - 5 - buttonWidth, 7f, buttonWidth, 31f);
+            if (!FilterButtonVisible) return;
 
-                var searchBar = this.Subviews.GetValue(1) as UIView;
-                var frame = searchBar.Frame;
-                frame.Width -= (_button.Frame.Width + 10f);
-                searchBar.Frame = frame;
-            }
+            const float buttonWidth = 44f;
+            _button.Frame = new RectangleF(bounds.Width - 5 - buttonWidth, 7f, buttonWidth, 31f);
+
+            var searchBar = this.Subviews.GetValue(1) as UIView;
+            if (searchBar == null) return;
+            var frame = searchBar.Frame;
+            frame.Width -= (_button.Frame.Width + 10f);
+            searchBar.Frame = frame;
         }
     }
 

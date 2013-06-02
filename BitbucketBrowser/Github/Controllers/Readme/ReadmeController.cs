@@ -1,13 +1,12 @@
 using System;
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
 using MonoTouch;
-using BitbucketBrowser.Controllers;
 
-namespace BitbucketBrowser.GitHub.Controllers.Readme
+namespace CodeBucket.GitHub.Controllers.Readme
 {
     public class ReadmeController : WebViewController
     {

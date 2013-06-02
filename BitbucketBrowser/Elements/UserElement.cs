@@ -1,7 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class UserElement : SubcaptionElement
     {

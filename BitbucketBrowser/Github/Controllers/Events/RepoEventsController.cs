@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
 using GitHubSharp.Models;
 
-namespace BitbucketBrowser.GitHub.Controllers.Events
+namespace CodeBucket.GitHub.Controllers.Events
 {
     public class RepoEventsController : EventsController
     {

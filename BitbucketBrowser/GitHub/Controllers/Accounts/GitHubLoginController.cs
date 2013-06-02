@@ -1,11 +1,12 @@
 using System;
+using BitbucketBrowser;
 using MonoTouch.UIKit;
 using RedPlum;
 using System.Threading;
 using MonoTouch;
 using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.GitHub.Controllers.Accounts
+namespace CodeBucket.GitHub.Controllers.Accounts
 {
 	public partial class GitHubLoginController : UIViewController
     {

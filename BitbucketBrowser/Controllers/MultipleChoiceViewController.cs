@@ -1,11 +1,8 @@
-using System;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
-using System.Collections.Generic;
 using MonoTouch.UIKit;
-using System.Linq;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class MultipleChoiceViewController<T> : BaseDialogViewController
     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BitbucketBrowser.Data;
+using CodeBucket.Controllers;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using BitbucketBrowser.Controllers;

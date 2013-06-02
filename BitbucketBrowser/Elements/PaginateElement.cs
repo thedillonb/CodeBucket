@@ -1,9 +1,9 @@
 using System;
+using CodeBucket.Views;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class PaginateElement : LoadMoreElement
     {

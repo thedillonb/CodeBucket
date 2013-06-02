@@ -1,17 +1,12 @@
-using BitbucketBrowser.Controllers;
+using BitbucketBrowser;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
 using System.Drawing;
 using System.Linq;
-using BitbucketBrowser.Controllers.Accounts;
-using BitbucketBrowser.Controllers.Events;
-using BitbucketBrowser.Controllers.Repositories;
-using BitbucketBrowser.Controllers.Groups;
-using System.Threading;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public abstract class MenuBaseController : DialogViewController
     {

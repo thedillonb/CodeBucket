@@ -1,7 +1,6 @@
-using MonoTouch;
-using BitbucketBrowser.Data;
+using CodeBucket.Data;
 
-namespace BitbucketBrowser
+namespace CodeBucket
 {
     /// <summary>
     /// Application.
@@ -12,13 +11,13 @@ namespace BitbucketBrowser
 		public static GitHubSharp.Client GitHubClient { get; private set; }
 
         public static Account Account { get; private set; }
-        public static BitbucketBrowser.Data.Accounts Accounts { get; private set; }
-        public static Data.WebCacheProvider Cache { get; private set; }
+        public static Accounts Accounts { get; private set; }
+        public static WebCacheProvider Cache { get; private set; }
 
         static Application()
         {
             Accounts = new Accounts();
-            Cache = new Data.WebCacheProvider();
+            Cache = new WebCacheProvider();
         }
 
         public static void SetUser(Account account)

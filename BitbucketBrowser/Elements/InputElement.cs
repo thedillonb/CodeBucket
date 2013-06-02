@@ -1,8 +1,7 @@
-using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class InputElement : EntryElement
     {

@@ -1,6 +1,8 @@
 using System;
-using BitbucketBrowser.Data;
-using BitbucketBrowser.GitHub.Controllers.Repositories;
+using BitbucketBrowser;
+using CodeBucket.Elements;
+using CodeBucket.GitHub.Controllers.Repositories;
+using CodeBucket.Views;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Threading;
@@ -8,10 +10,8 @@ using System.Linq;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers
 {
     public sealed class ExploreController : DialogViewController
     {

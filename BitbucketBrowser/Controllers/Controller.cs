@@ -1,14 +1,14 @@
 using System;
+using CodeBucket.Elements;
+using CodeBucket.Views;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch;
-using CodeFramework.UI.Views;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public abstract class Controller<T> : BaseDialogViewController where T : class
     {

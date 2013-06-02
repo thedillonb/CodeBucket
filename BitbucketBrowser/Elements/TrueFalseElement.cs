@@ -1,7 +1,6 @@
-using System;
 using MonoTouch.Dialog;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class TrueFalseElement : BooleanElement
     {

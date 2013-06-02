@@ -1,12 +1,12 @@
 using System;
+using CodeBucket.Views;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog.Utilities;
 using MonoTouch.Foundation;
-using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class NameTimeStringElement : CustomElement, IImageUpdated
     {

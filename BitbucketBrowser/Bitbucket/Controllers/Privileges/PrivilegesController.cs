@@ -3,8 +3,9 @@ using System.Linq;
 using BitbucketBrowser.Controllers;
 using System.Collections.Generic;
 using BitbucketSharp.Models;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
 
 namespace BitbucketBrowser.Controllers.Privileges
 {

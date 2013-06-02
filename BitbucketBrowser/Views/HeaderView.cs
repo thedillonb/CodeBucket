@@ -2,7 +2,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Dialog;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class HeaderView : UIView
     {

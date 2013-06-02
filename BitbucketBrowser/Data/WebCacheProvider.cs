@@ -1,15 +1,15 @@
 using System;
-using BitbucketSharp;
 using System.Linq;
+using BitbucketSharp;
 using System.Collections.Generic;
 using MonoTouch;
 
-namespace BitbucketBrowser.Data
+namespace CodeBucket.Data
 {
-    public class WebCacheProvider : BitbucketSharp.ICacheProvider, GitHubSharp.ICacheProvider
+    public class WebCacheProvider : ICacheProvider, GitHubSharp.ICacheProvider
     {
-        private static int MAX_CACHED_ITEMS = 50;
-        private readonly Dictionary<string, CachedObject> _cache = new Dictionary<string, CachedObject>(MAX_CACHED_ITEMS);
+        private const int MaxCachedItems = 50;
+        private readonly Dictionary<string, CachedObject> _cache = new Dictionary<string, CachedObject>(MaxCachedItems);
 
         public T Get<T>(string name) where T : class
         {
@@ -52,18 +52,18 @@ namespace BitbucketBrowser.Data
 
         public void Set<T>(T objectToCache, string name) where T : class
         {
-            var cacheObj = new CachedObject() { When = DateTime.Now, Cached = objectToCache };
+            var cacheObj = new CachedObject { When = DateTime.Now, Cached = objectToCache };
 
             lock (_cache)
             {
                 _cache[name] = cacheObj;
 
-                if (_cache.Count >= MAX_CACHED_ITEMS)
+                if (_cache.Count >= MaxCachedItems)
                 {
                     //Create a reverse dictionary
                     var sortedCached = new SortedDictionary<CachedObject, string>(new CachedObjectComparable());
                     foreach (var key in _cache.Keys)
-                        sortedCached[_cache[key] as CachedObject] = key; 
+                        sortedCached[_cache[key]] = key; 
 
                     //Remove the first 25 items
                     int i = 0;
@@ -72,7 +72,7 @@ namespace BitbucketBrowser.Data
                         _cache.Remove(obj.Value);
                         Utilities.Log("Removed cached item {0} -> {1}", obj.Value, obj.Key.GetType().ToString());
                         i++;
-                        if (i >= MAX_CACHED_ITEMS / 2)
+                        if (i >= MaxCachedItems / 2)
                             break;
                     }
                 }
@@ -92,11 +92,7 @@ namespace BitbucketBrowser.Data
             lock (_cache)
             {
                 var removeList = new List<string>(_cache.Keys.Count);
-                foreach (var k in _cache.Keys)
-                {
-                    if (k.StartsWith(name))
-                        removeList.Add(k);
-                }
+                removeList.AddRange(_cache.Keys.Where(k => k.StartsWith(name)));
 
                 foreach (var item in removeList)
                 {

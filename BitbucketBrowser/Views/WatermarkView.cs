@@ -1,6 +1,6 @@
 using MonoTouch.UIKit;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class WatermarkView : UIView
     {

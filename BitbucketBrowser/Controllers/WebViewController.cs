@@ -1,8 +1,9 @@
 using System;
+using BitbucketBrowser;
+using CodeBucket.Views;
 using MonoTouch.UIKit;
-using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class WebViewController : UIViewController
     {

@@ -1,9 +1,9 @@
-using System;
 using System.IO;
+using BitbucketBrowser.Data;
 using SQLite;
 using MonoTouch;
 
-namespace BitbucketBrowser.Data
+namespace CodeBucket.Data
 {
     public class Database : SQLiteConnection
     {

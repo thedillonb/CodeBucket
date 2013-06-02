@@ -1,15 +1,14 @@
 using System;
+using BitbucketBrowser;
+using BitbucketBrowser.Bitbucket.Controllers.Accounts;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 using MonoTouch.Foundation;
 using MonoTouch.MessageUI;
-using MonoTouch;
-using BitbucketBrowser.Controllers.Accounts;
 using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class SettingsController : BaseDialogViewController
     {
@@ -51,7 +50,7 @@ namespace BitbucketBrowser.Controllers
 					{
 						if (thisAccount.AccountType == BitbucketBrowser.Data.Account.Type.Bitbucket)
 						{
-							var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
+							var loginController = new LoginViewController() { Username = thisAccount.Username };
 							loginController.LoginComplete = changeUserAction;
 							NavigationController.PushViewController(loginController, true);
 						}
@@ -94,7 +93,7 @@ namespace BitbucketBrowser.Controllers
             var supportSection = new Section("Support");
 			root.Add (supportSection);
             supportSection.Add(new StyledElement("Technical Support", () => {
-                var web = new BitbucketBrowser.Controllers.HelpViewController();
+                var web = new HelpViewController();
                 NavigationController.PushViewController(web, true);
             }));
 

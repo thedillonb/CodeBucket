@@ -5,7 +5,7 @@ namespace MonoTouch
 {
     public class Configurations
     {
-        private static string BaseDir = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+        private static readonly string BaseDir = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 
         public static T Load<T>(string domain, string key) where T : new()
         {

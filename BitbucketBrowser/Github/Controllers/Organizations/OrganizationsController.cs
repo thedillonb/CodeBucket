@@ -1,13 +1,12 @@
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
 using System.Linq;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers.Groups
+namespace CodeBucket.GitHub.Controllers.Organizations
 {
 	public class OrganizationsController : ListController<BasicUserModel>
 	{

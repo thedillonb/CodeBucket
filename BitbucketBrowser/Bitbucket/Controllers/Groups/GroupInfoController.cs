@@ -1,9 +1,10 @@
 using BitbucketBrowser.Controllers;
 using BitbucketSharp.Models;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using System.Linq;
-using BitbucketBrowser.Elements;
 
 namespace BitbucketBrowser.Controllers.Groups
 {

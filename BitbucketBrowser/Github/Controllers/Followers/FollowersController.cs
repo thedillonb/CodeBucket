@@ -1,13 +1,10 @@
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
 using GitHubSharp.Models;
-using System.Linq;
-using System.Collections.Generic;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
+using ProfileController = CodeBucket.GitHub.Controllers.Accounts.ProfileController;
 
-
-namespace BitbucketBrowser.GitHub.Controllers.Followers
+namespace CodeBucket.GitHub.Controllers.Followers
 {
 	public abstract class FollowersController : ListController<BasicUserModel>
     {

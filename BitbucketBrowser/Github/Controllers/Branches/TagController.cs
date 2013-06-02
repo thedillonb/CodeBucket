@@ -1,12 +1,12 @@
+using BitbucketBrowser;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using BitbucketBrowser.Data;
 using BitbucketBrowser.GitHub.Controllers.Source;
 using MonoTouch.Dialog;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers.Branches
 {
     public class TagController : ListController<TagModel>
     {

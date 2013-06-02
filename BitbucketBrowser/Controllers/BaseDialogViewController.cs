@@ -1,9 +1,9 @@
+using CodeBucket.Views;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using CodeFramework.UI.Views;
 using System.Drawing;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class BaseDialogViewController : DialogViewController
     {
@@ -44,7 +44,7 @@ namespace BitbucketBrowser.Controllers
         }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BitbucketBrowser.Controllers.BaseDialogViewController"/> class.
+		/// Initializes a new instance of the <see cref="BaseDialogViewController"/> class.
 		/// </summary>
 		/// <param name="push">If set to <c>true</c> push.</param>
         public BaseDialogViewController(bool push)
@@ -53,7 +53,7 @@ namespace BitbucketBrowser.Controllers
         }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BitbucketBrowser.Controllers.BaseDialogViewController"/> class.
+		/// Initializes a new instance of the <see cref="BaseDialogViewController"/> class.
 		/// </summary>
 		/// <param name="push">If set to <c>true</c> push.</param>
 		/// <param name="backButtonText">Back button text.</param>

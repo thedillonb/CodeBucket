@@ -1,22 +1,19 @@
-
 using System;
 using System.Drawing;
-
+using BitbucketBrowser;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
 using CodeFramework.UI.Views;
-using MonoTouch.Dialog;
-using BitbucketSharp.Models;
 
-namespace BitbucketBrowser.Cells
+namespace CodeBucket.Cells
 {
 
     public partial class RepositoryCellView : UITableViewCell
     {
-        private static UIImage Commit;
-        private static UIImage Heart;
-        private static UIImage Fork;
+        private static readonly UIImage Commit;
+        private static readonly UIImage Heart;
+        private static readonly UIImage Fork;
 
         static RepositoryCellView()
         {
@@ -31,11 +28,17 @@ namespace BitbucketBrowser.Cells
             var views = NSBundle.MainBundle.LoadNib("RepositoryCellView", cell, null);
             cell = Runtime.GetNSObject( views.ValueAt(0) ) as RepositoryCellView;
 
-            cell.Image1.Image = Commit;
-            cell.Image2.Image = Heart;
-            cell.Image3.Image = Fork;
-
-            cell.BackgroundView = new CellBackgroundView();
+            if (cell == null)
+            {
+                MonoTouch.Utilities.Log("Null Repository Cell");
+            }
+            else
+            {
+                cell.Image1.Image = Commit;
+                cell.Image2.Image = Heart;
+                cell.Image3.Image = Fork;
+                cell.BackgroundView = new CellBackgroundView();
+            }
 
             //Create the icons
             return cell;
@@ -43,7 +46,6 @@ namespace BitbucketBrowser.Cells
 
 
         public RepositoryCellView()
-            : base()
         {
         }
 

@@ -1,13 +1,12 @@
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class TableViewSectionView : UIView
     {
         public static UIImage BackgroundImage;
-        UILabel _lbl;
+        readonly UILabel _lbl;
 
         static readonly MonoTouch.CoreGraphics.CGGradient BottomGradient;
         static readonly MonoTouch.CoreGraphics.CGGradient TopGradient;
@@ -30,7 +29,7 @@ namespace CodeFramework.UI.Views
 
         public TableViewSectionView(string text)
         {
-            Frame = new System.Drawing.RectangleF(0, 0, 320, 24);
+            Frame = new RectangleF(0, 0, 320, 24);
             BackgroundColor = UIColor.FromPatternImage(BackgroundImage).ColorWithAlpha(0.9f);
             
             _lbl = new UILabel();
@@ -47,10 +46,10 @@ namespace CodeFramework.UI.Views
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
-            _lbl.Frame = new System.Drawing.RectangleF(10, 2, Bounds.Width - 20f, Bounds.Height - 4f);
+            _lbl.Frame = new RectangleF(10, 2, Bounds.Width - 20f, Bounds.Height - 4f);
         }
 
-        public override void Draw(System.Drawing.RectangleF rect)
+        public override void Draw(RectangleF rect)
         {
             var context = UIGraphics.GetCurrentContext();
             var bounds = Bounds;

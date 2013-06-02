@@ -1,15 +1,11 @@
 using System;
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
-using System.Linq;
 using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
-using MonoTouch;
 
-
-namespace BitbucketBrowser.GitHub.Controllers.Changesets
+namespace CodeBucket.GitHub.Controllers.Changesets
 {
     public class ChangesetController : Controller<List<CommitModel>>
     {

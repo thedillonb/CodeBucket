@@ -1,8 +1,9 @@
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog.Utilities;
 using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
 using BitbucketBrowser.Elements;
 using BitbucketBrowser.Controllers.Followers;
 using BitbucketBrowser.Controllers.Events;

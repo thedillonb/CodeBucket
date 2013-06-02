@@ -3,6 +3,7 @@ using BitbucketBrowser.GitHub.Controllers.Branches;
 using BitbucketBrowser.GitHub.Controllers.Changesets;
 using BitbucketBrowser.GitHub.Controllers.Events;
 using BitbucketBrowser.GitHub.Controllers.Followers;
+using CodeBucket.Elements;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;

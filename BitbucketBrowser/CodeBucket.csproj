@@ -8,8 +8,8 @@
     <ProjectGuid>{88AEDD05-831D-474F-B598-CF08C0836C24}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>BitbucketBrowser</RootNamespace>
-    <AssemblyName>BitbucketBrowser</AssemblyName>
+    <RootNamespace>CodeBucket</RootNamespace>
+    <AssemblyName>CodeBucket</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>True</DebugSymbols>
@@ -213,20 +213,6 @@
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Markdown\CreoleParser.cs" />
-    <Compile Include="DiffPlex\Model\DiffBlock.cs" />
-    <Compile Include="DiffPlex\Model\DiffResult.cs" />
-    <Compile Include="DiffPlex\Model\EditLengthResult.cs" />
-    <Compile Include="DiffPlex\Model\ModificationData.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\IInlineDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\InlineDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPaneModel.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\DiffPiece.cs" />
-    <Compile Include="DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs" />
-    <Compile Include="DiffPlex\Differ.cs" />
-    <Compile Include="DiffPlex\IDiffer.cs" />
-    <Compile Include="DiffPlex\Log.cs" />
     <Compile Include="GitHub\Controllers\ExploreController.cs" />
     <Compile Include="GitHub\Controllers\Branches\BranchController.cs" />
     <Compile Include="GitHub\Controllers\Changesets\ChangesetController.cs" />
@@ -274,21 +260,7 @@
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Images\" />
-    <Folder Include="Images\Tabs\" />
-    <Folder Include="Cells\" />
-    <Folder Include="Images\Controls\" />
-    <Folder Include="Images\Official\" />
-    <Folder Include="Data\" />
-    <Folder Include="Bitbucket\" />
-    <Folder Include="GitHub\" />
-    <Folder Include="GitHub\Controllers\" />
-    <Folder Include="Bitbucket\Controllers\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Elements\" />
-    <Folder Include="Images\Logos\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Images\plus.png" />
     <Content Include="Images\heart.png" />
@@ -436,6 +408,10 @@
     <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
+      <Project>{559E4B25-CBC1-4615-BBED-A7C43B35FFAA}</Project>
+      <Name>DiffPlex</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>

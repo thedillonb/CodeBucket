@@ -1,3 +1,4 @@
+using BitbucketBrowser;
 using BitbucketBrowser.GitHub.Controllers.Events;
 using BitbucketBrowser.GitHub.Controllers.Followers;
 using BitbucketBrowser.GitHub.Controllers.Groups;
@@ -8,10 +9,9 @@ using MonoTouch.Dialog.Utilities;
 using BitbucketBrowser.Controllers;
 using CodeFramework.UI.Views;
 using BitbucketBrowser.Elements;
-using BitbucketBrowser.Data;
 using BitbucketBrowser.GitHub.Controllers.Gists;
 
-namespace BitbucketBrowser.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers.Accounts
 {
     public class ProfileController : Controller<UserModel>, IImageUpdated
 	{

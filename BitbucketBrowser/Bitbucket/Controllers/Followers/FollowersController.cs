@@ -1,13 +1,13 @@
+using CodeBucket.Bitbucket.Controllers.Accounts;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using BitbucketSharp.Models;
 using System.Linq;
 using System.Collections.Generic;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
 
-
-namespace BitbucketBrowser.Controllers.Followers
+namespace CodeBucket.Bitbucket.Controllers.Followers
 {
 	public abstract class FollowersController : Controller<List<FollowerModel>>
     {

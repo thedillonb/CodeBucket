@@ -1,10 +1,10 @@
-using BitbucketBrowser.Elements;
 using System.Collections.Generic;
+using CodeBucket.Elements;
 using MonoTouch.UIKit;
 using System.Linq;
 using System;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
 
     public abstract class FilterController : BaseDialogViewController

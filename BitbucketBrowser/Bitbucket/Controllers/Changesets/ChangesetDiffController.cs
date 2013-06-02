@@ -5,7 +5,6 @@ using BitbucketBrowser.Controllers;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Controllers;
 using MonoTouch.Foundation;
-using CodeFramework.UI.Views;
 using BitbucketSharp;
 
 namespace BitbucketBrowser.Controllers.Changesets

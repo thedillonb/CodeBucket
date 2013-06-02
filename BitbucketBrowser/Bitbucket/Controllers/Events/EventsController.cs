@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using BitbucketSharp.Models;
+using CodeBucket.Controllers;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using BitbucketBrowser.Controllers.Repositories;
 using BitbucketBrowser.Controllers.Issues;
 using BitbucketBrowser.Controllers.Changesets;
 using MonoTouch;
-using CodeFramework.UI.Views;
 
 namespace BitbucketBrowser.Controllers.Events
 {

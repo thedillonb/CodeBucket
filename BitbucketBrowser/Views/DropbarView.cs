@@ -1,7 +1,7 @@
 using MonoTouch.UIKit;
 using System.Drawing;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class DropbarView : UIView
     {

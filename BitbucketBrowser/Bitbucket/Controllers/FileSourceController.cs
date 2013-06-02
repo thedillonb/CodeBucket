@@ -1,7 +1,8 @@
 using System;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeFramework.UI.Views;
 using BitbucketBrowser.Controllers;
 
 namespace BitbucketBrowser.Controllers

@@ -1,7 +1,6 @@
-using System;
 using MonoTouch.UIKit;
 
-namespace BitbucketBrowser
+namespace CodeBucket.Images
 {
     public static class Images
     {
@@ -70,10 +69,8 @@ namespace BitbucketBrowser
             { 
                 if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
                 {
-                    if (MonoTouch.Utilities.IsTall)
-                        return UIImageHelper.FromFileAuto("Images/Controls/logobehind-568h"); 
-                    else
-                        return UIImageHelper.FromFileAuto("Images/Controls/logobehind"); 
+                    return UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? 
+                        "Images/Controls/logobehind-568h" : "Images/Controls/logobehind");
                 }
                 return UIImageHelper.FromFileAuto("Images/Controls/logobehind-portrait");
             } 

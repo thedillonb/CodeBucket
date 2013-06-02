@@ -1,6 +1,4 @@
-using BitbucketBrowser.Controllers;
-
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class HelpViewController : WebViewController
     {

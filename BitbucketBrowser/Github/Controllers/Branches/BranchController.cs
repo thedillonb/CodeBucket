@@ -1,14 +1,13 @@
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
 using BitbucketBrowser.GitHub.Controllers.Source;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 using System.Linq;
 
-namespace BitbucketBrowser.GitHub.Controllers.Branches
+namespace CodeBucket.GitHub.Controllers.Branches
 {
 	public class BranchController : ListController<BranchModel>
 	{

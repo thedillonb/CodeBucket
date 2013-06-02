@@ -1,16 +1,12 @@
 using System;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Collections.Generic;
-using MonoTouch.Dialog.Utilities;
-using BitbucketBrowser.Elements;
-using CodeFramework.UI.Views;
 using System.Linq;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class NewsFeedElement : NameTimeStringElement
     {

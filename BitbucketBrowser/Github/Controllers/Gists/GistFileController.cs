@@ -1,9 +1,7 @@
-using System;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Data;
+using BitbucketBrowser;
 using GitHubSharp.Models;
 
-namespace BitbucketBrowser.GitHub.Controllers.Gists
+namespace CodeBucket.GitHub.Controllers.Gists
 {
     public class GistFileController : FileViewController
     {

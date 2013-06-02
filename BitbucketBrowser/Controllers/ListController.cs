@@ -1,11 +1,11 @@
 using System;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using MonoTouch;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public abstract class ListController<T> : Controller<List<T>>
     {

@@ -4,7 +4,7 @@ using RedPlum;
 using System.Threading;
 using MonoTouch;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public static class ControllerExtensions
     {

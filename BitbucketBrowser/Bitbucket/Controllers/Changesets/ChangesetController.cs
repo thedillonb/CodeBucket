@@ -1,10 +1,11 @@
 using System;
 using BitbucketSharp.Models;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using System.Collections.Generic;
 using System.Linq;
 using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Elements;
 using MonoTouch;
 
 

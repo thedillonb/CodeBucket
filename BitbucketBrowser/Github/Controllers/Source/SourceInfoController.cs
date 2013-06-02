@@ -1,13 +1,6 @@
-using System;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Data;
 using GitHubSharp;
-using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
-using MonoTouch.Foundation;
-using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.GitHub.Controllers.Source
+namespace CodeBucket.GitHub.Controllers.Source
 {
     public class SourceInfoController : FileViewController
     {

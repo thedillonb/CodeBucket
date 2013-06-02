@@ -6,7 +6,6 @@ using System.Linq;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
-using CodeFramework.UI.Views;
 using BitbucketBrowser.Controllers.Repositories;
 using System.Collections.Generic;
 using BitbucketSharp.Models;

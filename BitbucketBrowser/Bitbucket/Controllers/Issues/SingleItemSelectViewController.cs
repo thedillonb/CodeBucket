@@ -2,6 +2,7 @@ using System;
 using BitbucketBrowser.Controllers;
 using System.Collections.Generic;
 using System.Linq;
+using CodeBucket.Controllers;
 
 namespace BitbucketBrowser.Controllers.Issues
 {

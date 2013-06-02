@@ -2,7 +2,6 @@ using System;
 using MonoTouch.UIKit;
 using BitbucketBrowser.Controllers;
 using MonoTouch.Foundation;
-using CodeFramework.UI.Views;
 using BitbucketBrowser.Controllers;
 using BitbucketSharp;
 

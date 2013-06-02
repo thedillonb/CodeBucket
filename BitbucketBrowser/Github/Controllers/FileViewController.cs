@@ -1,9 +1,8 @@
 using System;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Data;
-using BitbucketBrowser.Controllers;
+using BitbucketBrowser;
+using CodeBucket.Bitbucket.Controllers;
 
-namespace BitbucketBrowser.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers
 {
     public abstract class FileViewController : FileSourceController
     {

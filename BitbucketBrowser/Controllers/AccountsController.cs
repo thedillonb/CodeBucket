@@ -1,11 +1,14 @@
 using System;
+using BitbucketBrowser;
+using BitbucketBrowser.Bitbucket.Controllers.Accounts;
 using BitbucketBrowser.Controllers;
+using BitbucketBrowser.Controllers.Accounts;
 using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using BitbucketBrowser.Elements;
 using BitbucketBrowser.Data;
 
-namespace BitbucketBrowser.Controllers.Accounts
+namespace CodeBucket.Controllers
 {
 	/// <summary>
 	/// A list of the accounts that are currently listed with the application
@@ -29,7 +32,7 @@ namespace BitbucketBrowser.Controllers.Accounts
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BitbucketBrowser.Controllers.Accounts.AccountsController"/> class.
+		/// Initializes a new instance of the <see cref="AccountsController"/> class.
 		/// </summary>
 		public AccountsController ()
 			: base(true, "Accounts")
@@ -59,8 +62,8 @@ namespace BitbucketBrowser.Controllers.Accounts
 					{
 						if (thisAccount.AccountType == Account.Type.Bitbucket)
 						{
-							var loginController = new Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-							loginController.LoginComplete = (a) => {
+							var loginController = new LoginViewController { Username = thisAccount.Username };
+							loginController.LoginComplete = a => {
 								NavigationController.PopToViewController(this, true);
 								OnAccountSelected(a); 
 							};
@@ -79,7 +82,7 @@ namespace BitbucketBrowser.Controllers.Accounts
 			var addSection = new Section();
 			var addAccount = new StyledElement("Add Account", () => {
 				var ctrl = new AddAccountController();
-				ctrl.AccountAdded = (a) => NavigationController.PopToViewController(this, true);
+				ctrl.AccountAdded = a => NavigationController.PopToViewController(this, true);
 				NavigationController.PushViewController(ctrl, true);
 			});
 			//addAccount.Image = Images.CommentAdd;

@@ -1,12 +1,11 @@
-using System;
+using BitbucketBrowser;
+using CodeBucket.Controllers;
+using CodeBucket.Elements;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using BitbucketBrowser.Controllers;
-using BitbucketBrowser.Data;
 using MonoTouch.UIKit;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers.Notifications
+namespace CodeBucket.GitHub.Controllers.Notifications
 {
     public class NotificationsController : ListController<NotificationModel>
     {

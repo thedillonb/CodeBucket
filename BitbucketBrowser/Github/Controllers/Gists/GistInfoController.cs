@@ -1,7 +1,8 @@
 using System;
+using CodeBucket.Controllers;
+using CodeBucket.Views;
 using GitHubSharp.Models;
 using BitbucketBrowser.Controllers;
-using CodeFramework.UI.Views;
 using MonoTouch.Dialog;
 using BitbucketBrowser.Data;
 using BitbucketBrowser.Elements;

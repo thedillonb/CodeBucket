@@ -1,10 +1,9 @@
 using System;
+using CodeBucket.Elements;
 using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
 
-namespace BitbucketBrowser.Controllers
+namespace CodeBucket.Controllers
 {
     public class RadioChoiceViewController : BaseDialogViewController
     {

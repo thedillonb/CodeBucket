@@ -1,13 +1,8 @@
-using System;
-using BitbucketBrowser.Controllers;
+using BitbucketBrowser;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
-using BitbucketBrowser.Data;
-using MonoTouch.Dialog;
-using BitbucketBrowser.Elements;
 
-namespace BitbucketBrowser.GitHub.Controllers.Gists
+namespace CodeBucket.GitHub.Controllers.Gists
 {
     public class AccountGistsController : GistsController
     {

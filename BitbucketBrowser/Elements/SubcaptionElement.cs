@@ -1,6 +1,6 @@
 using MonoTouch.UIKit;
 
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public class SubcaptionElement : StyledElement
     {

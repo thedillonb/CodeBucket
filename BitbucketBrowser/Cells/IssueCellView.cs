@@ -1,7 +1,6 @@
-
 using System;
 using System.Drawing;
-
+using BitbucketBrowser;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.ObjCRuntime;
@@ -10,13 +9,14 @@ using BitbucketSharp.Models;
 using MonoTouch.CoreGraphics;
 using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.Cells
+namespace CodeBucket.Cells
 {
     public partial class IssueCellView : UITableViewCell
     {
-        private static UIImage User, Priority, Pencil, Cog;
-
-        private int MessageCount { get; set; }
+        private static readonly UIImage User;
+        private static readonly UIImage Priority;
+        private static readonly UIImage Pencil;
+        private static readonly UIImage Cog;
 
         static IssueCellView()
         {
@@ -32,22 +32,26 @@ namespace BitbucketBrowser.Cells
             var views = NSBundle.MainBundle.LoadNib("IssueCellView", cell, null);
             cell = Runtime.GetNSObject( views.ValueAt(0) ) as IssueCellView;
 
-            cell.AddSubview(new SeperatorIssues() { Frame = new RectangleF(65f, 5f, 1f, cell.Frame.Height - 10f) });
+            if (cell == null)
+            {
+                Console.WriteLine("Null cell!");
+            }
+            else
+            {
+                cell.AddSubview(new SeperatorIssues() {Frame = new RectangleF(65f, 5f, 1f, cell.Frame.Height - 10f)});
+                cell.Image1.Image = Cog;
+                cell.Image2.Image = Priority;
+                cell.Image3.Image = User;
+                cell.Image4.Image = Pencil;
+                cell.BackgroundView = new CellBackgroundView();
+            }
 
-            cell.Image1.Image = Cog;
-            cell.Image2.Image = Priority;
-            cell.Image3.Image = User;
-            cell.Image4.Image = Pencil;
-
-
-            cell.BackgroundView = new CellBackgroundView();
 
             //Create the icons
             return cell;
         }
 
-        public IssueCellView() 
-            : base ()
+        public IssueCellView()
         {
         }
 
@@ -85,13 +89,13 @@ namespace BitbucketBrowser.Cells
             */
         }
 
-        static UIFont CountFont = UIFont.BoldSystemFontOfSize (13);
+        static readonly UIFont CountFont = UIFont.BoldSystemFontOfSize (13);
 
 
 
         private class CounterView : UIView
         {
-            private int _counter;
+            private readonly int _counter;
             public CounterView(int counter) 
                 : base ()
             {
@@ -119,8 +123,7 @@ namespace BitbucketBrowser.Cells
 
         private class SeperatorIssues : UIView
         {
-            public SeperatorIssues() 
-                : base ()
+            public SeperatorIssues()
             {
             }
 
@@ -182,13 +185,8 @@ namespace BitbucketBrowser.Cells
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(CellKey) as IssueCellView;
-
-            if (cell == null)
-                cell = IssueCellView.Create();
-
+            var cell = tv.DequeueReusableCell(CellKey) as IssueCellView ?? IssueCellView.Create();
             cell.Bind(Model);
-
             return cell;
         }
 

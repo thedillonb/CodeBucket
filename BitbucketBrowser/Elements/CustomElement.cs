@@ -5,8 +5,7 @@ using MonoTouch.Foundation;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
 
-
-namespace BitbucketBrowser.Elements
+namespace CodeBucket.Elements
 {
     public abstract class CustomElement : Element, IElementSizing, IColorizeBackground
     {       

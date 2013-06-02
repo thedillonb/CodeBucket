@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
-using BitbucketBrowser.Data;
-using BitbucketBrowser.GitHub.Controllers.Changesets;
+using BitbucketBrowser;
 using BitbucketBrowser.GitHub.Controllers.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
@@ -10,11 +8,11 @@ using System.Collections.Generic;
 using BitbucketBrowser.Controllers;
 using BitbucketBrowser.Elements;
 using MonoTouch;
-using CodeFramework.UI.Views;
 using BitbucketBrowser.GitHub.Controllers.Gists;
 using MonoTouch.Foundation;
+using ProfileController = CodeBucket.GitHub.Controllers.Accounts.ProfileController;
 
-namespace BitbucketBrowser.GitHub.Controllers.Events
+namespace CodeBucket.GitHub.Controllers.Events
 {
     public class EventsController : Controller<List<EventModel>>
     {

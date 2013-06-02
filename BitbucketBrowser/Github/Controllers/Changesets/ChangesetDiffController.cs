@@ -1,20 +1,17 @@
 using System;
 using System.Text;
-using BitbucketBrowser.Data;
-using BitbucketBrowser.GitHub.Controllers.Source;
-using BitbucketBrowser.Controllers;
+using BitbucketBrowser.GitHub.Controllers;
 using GitHubSharp;
-using MonoTouch.UIKit;
-using BitbucketBrowser.Controllers;
-using MonoTouch.Foundation;
-using CodeFramework.UI.Views;
 
-namespace BitbucketBrowser.GitHub.Controllers.Changesets
+namespace CodeBucket.GitHub.Controllers.Changesets
 {
     public class ChangesetDiffController : FileViewController
     {
-        private string _parent;
-        private string _user, _slug, _branch, _path;
+        private readonly string _parent;
+        private readonly string _user;
+        private readonly string _slug;
+        private readonly string _branch;
+        private readonly string _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
         
@@ -27,9 +24,7 @@ namespace BitbucketBrowser.GitHub.Controllers.Changesets
             _path = path;
 
             //Create the filename
-            var fileName = System.IO.Path.GetFileName(path);
-            if (fileName == null)
-                fileName = path.Substring(path.LastIndexOf('/') + 1);
+            var fileName = System.IO.Path.GetFileName(path) ?? path.Substring(path.LastIndexOf('/') + 1);
             Title = fileName;
         }
 

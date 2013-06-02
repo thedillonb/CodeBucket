@@ -1,9 +1,7 @@
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
-using MonoTouch.Foundation;
 
-namespace CodeFramework.UI.Views
+namespace CodeBucket.Views
 {
     public class TitleView : UIView
     {
