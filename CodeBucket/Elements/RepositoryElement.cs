@@ -39,15 +39,15 @@ namespace CodeBucket.Elements
 		{
 		}
 		
-		public RepositoryElement(GitHubSharp.Models.RepositorySearchModel.RepositoryFromSearchModel model)
-			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner)
-		{
-		}
-
-		public RepositoryElement(GitHubSharp.Models.RepositoryModel model)
-			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner != null ? model.Owner.Login : null)
-		{
-		}
+//		public RepositoryElement(GitHubSharp.Models.RepositorySearchModel.RepositoryFromSearchModel model)
+//			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner)
+//		{
+//		}
+//
+//		public RepositoryElement(GitHubSharp.Models.RepositoryModel model)
+//			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner != null ? model.Owner.Login : null)
+//		{
+//		}
 		
 		public float GetHeight (UITableView tableView, NSIndexPath indexPath)
 		{

@@ -21,12 +21,10 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchProfiling>True</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
     <MtouchUseSGen>True</MtouchUseSGen>
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchI18n />
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -212,50 +210,17 @@
     <Compile Include="Utils\EnumExtensions.cs" />
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Data\SQLite.cs" />
-    <Compile Include="GitHub\Controllers\ExploreController.cs" />
-    <Compile Include="GitHub\Controllers\Branches\BranchController.cs" />
-    <Compile Include="GitHub\Controllers\Changesets\ChangesetController.cs" />
-    <Compile Include="GitHub\Controllers\Changesets\ChangesetDiffController.cs" />
-    <Compile Include="GitHub\Controllers\Changesets\ChangesetInfoController.cs" />
-    <Compile Include="GitHub\Controllers\Events\EventsController.cs" />
-    <Compile Include="GitHub\Controllers\Events\RepoEventsController.cs" />
-    <Compile Include="GitHub\Controllers\Followers\FollowersController.cs" />
-    <Compile Include="GitHub\Controllers\Followers\RepoFollowersController.cs" />
-    <Compile Include="GitHub\Controllers\Followers\UserFollowersController.cs" />
-    <Compile Include="GitHub\Controllers\Repositories\AccountRepositoryController.cs" />
-    <Compile Include="GitHub\Controllers\Repositories\RepositoryController.cs" />
-    <Compile Include="GitHub\Controllers\Repositories\RepositoryInfoController.cs" />
-    <Compile Include="GitHub\Controllers\Source\SourceController.cs" />
-    <Compile Include="GitHub\Controllers\Source\SourceInfoController.cs" />
-    <Compile Include="GitHub\Controllers\Readme\ReadmeController.cs" />
-    <Compile Include="GitHub\Controllers\Branches\TagController.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\ProfileController.cs" />
-    <Compile Include="GitHub\Controllers\Organizations\OrganizationsController.cs" />
-    <Compile Include="GitHub\Controllers\Organizations\OrganizationInfoController.cs" />
-    <Compile Include="GitHub\Controllers\Notifications\NotificationsController.cs" />
-    <Compile Include="GitHub\Controllers\Gists\GistInfoController.cs" />
-    <Compile Include="GitHub\Controllers\Gists\GistFileController.cs" />
-    <Compile Include="GitHub\Controllers\Gists\AccountGistsController.cs" />
-    <Compile Include="GitHub\Controllers\Gists\GistsController.cs" />
-    <Compile Include="GitHub\Controllers\FileViewController.cs" />
-    <Compile Include="GitHub\Controllers\MenuViewController.cs" />
     <Compile Include="Elements\RepositoryElement.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\AddAccountController.cs" />
-    <Compile Include="Controllers\AddAccountController.designer.cs" />
     <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.cs" />
     <Compile Include="Bitbucket\Controllers\Accounts\LoginViewController.designer.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\GitHubLoginController.cs" />
-    <Compile Include="GitHub\Controllers\Accounts\GitHubLoginController.designer.cs" />
     <Compile Include="Controllers\MenuBaseController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <InterfaceDefinition Include="Controllers\AddAccountController.xib" />
     <InterfaceDefinition Include="Bitbucket\Controllers\Accounts\LoginViewController.xib" />
-    <InterfaceDefinition Include="GitHub\Controllers\Accounts\GitHubLoginController.xib" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -422,10 +387,6 @@
     <ProjectReference Include="..\bitbucketsharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\githubsharp\GitHubSharp\GitHubSharp.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\OHAttributedLabel\OHAttributedLabel.csproj">
       <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>

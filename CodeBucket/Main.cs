@@ -115,7 +115,8 @@ namespace CodeBucket
 			//There's no accounts...
 			if (GetDefaultAccount() == null)
 			{
-			    var login = new AddAccountController {AccountAdded = delegate { ShowMainWindow(); }};
+                var login = new Bitbucket.Controllers.Accounts.LoginViewController();
+                login.LoginComplete = delegate { ShowMainWindow(); };
 
 			    //Make it so!
 				_window.RootViewController = new UINavigationController(login);

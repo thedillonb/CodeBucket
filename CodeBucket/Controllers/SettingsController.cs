@@ -68,8 +68,8 @@ namespace CodeBucket.Controllers
             }
 
             var addAccount = new StyledElement("Add Account", () => {
-				var ctrl = new AddAccountController();
-				ctrl.AccountAdded = (a) => NavigationController.PopToViewController(this, true);
+                var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
+                ctrl.LoginComplete = (a) => NavigationController.PopToViewController(this, true);
 				NavigationController.PushViewController(ctrl, true);
 			});
             //addAccount.Image = Images.CommentAdd;
