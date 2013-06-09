@@ -198,8 +198,32 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
         {
             var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page];
             var d = wiki.GetInfo(forceInvalidation);
-            var w = new Wiki.CreoleParser();
-            w.OnLink += HandleOnLink;
+            var dataHtml = String.Empty;
+
+            if (d.Markup.Equals("markdown"))
+            {
+                var markdown = new MarkdownSharp.Markdown();
+                dataHtml = markdown.Transform(d.Data);
+            }
+            else if (d.Markup.Equals("creole"))
+            {
+                var w = new Wiki.CreoleParser();
+                w.OnLink += HandleOnLink;
+                dataHtml = w.ToHTML(d.Data);
+            }
+            else if (d.Markup.Equals("textile"))
+            {
+                dataHtml = Markup.Textile.Transform(d.Data);
+            }
+            else if (d.Markup.Equals("rest"))
+            {
+                //Need a parser for reStructuredText!!!
+                dataHtml = d.Data;
+            }
+            else
+            {
+                dataHtml = d.Data;
+            }
 
             //Generate the markup
             var markup = new System.Text.StringBuilder();
@@ -208,7 +232,7 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
             markup.Append("<title>");
             markup.Append(page);
             markup.Append("</title></head><body>");
-            markup.Append(w.ToHTML(d.Data));
+            markup.Append(dataHtml);
             markup.Append("</body></html>");
 
             var url = WikiCache + Uri.UnescapeDataString(page) + ".html";

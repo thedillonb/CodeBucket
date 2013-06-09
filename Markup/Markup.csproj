@@ -35,9 +35,14 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Textile">
+      <HintPath>Textile.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="CreoleParser.cs" />
+    <Compile Include="MarkdownParser.cs" />
+    <Compile Include="Textile.cs" />
   </ItemGroup>
 </Project>

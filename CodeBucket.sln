@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.MonoTouch", "Rest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OHAttributedLabel", "OHAttributedLabel\OHAttributedLabel.csproj", "{1FD1BA85-25F8-460D-B588-0E753CFF578D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markdown", "Markdown\Markdown.csproj", "{B6ED00F3-206B-4A94-A109-0A97F2E68F60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markup", "Markup\Markup.csproj", "{B6ED00F3-206B-4A94-A109-0A97F2E68F60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex", "DiffPlex\DiffPlex.csproj", "{8913502E-CDFB-4FD8-855A-5D6177B60B42}"
 EndProject
