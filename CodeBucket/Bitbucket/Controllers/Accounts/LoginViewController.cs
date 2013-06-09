@@ -12,16 +12,14 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         public Action<Account> LoginComplete;
         private string _username;
 
-		public string Username
-		{
-			get { return _username; }
-			set
-			{
-				_username = value;
-				if (User != null)
-					User.Text = _username;
-			}
-		}
+        public string Username {
+            get { return _username; }
+            set {
+                _username = value;
+                if (User != null)
+                    User.Text = _username;
+            }
+        }
 
         public LoginViewController()
             : base("LoginViewController", null)
@@ -34,17 +32,15 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
 
             Title = "Login";
-			Logo.Image = Images.BitbucketLogo;
+            Logo.Image = Images.BitbucketLogo;
             if (Username != null)
                 User.Text = Username;
 
-            User.ShouldReturn = delegate
-            {
+            User.ShouldReturn = delegate {
                 Password.BecomeFirstResponder();
                 return true;
             };
-            Password.ShouldReturn = delegate
-            {
+            Password.ShouldReturn = delegate {
                 Password.ResignFirstResponder();
 
                 //Run this in another thread
@@ -65,20 +61,24 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
 
             ReleaseDesignerOutlets();
         }
-
 		/// <summary>
 		/// Login the specified username and password.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="password">Password.</param>
-		protected Account Login(string username, string password)
-		{
-			var client = new BitbucketSharp.Client(username, password);
-			client.Account.SSHKeys.GetKeys();
-			var userInfo = client.Account.GetInfo();
-			return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar, AccountType = Account.Type.Bitbucket };
-		}
+        protected Account Login(string username, string password)
+        {
+            var client = new BitbucketSharp.Client(username, password);
+            client.Account.SSHKeys.GetKeys();
+            var userInfo = client.Account.GetInfo();
 
+            //Username was actually a email address!
+            //User the username instead
+            if (username.Contains("@"))
+                username = userInfo.User.Username;
+
+            return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar, AccountType = Account.Type.Bitbucket };
+        }
 		/// <summary>
 		/// Begins the login process.
 		/// </summary>
@@ -86,7 +86,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         {
             MBProgressHUD hud = null;
             string username = null, password = null;
-			Account loggedInAccount = null;
+            Account loggedInAccount = null;
 
             //The nice hud
             InvokeOnMainThread(delegate {
@@ -97,14 +97,14 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
                 hud.Show(true);
             });
 
-			try
-			{
-				loggedInAccount = Login (username, password);
-			}
-			catch (Exception e)
-			{
+            try
+            {
+                loggedInAccount = Login(username, password);
+            }
+            catch (Exception e)
+            {
                 Console.WriteLine("Error = " + e.Message);
-			}
+            }
 
             InvokeOnMainThread(delegate
             {
