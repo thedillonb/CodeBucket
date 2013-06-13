@@ -5,6 +5,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Controllers;
+using System.Text;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
@@ -49,7 +50,7 @@ namespace CodeBucket.Bitbucket.Controllers
         }
         
         protected abstract void Request();
-        
+
         protected void LoadRawData(string data)
         {
             InvokeOnMainThread(delegate {
