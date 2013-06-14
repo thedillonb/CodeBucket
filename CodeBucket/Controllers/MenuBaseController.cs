@@ -47,6 +47,9 @@ namespace CodeBucket.Controllers
             var view = new UIView(new RectangleF(0, 0, View.Bounds.Width, 10));
             view.BackgroundColor = UIColor.Clear;
             TableView.TableFooterView = view;
+
+            //Prevent the scroll to top on this view
+            this.TableView.ScrollsToTop = false;
         }
         
         public override void ViewWillAppear(bool animated)
