@@ -2,24 +2,97 @@ using System.IO;
 using CodeBucket.Data;
 using SQLite;
 using MonoTouch;
+using System.Linq;
+using System.Collections.Generic;
+using System;
 
 namespace CodeBucket.Data
 {
     public class Database : SQLiteConnection
     {
-        private Database(string file) 
-			: base(file)
+        //The current database version
+        private static readonly int CurrentDBVersion = 1;
+        private static readonly string DatabaseVersionKey = "DATABASE_VERSION";
+        private static readonly string DatabasePath = Utilities.BaseDir + "/Documents/data.db";
+        private static Database _database;
+
+        public static Database Main
         {
-            CreateTable<Account>();
+            get 
+            {
+                if (_database == null)
+                    _database = new Database(DatabasePath, System.IO.File.Exists(DatabasePath));
+                return _database;
+            }
         }
 
-		private static void Upgrade() 
+
+        private Database(string file, bool dbExists) 
+			: base(file)
+        {
+            //We only need to run upgrades if the database exists...
+            if (dbExists == true)
+            {
+                //Run any upgrades needed
+                Upgrade();
+            }
+
+            //Execute the typical stuff
+            CreateTable<CodeBucket.Data.Account>();
+        }
+
+		private void Upgrade() 
 		{
-			if (!File.Exists(Utilities.BaseDir + "/Documents/data.db"))
-				return;
+            var version = Utilities.Defaults.IntForKey(DatabaseVersionKey);
+            if (version == CurrentDBVersion)
+                return;
+
+            //Keep going until we upgrade to the current!
+            for (; version < CurrentDBVersion; version++)
+            {
+                try
+                {
+                    if (version == 0)
+                    {
+                        var oldAccounts = this.Table<Account>();
+                        var newAccounts = new List<CodeBucket.Data.Account>(oldAccounts.Select(x => 
+                            new CodeBucket.Data.Account() {
+                                AccountType = CodeBucket.Data.Account.Type.Bitbucket,
+                                AvatarUrl = x.AvatarUrl,
+                                DontRemember = x.DontRemember,
+                                Password = x.Password,
+                                Username = x.Username,
+                            }
+                        ));
+
+                        this.DropTable<Account>();
+                        this.CreateTable<CodeBucket.Data.Account>();
+                        this.InsertAll(newAccounts);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Utilities.LogException("Unable to migrate database from version 0", e);
+                }
+            }
+
+            Utilities.Defaults.SetInt(version, DatabaseVersionKey);
+            Utilities.Defaults.Synchronize();
 		}
 
-        public readonly static Database Main = new Database(Utilities.BaseDir + "/Documents/database.db");
+
+        #region Migration Objects (Old database objects)
+
+        private class Account
+        {
+            [PrimaryKey]
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string AvatarUrl { get; set; }
+            public bool DontRemember { get; set; }
+        }
+
+        #endregion
     }
 }
 

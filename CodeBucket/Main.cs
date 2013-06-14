@@ -43,8 +43,8 @@ namespace CodeBucket
 			//Create the window
             _window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-			//Process the accounts
-			ProcessAccounts();
+            //Process the accounts
+            ProcessAccounts();
             
 			//Make what ever window visible.
 			_window.MakeKeyAndVisible();

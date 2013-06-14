@@ -186,7 +186,7 @@ namespace CodeBucket.Controllers
 		{
 			public Account Account { get; private set; }
 			public AccountElement(Account account)
-				: base(account.Username, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
+				: base(account.Username) //, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
 			{
 				Account = account;
 				Image = Images.Anonymous;
