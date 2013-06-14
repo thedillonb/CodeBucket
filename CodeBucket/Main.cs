@@ -160,8 +160,8 @@ namespace CodeBucket
                 return;
 
 		    var killSplash = MonoTouch.Utilities.IsTall ? 
-                new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "jpg")) : 
-                new UIImageView(UIImageHelper.FromFileAuto("Default", "jpg"));
+                new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "png")) : 
+                new UIImageView(UIImageHelper.FromFileAuto("Default", "png"));
 				
 		    _window.AddSubview(killSplash);
 		    _window.BringSubviewToFront(killSplash);

@@ -89,7 +89,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Distribution: Dillon Buchanan</CodesignKey>
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
     <CrashReportingApiKey />
@@ -318,15 +318,6 @@
     <Content Include="Images\gradient.png" />
     <Content Include="Images\anonymous%402x.png" />
     <Content Include="Images\anonymous.png" />
-    <Content Include="Default.jpg" />
-    <Content Include="Default%402x.jpg" />
-    <Content Include="Default-Landscape.jpg">
-      <DependentUpon>Default-Portrait%402x.jpg</DependentUpon>
-    </Content>
-    <Content Include="Default-Portrait.jpg" />
-    <Content Include="Default-Landscape%402x.jpg" />
-    <Content Include="Default-Portrait%402x.jpg" />
-    <Content Include="Default-568h%402x.jpg" />
     <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\Controls\barbutton-land%402x.png" />
@@ -367,6 +358,13 @@
     <Content Include="SourceBrowser\run_prettify.js" />
     <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\forward_button%402x.png" />
+    <Content Include="Default-568h%402x.png" />
+    <Content Include="Default-Portrait%402x.png" />
+    <Content Include="Default-Portrait.png" />
+    <Content Include="Default-Landscape%402x.png" />
+    <Content Include="Default-Landscape.png" />
+    <Content Include="Default.png" />
+    <Content Include="Default%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

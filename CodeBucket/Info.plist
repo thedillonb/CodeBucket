@@ -18,7 +18,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>codebucket</string>
 	<key>CFBundleVersion</key>
-	<string>1.2.1.0</string>
+	<string>1.2.2.0</string>
 	<key>MinimumOSVersion</key>
 	<string>5.0</string>
 	<key>UIDeviceFamily</key>
@@ -27,7 +27,7 @@
 		<integer>2</integer>
 	</array>
 	<key>UILaunchImageFile</key>
-	<string>Default.jpg</string>
+	<string>Default.png</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
