@@ -49,7 +49,7 @@ namespace CodeBucket.Controllers
 			}
 			else if (Application.Account.AccountType == Account.Type.GitHub)
 			{
-				//SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false));
+				SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false));
 			}
 		}
 		
@@ -68,7 +68,7 @@ namespace CodeBucket.Controllers
 			}
 			else if (Application.Account.AccountType == Account.Type.GitHub)
 			{
-				//MenuView = new GitHub.Controllers.MenuController();
+				MenuView = new GitHub.Controllers.MenuController();
 			}
 		}
 	}

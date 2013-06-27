@@ -97,9 +97,7 @@ namespace CodeBucket.Data
 		{
 		    if (ReferenceEquals(null, obj)) return false;
 		    if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Account)) return false;
-            var act = (Account)obj;
-            return this.Id.Equals(act.Id);
+		    return obj.GetType() == typeof (Account) && Equals(obj);
 		}
 
         #region Filters
