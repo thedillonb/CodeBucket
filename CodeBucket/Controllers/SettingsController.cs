@@ -185,6 +185,9 @@ namespace CodeBucket.Controllers
             }
         }
 
+        /// <summary>
+        /// An element that represents an account object
+        /// </summary>
 		private class AccountElement : StyledElement
 		{
 			public Account Account { get; private set; }
@@ -196,6 +199,29 @@ namespace CodeBucket.Controllers
                 if (!string.IsNullOrEmpty(Account.AvatarUrl))
                     this.ImageUri = new Uri(Account.AvatarUrl);
 			}
+
+            // We need to create our own cell so we can position the image view appropriately
+            protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
+            {
+                return new PinnedImageTableViewCell(style, key);
+            }
+
+            /// <summary>
+            /// This class is to make sure the imageview is of a specific size... :(
+            /// </summary>
+            private class PinnedImageTableViewCell : UITableViewCell
+            {
+                public PinnedImageTableViewCell(UITableViewCellStyle style, string key) : base(style, key) { }
+
+                public override void LayoutSubviews()
+                {
+                    base.LayoutSubviews();
+                    ImageView.Frame = new System.Drawing.RectangleF(5, 5, 32, 32);
+                    ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
+                    TextLabel.Frame = new System.Drawing.RectangleF(42, TextLabel.Frame.Y, TextLabel.Frame.Width, TextLabel.Frame.Height);
+                    DetailTextLabel.Frame = new System.Drawing.RectangleF(42, DetailTextLabel.Frame.Y, DetailTextLabel.Frame.Width, DetailTextLabel.Frame.Height);
+                }
+            }
 		}
     }
 }
