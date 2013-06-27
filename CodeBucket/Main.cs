@@ -131,14 +131,27 @@ namespace CodeBucket
 						ShowMainWindow();
 					};
 
-				    var loginController = new LoginViewController
-				                              {
-				                                      Username = defaultAccount.Username, 
-                                                      LoginComplete = delegate { ShowMainWindow(); }
-				                              };
+                    UIViewController loginController = null;
+                    if (defaultAccount.AccountType == Account.Type.Bitbucket)
+                    {
+                        loginController = new LoginViewController {
+                            Username = defaultAccount.Username, 
+                            LoginComplete = delegate { ShowMainWindow(); }
+                        };
+                    }
+                    else if (defaultAccount.AccountType == Account.Type.GitHub)
+                    {
+                        loginController = new GitHub.Controllers.Accounts.GitHubLoginController {
+                            Username = defaultAccount.Username, 
+                            LoginComplete = delegate { ShowMainWindow(); }
+                        };
+                    }
 
 				    var navigationController = new UINavigationController(accountsController);
-					navigationController.PushViewController(loginController, false);
+
+                    // This should never happen... But it's better to be prepared...
+                    if (loginController != null)
+					    navigationController.PushViewController(loginController, false);
 
 					_window.RootViewController = navigationController;
 				}

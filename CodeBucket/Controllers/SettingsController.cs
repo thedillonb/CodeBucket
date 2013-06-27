@@ -32,9 +32,6 @@ namespace CodeBucket.Controllers
             {
                 var thisAccount = account;
 				var t = new AccountElement(thisAccount);
-                if (!string.IsNullOrEmpty(thisAccount.AvatarUrl))
-                    t.ImageUri = new Uri(thisAccount.AvatarUrl);
-
                 t.Tapped += () => { 
 
 					//Change the user delegate
@@ -46,12 +43,18 @@ namespace CodeBucket.Controllers
 					//If the account doesn't remember the password we need to prompt
 					if (thisAccount.DontRemember)
 					{
-						if (thisAccount.AccountType == CodeBucket.Data.Account.Type.Bitbucket)
+						if (thisAccount.AccountType == Account.Type.Bitbucket)
 						{
 							var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
 							loginController.LoginComplete = changeUserAction;
 							NavigationController.PushViewController(loginController, true);
 						}
+                        else if (thisAccount.AccountType == Account.Type.GitHub)
+                        {
+                            var loginController = new CodeBucket.GitHub.Controllers.Accounts.GitHubLoginController() { Username = thisAccount.Username };
+                            loginController.LoginComplete = changeUserAction;
+                            NavigationController.PushViewController(loginController, true);
+                        }
 					}
 					//Change the user!
 					else
@@ -186,10 +189,12 @@ namespace CodeBucket.Controllers
 		{
 			public Account Account { get; private set; }
 			public AccountElement(Account account)
-				: base(account.Username) //, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
+				: base(account.Username, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
 			{
 				Account = account;
 				Image = Images.Anonymous;
+                if (!string.IsNullOrEmpty(Account.AvatarUrl))
+                    this.ImageUri = new Uri(Account.AvatarUrl);
 			}
 		}
     }

@@ -65,6 +65,15 @@ namespace CodeBucket.Controllers
 							};
 							NavigationController.PushViewController(loginController, true);
 						}
+                        else if (thisAccount.AccountType == Account.Type.GitHub)
+                        {
+                            var loginController = new CodeBucket.GitHub.Controllers.Accounts.GitHubLoginController { Username = thisAccount.Username };
+                            loginController.LoginComplete = a => {
+                                NavigationController.PopToViewController(this, true);
+                                OnAccountSelected(a); 
+                            };
+                            NavigationController.PushViewController(loginController, true);
+                        }
 					}
 					else
 					{
