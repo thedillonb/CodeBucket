@@ -437,6 +437,10 @@
       <Project>{B6ED00F3-206B-4A94-A109-0A97F2E68F60}</Project>
       <Name>Markup</Name>
     </ProjectReference>
+    <ProjectReference Include="..\monotouch-uservoice\UserVoice\UserVoice\UserVoice.csproj">
+      <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
+      <Name>UserVoice</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Images\Logos\logoBitBucketPNG.png" />

@@ -93,14 +93,9 @@ namespace CodeBucket.Controllers
 
             var supportSection = new Section("Support");
 			root.Add (supportSection);
-            supportSection.Add(new StyledElement("Technical Support", () => {
-                var web = new HelpViewController();
-                NavigationController.PushViewController(web, true);
+            supportSection.Add(new StyledElement("Feedback & Support", () => {
+                OpenUserVoice();
             }));
-
-            if (MFMailComposeViewController.CanSendMail)
-                supportSection.Add(new StyledElement("Contact Me", OpenMailer));
-
 
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!");
 			root.Add(aboutSection);
@@ -138,6 +133,12 @@ namespace CodeBucket.Controllers
 				Root.Remove(_accountOptionsSection);
 				Application.SetUser(null);
 			}
+        }
+
+        private void OpenUserVoice()
+        {
+            var config = UserVoice.UVConfig.Create("http://codebucket.uservoice.com", "pnuDmPENErDiDpXrms1DTg", "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk");
+            UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
         }
 
         private void OpenMailer()
