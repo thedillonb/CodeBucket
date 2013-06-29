@@ -18,6 +18,7 @@ namespace CodeBucket.GitHub.Controllers.Branches
             Title = "Tags";
             User = user;
             Repo = repo;
+            SearchPlaceholder = "Search Tags";
         }
 
         protected override List<TagModel> GetData(bool force, int currentPage, out int nextPage)
@@ -31,7 +32,6 @@ namespace CodeBucket.GitHub.Controllers.Branches
         {
             return new StyledElement(obj.Name, () => NavigationController.PushViewController(new SourceController(User, Repo, obj.Commit.Sha), true));
         }
-
     }
 }
 

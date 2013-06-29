@@ -10,44 +10,30 @@ using CodeBucket.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Branches
 {
-	public class BranchController : Controller<Dictionary<string, BranchModel>>
+    public class BranchController : ListController<BranchModel>
 	{
         public string Username { get; private set; }
         public string Slug { get; private set; }
 
 		public BranchController(string username, string slug) 
-            : base(true, true)
+            : base(true)
 		{
-			Style = UITableViewStyle.Plain;
             Username = username;
             Slug = slug;
             Title = "Branches";
-            EnableSearch = true;
-            AutoHideSearch = true;
             SearchPlaceholder = "Search Branches";
 		}
-		
-        protected override void OnRefresh()
+
+        protected override List<BranchModel> GetData(bool force, int currentPage, out int nextPage)
         {
-            var sec = new Section();
-            if (Model.Count == 0)
-                sec.Add(new NoItemsElement("No Branches"));
-            else
-			{
-				foreach (var branchName in Model.Keys.OrderBy(x => x))
-				{
-					sec.Add(new StyledElement(branchName, () => NavigationController.PushViewController(new SourceController(Username, Slug, branchName), true)));
-				}
-			}
-           
-            InvokeOnMainThread(delegate {
-                Root = new RootElement(Title) { sec };
-            });
+            var d = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(force);
+            nextPage = -1;
+            return d.Values.OrderBy(x => x.Branch).ToList();
         }
 
-		protected override Dictionary<string, BranchModel> OnUpdate(bool forced)
+        protected override Element CreateElement(BranchModel obj)
         {
-            return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced);
+            return new StyledElement(obj.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, obj.Branch), true));
         }
 	}
 }

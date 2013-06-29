@@ -3,7 +3,6 @@ using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Views;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Controllers;
 using System.Text;
 

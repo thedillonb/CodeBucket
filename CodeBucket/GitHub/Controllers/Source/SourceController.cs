@@ -23,6 +23,7 @@ namespace CodeBucket.GitHub.Controllers.Source
             Slug = slug;
             Branch = branch;
             Path = path;
+            SearchPlaceholder = "Search Files & Folders";
             Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }
 

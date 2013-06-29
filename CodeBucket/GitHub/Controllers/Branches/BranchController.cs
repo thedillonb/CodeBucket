@@ -19,6 +19,7 @@ namespace CodeBucket.GitHub.Controllers.Branches
             Username = username;
             Slug = slug;
             Title = "Branches";
+            SearchPlaceholder = "Search Branches";
 		}
 
         protected override List<BranchModel> GetData(bool force, int currentPage, out int nextPage)
