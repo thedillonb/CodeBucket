@@ -12,6 +12,7 @@ namespace CodeBucket.GitHub.Controllers.Followers
 			: base(true)
 		{
             Title = "Followers";
+            SearchPlaceholder = "Search Followers";
 		}
 
         protected override Element CreateElement(BasicUserModel s)

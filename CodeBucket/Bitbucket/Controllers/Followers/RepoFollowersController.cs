@@ -16,9 +16,10 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
             _owner = owner;
         }
 
-        protected override List<FollowerModel> OnUpdate(bool forced)
+        protected override List<FollowerModel> GetData(bool force, int currentPage, out int nextPage)
         {
-            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers(forced).Followers;
+            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers(force).Followers;
+            nextPage = -1;
             return f.OrderBy(x => x.Username).ToList();
         }
     }

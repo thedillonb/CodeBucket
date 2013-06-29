@@ -12,10 +12,11 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
         {
             _name = name;
         }
-        
-        protected override List<FollowerModel> OnUpdate(bool forced)
+
+        protected override List<FollowerModel> GetData(bool force, int currentPage, out int nextPage)
         {
-            var f = Application.Client.Users[_name].GetFollowers(forced).Followers;
+            var f = Application.Client.Users[_name].GetFollowers(force).Followers;
+            nextPage = -1;
             return f.OrderBy(x => x.Username).ToList();
         }
     }

@@ -9,38 +9,28 @@ using CodeBucket.Controllers;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-	public class GroupController : Controller<List<GroupModel>>
+    public class GroupController : ListController<GroupModel>
 	{
         public string Username { get; private set; }
 
 		public GroupController(string username, bool push = true) 
-            : base(push, true)
+            : base(push)
 		{
-			Style = UITableViewStyle.Plain;
             Username = username;
             Title = "Groups";
-            EnableSearch = true;
-            AutoHideSearch = true;
             SearchPlaceholder = "Search Groups";
 		}
 
-        protected override void OnRefresh()
+        protected override List<GroupModel> GetData(bool force, int currentPage, out int nextPage)
         {
-            var sec = new Section();
-            if (Model.Count == 0)
-                sec.Add(new NoItemsElement("No Groups"));
-            else
-                Model.ForEach(g => sec.Add(new StyledElement(g.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, g), true))));
-
-            InvokeOnMainThread(delegate {
-                Root = new RootElement(Title) { sec };
-            });
+            var items = Application.Client.Users[Username].Groups.GetGroups(force);
+            nextPage = -1;
+            return items.OrderBy(a => a.Name).ToList();
         }
 
-        protected override List<GroupModel> OnUpdate(bool forced)
+        protected override Element CreateElement(GroupModel obj)
         {
-            var items = Application.Client.Users[Username].Groups.GetGroups(forced);
-            return items.OrderBy(a => a.Name).ToList();
+            return new StyledElement(obj.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, obj), true));
         }
 	}
 }

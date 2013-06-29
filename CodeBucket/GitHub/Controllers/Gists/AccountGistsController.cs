@@ -1,5 +1,6 @@
 using GitHubSharp.Models;
 using System.Collections.Generic;
+using CodeBucket.Controllers;
 
 namespace CodeBucket.GitHub.Controllers.Gists
 {
@@ -13,6 +14,14 @@ namespace CodeBucket.GitHub.Controllers.Gists
         {
             MultipleSelections = _sections;
             MultipleSelectionsKey = SavedSelection;
+
+//            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Compose, (s, e) => {
+//                var composer = new Composer { Title = "New Gist", ActionButtonText = "Save" };
+//                composer.NewComment(this, () => {
+//                    var text = composer.Text;
+//                    composer.CloseComposer();
+//                });
+//            });
         }
 
         protected override List<GistModel> GetData(bool force, int currentPage, out int nextPage)
