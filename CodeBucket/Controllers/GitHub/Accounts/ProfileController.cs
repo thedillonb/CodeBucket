@@ -35,7 +35,7 @@ namespace CodeBucket.GitHub.Controllers.Accounts
             var events = new StyledElement("Events", () => NavigationController.PushViewController(new EventsController(Username) { ReportRepository = true }, true), Images.Event);
             var groups = new StyledElement("Organizations", () => NavigationController.PushViewController(new OrganizationsController(Username), true), Images.Group);
             var repos = new StyledElement("Repositories", () => NavigationController.PushViewController(new RepositoryController(Username) { ShowOwner = false }, true), Images.Repo);
-            var gists = new StyledElement("Gists", () => NavigationController.PushViewController(new GistsController(Username), true), Images.Repo);
+            var gists = new StyledElement("Gists", () => NavigationController.PushViewController(new GistsController(Username), true), Images.Script);
 
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos, gists} });
         }

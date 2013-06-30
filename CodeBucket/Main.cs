@@ -89,14 +89,17 @@ namespace CodeBucket
 			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
 			SearchFilterBar.FilterImage = Images.Filter;
 			
-			DropbarView.Image = UIImage.FromBundle("/Images/Dropbar");
+			DropbarView.Image = UIImage.FromFile("Images/Controls/Dropbar.png");
 			WatermarkView.Image = Images.Background;
 			HeaderView.Gradient = Images.CellGradient;
 			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
 			ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
 			UserElement.Default = Images.Anonymous;
 			NewsFeedElement.DefaultImage = Images.Anonymous;
-			TableViewSectionView.BackgroundImage = Images.Searchbar;
+            NewsFeedElement.LinkColor = UIColor.FromRGB(0, 64, 128);
+            NewsFeedElement.LinkFont = UIFont.BoldSystemFontOfSize(12f);
+            TableViewSectionView.BackgroundImage = Images.Searchbar;
+
 			
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

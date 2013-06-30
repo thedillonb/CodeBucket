@@ -220,14 +220,14 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             if (!repoOwner.ToLower().Equals(Application.Account.Username.ToLower()))
             {
                 return new [] {
-                    new NewsFeedElement.TextBlock(repoOwner, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
+                    new NewsFeedElement.TextBlock(repoOwner, () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
                     new NewsFeedElement.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
-                    new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)),
+                    new NewsFeedElement.TextBlock(repoName, () => RepoTapped(eventModel)),
                 };
             }
 
             //Just return the name
-            return new [] { new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(eventModel)) };
+            return new [] { new NewsFeedElement.TextBlock(repoName, () => RepoTapped(eventModel)) };
         }
        
         private void AddItems(List<EventModel> events, bool prepend = true)
@@ -273,47 +273,52 @@ namespace CodeBucket.Bitbucket.Controllers.Events
 
 			newEvents.ForEach(e =>
             {
-                UIImage small;
-                var hello = CreateDescription(e, out small);
-                if (hello == null)
-                    return;
-
-                //Get the user
-                var username = e.User != null ? e.User.Username : null;
-                var avatar = e.User != null ? e.User.Avatar : null;
-                var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small) { LinkColor = UIColor.FromRGB(0, 64, 128) };
-                if ((e.Event == EventModel.Type.Commit || e.Event == EventModel.Type.Pushed) && e.Repository != null)
+                try
                 {
-                    newsEl.Tapped += () =>
+                    UIImage small;
+                    var hello = CreateDescription(e, out small);
+                    if (hello == null)
+                        return;
+
+                    //Get the user
+                    var username = e.User != null ? e.User.Username : null;
+                    var avatar = e.User != null ? e.User.Avatar : null;
+                    var newsEl = new NewsFeedElement(username, avatar, (e.UtcCreatedOn), hello, small);
+                    if ((e.Event == EventModel.Type.Commit || e.Event == EventModel.Type.Pushed) && e.Repository != null)
                     {
-                        if (NavigationController != null)
-                            NavigationController.PushViewController(
-                                new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node) { Repo = e.Repository }, true);
-                    };
-                }
-                else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated)
-                {
-                    if (e.Repository != null)
-                        newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
-                }
-                else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
-                {
-                    if (e.Repository != null)
-                        newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
-                }
-                else if (e.Event == EventModel.Type.IssueComment || e.Event == EventModel.Type.IssueUpdated || e.Event == EventModel.Type.IssueReported)
-                {
-                    if (e.Repository != null)
-                        newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
-                }
+                        newsEl.Tapped += () =>
+                        {
+                            if (NavigationController != null)
+                                NavigationController.PushViewController(
+                                    new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node) { Repo = e.Repository }, true);
+                        };
+                    }
+                    else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated)
+                    {
+                        if (e.Repository != null)
+                            newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
+                    }
+                    else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
+                    {
+                        if (e.Repository != null)
+                            newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
+                    }
+                    else if (e.Event == EventModel.Type.IssueComment || e.Event == EventModel.Type.IssueUpdated || e.Event == EventModel.Type.IssueReported)
+                    {
+                        if (e.Repository != null)
+                            newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
+                    }
 
-                sec.Add(newsEl);
+                    sec.Add(newsEl);
+                }
+                catch (Exception ex)
+                {
+                    Utilities.LogException("Unable to add event", ex);
+                }
             });
 
             if (sec.Count == 0)
-            {
                 return;
-            }
 
             InvokeOnMainThread(delegate
             {

@@ -11,6 +11,9 @@ namespace CodeBucket.Elements
     public class NewsFeedElement : NameTimeStringElement
     {
         public static UIImage DefaultImage;
+        public static UIColor LinkColor;
+        public static UIFont LinkFont;
+
 
         private TextBlock[] _blocks;
         private NSMutableAttributedString _string;
@@ -19,8 +22,6 @@ namespace CodeBucket.Elements
 
         private UIImage LittleImage { get; set; }
         private float _lastHeight = 0;
-
-        public UIColor LinkColor { get; set; }
 
         private List<ListToLinks> _listToLinks;
         private class ListToLinks
@@ -36,7 +37,22 @@ namespace CodeBucket.Elements
             public NSAction Tapped;
             public UIFont Font;
             public UIColor Color;
-            
+
+            public TextBlock()
+            {
+            }
+
+            public TextBlock(string value)
+            {
+                Value = value;
+            }
+
+            public TextBlock(string value, NSAction tapped = null)
+            {
+                Value = value;
+                Tapped = tapped;
+            }
+
             public TextBlock(string value, UIFont font = null, UIColor color = null, NSAction tapped = null)
             {
                 Value = value; Font = font; Color = color; Tapped = tapped;
@@ -64,10 +80,32 @@ namespace CodeBucket.Elements
             int i = 0;
             foreach (var b in _blocks)
             {
-                var myFont = b.Font != null ? b.Font : UIFont.SystemFontOfSize(12f);
-                var myColor = b.Color != null ? b.Color : UIColor.Black;
-                var font = new MonoTouch.CoreText.CTFont(myFont.Name, myFont.PointSize);
-                var str = new NSAttributedString(b.Value, new MonoTouch.CoreText.CTStringAttributes() { ForegroundColor = myColor.CGColor, Font = font });
+                UIColor color = null;
+                if (b.Color != null)
+                    color = b.Color;
+                else
+                {
+                    if (b.Tapped != null)
+                        color = LinkColor;
+                }
+
+                UIFont font = null;
+                if (b.Font != null)
+                    font = b.Font;
+                else
+                {
+                    if (b.Tapped != null)
+                        font = LinkFont;
+                }
+
+                if (color == null)
+                    color = UIColor.Black;
+                if (font == null)
+                    font = UIFont.SystemFontOfSize(12f);
+
+
+                var ctFont = new MonoTouch.CoreText.CTFont(font.Name, font.PointSize);
+                var str = new NSAttributedString(b.Value, new MonoTouch.CoreText.CTStringAttributes() { ForegroundColor = color.CGColor, Font = ctFont });
                 _string.Append(str);
                 var strLength = str.Length;
 
@@ -76,12 +114,6 @@ namespace CodeBucket.Elements
 
                 lengthCounter += strLength;
             }
-
-//
-//            var sb = new System.Text.StringBuilder();
-//            foreach (var b in blocks)
-//                sb.Append(b.Value);
-//            String = sb.ToString();
         }
 
         public override UITableViewCell GetCell(UITableView tv)

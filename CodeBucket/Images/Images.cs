@@ -24,6 +24,8 @@ namespace CodeBucket
         public static UIImage Milestone = UIImage.FromBundle("/Images/milestone");
         public static UIImage ServerComponents = UIImage.FromBundle("/Images/server_components");
         public static UIImage SitemapColor = UIImage.FromBundle("/Images/sitemap_color");
+        public static UIImage Script = UIImage.FromBundle("/Images/script");
+        public static UIImage Information = UIImage.FromBundle("/Images/information");
 
         public static UIImage CellGradient = UIImage.FromBundle("/Images/gradient");
 

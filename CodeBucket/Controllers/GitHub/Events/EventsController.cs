@@ -18,8 +18,10 @@ namespace CodeBucket.GitHub.Controllers.Events
         protected int _nextPage = 1;
         private LoadMoreElement _loadMore;
 
-        public string Username { get; private set; }
+        private static UIFont LinkFont = UIFont.BoldSystemFontOfSize(12f);
+        private static UIColor LinkColor = UIColor.FromRGB(0, 64, 128);
 
+        public string Username { get; private set; }
         public bool ReportRepository { get; set; }
 
         public EventsController(string username, bool push = true)
@@ -113,6 +115,8 @@ namespace CodeBucket.GitHub.Controllers.Events
                         textBlocks.Add(new NewsFeedElement.TextBlock("Commited: " + desc));
                     }
                     var el = new NewsFeedElement(username, avatar, eventModel.CreatedAt, textBlocks, img);
+                    if (eventModel.Repo != null && eventModel.Repo.Name != null)
+                        el.Tapped += () => NavigationController.PushViewController(new Changesets.ChangesetInfoController(username, RepoSlug(eventModel.Repo), x.Sha), true);
                     elements.Add(el);
                 });
 
@@ -121,7 +125,7 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.GollumEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.GollumEvent;
-                img = Images.Plus;
+                img = Images.Pencil;
 
                 var elements = new List<Element>(obj.Pages.Count);
                 obj.Pages.ForEach(x => {
@@ -155,7 +159,7 @@ namespace CodeBucket.GitHub.Controllers.Events
             {
                 var obj = eventModel.PayloadObject as EventModel.CommitCommentEvent;
                 var desc = obj.Comment.Body.Replace("\n", " ").Trim();
-                img = Images.Plus;
+                img = Images.CommentAdd;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Commented on commit in "));
@@ -168,21 +172,58 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.CreateEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.CreateEvent;
-                img = Images.Plus;
-                if (ReportRepository)
+                var s = eventModel.Repo.Name.Split('/');
+                var repoOwner = s[0];
+                var repoName = s[1];
+
+                if (obj.RefType.Equals("repository"))
                 {
-                    blocks.Add(new NewsFeedElement.TextBlock("Created new " + obj.RefType + " in "));
-                    blocks.AddRange(RepoName(eventModel.Repo));
+                    img = Images.Repo;
+                    blocks.Add(new NewsFeedElement.TextBlock("Created new " + obj.RefType + " "));
+
+                    if (ReportRepository)
+                    {
+                        action = NavigateToRepository(eventModel.Repo);
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+                else if (obj.RefType.Equals("branch"))
+                {
+                    img = Images.Branch;
+                    action = () => NavigationController.PushViewController(new Controllers.Source.SourceController(repoOwner, repoName, obj.Ref), true);
+                    blocks.Add(new NewsFeedElement.TextBlock("Created new " + obj.RefType + " "));
+                    blocks.Add(new NewsFeedElement.TextBlock(obj.Ref, action));
+
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" in "));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+                else if (obj.RefType.Equals("tag"))
+                {
+                    img = Images.Tag;
+                    action = () => NavigationController.PushViewController(new Controllers.Source.SourceController(repoOwner, repoName, obj.Ref), true);
+                    blocks.Add(new NewsFeedElement.TextBlock("Created new " + obj.RefType + " "));
+                    blocks.Add(new NewsFeedElement.TextBlock(obj.Ref, action));
+
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" in "));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
                 }
                 else
-                    blocks.Add(new NewsFeedElement.TextBlock("Created new " + obj.RefType));
+                    throw new InvalidOperationException("No such create event for: " + obj.RefType);
             }
             else if (eventModel.PayloadObject is EventModel.DeleteEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.DeleteEvent;
-                img = Images.Plus;
+                action = NavigateToRepository(eventModel.Repo);
+                img = Images.BinClosed;
                 if (ReportRepository)
                 {
+                    action = NavigateToRepository(eventModel.Repo);
                     blocks.Add(new NewsFeedElement.TextBlock("Deleted " + obj.RefType + " in "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                 }
@@ -191,10 +232,10 @@ namespace CodeBucket.GitHub.Controllers.Events
             }
             else if (eventModel.PayloadObject is EventModel.DownloadEvent)
             {
-                var obj = eventModel.PayloadObject as EventModel.DownloadEvent;
-                img = Images.Plus;
+                img = Images.Create;
                 if (ReportRepository)
                 {
+                    action = NavigateToRepository(eventModel.Repo);
                     blocks.Add(new NewsFeedElement.TextBlock("Created download in "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                 }
@@ -204,40 +245,44 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.FollowEvent;
-                img = Images.Plus;
+                img = Images.HeartAdd;
                 blocks.Add(new NewsFeedElement.TextBlock("Begun following "));
                 blocks.Add(CreateUserBlock(obj.Target.Login));
+                action = () => NavigationController.PushViewController(new ProfileController(obj.Target.Login), true);
             }
             else if (eventModel.PayloadObject is EventModel.ForkEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.ForkEvent;
-                img = Images.Plus;
+                img = Images.Fork;
+                var forkee = new EventModel.RepoModel { 
+                    Id = obj.Forkee.Id, 
+                    Name = obj.Forkee.FullName, 
+                    Url = obj.Forkee.Url 
+                };
+
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Forked "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                     blocks.Add(new NewsFeedElement.TextBlock(" to "));
-                    var repo = new EventModel.RepoModel { 
-                        Id = obj.Forkee.Id, 
-                        Name = obj.Forkee.FullName, 
-                        Url = obj.Forkee.Url 
-                    };
-                    blocks.AddRange(RepoName(repo));
+                    blocks.AddRange(RepoName(forkee));
+                    action = NavigateToRepository(forkee);
                 }
                 else
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Forked from "));
                     blocks.AddRange(RepoName(eventModel.Repo));
+                    action = NavigateToRepository(forkee);
                 }
             }
             else if (eventModel.PayloadObject is EventModel.ForkApplyEvent)
             {
-                var obj = eventModel.PayloadObject as EventModel.ForkApplyEvent;
-                img = Images.Plus;
+                img = Images.ServerComponents;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Applied patch to fork "));
                     blocks.AddRange(RepoName(eventModel.Repo));
+                    action = NavigateToRepository(eventModel.Repo);
                 }
                 else
                     blocks.Add(new NewsFeedElement.TextBlock("Applied patch to fork"));
@@ -245,7 +290,7 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.GistEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.GistEvent;
-                img = Images.Plus;
+                img = Images.Script;
                 action = () => NavigationController.PushViewController(new GistInfoController(obj.Gist.Id), true);
                 var desc = string.IsNullOrEmpty(obj.Gist.Description) ? "Gist " + obj.Gist.Id : obj.Gist.Description;
                 blocks.Add(new NewsFeedElement.TextBlock(obj.Action.ToTitleCase() + " Gist: "));
@@ -273,7 +318,7 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.IssuesEvent;
-                img = Images.Plus;
+                img = Images.Flag;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock(obj.Action.ToTitleCase() + " issue "));
@@ -290,28 +335,31 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.MemberEvent;
-                img = Images.Plus;
+                img = Images.Person;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Member added to "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                     blocks.Add(new NewsFeedElement.TextBlock(": "));
                     blocks.Add(CreateUserBlock(obj.Member.Login));
+                    action = NavigateToRepository(eventModel.Repo);
                 }
                 else
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Member added: "));
                     blocks.Add(CreateUserBlock(obj.Member.Login));
+                    action = () => NavigationController.PushViewController(new ProfileController(obj.Member.Login), true);
                 }
             }
             else if (eventModel.PayloadObject is EventModel.PublicEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.PublicEvent;
-                img = Images.Plus;
+                img = Images.Information;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Open sourced "));
                     blocks.AddRange(RepoName(eventModel.Repo));
+                    action = NavigateToRepository(eventModel.Repo);
                 }
                 else
                     blocks.Add(new NewsFeedElement.TextBlock("Open sourced this repository!"));
@@ -319,11 +367,12 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.PullRequestEvent;
-                img = Images.Plus;
+                img = Images.SitemapColor;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock(obj.Action.ToTitleCase() + " pull request for "));
                     blocks.AddRange(RepoName(eventModel.Repo));
+                    action = NavigateToRepository(eventModel.Repo);
                 }
                 else
                     blocks.Add(new NewsFeedElement.TextBlock(obj.Action.ToTitleCase() + " pull request"));
@@ -331,12 +380,13 @@ namespace CodeBucket.GitHub.Controllers.Events
             else if (eventModel.PayloadObject is EventModel.PullRequestReviewCommentEvent)
             {
                 var obj = eventModel.PayloadObject as EventModel.PullRequestReviewCommentEvent;
-                img = Images.Plus;
+                img = Images.CommentAdd;
                 if (ReportRepository)
                 {
                     blocks.Add(new NewsFeedElement.TextBlock("Commented on pull request in "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                     blocks.Add(new NewsFeedElement.TextBlock(": " + obj.Comment.Body));
+                    action = NavigateToRepository(eventModel.Repo);
                 }
                 else
                     blocks.Add(new NewsFeedElement.TextBlock("Commented on pull request: " + obj.Comment.Body));
@@ -346,11 +396,16 @@ namespace CodeBucket.GitHub.Controllers.Events
                 img = Images.Plus;
                 if (ReportRepository)
                 {
+                    action = NavigateToRepository(eventModel.Repo);
                     blocks.Add(new NewsFeedElement.TextBlock("Begun watching: "));
                     blocks.AddRange(RepoName(eventModel.Repo));
                 }
                 else
+                {
                     blocks.Add(new NewsFeedElement.TextBlock("Begun watching this repository"));
+                    action = () => NavigationController.PushViewController(new ProfileController(eventModel.Actor.Login), true);
+
+                }
             }
 
             var element = new NewsFeedElement(username, avatar, eventModel.CreatedAt, blocks, img);
@@ -368,18 +423,44 @@ namespace CodeBucket.GitHub.Controllers.Events
 
         private NewsFeedElement.TextBlock CreateUserBlock(string username)
         {
-            return new NewsFeedElement.TextBlock(username, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(username), true));
+            return new NewsFeedElement.TextBlock(username, () => NavigationController.PushViewController(new ProfileController(username), true));
         }
 
         private NewsFeedElement.TextBlock CreateIssueBlock(IssueModel issue)
         {
-            return new NewsFeedElement.TextBlock(issue.Title, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => { });
+            return new NewsFeedElement.TextBlock(issue.Title, () => { });
         }
 
         private NewsFeedElement.TextBlock CreateWikiBlock(EventModel.GollumEvent.PageModel page)
         {
-            return new NewsFeedElement.TextBlock(page.Title, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => { });
+            return new NewsFeedElement.TextBlock(page.Title,() => { });
         } 
+
+        private NSAction NavigateToRepository(EventModel.RepoModel repoModel)
+        {
+            if (ValidRepo(repoModel))
+            {
+                var repoNameSplit = repoModel.Name.Split('/');
+                return () => NavigationController.PushViewController(new Repositories.RepositoryInfoController(repoNameSplit[0], repoNameSplit[1]), true);
+            }
+
+            return null;
+        }
+
+        private bool ValidRepo(EventModel.RepoModel repoModel)
+        {
+            return (repoModel != null && repoModel.Name != null);
+        }
+
+        private string RepoSlug(EventModel.RepoModel repoModel)
+        {
+            if (repoModel == null || repoModel.Name == null)
+                return null;
+            var repoSplit = repoModel.Name.Split('/');
+            if (repoSplit.Length < 2)
+                return repoModel.Name;
+            return repoSplit[1];
+        }
 
         private IEnumerable<NewsFeedElement.TextBlock> RepoName(EventModel.RepoModel repoModel)
         {
@@ -387,12 +468,12 @@ namespace CodeBucket.GitHub.Controllers.Events
             if (repoModel == null)
                 return new [] { new NewsFeedElement.TextBlock("Unknown Repository") };
             if (repoModel.Name == null)
-                return new [] { new NewsFeedElement.TextBlock("(Deleted Repository)", UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)) };
+                return new [] { new NewsFeedElement.TextBlock("(Deleted Repository)") };
 
             var repoSplit = repoModel.Name.Split('/');
             if (repoSplit.Length < 2)
             {
-                return new [] { new NewsFeedElement.TextBlock(repoModel.Name, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128)) };
+                return new [] { new NewsFeedElement.TextBlock(repoModel.Name) };
             }
 
             var repoOwner = repoSplit[0];
@@ -400,14 +481,14 @@ namespace CodeBucket.GitHub.Controllers.Events
             if (!repoOwner.ToLower().Equals(Application.Account.Username.ToLower()))
             {
                 return new [] {
-                    new NewsFeedElement.TextBlock(repoOwner, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
+                    new NewsFeedElement.TextBlock(repoOwner, () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
                     new NewsFeedElement.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
-                    new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(repoOwner, repoName)),
+                    new NewsFeedElement.TextBlock(repoName, () => RepoTapped(repoOwner, repoName)),
                 };
             }
 
             //Just return the name
-            return new [] { new NewsFeedElement.TextBlock(repoName, UIFont.BoldSystemFontOfSize(12f), UIColor.FromRGB(0, 64, 128), () => RepoTapped(repoOwner, repoName)) };
+            return new [] { new NewsFeedElement.TextBlock(repoName, () => RepoTapped(repoOwner, repoName)) };
         }
 
 
@@ -415,44 +496,22 @@ namespace CodeBucket.GitHub.Controllers.Events
         private void AddItems(List<EventModel> events)
         {
             var sec = new Section();
-            events.ForEach(e =>
+            foreach (var e in events)
             {
-                var a = CreateElement(e);
-                if (a != null) sec.AddAll(a);
-
-                //Get the user
-
-//                if (e.Event == EventModel.Type.Commit && e.Repository != null)
-//                {
-//                    newsEl.Tapped += () =>
-//                    {
-//                        if (NavigationController != null)
-//                            NavigationController.PushViewController(
-//                                new ChangesetInfoController(e.Repository.Owner, e.Repository.Slug, e.Node) { Repo = e.Repository }, true);
-//                    };
-//                }
-//                else if (e.Event == EventModel.Type.WikiCreated || e.Event == EventModel.Type.WikiUpdated)
-//                {
-//                    if (e.Repository != null)
-//                        newsEl.Tapped += () => NavigationController.PushViewController(new WikiInfoController(e.Repository.Owner, e.Repository.Slug, e.Description), true);
-//                }
-//                else if (e.Event == EventModel.Type.CreateRepo || e.Event == EventModel.Type.StartFollowRepo || e.Event == EventModel.Type.StopFollowRepo)
-//                {
-//                    if (e.Repository != null)
-//                        newsEl.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(e.Repository), true);
-//                }
-//                else if (e.Event == EventModel.Type.IssueComment || e.Event == EventModel.Type.IssueUpdated || e.Event == EventModel.Type.IssueReported)
-//                {
-//                    if (e.Repository != null)
-//                        newsEl.Tapped += () => NavigationController.PushViewController(new IssuesController(e.Repository.Owner, e.Repository.Slug), true);
-//                }
-
-            });
+                try
+                {
+                    var elements = CreateElement(e);
+                    if (elements != null)
+                        sec.AddAll(elements);
+                }
+                catch (Exception ex)
+                {
+                    Utilities.LogException("Unable to add event", ex);
+                }
+            }
 
             if (sec.Count == 0)
-            {
                 return;
-            }
 
             InvokeOnMainThread(delegate
             {

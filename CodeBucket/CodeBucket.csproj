@@ -291,7 +291,6 @@
     <Content Include="Images\locked%402x.png" />
     <Content Include="Images\unlocked.png" />
     <Content Include="Images\unlocked%402x.png" />
-    <Content Include="Images\Dropbar.png" />
     <Content Include="Images\TableCell.png" />
     <Content Include="Images\pencil%402x.png" />
     <Content Include="Images\heart%402x.png" />
@@ -399,6 +398,7 @@
     <Content Include="Default-Landscape.png" />
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
+    <Content Include="Images\Controls\Dropbar.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -444,5 +444,9 @@
   <ItemGroup>
     <BundleResource Include="Images\Logos\logoBitBucketPNG.png" />
     <BundleResource Include="Images\Logos\GitHub-Logo.png" />
+    <BundleResource Include="Images\script.png" />
+    <BundleResource Include="Images\script%402x.png" />
+    <BundleResource Include="Images\information%402x.png" />
+    <BundleResource Include="Images\information.png" />
   </ItemGroup>
 </Project>

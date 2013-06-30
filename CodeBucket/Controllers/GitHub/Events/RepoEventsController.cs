@@ -16,10 +16,7 @@ namespace CodeBucket.GitHub.Controllers.Events
         protected override List<EventModel> OnGetData(int page = 1)
         {
             var response = Application.GitHubClient.API.GetRepositoryEvents(Username, Slug, page);
-            if (response.Next != null)
-                _nextPage = page + 1;
-            else
-                _nextPage = -1;
+            _nextPage = response.Next != null ? page + 1 : -1;
             return response.Data;
         }
     }
