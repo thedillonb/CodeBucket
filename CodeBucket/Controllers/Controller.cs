@@ -96,7 +96,7 @@ namespace CodeBucket.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("There was an issue attempting to refresh: " + ex.Message);
+                    MonoTouch.Utilities.LogException("Error when refreshing view", ex);
                 }
 
                 InvokeOnMainThread(delegate { 

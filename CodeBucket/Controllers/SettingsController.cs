@@ -93,9 +93,7 @@ namespace CodeBucket.Controllers
 
             var supportSection = new Section("Support");
 			root.Add (supportSection);
-            supportSection.Add(new StyledElement("Feedback & Support", () => {
-                OpenUserVoice();
-            }));
+            supportSection.Add(new StyledElement("Feedback & Support", OpenUserVoice));
 
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!");
 			root.Add(aboutSection);
@@ -118,13 +116,8 @@ namespace CodeBucket.Controllers
 			if (accountElement == null)
                 return;
 
+            //Remove the designated username
 			var account = accountElement.Account;
-			var username = account.Username;
-			string currentUsername = null;
-			if (Application.Account != null)
-				currentUsername = Application.Account.Username;
-
-			//Remove the designated username
             Application.Accounts.Remove(account);
 
 			if (Application.Account.Equals(account))
@@ -139,16 +132,6 @@ namespace CodeBucket.Controllers
         {
             var config = UserVoice.UVConfig.Create("http://codebucket.uservoice.com", "pnuDmPENErDiDpXrms1DTg", "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk");
             UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
-        }
-
-        private void OpenMailer()
-        {
-            var mailer = new MFMailComposeViewController();
-            mailer.SetSubject("CodeBucket Feedback");
-            mailer.SetToRecipients(new string[] { "codebucketapp@gmail.com" });
-            mailer.ModalPresentationStyle = UIModalPresentationStyle.PageSheet;
-            mailer.Finished += (sender, e) => this.DismissModalViewControllerAnimated(true);
-            this.PresentModalViewController(mailer, true);
         }
 
         private class EditSource : Source

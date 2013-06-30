@@ -147,7 +147,6 @@
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
-    <Compile Include="Controllers\HelpViewController.cs" />
     <Compile Include="Controllers\BaseDialogViewController.cs" />
     <Compile Include="Controllers\Composer.cs" />
     <Compile Include="Controllers\Controller.cs" />
@@ -445,8 +444,5 @@
   <ItemGroup>
     <BundleResource Include="Images\Logos\logoBitBucketPNG.png" />
     <BundleResource Include="Images\Logos\GitHub-Logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Products\" />
   </ItemGroup>
 </Project>
