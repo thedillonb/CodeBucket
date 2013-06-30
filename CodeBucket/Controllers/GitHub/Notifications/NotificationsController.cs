@@ -15,10 +15,7 @@ namespace CodeBucket.GitHub.Controllers.Notifications
         {
             MultipleSelections = _sections;
             MultipleSelectionsKey = SavedSelection;
-            Style = UITableViewStyle.Plain;
             Title = "Notifications";
-            EnableSearch = true;
-            AutoHideSearch = true;
         }
 
         protected override List<NotificationModel> GetData(bool force, int currentPage, out int nextPage)

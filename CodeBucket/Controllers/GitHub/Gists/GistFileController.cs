@@ -14,7 +14,7 @@ namespace CodeBucket.GitHub.Controllers.Gists
         protected override void Request()
         {
             var data = Application.GitHubClient.API.GetGistFile(_url);
-            LoadRawData(data);
+            LoadRawData(System.Security.SecurityElement.Escape(data));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CodeBucket.GitHub.Controllers.Organizations
 
         protected override Element CreateElement(BasicUserModel obj)
         {
-            return new StyledElement(obj.Login, () => NavigationController.PushViewController(new GroupInfoController(obj.Login), true));
+            return new StyledElement(obj.Login, () => NavigationController.PushViewController(new OrganizationInfoController(obj.Login), true));
         }
 
         protected override List<BasicUserModel> GetData(bool force, int currentPage, out int nextPage)

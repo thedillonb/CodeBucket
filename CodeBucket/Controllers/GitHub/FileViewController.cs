@@ -9,7 +9,7 @@ namespace CodeBucket.GitHub.Controllers
         {
         }
 
-        protected static string DownloadFile(string user, string slug, string branch, string path, out string mime)
+        protected new static string DownloadFile(string user, string slug, string branch, string path, out string mime)
         {
             //Create a temporary filename
             var ext = System.IO.Path.GetExtension(path);

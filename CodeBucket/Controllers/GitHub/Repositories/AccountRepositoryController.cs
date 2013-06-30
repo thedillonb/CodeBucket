@@ -13,6 +13,7 @@ namespace CodeBucket.GitHub.Controllers.Repositories
         {
             MultipleSelections = _sections;
             MultipleSelectionsKey = SavedSelection;
+            Title = "Repositories";
         }
 
         protected override List<RepositoryModel> GetData(bool force, int currentPage, out int nextPage)

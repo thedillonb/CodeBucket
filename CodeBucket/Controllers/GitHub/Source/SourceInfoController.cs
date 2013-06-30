@@ -29,7 +29,7 @@ namespace CodeBucket.GitHub.Controllers.Source
                 string mime = "text";
                 var file = DownloadFile(_user, _slug, _branch, _path, out mime);
                 if (mime.StartsWith("text"))
-                    LoadRawData(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8));
+                    LoadRawData(System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8)));
                 else
                     LoadFile(file);
             }

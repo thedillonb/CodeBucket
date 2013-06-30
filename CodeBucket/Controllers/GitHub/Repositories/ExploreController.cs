@@ -22,6 +22,7 @@ namespace CodeBucket.GitHub.Controllers.Repositories
             EnableSearch = true;
             AutoHideSearch = false;
             Autorotate = true;
+            Title = "Explore";
             SearchPlaceholder = "Search Repositories";
         }
 

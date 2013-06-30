@@ -47,7 +47,7 @@ namespace CodeBucket.GitHub.Controllers.Changesets
             {
                 var file = DownloadFile(_user, _slug, _branch, _path, out mime);
                 if (mime.StartsWith("text/plain"))
-                    newSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file));
+                    newSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8));
                 else
                 {
                     LoadFile(file);
@@ -60,7 +60,7 @@ namespace CodeBucket.GitHub.Controllers.Changesets
             {
                 var file = DownloadFile(_user, _slug, _parent, _path, out mime);
                 if (mime.StartsWith("text/plain"))
-                    oldSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file));
+                    oldSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8));
                 else
                 {
                     LoadFile(file);
