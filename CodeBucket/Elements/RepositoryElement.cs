@@ -38,11 +38,6 @@ namespace CodeBucket.Elements
 			this(m.Name, m.Scm, m.FollowersCount, m.ForkCount, m.Description, m.Owner)
 		{
 		}
-		
-		public RepositoryElement(GitHubSharp.Models.RepositorySearchModel.RepositoryFromSearchModel model)
-			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner)
-		{
-		}
 
 		public RepositoryElement(GitHubSharp.Models.RepositoryModel model)
 			: this(model.Name, "git", model.Watchers, model.Forks, model.Description, model.Owner != null ? model.Owner.Login : null)

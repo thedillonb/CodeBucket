@@ -12,8 +12,8 @@ namespace CodeBucket.GitHub.Controllers.Repositories
         public string Username { get; private set; }
         public bool ShowOwner { get; set; }
 
-        public RepositoryController(string username, bool push = true)
-            : base(push)
+        public RepositoryController(string username, bool push = true, bool refresh = true)
+            : base(push, refresh)
         {
             Title = "Repositories";
             Username = username;

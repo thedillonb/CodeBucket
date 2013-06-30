@@ -9,22 +9,23 @@ using System.Linq;
 using RedPlum;
 using System.Drawing;
 using MonoTouch;
+using System.Collections.Generic;
+using GitHubSharp.Models;
 
-namespace CodeBucket.GitHub.Controllers
+namespace CodeBucket.GitHub.Controllers.Repositories
 {
-    public sealed class ExploreController : DialogViewController
+    public sealed class ExploreController : RepositoryController
     {
-
         public ExploreController()
-            : base(UITableViewStyle.Plain, new RootElement("Explore"), false)
+            : base(Application.Account.Username, true, false)
         {
             EnableSearch = true;
             AutoHideSearch = false;
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
             Autorotate = true;
             SearchPlaceholder = "Search Repositories";
         }
 
+        
         void ShowSearch(bool value)
         {
             if (!value)
@@ -50,7 +51,7 @@ namespace CodeBucket.GitHub.Controllers
             public override void OnEditingStarted (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = true;
-                _container.StartSearch ();
+                _container.SearchStart ();
                 _container.ShowSearch(true);
                 _container.NavigationController.SetNavigationBarHidden(true, true);
             }
@@ -60,6 +61,7 @@ namespace CodeBucket.GitHub.Controllers
                 searchBar.ShowsCancelButton = false;
                 _container.FinishSearch ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.SearchEnd();
             }
 
             public override void TextChanged (UISearchBar searchBar, string searchText)
@@ -72,6 +74,7 @@ namespace CodeBucket.GitHub.Controllers
                 _container.FinishSearch ();
                 searchBar.ResignFirstResponder ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
+                _container.SearchEnd();
             }
 
             public override void SearchButtonClicked (UISearchBar searchBar)
@@ -86,17 +89,16 @@ namespace CodeBucket.GitHub.Controllers
             base.ViewDidLoad();
             var search = (UISearchBar)TableView.TableHeaderView;
             search.Delegate = new ExploreSearchDelegate(this);
+        }
 
-            TableView.BackgroundColor = UIColor.Clear;
-            WatermarkView.AssureWatermark(this);
-
-            TableView.TableFooterView = new DropbarView(View.Bounds.Width) {Hidden = true};
+        protected override List<RepositoryModel> OnUpdate(bool forced)
+        {
+            return Model;
         }
 
         public override void SearchButtonClicked(string text)
         {
             View.EndEditing(true);
-
 
             var hud = new MBProgressHUD(View.Superview) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Searching..."};
 
@@ -113,25 +115,18 @@ namespace CodeBucket.GitHub.Controllers
 
                 try
                 {
-                    var l = Application.GitHubClient.API.SearchRepositories(text).Data;
-                    var sec = new Section();
-
-                    foreach (var repo in l.Repositories.OrderByDescending(x => x.Watchers))
-                    {
-                        var r = repo;
-                        var el = new RepositoryElement(r);
-                        el.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(r.Owner, r.Name), true);
-                        sec.Add(el);
-                    }
-
+                    var l = Application.GitHubClient.API.SearchRepositories(text);
+                    Model = l.Data.Repositories.Select(x => new RepositoryModel { 
+                        Description = x.Description,
+                        Forks = x.Forks,
+                        Name = x.Name,
+                        Watchers = x.Watchers,
+                        Owner = new BasicUserModel { Login = x.Username }
+                    }).ToList();
+                    OnRefresh();
 
                     InvokeOnMainThread(delegate {
-                        TableView.TableFooterView.Hidden = sec.Elements.Count == 0;
-                        Root = new RootElement(Title) { sec };
-                        hud.Hide(true);
-                        hud.RemoveFromSuperview();
-
-                        ShowSearch(sec.Count == 0);
+                        ShowSearch(Root.Count > 0 && Root[0].Count == 0);
                     });
 
                 }
@@ -142,10 +137,13 @@ namespace CodeBucket.GitHub.Controllers
 
                 Utilities.PopNetworkActive();
 
-                InvokeOnMainThread(delegate {
-                    hud.Hide(true);
-                    hud.RemoveFromSuperview();
-                });
+                if (hud != null)
+                {
+                    InvokeOnMainThread(delegate {
+                        hud.Hide(true);
+                        hud.RemoveFromSuperview();
+                    });
+                }
             });
         }
     }
