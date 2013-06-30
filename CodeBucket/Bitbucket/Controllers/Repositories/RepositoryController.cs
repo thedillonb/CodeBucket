@@ -14,36 +14,35 @@ using CodeBucket.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryController : Controller<List<RepositoryDetailedModel>>
+    public class RepositoryController : ListController<RepositoryDetailedModel>
     {
         FilterModel _filterModel = Application.Account.RepoFilterObject;
         public string Username { get; private set; }
         public bool ShowOwner { get; set; }
 
-        public RepositoryController(string username, bool push = true)
-            : this(username, push, true)
-        {
-        }
-
         public RepositoryController(string username, bool push = true, bool refresh = true)
             : base(push, refresh)
         {
             Title = "Repositories";
-            Style = UITableViewStyle.Plain;
             Username = username;
-            AutoHideSearch = true;
-            EnableSearch = true;
             ShowOwner = true;
             EnableFilter = true;
-            SearchPlaceholder = "Search Repositories";
         }
 
-        private RepositoryElement CreateElement(RepositoryDetailedModel x)
+        protected override List<RepositoryDetailedModel> GetData(bool force, int currentPage, out int nextPage)
+        {
+            var a = Application.Client.Users[Username].GetInfo(force).Repositories;
+            nextPage = -1;
+            return a.OrderBy(x => x.Name).ToList();
+        }
+
+        protected override Element CreateElement(RepositoryDetailedModel x)
         {
             var sse = new RepositoryElement(x) { ShowOwner = ShowOwner };
             sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
             return sse;
         }
+
 
         static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
@@ -132,11 +131,6 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                 sections.Add(new Section() { new NoItemsElement("No Repositories") });
 
             InvokeOnMainThread(() => { Root = new RootElement(Title) { sections }; });
-        }
-
-        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
-        {
-            return Application.Client.Users[Username].GetInfo(forced).Repositories;
         }
 
         private void ApplyFilter()

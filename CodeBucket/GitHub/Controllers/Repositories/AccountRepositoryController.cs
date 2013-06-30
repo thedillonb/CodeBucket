@@ -20,7 +20,10 @@ namespace CodeBucket.GitHub.Controllers.Repositories
             var selected = 0;
             InvokeOnMainThread(() => { selected = _segment.SelectedSegment; });
             GitHubSharp.GitHubResponse<List<RepositoryModel>> data = null;
-            
+
+            //Set the show property based on what is selected
+            ShowOwner = selected != 0;
+
             if (selected == 0)
                 data = Application.GitHubClient.API.ListRepositories(Username);
             else if (selected == 1)

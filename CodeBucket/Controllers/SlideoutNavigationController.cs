@@ -45,11 +45,11 @@ namespace CodeBucket.Controllers
 			//Select a view based on the account type
 			if (Application.Account.AccountType == Account.Type.Bitbucket)
 			{
-				SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { Title = "Events", ReportRepository = true });
+				SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
 			}
 			else if (Application.Account.AccountType == Account.Type.GitHub)
 			{
-				SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false));
+                SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
 			}
 		}
 		

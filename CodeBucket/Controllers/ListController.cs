@@ -19,8 +19,8 @@ namespace CodeBucket.Controllers
         public bool UnevenRows { get; set; }
         public bool AppendStrategy { get; set; }
 
-        protected ListController(bool push = false)
-            : base(push, true)
+        protected ListController(bool push = false, bool refresh = true)
+            : base(push, refresh)
         {
             Style = UITableViewStyle.Plain;
             EnableSearch = true;
