@@ -61,7 +61,8 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             }
             
             //Attempt to load hte file the raw way.
-            var file = DownloadFile(_user, _slug, _branch, _path);
+            string mime;
+            var file = DownloadFile(_user, _slug, _branch, _path, out mime);
             LoadFile(file);
         }
     }

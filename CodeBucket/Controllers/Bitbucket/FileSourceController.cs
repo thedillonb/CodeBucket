@@ -69,7 +69,7 @@ namespace CodeBucket.Bitbucket.Controllers
             InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
         }
         
-        protected static string DownloadFile(string user, string slug, string branch, string path)
+        protected static string DownloadFile(string user, string slug, string branch, string path, out string mime)
         {
             //Create a temporary filename
             var ext = System.IO.Path.GetExtension(path);
@@ -81,7 +81,8 @@ namespace CodeBucket.Bitbucket.Controllers
             //Find
             using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
             {
-                Application.Client.Users[user].Repositories[slug].Branches[branch].Source.GetFileRaw(path, stream);
+                var response = Application.Client.Users[user].Repositories[slug].Branches[branch].Source.GetFileRaw(path, stream);
+                mime = response.ContentType;
             }
             
             return filepath;

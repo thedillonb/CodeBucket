@@ -35,53 +35,37 @@ namespace CodeBucket.GitHub.Controllers.Changesets
                 throw new InvalidOperationException("File does not exist!");
             }
 
-            try
-            {
-                RequestSourceDiff();
-                return;
-            }
-            catch (InternalServerException ex)
-            {
-                Console.WriteLine("Could not generate diff from source. Must be binary: " + ex.Message);
-            }
-
-            RequestBinary();
-        }
-
-        private void RequestBinary()
-        {
-            if (!Removed)
-            {
-                var mime = "";
-                var newFile = DownloadFile(_user, _slug, _branch, _path, out mime);
-                LoadFile(newFile);
-            }
-            else if (_parent != null && !Added)
-            {
-                var mime = "";
-                var newFile = DownloadFile(_user, _slug, _parent, _path, out mime);
-                LoadFile(newFile);
-            }
-            else
-            {
-                throw new InvalidOperationException("Request for file failed.");
-            }
+            RequestSourceDiff();
         }
 
         private void RequestSourceDiff()
         {
             var newSource = "";
+            var mime = "";
+
             if (!Removed)
             {
-//                newSource = System.Security.SecurityElement.Escape(
-//                    Application.GitHubClient.Users[_user].Repositories[_slug].Branches[_branch].Source.GetFile(_path).Data);
+                var file = DownloadFile(_user, _slug, _branch, _path, out mime);
+                if (mime.StartsWith("text/plain"))
+                    newSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file));
+                else
+                {
+                    LoadFile(file);
+                    return;
+                }
             }
             
             var oldSource = "";
             if (_parent != null && !Added)
             {
-//                oldSource = System.Security.SecurityElement.Escape(
-//                    Application.GitHubClient.Users[_user].Repositories[_slug].Branches[_parent].Source.GetFile(_path).Data);
+                var file = DownloadFile(_user, _slug, _parent, _path, out mime);
+                if (mime.StartsWith("text/plain"))
+                    oldSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file));
+                else
+                {
+                    LoadFile(file);
+                    return;
+                }
             }
             
             var differ = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
