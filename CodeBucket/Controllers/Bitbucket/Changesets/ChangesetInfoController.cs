@@ -1,12 +1,13 @@
 using System;
 using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
-using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using CodeBucket.Bitbucket.Controllers.Repositories;
 using System.Linq;
-using CodeBucket.Views;
 using CodeBucket.Controllers;
+using CodeFramework.Controllers;
+using CodeFramework.Views;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {

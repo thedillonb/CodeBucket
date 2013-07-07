@@ -132,14 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\Images.cs" />
-    <Compile Include="Cells\IssueCellView.cs" />
-    <Compile Include="Cells\IssueCellView.designer.cs">
-      <DependentUpon>IssueCellView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cells\RepositoryCellView.cs" />
-    <Compile Include="Cells\RepositoryCellView.designer.cs">
-      <DependentUpon>RepositoryCellView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
@@ -147,44 +139,6 @@
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
-    <Compile Include="Controllers\BaseDialogViewController.cs" />
-    <Compile Include="Controllers\Composer.cs" />
-    <Compile Include="Controllers\Controller.cs" />
-    <Compile Include="Controllers\ControllerExtensions.cs" />
-    <Compile Include="Controllers\FilterController.cs" />
-    <Compile Include="Controllers\ListController.cs" />
-    <Compile Include="Controllers\MultipleChoiceViewController.cs" />
-    <Compile Include="Controllers\RadioChoiceViewController.cs" />
-    <Compile Include="Controllers\WebViewController.cs" />
-    <Compile Include="Elements\CustomElement.cs" />
-    <Compile Include="Elements\InputElement.cs" />
-    <Compile Include="Elements\MultilinedElement.cs" />
-    <Compile Include="Elements\NameTimeStringElement.cs" />
-    <Compile Include="Elements\NewsFeedElement.cs" />
-    <Compile Include="Elements\NoItemsElement.cs" />
-    <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SplitElement.cs" />
-    <Compile Include="Elements\StyledElement.cs" />
-    <Compile Include="Elements\SubcaptionElement.cs" />
-    <Compile Include="Elements\TrueFalseElement.cs" />
-    <Compile Include="Elements\UserElement.cs" />
-    <Compile Include="Views\ErrorView.cs" />
-    <Compile Include="Views\CellBackgroundView.cs" />
-    <Compile Include="Views\DropbarView.cs" />
-    <Compile Include="Views\WatermarkView.cs" />
-    <Compile Include="Views\HeaderView.cs" />
-    <Compile Include="Views\SearchFilterView.cs" />
-    <Compile Include="Views\TitleView.cs" />
-    <Compile Include="Views\TableViewSectionView.cs" />
-    <Compile Include="Utils\DateTimeExtensions.cs" />
-    <Compile Include="Utils\MbProgressHud.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
-    <Compile Include="Utils\UIImageExtensions.cs" />
-    <Compile Include="Utils\Util.cs" />
-    <Compile Include="Utils\EnumExtensions.cs" />
-    <Compile Include="Utils\Configurations.cs" />
-    <Compile Include="Data\SQLite.cs" />
-    <Compile Include="Elements\RepositoryElement.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\AddAccountController.cs" />
@@ -219,42 +173,11 @@
     <Compile Include="Controllers\Bitbucket\Wikis\WikiController.cs" />
     <Compile Include="Controllers\Bitbucket\FileSourceController.cs" />
     <Compile Include="Controllers\Bitbucket\MenuViewController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\ProfileController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\GitHubLoginController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\GitHubLoginController.designer.cs" />
-    <Compile Include="Controllers\GitHub\Branches\BranchController.cs" />
-    <Compile Include="Controllers\GitHub\Branches\TagController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetDiffController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Events\EventsController.cs" />
-    <Compile Include="Controllers\GitHub\Events\RepoEventsController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\FollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\RepoFollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\UserFollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistFileController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\AccountGistsController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistsController.cs" />
-    <Compile Include="Controllers\GitHub\Notifications\NotificationsController.cs" />
-    <Compile Include="Controllers\GitHub\Organizations\OrganizationsController.cs" />
-    <Compile Include="Controllers\GitHub\Organizations\OrganizationInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Readme\ReadmeController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\AccountRepositoryController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\RepositoryController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\RepositoryInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\ExploreController.cs" />
-    <Compile Include="Controllers\GitHub\Source\SourceController.cs" />
-    <Compile Include="Controllers\GitHub\Source\SourceInfoController.cs" />
-    <Compile Include="Controllers\GitHub\FileViewController.cs" />
-    <Compile Include="Controllers\GitHub\MenuViewController.cs" />
+    <Compile Include="Utils\Configurations.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
-    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Controllers\AddAccountController.xib" />
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
-    <InterfaceDefinition Include="Controllers\GitHub\Accounts\GitHubLoginController.xib" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -357,38 +280,6 @@
     <Content Include="Images\Controls\barbutton-land.png" />
     <Content Include="Images\three_lines.png" />
     <Content Include="Images\filter_results.png" />
-    <Content Include="SourceBrowser\index.html" />
-    <Content Include="SourceBrowser\lang-apollo.js" />
-    <Content Include="SourceBrowser\lang-basic.js" />
-    <Content Include="SourceBrowser\lang-clj.js" />
-    <Content Include="SourceBrowser\lang-css.js" />
-    <Content Include="SourceBrowser\lang-dart.js" />
-    <Content Include="SourceBrowser\lang-erlang.js" />
-    <Content Include="SourceBrowser\lang-go.js" />
-    <Content Include="SourceBrowser\lang-hs.js" />
-    <Content Include="SourceBrowser\lang-lisp.js" />
-    <Content Include="SourceBrowser\lang-llvm.js" />
-    <Content Include="SourceBrowser\lang-lua.js" />
-    <Content Include="SourceBrowser\lang-matlab.js" />
-    <Content Include="SourceBrowser\lang-ml.js" />
-    <Content Include="SourceBrowser\lang-mumps.js" />
-    <Content Include="SourceBrowser\lang-n.js" />
-    <Content Include="SourceBrowser\lang-pascal.js" />
-    <Content Include="SourceBrowser\lang-proto.js" />
-    <Content Include="SourceBrowser\lang-r.js" />
-    <Content Include="SourceBrowser\lang-rd.js" />
-    <Content Include="SourceBrowser\lang-scala.js" />
-    <Content Include="SourceBrowser\lang-sql.js" />
-    <Content Include="SourceBrowser\lang-tcl.js" />
-    <Content Include="SourceBrowser\lang-tex.js" />
-    <Content Include="SourceBrowser\lang-vb.js" />
-    <Content Include="SourceBrowser\lang-vhdl.js" />
-    <Content Include="SourceBrowser\lang-wiki.js" />
-    <Content Include="SourceBrowser\lang-xq.js" />
-    <Content Include="SourceBrowser\lang-yaml.js" />
-    <Content Include="SourceBrowser\prettify.css" />
-    <Content Include="SourceBrowser\prettify.js" />
-    <Content Include="SourceBrowser\run_prettify.js" />
     <Content Include="Images\back_button%402x.png" />
     <Content Include="Images\forward_button%402x.png" />
     <Content Include="Default-568h%402x.png" />
@@ -404,14 +295,6 @@
     <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>MonoTouch.Dialog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\monotouch.slideoutnavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
-      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
-      <Name>MonoTouch.SlideoutNavigation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
       <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
       <Name>RestSharp.MonoTouch</Name>
@@ -424,19 +307,23 @@
       <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OHAttributedLabel\OHAttributedLabel.csproj">
+    <ProjectReference Include="..\CodeFramework\CodeFramework\CodeFramework.csproj">
+      <Project>{FECA9DCA-3B0B-4C0E-B7B4-E826C1BFDDB2}</Project>
+      <Name>CodeFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\OHAttributedLabel\OHAttributedLabel.csproj">
       <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
       <Name>OHAttributedLabel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
-      <Project>{8913502E-CDFB-4FD8-855A-5D6177B60B42}</Project>
-      <Name>DiffPlex</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Markup\Markup.csproj">
-      <Project>{B6ED00F3-206B-4A94-A109-0A97F2E68F60}</Project>
-      <Name>Markup</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\monotouch-uservoice\UserVoice\UserVoice\UserVoice.csproj">
+    <ProjectReference Include="..\CodeFramework\monotouch-uservoice\UserVoice\UserVoice\UserVoice.csproj">
       <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
       <Name>UserVoice</Name>
     </ProjectReference>
@@ -448,5 +335,8 @@
     <BundleResource Include="Images\script%402x.png" />
     <BundleResource Include="Images\information%402x.png" />
     <BundleResource Include="Images\information.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>

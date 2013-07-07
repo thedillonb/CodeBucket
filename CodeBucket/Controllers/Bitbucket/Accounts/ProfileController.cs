@@ -1,5 +1,4 @@
 using CodeBucket.Bitbucket.Controllers;
-using CodeBucket.Views;
 using MonoTouch.Dialog;
 using BitbucketSharp.Models;
 using MonoTouch.Dialog.Utilities;
@@ -8,7 +7,9 @@ using CodeBucket.Bitbucket.Controllers.Events;
 using CodeBucket.Bitbucket.Controllers.Groups;
 using CodeBucket.Bitbucket.Controllers.Repositories;
 using CodeBucket.Controllers;
-using CodeBucket.Elements;
+using CodeFramework.Controllers;
+using CodeFramework.Views;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers
 {

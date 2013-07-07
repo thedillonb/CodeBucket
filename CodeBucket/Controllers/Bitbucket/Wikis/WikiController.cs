@@ -1,10 +1,11 @@
 using System;
 using CodeBucket.Bitbucket.Controllers;
-using CodeBucket.Views;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch;
 using CodeBucket.Controllers;
+using CodeFramework.Views;
+using CodeFramework.Controllers;
 
 
 namespace CodeBucket.Bitbucket.Controllers.Wikis

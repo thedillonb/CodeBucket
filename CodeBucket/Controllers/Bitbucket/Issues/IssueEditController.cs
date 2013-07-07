@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using BitbucketSharp.Models;
-using CodeBucket.Elements;
 using MonoTouch;
 using MonoTouch.UIKit;
 using CodeBucket.Bitbucket.Controllers;
@@ -10,6 +9,8 @@ using MonoTouch.Foundation;
 using CodeBucket.Bitbucket.Controllers.Privileges;
 using System.Collections.Generic;
 using CodeBucket.Controllers;
+using CodeFramework.Controllers;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {

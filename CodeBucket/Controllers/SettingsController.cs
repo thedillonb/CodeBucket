@@ -4,7 +4,8 @@ using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.MessageUI;
 using CodeBucket.Data;
-using CodeBucket.Elements;
+using CodeFramework.Elements;
+using CodeFramework.Controllers;
 
 namespace CodeBucket.Controllers
 {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeBucket.Bitbucket.Controllers;
 using CodeBucket.Controllers;
+using CodeFramework.Controllers;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {

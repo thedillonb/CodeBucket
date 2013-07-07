@@ -102,6 +102,16 @@ namespace CodeBucket.Data
             return this.Id.Equals(act.Id);
 		}
 
+        /// <summary>
+        /// Serves as a hash function for a <see cref="Gistacular.Data.Account"/> object.
+        /// </summary>
+        /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
+        /// hash table.</returns>
+        public override int GetHashCode ()
+        {
+            return this.Id;
+        }
+
         #region Filters
 
         private IssuesController.FilterModel _issueFilterModel;

@@ -6,11 +6,10 @@ using System.Linq;
 using CodeBucket.Bitbucket.Controllers;
 using System;
 using System.Drawing;
+using CodeFramework.Controllers;
+using CodeFramework.Elements;
+using CodeFramework.Views;
 
-using CodeBucket.Cells;
-using CodeBucket.Controllers;
-using CodeBucket.Views;
-using CodeBucket.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {

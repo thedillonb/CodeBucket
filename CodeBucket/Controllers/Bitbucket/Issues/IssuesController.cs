@@ -8,10 +8,10 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch;
 using CodeBucket.Bitbucket.Controllers.Privileges;
-using CodeBucket.Cells;
 using CodeBucket.Controllers;
-using CodeBucket.Views;
-using CodeBucket.Elements;
+using CodeFramework.Controllers;
+using CodeFramework.Views;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {

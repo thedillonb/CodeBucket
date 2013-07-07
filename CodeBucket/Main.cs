@@ -2,8 +2,10 @@ using System.Linq;
 using CodeBucket.Bitbucket.Controllers.Accounts;
 using CodeBucket.Controllers;
 using CodeBucket.Data;
-using CodeBucket.Elements;
-using CodeBucket.Views;
+using CodeFramework.Elements;
+using CodeFramework.Views;
+using CodeFramework.Controllers;
+using CodeFramework.Cells;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
@@ -56,6 +58,7 @@ namespace CodeBucket
 			return true;
 		}
 
+
 		/// <summary>
 		/// Sets the theme of the application.
 		/// </summary>
@@ -100,6 +103,17 @@ namespace CodeBucket
             NewsFeedElement.LinkFont = UIFont.BoldSystemFontOfSize(12f);
             TableViewSectionView.BackgroundImage = Images.Searchbar;
 
+            WebViewController.BackButtonImage = Images.BackNavigationButton;
+            WebViewController.ForwardButtonImage = Images.ForwardNavigationButton;
+
+            IssueCellView.User = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueCellView.Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueCellView.Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueCellView.Cog = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up);
+
+            RepositoryCellView.Commit = new UIImage(Images.ScmType.CGImage, 1.3f, UIImageOrientation.Up);
+            RepositoryCellView.Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);
+            RepositoryCellView.Fork = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up);
 			
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

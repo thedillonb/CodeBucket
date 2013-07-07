@@ -2,7 +2,6 @@ using System;
 using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
-using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Drawing;
@@ -10,7 +9,9 @@ using MonoTouch.Foundation;
 using System.Linq;
 using MonoTouch;
 using CodeBucket.Controllers;
-using CodeBucket.Views;
+using CodeFramework.Controllers;
+using CodeFramework.Views;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {

@@ -3,9 +3,10 @@ using System.Linq;
 using CodeBucket.Bitbucket.Controllers;
 using System.Collections.Generic;
 using BitbucketSharp.Models;
-using CodeBucket.Elements;
 using MonoTouch.Dialog;
 using CodeBucket.Controllers;
+using CodeFramework.Controllers;
+using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Privileges
 {
