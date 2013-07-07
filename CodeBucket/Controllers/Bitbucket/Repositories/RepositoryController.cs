@@ -37,7 +37,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         protected override Element CreateElement(RepositoryDetailedModel x)
         {
-            var sse = new RepositoryElement(x) { ShowOwner = ShowOwner };
+            var sse = new RepositoryElement(x.Name, x.Scm, x.FollowersCount, x.ForkCount, x.Description, x.Owner) { ShowOwner = ShowOwner };
             sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
             return sse;
         }

@@ -74,10 +74,10 @@ namespace CodeBucket.Data
 		/// <summary>
 		/// Remove the specified username.
 		/// </summary>
-		public void Remove(string username, Account.Type type)
+		public void Remove(string username)
 		{
 			var q = from f in Database.Main.Table<Account>()
-				where f.Username == username && f.AccountType == type
+				where f.Username == username
 					select f;
 			var account = q.FirstOrDefault();
 			if (account != null)
@@ -89,15 +89,15 @@ namespace CodeBucket.Data
 		/// </summary>
 		public bool Exists(Account account)
 		{
-			return Find(account.Username, account.AccountType) != null;
+			return Find(account.Username) != null;
 		}
 
 		/// <summary>
 		/// Find the specified account via it's username
 		/// </summary>
-		public Account Find(string username, Account.Type type)
+		public Account Find(string username)
 		{
-			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?) and AccountType = ?", username, type);
+			var query = Database.Main.Query<Account>("select * from Account where LOWER(Username) = LOWER(?)", username);
 			if (query.Count > 0)
 				return query[0];
 			return null;

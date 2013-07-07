@@ -141,8 +141,6 @@
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\AddAccountController.cs" />
-    <Compile Include="Controllers\AddAccountController.designer.cs" />
     <Compile Include="Controllers\MenuBaseController.cs" />
     <Compile Include="Controllers\Bitbucket\Accounts\ProfileController.cs" />
     <Compile Include="Controllers\Bitbucket\Accounts\LoginViewController.cs" />
@@ -176,7 +174,6 @@
     <Compile Include="Utils\Configurations.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Controllers\AddAccountController.xib" />
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
@@ -302,10 +299,6 @@
     <ProjectReference Include="..\bitbucketsharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\githubsharp\GitHubSharp\GitHubSharp.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\CodeFramework\CodeFramework\CodeFramework.csproj">
       <Project>{FECA9DCA-3B0B-4C0E-B7B4-E826C1BFDDB2}</Project>

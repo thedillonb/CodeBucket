@@ -43,14 +43,7 @@ namespace CodeBucket.Controllers
 			Application.Cache.DeleteAll();
 
 			//Select a view based on the account type
-			if (Application.Account.AccountType == Account.Type.Bitbucket)
-			{
-				SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
-			}
-			else if (Application.Account.AccountType == Account.Type.GitHub)
-			{
-                SelectView(new GitHub.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
-			}
+			SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
 		}
 		
 		public override void ViewWillAppear(bool animated)
@@ -62,14 +55,7 @@ namespace CodeBucket.Controllers
 				return;
 
 			//Determine which menu to instantiate by the account type!
-			if (Application.Account.AccountType == Account.Type.Bitbucket)
-			{
-				MenuView = new Bitbucket.Controllers.MenuController();
-			}
-			else if (Application.Account.AccountType == Account.Type.GitHub)
-			{
-				MenuView = new GitHub.Controllers.MenuController();
-			}
+			MenuView = new Bitbucket.Controllers.MenuController();
 		}
 	}
 }

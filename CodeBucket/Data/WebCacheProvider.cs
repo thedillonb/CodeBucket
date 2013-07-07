@@ -6,7 +6,7 @@ using MonoTouch;
 
 namespace CodeBucket.Data
 {
-    public class WebCacheProvider : ICacheProvider, GitHubSharp.ICacheProvider
+    public class WebCacheProvider : ICacheProvider
     {
         private const int MaxCachedItems = 50;
         private readonly Dictionary<string, CachedObject> _cache = new Dictionary<string, CachedObject>(MaxCachedItems);

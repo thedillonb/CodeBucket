@@ -57,7 +57,6 @@ namespace CodeBucket.Data
                         var oldAccounts = this.Table<Account>();
                         var newAccounts = new List<CodeBucket.Data.Account>(oldAccounts.Select(x => 
                             new CodeBucket.Data.Account() {
-                                AccountType = CodeBucket.Data.Account.Type.Bitbucket,
                                 AvatarUrl = x.AvatarUrl,
                                 DontRemember = x.DontRemember,
                                 Password = x.Password,

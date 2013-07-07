@@ -4,9 +4,6 @@
 [submodule "RestSharp"]
 	path = RestSharp
 	url = https://github.com/thedillonb/RestSharp.git
-[submodule "githubsharp"]
-	path = githubsharp
-	url = https://github.com/thedillonb/GitHubSharp.git
 [submodule "CodeFramework"]
 	path = CodeFramework
 	url = https://github.com/thedillonb/CodeFramework.git

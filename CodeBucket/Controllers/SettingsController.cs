@@ -19,7 +19,7 @@ namespace CodeBucket.Controllers
             Title = "Settings";
             Style = UITableViewStyle.Grouped;
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissModalViewControllerAnimated(true));
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissViewController(true, null));
         }
 
         public override void ViewWillAppear(bool animated)
@@ -38,24 +38,15 @@ namespace CodeBucket.Controllers
 					//Change the user delegate
 					Action<Account> changeUserAction = (a) => {
 						Application.SetUser(a);
-						DismissModalViewControllerAnimated(true);
+                        DismissViewController(true, null);
 					};
 
 					//If the account doesn't remember the password we need to prompt
 					if (thisAccount.DontRemember)
 					{
-						if (thisAccount.AccountType == Account.Type.Bitbucket)
-						{
-							var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-							loginController.LoginComplete = changeUserAction;
-							NavigationController.PushViewController(loginController, true);
-						}
-                        else if (thisAccount.AccountType == Account.Type.GitHub)
-                        {
-                            var loginController = new CodeBucket.GitHub.Controllers.Accounts.GitHubLoginController() { Username = thisAccount.Username };
-                            loginController.LoginComplete = changeUserAction;
-                            NavigationController.PushViewController(loginController, true);
-                        }
+						var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
+						loginController.LoginComplete = changeUserAction;
+						NavigationController.PushViewController(loginController, true);
 					}
 					//Change the user!
 					else
@@ -72,9 +63,9 @@ namespace CodeBucket.Controllers
             }
 
             var addAccount = new StyledElement("Add Account", () => {
-				var ctrl = new AddAccountController();
-				ctrl.AccountAdded = (a) => NavigationController.PopToViewController(this, true);
-				NavigationController.PushViewController(ctrl, true);
+                var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
+                ctrl.LoginComplete = (a) => NavigationController.PopToViewController(this, true);
+                NavigationController.PushViewController(ctrl, true);
 			});
             //addAccount.Image = Images.CommentAdd;
             accountSection.Add(addAccount);
@@ -177,7 +168,7 @@ namespace CodeBucket.Controllers
 		{
 			public Account Account { get; private set; }
 			public AccountElement(Account account)
-				: base(account.Username, account.AccountType.ToString(), UITableViewCellStyle.Subtitle)
+				: base(account.Username)
 			{
 				Account = account;
 				Image = Images.Anonymous;
@@ -203,8 +194,11 @@ namespace CodeBucket.Controllers
                     base.LayoutSubviews();
                     ImageView.Frame = new System.Drawing.RectangleF(5, 5, 32, 32);
                     ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
+                    ImageView.Layer.CornerRadius = 4.0f;
+                    ImageView.Layer.MasksToBounds = true;
                     TextLabel.Frame = new System.Drawing.RectangleF(42, TextLabel.Frame.Y, TextLabel.Frame.Width, TextLabel.Frame.Height);
-                    DetailTextLabel.Frame = new System.Drawing.RectangleF(42, DetailTextLabel.Frame.Y, DetailTextLabel.Frame.Width, DetailTextLabel.Frame.Height);
+                    if (DetailTextLabel != null)
+                        DetailTextLabel.Frame = new System.Drawing.RectangleF(42, DetailTextLabel.Frame.Y, DetailTextLabel.Frame.Width, DetailTextLabel.Frame.Height);
                 }
             }
 		}

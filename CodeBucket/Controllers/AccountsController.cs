@@ -50,31 +50,19 @@ namespace CodeBucket.Controllers
 			foreach (var account in Application.Accounts)
 			{
 				var thisAccount = account;
-				var t = new StyledElement(thisAccount.Username, thisAccount.AccountType.ToString(), UITableViewCellStyle.Subtitle) { Image = Images.Anonymous };
+				var t = new StyledElement(thisAccount.Username) { Image = Images.Anonymous };
 				if (!string.IsNullOrEmpty(thisAccount.AvatarUrl))
 					t.ImageUri = new Uri(thisAccount.AvatarUrl);
 				
 				t.Tapped += () => { 
 					if (thisAccount.DontRemember)
 					{
-						if (thisAccount.AccountType == Account.Type.Bitbucket)
-						{
-							var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController { Username = thisAccount.Username };
-							loginController.LoginComplete = a => {
-								NavigationController.PopToViewController(this, true);
-								OnAccountSelected(a); 
-							};
-							NavigationController.PushViewController(loginController, true);
-						}
-                        else if (thisAccount.AccountType == Account.Type.GitHub)
-                        {
-                            var loginController = new CodeBucket.GitHub.Controllers.Accounts.GitHubLoginController { Username = thisAccount.Username };
-                            loginController.LoginComplete = a => {
-                                NavigationController.PopToViewController(this, true);
-                                OnAccountSelected(a); 
-                            };
-                            NavigationController.PushViewController(loginController, true);
-                        }
+						var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController { Username = thisAccount.Username };
+						loginController.LoginComplete = a => {
+							NavigationController.PopToViewController(this, true);
+							OnAccountSelected(a); 
+						};
+						NavigationController.PushViewController(loginController, true);
 					}
 					else
 					{
@@ -87,9 +75,9 @@ namespace CodeBucket.Controllers
 
 			var addSection = new Section();
 			var addAccount = new StyledElement("Add Account", () => {
-				var ctrl = new AddAccountController();
-				ctrl.AccountAdded = a => NavigationController.PopToViewController(this, true);
-				NavigationController.PushViewController(ctrl, true);
+                var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
+                ctrl.LoginComplete = (a) => NavigationController.PopToViewController(this, true);
+                NavigationController.PushViewController(ctrl, true);
 			});
 			//addAccount.Image = Images.CommentAdd;
 			addSection.Add(addAccount);

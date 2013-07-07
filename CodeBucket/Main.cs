@@ -132,7 +132,8 @@ namespace CodeBucket
 			//There's no accounts...
 			if (GetDefaultAccount() == null)
 			{
-			    var login = new AddAccountController {AccountAdded = delegate { ShowMainWindow(); }};
+                var login = new Bitbucket.Controllers.Accounts.LoginViewController();
+                login.LoginComplete = delegate { ShowMainWindow(); };
 
 			    //Make it so!
 				_window.RootViewController = new UINavigationController(login);
@@ -149,20 +150,10 @@ namespace CodeBucket
 					};
 
                     UIViewController loginController = null;
-                    if (defaultAccount.AccountType == Account.Type.Bitbucket)
-                    {
-                        loginController = new LoginViewController {
-                            Username = defaultAccount.Username, 
-                            LoginComplete = delegate { ShowMainWindow(); }
-                        };
-                    }
-                    else if (defaultAccount.AccountType == Account.Type.GitHub)
-                    {
-                        loginController = new GitHub.Controllers.Accounts.GitHubLoginController {
-                            Username = defaultAccount.Username, 
-                            LoginComplete = delegate { ShowMainWindow(); }
-                        };
-                    }
+                    loginController = new LoginViewController {
+                        Username = defaultAccount.Username, 
+                        LoginComplete = delegate { ShowMainWindow(); }
+                    };
 
 				    var navigationController = new UINavigationController(accountsController);
 

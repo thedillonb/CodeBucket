@@ -8,7 +8,6 @@ namespace CodeBucket
     public static class Application
     {
         public static BitbucketSharp.Client Client { get; private set; }
-		public static GitHubSharp.Client GitHubClient { get; private set; }
 
         public static Account Account { get; private set; }
         public static Accounts Accounts { get; private set; }
@@ -26,7 +25,6 @@ namespace CodeBucket
             {
                 Account = null;
 				Client = null;
-				GitHubClient = null;
                 Accounts.SetDefault(null);
                 return;
             }
@@ -34,22 +32,10 @@ namespace CodeBucket
             Account = account;
             Accounts.SetDefault(Account);
 
-			if (account.AccountType == Account.Type.Bitbucket)
-			{
-				GitHubClient = null;
-				Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
-					Timeout = 1000 * 30, //30 seconds
-					CacheProvider = Cache,
-				};
-			}
-			else if (account.AccountType == Account.Type.GitHub)
-			{
-				Client = null;
-				GitHubClient = new GitHubSharp.Client(Account.Username, Account.Password) {
-					Timeout = 1000 * 30, //30 seconds
-					CacheProvider = Cache,
-				};
-			}
+			Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
+				Timeout = 1000 * 30, //30 seconds
+				CacheProvider = Cache,
+			};
         }
     }
 }

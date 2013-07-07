@@ -6,15 +6,6 @@ namespace CodeBucket.Data
 {
     public class Account
     {
-		/// <summary>
-		/// The account type
-		/// </summary>
-		public enum Type
-		{
-			Bitbucket = 0,
-			GitHub = 1
-		}
-
 		[PrimaryKey]
 		[AutoIncrement]
 		public int Id { get; set; }
@@ -44,19 +35,12 @@ namespace CodeBucket.Data
 		public bool DontRemember { get; set; }
 
 		/// <summary>
-		/// Gets or sets the type of the account.
-		/// </summary>
-		/// <value>The type of the account.</value>
-		public Type AccountType { get; set; }
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.
 		/// </summary>
 		public Account()
 		{
 			//Set some default values
 			DontRemember = false;
-			AccountType = Type.Bitbucket;
 		}
 		
 		/// <summary>

@@ -74,7 +74,13 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
         private IssueElement CreateElement(IssueModel model)
         {
-            var el = new IssueElement(model);
+            var assigned = model.Responsible != null ? model.Responsible.Username : "unassigned";
+            var kind = model.Metadata.Kind;
+            if (kind.ToLower().Equals("enhancement")) 
+                kind = "enhance";
+
+            var el = new IssueElement(model.LocalId.ToString(), model.Title, assigned, model.Status, model.Priority, kind, model.UtcLastUpdated);
+            el.Tag = model;
             el.Tapped += () =>
             {
                 //Make sure the first responder is gone.
@@ -166,7 +172,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 for (r = 0; r < Root[s].Count; r++)
                 {
                     var el = Root[s][r] as IssueElement;
-                    if (el != null && el.Model.LocalId == issue.LocalId)
+                    if (el != null && ((IssueModel)el.Tag).LocalId == issue.LocalId)
                     {
                         done = true;
                         break;

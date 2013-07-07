@@ -77,7 +77,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             if (username.Contains("@"))
                 username = userInfo.User.Username;
 
-            return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar, AccountType = Account.Type.Bitbucket };
+            return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar };
         }
 		/// <summary>
 		/// Begins the login process.
@@ -118,7 +118,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
                     return;
                 }
 
-				var account = Application.Accounts.Find(loggedInAccount.Username, Account.Type.Bitbucket);
+				var account = Application.Accounts.Find(loggedInAccount.Username);
 
 				//Account does not exist! Add it!
 				if (account == null)
