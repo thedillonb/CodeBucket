@@ -24,7 +24,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         {
             Title = "Repositories";
             Username = username;
-            ShowOwner = true;
+            ShowOwner = false;
             EnableFilter = true;
         }
 

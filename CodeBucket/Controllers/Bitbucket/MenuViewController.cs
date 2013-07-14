@@ -28,14 +28,14 @@ namespace CodeBucket.Bitbucket.Controllers
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-            repoSection.Add(new MenuElement("Owned", () => NavPush(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo));
-            repoSection.Add(new MenuElement("Following", () => NavPush(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo));
+            repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoryController(Application.Account.Username, false) { Title = "Owned" }), Images.Repo));
+            repoSection.Add(new MenuElement("Following", () => NavPush(new FollowingRepositoryController()), Images.RepoFollow));
             repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), UIImage.FromBundle("/Images/Tabs/search")));
             root.Add(repoSection);
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Groups & Teams") };
             groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Group));
-            groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Group));
+            groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Team));
             root.Add(groupsTeamsSection);
 
             var settingsSection = new Section() { HeaderView = new MenuSectionView("Settings") };

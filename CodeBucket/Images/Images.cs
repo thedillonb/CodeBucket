@@ -8,6 +8,11 @@ namespace CodeBucket
         public static UIImage Language = UIImage.FromBundle("/Images/language");
         public static UIImage Webpage = UIImage.FromBundle("/Images/webpage");
         public static UIImage Repo = UIImage.FromBundle("/Images/repo");
+
+        public static UIImage RepoFollow = UIImageHelper.FromFileAuto("Images/repo_follow");
+        public static UIImage Team = UIImageHelper.FromFileAuto("Images/team");
+
+
         public static UIImage Size = UIImage.FromBundle("/Images/size");
         public static UIImage Locked = UIImage.FromBundle("/Images/locked");
         public static UIImage Unlocked = UIImage.FromBundle("/Images/unlocked");

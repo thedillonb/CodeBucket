@@ -161,7 +161,6 @@
     <Compile Include="Controllers\Bitbucket\Issues\IssuesController.cs" />
     <Compile Include="Controllers\Bitbucket\Issues\SingleItemSelectViewController.cs" />
     <Compile Include="Controllers\Bitbucket\Privileges\PrivilegesController.cs" />
-    <Compile Include="Controllers\Bitbucket\Repositories\AccountRepositoryController.cs" />
     <Compile Include="Controllers\Bitbucket\Repositories\ExploreController.cs" />
     <Compile Include="Controllers\Bitbucket\Repositories\RepositoryController.cs" />
     <Compile Include="Controllers\Bitbucket\Repositories\RepositoryInfoController.cs" />
@@ -173,6 +172,7 @@
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\Bitbucket\Teams\TeamController.cs" />
+    <Compile Include="Controllers\Bitbucket\Repositories\FollowingRepositoryController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
@@ -326,9 +326,22 @@
     <BundleResource Include="Images\script%402x.png" />
     <BundleResource Include="Images\information%402x.png" />
     <BundleResource Include="Images\information.png" />
+    <BundleResource Include="Images\repo_follow%402x.png" />
+    <BundleResource Include="Images\repo_follow.png" />
+    <BundleResource Include="Images\team%402x.png" />
+    <BundleResource Include="Images\team.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
     <Folder Include="Controllers\Bitbucket\Teams\" />
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
