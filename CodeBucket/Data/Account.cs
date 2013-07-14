@@ -1,6 +1,8 @@
 using SQLite;
 using CodeBucket.Bitbucket.Controllers.Issues;
 using CodeBucket.Bitbucket.Controllers.Repositories;
+using BitbucketSharp.Models;
+using System.Collections.Generic;
 
 namespace CodeBucket.Data
 {
@@ -33,6 +35,17 @@ namespace CodeBucket.Data
 		/// THIS HAS TO BE A NEGATIVE STATEMENT SINCE IT DEFAULTS TO 'FALSE' WHEN RETRIEVING A NULL VIA SQLITE
 		/// </summary>
 		public bool DontRemember { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether teams should be listed in the menu controller under 'events'
+        /// </summary>
+        public bool DontShowTeamEvents { get; set; }
+
+        /// <summary>
+        /// A transient list of the teams this account is a part of
+        /// </summary>
+        [Ignore]
+        public List<TeamModel> Teams { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.

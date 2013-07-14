@@ -24,7 +24,15 @@ namespace CodeBucket.Bitbucket.Controllers
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false) { ReportRepository = true }), Images.Event));
+            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false)), Images.Event));
+            if (Application.Account.Teams != null && !Application.Account.DontShowTeamEvents)
+            {
+                foreach (var t in Application.Account.Teams)
+                {
+                    var team = t; //Capture
+                    eventsSection.Add(new MenuElement(team.DisplayName, () => NavPush(new EventsController(team.Username, false)), Images.Event));
+                }
+            }
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };

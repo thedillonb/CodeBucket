@@ -34,7 +34,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             Style = UITableViewStyle.Plain;
             Username = username;
             Root.UnevenRows = true;
-            ReportRepository = false;
+            ReportRepository = true;
         }
 
         protected virtual EventsModel OnGetData(int start = 0, int limit = 30)

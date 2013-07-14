@@ -11,8 +11,6 @@ namespace CodeBucket.Controllers
 {
     public class SettingsController : BaseDialogViewController
     {
-		private Section _accountOptionsSection;
-
         public SettingsController()
             : base(false)
         {
@@ -26,19 +24,21 @@ namespace CodeBucket.Controllers
         {
             base.ViewWillAppear(animated);
             var root = new RootElement(Title);
-
 			var currentAccount = Application.Account;
-			if (currentAccount != null)
-			{
-				_accountOptionsSection = new Section("Account Options");
-				root.Add(_accountOptionsSection);
-	            var autoSigninElement = new TrueFalseElement("Remember Credentials", !currentAccount.DontRemember);
-	            autoSigninElement.ValueChanged += (sender, e) => { 
-					currentAccount.DontRemember = !autoSigninElement.Value; 
-					currentAccount.Update();
-				};
-				_accountOptionsSection.Add(autoSigninElement);
-			}
+
+            root.Add(new Section(string.Empty, "If disabled, CodeBucket will prompt you for your password when you switch to this account.") {
+                    new TrueFalseElement("Remember Credentials", !currentAccount.DontRemember, (e) => { 
+                        currentAccount.DontRemember = !e.Value; 
+                        currentAccount.Update();
+                    })
+            });
+
+            root.Add(new Section(string.Empty, "If enabled, your teams will be shown in the CodeBucket slideout menu.") {
+                new TrueFalseElement("Show Teams in Menu", !currentAccount.DontShowTeamEvents, (e) => { 
+                    currentAccount.DontShowTeamEvents = !e.Value; 
+                    currentAccount.Update();
+                })
+            });
 
 			//Assign the root
 			Root = root;

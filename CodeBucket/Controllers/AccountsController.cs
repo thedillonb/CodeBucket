@@ -40,6 +40,30 @@ namespace CodeBucket.Controllers
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => this.DismissViewController(true, null)));
 		}
 
+        private void ChangeUser(Account account)
+        {
+            this.DoWork("Logging In...", () => {
+                //Getting the team is experimental. 
+                //This should never cause a failure of the login process.
+                try
+                {
+                    var client = new BitbucketSharp.Client(account.Username, account.Password);
+                    account.Teams = client.Account.Teams.GetTeams();
+                }
+                catch
+                {
+                }
+
+                InvokeOnMainThread(() => {
+                    Application.SetUser(account);
+                    OnAccountSelected(account);
+                    DismissViewController(true, null);
+                });
+            }, (e) => {
+                MonoTouch.Utilities.ShowAlert("Unable to login", e.Message);
+            });
+        }
+
 		/// <summary>
 		/// Views the will appear.
 		/// </summary>
@@ -53,25 +77,17 @@ namespace CodeBucket.Controllers
                 var thisAccount = account;
                 var t = new AccountElement(thisAccount);
                 t.Tapped += () => { 
-
-                    //Change the user delegate
-                    Action<Account> changeUserAction = (a) => {
-                        Application.SetUser(a);
-                        OnAccountSelected(a);
-                        DismissViewController(true, null);
-                    };
-
                     //If the account doesn't remember the password we need to prompt
                     if (thisAccount.DontRemember)
                     {
                         var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-                        loginController.LoginComplete = changeUserAction;
+                        loginController.LoginComplete = ChangeUser;
                         NavigationController.PushViewController(loginController, true);
                     }
                     //Change the user!
                     else
                     {
-                        changeUserAction(thisAccount);
+                        ChangeUser(thisAccount);
                     }
                 };
 

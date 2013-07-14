@@ -11,6 +11,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             : base(username)
         {
             Slug = slug;
+            ReportRepository = false;
         }
         
         protected override EventsModel OnGetData(int start = 0, int limit = 30)

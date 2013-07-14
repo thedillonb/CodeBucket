@@ -25,7 +25,7 @@ namespace CodeBucket.Controllers
 			Application.Cache.DeleteAll();
 
 			//Select a view based on the account type
-			SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false) { ReportRepository = true });
+			SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false));
 		}
 		
 		public override void ViewWillAppear(bool animated)
