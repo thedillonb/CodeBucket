@@ -41,15 +41,14 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Root.UnevenRows = true;
             SearchPlaceholder = "Search Issues";
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => {
-                var b = new IssueEditController
-                {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Add, () => {
+                var b = new IssueEditController {
                     Username = User,
                     RepoSlug = Slug,
                     Success = OnCreateIssue
                 };
                 NavigationController.PushViewController(b, true);
-            });
+            }));
 
             _titleView = new TitleView();
             RefreshCaption();
@@ -535,7 +534,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                         new StyledElement("Save as Default", () => {  
                             var model = CreateFilterModel();
                             Application.Account.IssueFilterObject = model;
-                            this.DismissModalViewControllerAnimated(true); 
+                            this.DismissViewController(true, null); 
                             this.ApplyFilter();
                         }, Images.Size) { Accessory = UITableViewCellAccessory.None },
                     }

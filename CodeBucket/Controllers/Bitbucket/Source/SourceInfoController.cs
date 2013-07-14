@@ -2,7 +2,6 @@ using System;
 using MonoTouch.UIKit;
 using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.Foundation;
-using CodeBucket.Bitbucket.Controllers;
 using BitbucketSharp;
 
 namespace CodeBucket.Bitbucket.Controllers.Source

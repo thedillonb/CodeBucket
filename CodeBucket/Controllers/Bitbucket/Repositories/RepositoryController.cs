@@ -190,7 +190,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                     new Section() {
                         new StyledElement("Save as Default", () => {  
                             Application.Account.RepoFilterObject = CreateFilterModel();
-                            this.DismissModalViewControllerAnimated(true); 
+                            this.DismissViewController(true, null); 
                             this.ApplyFilter();
                         }, Images.Size) { Accessory = UITableViewCellAccessory.None },
                     }

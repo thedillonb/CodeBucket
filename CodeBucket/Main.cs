@@ -20,7 +20,7 @@ namespace CodeBucket
 	{
 		// class-level declarations
 		UIWindow _window;
-        SlideoutNavigationController _nav;
+        CodeBucket.Controllers.SlideoutNavigationController _nav;
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -232,8 +232,7 @@ namespace CodeBucket
 //            }
 //            else
             {
-				_nav = new SlideoutNavigationController();
-                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
+				_nav = new CodeBucket.Controllers.SlideoutNavigationController();
                 _window.RootViewController = _nav;
             }
         }

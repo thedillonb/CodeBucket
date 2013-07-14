@@ -4,6 +4,7 @@ using RedPlum;
 using System.Threading;
 using MonoTouch;
 using CodeBucket.Data;
+using CodeFramework.Views;
 
 namespace CodeBucket.Bitbucket.Controllers.Accounts
 {
@@ -24,6 +25,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         public LoginViewController()
             : base("LoginViewController", null)
         {
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
         public override void ViewDidLoad()

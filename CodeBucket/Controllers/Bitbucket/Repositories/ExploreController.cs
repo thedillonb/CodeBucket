@@ -22,6 +22,7 @@ namespace CodeBucket.Bitbucket.Controllers
             AutoHideSearch = false;
             Autorotate = true;
             SearchPlaceholder = "Search Repositories";
+            Title = "Explore";
         }
 
         void ShowSearch(bool value)

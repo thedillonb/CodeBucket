@@ -53,7 +53,6 @@ namespace CodeBucket
         public static UIImage BarButtonLandscape = UIImage.FromBundle("/Images/Controls/barbutton-land");
 
         public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
-        public static UIImage TitlebarDark = UIImage.FromBundle("/Images/Controls/titlebar_dark");
         public static UIImage Bottombar = UIImage.FromFile("Images/Controls/bottombar.png");
         public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
         public static UIImage Divider = UIImage.FromBundle("/Images/Controls/divider");
@@ -89,10 +88,7 @@ namespace CodeBucket
 
         public static UIImage Filter = UIImage.FromFile("Images/filter_results.png");
 
-        public static UIImage ThreeLines = UIImage.FromFile("Images/three_lines.png");
-
 		public static UIImage BitbucketLogo = UIImage.FromFile("Images/Logos/logoBitBucketPNG.png");
-		public static UIImage GitHubLogo = UIImage.FromFile("Images/Logos/GitHub-Logo.png");
 		
     }
 }

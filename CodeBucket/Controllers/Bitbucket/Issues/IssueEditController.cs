@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using CodeFramework.Views;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
@@ -41,7 +42,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             : base(true)
         {
             Title = "New Issue";
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => SaveIssue());
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Save, SaveIssue));
         }
 
         public override void ViewDidAppear(bool animated)
