@@ -172,6 +172,7 @@
     <Compile Include="Controllers\Bitbucket\MenuViewController.cs" />
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Controllers\AboutController.cs" />
+    <Compile Include="Controllers\Bitbucket\Teams\TeamController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
@@ -328,5 +329,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
+    <Folder Include="Controllers\Bitbucket\Teams\" />
   </ItemGroup>
 </Project>

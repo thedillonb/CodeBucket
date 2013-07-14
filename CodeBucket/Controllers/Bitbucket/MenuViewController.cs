@@ -11,6 +11,7 @@ using System.Threading;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
+using CodeBucket.Bitbucket.Controllers.Teams;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
@@ -18,13 +19,24 @@ namespace CodeBucket.Bitbucket.Controllers
     {
 		protected override void CreateMenu(RootElement root)
 		{
-            var bitbucketSection = new Section() { HeaderView = new MenuSectionView("Bitbucket") };
-            root.Add(bitbucketSection);
-            bitbucketSection.Add(new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person));
-            bitbucketSection.Add(new MenuElement("Events", () => NavPush(new EventsController(Application.Account.Username, false) { ReportRepository = true }), Images.Event));
-            bitbucketSection.Add(new MenuElement("Repositories", () => NavPush(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo));
-            bitbucketSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Group));
-            bitbucketSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), UIImage.FromBundle("/Images/Tabs/search")));
+            root.Add(new Section() {
+                new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person),
+            });
+
+            var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
+            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false) { ReportRepository = true }), Images.Event));
+            root.Add(eventsSection);
+
+            var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
+            repoSection.Add(new MenuElement("Owned", () => NavPush(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo));
+            repoSection.Add(new MenuElement("Following", () => NavPush(new AccountRepositoryController(Application.Account.Username) { Title = "Repositories" }), Images.Repo));
+            repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), UIImage.FromBundle("/Images/Tabs/search")));
+            root.Add(repoSection);
+
+            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Groups & Teams") };
+            groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Group));
+            groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Group));
+            root.Add(groupsTeamsSection);
 
             var settingsSection = new Section() { HeaderView = new MenuSectionView("Settings") };
             root.Add(settingsSection);
