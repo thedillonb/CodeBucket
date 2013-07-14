@@ -5,6 +5,7 @@ using CodeBucket.Data;
 using CodeFramework.Elements;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
+using System.Linq;
 
 namespace CodeBucket.Controllers
 {
@@ -43,15 +44,20 @@ namespace CodeBucket.Controllers
         private void ChangeUser(Account account)
         {
             this.DoWork("Logging In...", () => {
-                //Getting the team is experimental. 
-                //This should never cause a failure of the login process.
                 try
                 {
                     var client = new BitbucketSharp.Client(account.Username, account.Password);
-                    account.Teams = client.Account.Teams.GetTeams();
+                    var privileges = client.Account.GetPrivileges();
+                    account.Teams = null; //Invalidate the teams if they existed
+                    if (privileges != null && privileges.Teams != null)
+                    {
+                        account.Teams = privileges.Teams.Keys.OrderBy(a => a).ToList();
+                        account.Teams.Remove(account.Username); //Remove this user from the 'team' list
+                    }
                 }
-                catch
+                catch (Exception e)
                 {
+                    MonoTouch.Utilities.LogException("Unable to get privileges", e);
                 }
 
                 InvokeOnMainThread(() => {

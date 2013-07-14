@@ -16,13 +16,10 @@ namespace CodeBucket.Controllers
         {
             Title = "Settings";
             Style = UITableViewStyle.Grouped;
-
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissViewController(true, null));
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
             var root = new RootElement(Title);
 			var currentAccount = Application.Account;
 
@@ -42,16 +39,9 @@ namespace CodeBucket.Controllers
 
 			//Assign the root
 			Root = root;
+
+            base.ViewWillAppear(animated);
         }
-
-
-
-        private void OpenUserVoice()
-        {
-            var config = UserVoice.UVConfig.Create("http://codebucket.uservoice.com", "pnuDmPENErDiDpXrms1DTg", "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk");
-            UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
-        }
-
     }
 }
 

@@ -10,7 +10,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Teams
 {
-    public class TeamController : ListController<TeamModel>
+    public class TeamController : ListController<string>
     {
         public TeamController(bool push = true) 
             : base(push)
@@ -19,19 +19,20 @@ namespace CodeBucket.Bitbucket.Controllers.Teams
             SearchPlaceholder = "Search Teams";
         }
 
-        protected override List<TeamModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override List<string> GetData(bool force, int currentPage, out int nextPage)
         {
-            var items = Application.Client.Account.Teams.GetTeams();
+            var items = Application.Client.Account.GetPrivileges(force);
             nextPage = -1;
-            return items.OrderBy(a => a.DisplayName).ToList();
+            var teams = items.Teams.Keys.OrderBy(a => a).ToList();
+
+            //Remove the current user from the 'teams'
+            teams.Remove(Application.Account.Username);
+            return teams;
         }
 
-        protected override Element CreateElement(TeamModel obj)
+        protected override Element CreateElement(string obj)
         {
-            var element = new StyledElement(obj.DisplayName, () => NavigationController.PushViewController(new ProfileController(obj.Username), true));
-            element.Image = Images.Anonymous;
-            element.ImageUri = new System.Uri(obj.Avatar);
-            return element;
+            return new StyledElement(obj, () => NavigationController.PushViewController(new ProfileController(obj), true));
         }
     }
 }

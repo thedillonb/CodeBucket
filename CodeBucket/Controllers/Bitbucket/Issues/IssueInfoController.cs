@@ -45,18 +45,16 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Id = id;
             Title = "Issue #" + id;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) =>
-            {
-                var editController = new IssueEditController
-                                         {
-                                             ExistingIssue = Model.Issue,
-                                             Username = User,
-                                             RepoSlug = Slug,
-                                             Title = "Edit Issue",
-                                             Success = EditingComplete,
-                                         };
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Edit, () => {
+                var editController = new IssueEditController {
+                     ExistingIssue = Model.Issue,
+                     Username = User,
+                     RepoSlug = Slug,
+                     Title = "Edit Issue",
+                     Success = EditingComplete,
+                 };
                 NavigationController.PushViewController(editController, true);
-            });
+            }));
             NavigationItem.RightBarButtonItem.Enabled = false;
 
             Style = UITableViewStyle.Grouped;

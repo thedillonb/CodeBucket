@@ -45,7 +45,7 @@ namespace CodeBucket.Data
         /// A transient list of the teams this account is a part of
         /// </summary>
         [Ignore]
-        public List<TeamModel> Teams { get; set; }
+        public List<string> Teams { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.
