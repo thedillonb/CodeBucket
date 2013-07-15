@@ -5,12 +5,14 @@ using System.Threading;
 using MonoTouch;
 using CodeBucket.Data;
 using CodeFramework.Views;
+using System.Linq;
 
 namespace CodeBucket.Bitbucket.Controllers.Accounts
 {
     public partial class LoginViewController : UIViewController
     {
-        public Action<Account> LoginComplete;
+        public Action<string, string> Login;
+
         private string _username;
 
         public string Username {
@@ -46,7 +48,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
                 Password.ResignFirstResponder();
 
                 //Run this in another thread
-                ThreadPool.QueueUserWorkItem(delegate { BeginLogin(); });
+                Login(User.Text, Password.Text);
                 return true;
             };
         }
@@ -62,83 +64,6 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             // e.g. myOutlet.Dispose (); myOutlet = null;
 
             ReleaseDesignerOutlets();
-        }
-		/// <summary>
-		/// Login the specified username and password.
-		/// </summary>
-		/// <param name="username">Username.</param>
-		/// <param name="password">Password.</param>
-        protected Account Login(string username, string password)
-        {
-            var client = new BitbucketSharp.Client(username, password);
-            client.Account.SSHKeys.GetKeys();
-            var userInfo = client.Account.GetInfo();
-
-            //Username was actually a email address!
-            //User the username instead
-            if (username.Contains("@"))
-                username = userInfo.User.Username;
-
-            return new Account { Username = username, Password = password, AvatarUrl = userInfo.User.Avatar };
-        }
-		/// <summary>
-		/// Begins the login process.
-		/// </summary>
-        private void BeginLogin()
-        {
-            MBProgressHUD hud = null;
-            string username = null, password = null;
-            Account loggedInAccount = null;
-
-            //The nice hud
-            InvokeOnMainThread(delegate {
-                username = User.Text;
-                password = Password.Text;
-                hud = new MBProgressHUD(View) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Logging In..."};
-                View.AddSubview(hud);
-                hud.Show(true);
-            });
-
-            try
-            {
-                loggedInAccount = Login(username, password);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error = " + e.Message);
-            }
-
-            InvokeOnMainThread(delegate
-            {
-                //Dismiss the hud
-                hud.Hide(true);
-                hud.RemoveFromSuperview();
-
-				if (loggedInAccount == null)
-                {
-                    Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
-                    return;
-                }
-
-				var account = Application.Accounts.Find(loggedInAccount.Username);
-
-				//Account does not exist! Add it!
-				if (account == null)
-			    {
-					account = loggedInAccount;
-					Application.Accounts.Insert(account);
-				}
-				//Account already exists. Update the password just incase it changed...
-				else
-				{
-					account.Password = Password.Text;
-					account.Update();
-					Application.SetUser(account);
-				}
-
-                if (LoginComplete != null)
-                    LoginComplete(account);
-            });
         }
 
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)

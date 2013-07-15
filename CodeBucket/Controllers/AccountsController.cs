@@ -15,22 +15,6 @@ namespace CodeBucket.Controllers
 	public class AccountsController : BaseDialogViewController
 	{
 		/// <summary>
-		/// Occurs when account selected.
-		/// </summary>
-		public event Action<Account> AccountSelected;
-
-		/// <summary>
-		/// Raises the account selected event.
-		/// </summary>
-		/// <param name="account">Account.</param>
-		protected virtual void OnAccountSelected(Account account)
-		{
-			var d = AccountSelected;
-			if (d != null)
-				d(account);
-		}
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="AccountsController"/> class.
 		/// </summary>
 		public AccountsController ()
@@ -40,35 +24,6 @@ namespace CodeBucket.Controllers
 			Style = UITableViewStyle.Grouped;
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => this.DismissViewController(true, null)));
 		}
-
-        private void ChangeUser(Account account)
-        {
-            this.DoWork("Logging In...", () => {
-                try
-                {
-                    var client = new BitbucketSharp.Client(account.Username, account.Password);
-                    var privileges = client.Account.GetPrivileges();
-                    account.Teams = null; //Invalidate the teams if they existed
-                    if (privileges != null && privileges.Teams != null)
-                    {
-                        account.Teams = privileges.Teams.Keys.OrderBy(a => a).ToList();
-                        account.Teams.Remove(account.Username); //Remove this user from the 'team' list
-                    }
-                }
-                catch (Exception e)
-                {
-                    MonoTouch.Utilities.LogException("Unable to get privileges", e);
-                }
-
-                InvokeOnMainThread(() => {
-                    Application.SetUser(account);
-                    OnAccountSelected(account);
-                    DismissViewController(true, null);
-                });
-            }, (e) => {
-                MonoTouch.Utilities.ShowAlert("Unable to login", e.Message);
-            });
-        }
 
 		/// <summary>
 		/// Views the will appear.
@@ -87,13 +42,15 @@ namespace CodeBucket.Controllers
                     if (thisAccount.DontRemember)
                     {
                         var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-                        loginController.LoginComplete = ChangeUser;
+                        loginController.Login = (username, password) => {
+                            Utils.Login.LoginAccount(username, password, loginController);
+                        };
                         NavigationController.PushViewController(loginController, true);
                     }
                     //Change the user!
                     else
                     {
-                        ChangeUser(thisAccount);
+                        Utils.Login.LoginAccount(thisAccount.Username, thisAccount.Password, this);
                     }
                 };
 
@@ -107,7 +64,9 @@ namespace CodeBucket.Controllers
             var addAccountSection = new Section();
             var addAccount = new StyledElement("Add Account", () => {
                 var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
-                ctrl.LoginComplete = (a) => NavigationController.PopToViewController(this, true);
+                ctrl.Login = (username, password) => {
+                    Utils.Login.LoginAccount(username, password, ctrl);
+                };
                 NavigationController.PushViewController(ctrl, true);
             });
             //addAccount.Image = Images.CommentAdd;
@@ -132,7 +91,7 @@ namespace CodeBucket.Controllers
             var account = accountElement.Account;
             Application.Accounts.Remove(account);
 
-            if (Application.Account.Equals(account))
+            if (Application.Account != null && Application.Account.Equals(account))
             {
                 NavigationItem.LeftBarButtonItem.Enabled = false;
                 Application.SetUser(null);
@@ -150,12 +109,12 @@ namespace CodeBucket.Controllers
 
             public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
             {
-                return (indexPath.Section == 0 && indexPath.Row != (_parent.Root[0].Count - 1));
+                return (indexPath.Section == 0);
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
             {
-                if (indexPath.Section == 0 && indexPath.Row != (_parent.Root[0].Count - 1))
+                if (indexPath.Section == 0)
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }

@@ -47,6 +47,12 @@ namespace CodeBucket.Data
         [Ignore]
         public List<string> Teams { get; set; }
 
+        /// <summary>
+        /// A transient record of the user's name
+        /// </summary>
+        [Ignore]
+        public string FullName { get; set; }
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.
 		/// </summary>

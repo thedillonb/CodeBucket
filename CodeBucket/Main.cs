@@ -19,8 +19,9 @@ namespace CodeBucket
 	public partial class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
-		UIWindow _window;
-        CodeBucket.Controllers.SlideoutNavigationController _nav;
+        internal UIWindow Window { get; set; }
+
+        internal CodeBucket.Controllers.SlideoutNavigationController Slideout { get; set; }
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -43,16 +44,15 @@ namespace CodeBucket
 			SetTheme();
 
 			//Create the window
-            _window = new UIWindow(UIScreen.MainScreen.Bounds);
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             //Process the accounts
-            ProcessAccounts();
-            
-			//Make what ever window visible.
-			_window.MakeKeyAndVisible();
+            //ProcessAccounts();
 
-			//Fade the splash screen
-			BeginSplashFade();
+            Window.RootViewController = new StartupController();
+
+			//Make what ever window visible.
+            Window.MakeKeyAndVisible();
 
 			//Always return true
 			return true;
@@ -122,160 +122,15 @@ namespace CodeBucket
 			}
 		}
 
-	    /// <summary>
-	    /// Processes the accounts.
-	    /// </summary>
-	    private void ProcessAccounts()
-		{
-			var defaultAccount = GetDefaultAccount();
-
-			//There's no accounts...
-			if (GetDefaultAccount() == null)
-			{
-                var login = new Bitbucket.Controllers.Accounts.LoginViewController();
-                login.LoginComplete = delegate { ShowMainWindow(); };
-
-			    //Make it so!
-				_window.RootViewController = new UINavigationController(login);
-			}
-			else
-			{
-				//Don't remember, prompt for password
-				if (defaultAccount.DontRemember)
-				{
-					var accountsController = new AccountsController();
-					accountsController.AccountSelected += obj => {
-						Application.SetUser(obj);
-						ShowMainWindow();
-					};
-
-                    UIViewController loginController = null;
-                    loginController = new LoginViewController {
-                        Username = defaultAccount.Username, 
-                        LoginComplete = delegate { ShowMainWindow(); }
-                    };
-
-				    var navigationController = new UINavigationController(accountsController);
-
-                    // This should never happen... But it's better to be prepared...
-                    if (loginController != null)
-					    navigationController.PushViewController(loginController, false);
-
-					_window.RootViewController = navigationController;
-				}
-				//If the user wanted to remember the account
-				else
-				{
-					ShowMainWindow();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Fade the splash screen
-		/// </summary>
-		private void BeginSplashFade()
-		{
-		    if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone) 
-                return;
-
-		    var killSplash = MonoTouch.Utilities.IsTall ? 
-                new UIImageView(UIImageHelper.FromFileAuto("Default-568h", "png")) : 
-                new UIImageView(UIImageHelper.FromFileAuto("Default", "png"));
-				
-		    _window.AddSubview(killSplash);
-		    _window.BringSubviewToFront(killSplash);
-				
-		    UIView.Animate(0.8, () => { killSplash.Alpha = 0.0f; }, killSplash.RemoveFromSuperview);
-		}
-
-		/// <summary>
-		/// Gets the default account. If there is not one assigned it will pick the first in the account list.
-		/// If there isn't one, it'll just return null.
-		/// </summary>
-		/// <returns>The default account.</returns>
-        private Account GetDefaultAccount()
-        {
-            var defaultAccount = Application.Accounts.GetDefault();
-            if (defaultAccount == null)
-            {
-				defaultAccount = Application.Accounts.FirstOrDefault();
-                Application.Accounts.SetDefault(defaultAccount);
-            }
-            return defaultAccount;
-        }
-
-        private void ShowMainWindow()
-        {
-            var defaultAccount = GetDefaultAccount();
-            Application.SetUser(defaultAccount);
-
-            //This supports the split view configuration of the iPad
-//            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
-//            {
-//                _nav = new MySlideout() { SlideHeight = 999f };
-//                _nav.SetMenuNavigationBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-//
-//                var menuNav = new UINavigationController(new iPadMenuViewController { Slideout = _nav });
-//                menuNav.NavigationBar.SetBackgroundImage(Images.TitlebarDark, UIBarMetrics.Default);
-//
-//                _nav.MenuView = new MenuController();
-//
-//                var split = new iPadSplitView { Slideout = _nav };
-//
-//                split.ViewControllers = new UIViewController[] {
-//                    menuNav,
-//                    _nav,
-//                };
-//
-//                window.RootViewController = split;
-//            }
-//            else
-            {
-				_nav = new CodeBucket.Controllers.SlideoutNavigationController();
-                _window.RootViewController = _nav;
-            }
-        }
-
         public override void ReceiveMemoryWarning(UIApplication application)
         {
             //Remove everything from the cache
             Application.Cache.DeleteAll();
 
             //Pop back to the root view...
-            if (_nav.TopView != null && _nav.TopView.NavigationController != null)
-                _nav.TopView.NavigationController.PopToRootViewController(false);
+            if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
+                Slideout.TopView.NavigationController.PopToRootViewController(false);
         }
-
-//        #region Stupid classes for the iPad
-//        private class iPadSplitView : UISplitViewController
-//        {
-//            public SlideoutNavigationController Slideout;
-//            public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
-//            {
-//                Slideout.Hide(false);
-//                Slideout.MenuEnabled = (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
-//                base.WillRotate(toInterfaceOrientation, duration);
-//            }
-//
-//            public override void ViewWillAppear(bool animated)
-//            {
-//                Slideout.MenuEnabled = (this.InterfaceOrientation == UIInterfaceOrientation.Portrait || this.InterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown);
-//                base.ViewWillAppear(animated);
-//            }
-//        }
-//
-//        private class iPadMenuViewController : MenuController
-//        {
-//            public SlideoutNavigationController Slideout;
-//            protected override void DoShit(UIViewController controller)
-//            {
-//                Slideout.MenuView.NavigationController.PushViewController(controller, true);
-//            }
-//        }
-//        #endregion
 	}
-
-
 }
 

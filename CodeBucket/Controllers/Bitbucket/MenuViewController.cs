@@ -62,7 +62,12 @@ namespace CodeBucket.Bitbucket.Controllers
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
         {
             var accounts = new AccountsController();
-            PresentViewController(new UINavigationController(accounts), true, null);
+            var nav = new UINavigationController(accounts);
+            accounts.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => {
+                var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+                Utils.Login.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
+            }));
+            Utils.Login.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
         }
 
         public override void ViewWillAppear(bool animated)

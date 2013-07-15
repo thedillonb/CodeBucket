@@ -173,6 +173,8 @@
     <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\Bitbucket\Teams\TeamController.cs" />
     <Compile Include="Controllers\Bitbucket\Repositories\FollowingRepositoryController.cs" />
+    <Compile Include="Controllers\StartupController.cs" />
+    <Compile Include="Utils\Login.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
