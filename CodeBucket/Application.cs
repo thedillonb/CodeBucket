@@ -31,6 +31,9 @@ namespace CodeBucket
 
             Account = account;
             Accounts.SetDefault(Account);
+            
+            //Release the cache
+            Cache.DeleteAll();
 
 			Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
 				Timeout = 1000 * 30, //30 seconds

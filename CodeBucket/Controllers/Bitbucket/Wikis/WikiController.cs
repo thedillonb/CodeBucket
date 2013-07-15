@@ -12,7 +12,8 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
 {
     public class WikiInfoController : WebViewController
     {
-        private static readonly string WikiCache = Utilities.BaseDir + "/tmp/WikiCache/";
+        private static readonly string WikiCache = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "wiki");
+
         private readonly string _user;
         private readonly string _slug;
         private readonly string _page;
@@ -57,10 +58,10 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
 
-            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, HandleEditButton) { Enabled = false };
+            _editButton = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Edit, HandleEditButton)) { Enabled = false };
         }
 
-        private void HandleEditButton(object sender, EventArgs args)
+        private void HandleEditButton()
         {
             try
             {

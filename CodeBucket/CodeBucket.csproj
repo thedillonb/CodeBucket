@@ -168,13 +168,14 @@
     <Compile Include="Controllers\Bitbucket\Source\SourceInfoController.cs" />
     <Compile Include="Controllers\Bitbucket\Wikis\WikiController.cs" />
     <Compile Include="Controllers\Bitbucket\FileSourceController.cs" />
-    <Compile Include="Controllers\Bitbucket\MenuViewController.cs" />
     <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\Bitbucket\Teams\TeamController.cs" />
     <Compile Include="Controllers\Bitbucket\Repositories\FollowingRepositoryController.cs" />
     <Compile Include="Controllers\StartupController.cs" />
     <Compile Include="Utils\Login.cs" />
+    <Compile Include="Utils\Transitions.cs" />
+    <Compile Include="Controllers\MenuViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />

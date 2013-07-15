@@ -13,7 +13,7 @@ using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeBucket.Bitbucket.Controllers.Teams;
 
-namespace CodeBucket.Bitbucket.Controllers
+namespace CodeBucket.Controllers
 {
 	public class MenuController : MenuBaseController
     {
@@ -41,15 +41,12 @@ namespace CodeBucket.Bitbucket.Controllers
             groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Team));
             root.Add(groupsTeamsSection);
 
-            var settingsSection = new Section() { HeaderView = new MenuSectionView("Settings") };
-            root.Add(settingsSection);
-            settingsSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), null));
-            settingsSection.Add(new MenuElement("Settings", () => NavPush(new SettingsController()), null));
-
-            var infoSection = new Section() { HeaderView = new MenuSectionView("Info") };
+            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
+            infoSection.Add(new MenuElement("Settings", () => NavPush(new SettingsController()), null));
             infoSection.Add(new MenuElement("About", () => NavPush(new AboutController()), null));
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, null));
+            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), null));
             Root = root;
 		}
 
@@ -65,9 +62,9 @@ namespace CodeBucket.Bitbucket.Controllers
             var nav = new UINavigationController(accounts);
             accounts.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => {
                 var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-                Utils.Login.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
+                Utils.Transitions.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
             }));
-            Utils.Login.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
+            Utils.Transitions.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
         }
 
         public override void ViewWillAppear(bool animated)

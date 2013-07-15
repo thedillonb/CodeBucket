@@ -60,7 +60,7 @@ namespace CodeBucket.Controllers
                 login.Login = (username, password) => {
                     Utils.Login.LoginAccount(username, password, login);
                 };
-                Utils.Login.TransitionToController(login);
+                Utils.Transitions.TransitionToController(login);
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace CodeBucket.Controllers
 
                 var navigationController = new UINavigationController(accountsController);
                 navigationController.PushViewController(login, false);
-                Utils.Login.TransitionToController(navigationController);
+                Utils.Transitions.TransitionToController(navigationController);
             }
             //If the user wanted to remember the account
             else

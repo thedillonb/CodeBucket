@@ -19,15 +19,13 @@ namespace CodeBucket
 	public partial class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
-        internal UIWindow Window { get; set; }
+        public override UIWindow Window { get; set; }
 
-        internal CodeBucket.Controllers.SlideoutNavigationController Slideout { get; set; }
+        public CodeBucket.Controllers.SlideoutNavigationController Slideout { get; set; }
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
 		{
-			// if you want to use a different Application Delegate class from "AppDelegate"
-			// you can specify it here.
 			UIApplication.Main(args, null, "AppDelegate");
 		}
 		
@@ -46,9 +44,7 @@ namespace CodeBucket
 			//Create the window
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            //Process the accounts
-            //ProcessAccounts();
-
+            //Always start into the Startup controller
             Window.RootViewController = new StartupController();
 
 			//Make what ever window visible.
@@ -92,8 +88,9 @@ namespace CodeBucket
 			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
 			SearchFilterBar.FilterImage = Images.Filter;
 			
-			DropbarView.Image = UIImage.FromFile("Images/Controls/Dropbar.png");
-			WatermarkView.Image = Images.Background;
+            CodeFramework.Images.Views.Dropbar = UIImage.FromFile("Images/Controls/Dropbar.png");
+			CodeFramework.Images.Views.Background = Images.Background;
+
 			HeaderView.Gradient = Images.CellGradient;
 			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
 			ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");

@@ -49,29 +49,13 @@ namespace CodeBucket.Utils
             });
         }
 
-        public static void TransitionToController(UIViewController controller)
-        {
-            Transition(controller, UIViewAnimationOptions.TransitionCrossDissolve);
-        }
-
         private static void TransitionToSlideout()
         {
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             var controller = new CodeBucket.Controllers.SlideoutNavigationController();
             if (appDelegate != null)
                 appDelegate.Slideout = controller;
-            Transition(controller, UIViewAnimationOptions.TransitionFlipFromRight);
-        }
-
-        public static void Transition(UIViewController controller, UIViewAnimationOptions options)
-        {
-            var window = UIApplication.SharedApplication.KeyWindow;
-            UIView.Transition(window, 1.0, options, () => {
-                var oldState = UIView.AnimationsEnabled;
-                UIView.AnimationsEnabled = false;
-                window.RootViewController = controller;
-                UIView.AnimationsEnabled = oldState;
-            }, null);
+            Transitions.Transition(controller, UIViewAnimationOptions.TransitionFlipFromRight);
         }
     }
 }
