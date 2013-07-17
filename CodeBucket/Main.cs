@@ -78,7 +78,6 @@ namespace CodeBucket
 			UISegmentedControl.Appearance.SetDividerImage(Images.Divider, UIControlState.Normal, UIControlState.Normal, UIBarMetrics.Default);
 			
 			UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
-			//UIBarButtonItem.Appearance.TintColor = UIColor.White;
 			UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 			
 			var textAttrs = new UITextAttributes { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
@@ -88,20 +87,12 @@ namespace CodeBucket
 			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
 			SearchFilterBar.FilterImage = Images.Filter;
 			
-            CodeFramework.Images.Views.Dropbar = UIImage.FromFile("Images/Controls/Dropbar.png");
 			CodeFramework.Images.Views.Background = Images.Background;
 
-			HeaderView.Gradient = Images.CellGradient;
 			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-			ErrorView.AlertImage = UIImage.FromFile("Images/warning.png");
 			UserElement.Default = Images.Anonymous;
 			NewsFeedElement.DefaultImage = Images.Anonymous;
-            NewsFeedElement.LinkColor = UIColor.FromRGB(0, 64, 128);
-            NewsFeedElement.LinkFont = UIFont.BoldSystemFontOfSize(12f);
             TableViewSectionView.BackgroundImage = Images.Searchbar;
-
-            WebViewController.BackButtonImage = Images.BackNavigationButton;
-            WebViewController.ForwardButtonImage = Images.ForwardNavigationButton;
 
             IssueCellView.User = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up);
             IssueCellView.Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);

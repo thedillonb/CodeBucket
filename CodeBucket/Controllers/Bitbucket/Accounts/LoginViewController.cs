@@ -30,10 +30,34 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
+        private UIImage CreateRepeatingBackground()
+        {
+            UIImage bgImage = null;
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                bgImage =  UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? "Default-568h" : "Default");
+            }
+            bgImage = UIImageHelper.FromFileAuto("Default-portrait");
+
+            UIGraphics.BeginImageContext(new System.Drawing.SizeF(30f, bgImage.Size.Height));
+            var ctx = UIGraphics.GetCurrentContext();
+            ctx.TranslateCTM (0, bgImage.Size.Height);
+            ctx.ScaleCTM (1f, -1f);
+            ctx.DrawImage(new System.Drawing.RectangleF(0, 0, 30f, bgImage.Size.Height), bgImage.CGImage);
+
+            var img = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            bgImage.Dispose();
+            bgImage = null;
+
+            return img;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            View.BackgroundColor = UIColor.FromPatternImage(Images.LogoBehind);
+
+            View.BackgroundColor = UIColor.FromPatternImage(CreateRepeatingBackground());
 
             Title = "Login";
             Logo.Image = Images.BitbucketLogo;

@@ -4,69 +4,64 @@ namespace CodeBucket
 {
     public static class Images
     {
-        public static UIImage ScmType = UIImage.FromBundle("/Images/scm_type");
-        public static UIImage Language = UIImage.FromBundle("/Images/language");
-        public static UIImage Webpage = UIImage.FromBundle("/Images/webpage");
-        public static UIImage Repo = UIImage.FromBundle("/Images/repo");
+        public static UIImage ScmType { get { return UIImage.FromBundle("/Images/scm_type"); } }
+        public static UIImage Language { get { return UIImage.FromBundle("/Images/language"); } }
+        public static UIImage Webpage { get { return UIImage.FromBundle("/Images/webpage"); } }
+        public static UIImage Repo { get { return UIImage.FromBundle("/Images/repo"); } }
 
-        public static UIImage RepoFollow = UIImageHelper.FromFileAuto("Images/repo_follow");
-        public static UIImage Team = UIImageHelper.FromFileAuto("Images/team");
+        public static UIImage RepoFollow { get { return UIImageHelper.FromFileAuto("Images/repo_follow"); } }
+        public static UIImage Team { get { return UIImageHelper.FromFileAuto("Images/team"); } }
 
 
-        public static UIImage Size = UIImage.FromBundle("/Images/size");
-        public static UIImage Locked = UIImage.FromBundle("/Images/locked");
-        public static UIImage Unlocked = UIImage.FromBundle("/Images/unlocked");
-        public static UIImage Heart = UIImage.FromBundle("/Images/heart");
-        public static UIImage HeartAdd = UIImage.FromBundle("/Images/heart_add");
-        public static UIImage HeartDelete = UIImage.FromBundle("/Images/heart_delete");
-        public static UIImage Fork = UIImage.FromBundle("/Images/fork");
-        public static UIImage Pencil = UIImage.FromBundle("/Images/pencil");
-        public static UIImage Plus = UIImage.FromBundle("/Images/plus");
-        public static UIImage Tag = UIImage.FromBundle("/Images/tag");
-        public static UIImage CommentAdd = UIImage.FromBundle("/Images/comment_add");
-        public static UIImage ReportEdit = UIImage.FromBundle("/Images/report_edit");
-        public static UIImage BinClosed = UIImage.FromBundle("/Images/bin_closed");
-        public static UIImage Milestone = UIImage.FromBundle("/Images/milestone");
-        public static UIImage ServerComponents = UIImage.FromBundle("/Images/server_components");
-        public static UIImage SitemapColor = UIImage.FromBundle("/Images/sitemap_color");
-        public static UIImage Script = UIImage.FromBundle("/Images/script");
-        public static UIImage Information = UIImage.FromBundle("/Images/information");
+        public static UIImage Size { get { return UIImage.FromBundle("/Images/size"); } }
+        public static UIImage Locked { get { return UIImage.FromBundle("/Images/locked"); } }
+        public static UIImage Unlocked { get { return UIImage.FromBundle("/Images/unlocked"); } }
+        public static UIImage Heart { get { return UIImage.FromBundle("/Images/heart"); } }
+        public static UIImage HeartAdd { get { return UIImage.FromBundle("/Images/heart_add"); } }
+        public static UIImage HeartDelete { get { return UIImage.FromBundle("/Images/heart_delete"); } }
+        public static UIImage Fork { get { return UIImage.FromBundle("/Images/fork"); } }
+        public static UIImage Pencil { get { return UIImage.FromBundle("/Images/pencil"); } }
+        public static UIImage Plus { get { return UIImage.FromBundle("/Images/plus"); } }
+        public static UIImage Tag { get { return UIImage.FromBundle("/Images/tag"); } }
+        public static UIImage CommentAdd { get { return UIImage.FromBundle("/Images/comment_add"); } }
+        public static UIImage ReportEdit { get { return UIImage.FromBundle("/Images/report_edit"); } }
+        public static UIImage BinClosed { get { return UIImage.FromBundle("/Images/bin_closed"); } }
+        public static UIImage Milestone { get { return UIImage.FromBundle("/Images/milestone"); } }
+        public static UIImage ServerComponents { get { return UIImage.FromBundle("/Images/server_components"); } }
+        public static UIImage SitemapColor { get { return UIImage.FromBundle("/Images/sitemap_color"); } }
+        public static UIImage Script { get { return UIImage.FromBundle("/Images/script"); } }
+        public static UIImage Information { get { return UIImage.FromBundle("/Images/information"); } }
 
-        public static UIImage CellGradient = UIImage.FromBundle("/Images/gradient");
+        public static UIImage Flag { get { return UIImage.FromBundle("/Images/flag"); } }
 
-        public static UIImage Flag = UIImage.FromBundle("/Images/flag");
+        public static UIImage Folder { get { return UIImage.FromBundle("/Images/folder"); } }
+        public static UIImage File { get { return UIImage.FromBundle("/Images/file"); } }
+        public static UIImage Branch { get { return UIImage.FromBundle("/Images/branch"); } }
+        public static UIImage Create { get { return UIImage.FromBundle("/Images/create"); } }
 
-        public static UIImage Folder = UIImage.FromBundle("/Images/folder");
-        public static UIImage File = UIImage.FromBundle("/Images/file");
-        public static UIImage Branch = UIImage.FromBundle("/Images/branch");
-        public static UIImage Create = UIImage.FromBundle("/Images/create");
+        public static UIImage Changes { get { return UIImage.FromBundle("/Images/changes"); } }
+        public static UIImage ChangeUser { get { return UIImage.FromBundle("/Images/change_user"); } }
 
-        public static UIImage Changes = UIImage.FromBundle("/Images/changes");
-        public static UIImage ChangeUser = UIImage.FromBundle("/Images/change_user");
+                //Tabs
+        public static UIImage Group { get { return UIImage.FromBundle("/Images/Tabs/group"); } }
+        public static UIImage Event { get { return UIImage.FromBundle("/Images/Tabs/events"); } }
+        public static UIImage Person { get { return UIImage.FromBundle("/Images/Tabs/person"); } }
+        public static UIImage Cog { get { return UIImage.FromBundle("/Images/Tabs/cog"); } }
 
-        //Tabs
-        public static UIImage Group = UIImage.FromBundle("/Images/Tabs/group");
-        public static UIImage Event = UIImage.FromBundle("/Images/Tabs/events");
-        public static UIImage Person = UIImage.FromBundle("/Images/Tabs/person");
-        public static UIImage Cog = UIImage.FromBundle("/Images/Tabs/cog");
+                //Controls
+        public static UIImage BackButton { get { return UIImage.FromBundle("/Images/Controls/backbutton"); } }
+        public static UIImage BackButtonLandscape { get { return UIImage.FromBundle("/Images/Controls/backbutton-landscape"); } }
 
-        //Controls
-        public static UIImage BackButton = UIImage.FromBundle("/Images/Controls/backbutton");
-        public static UIImage BackButtonLandscape = UIImage.FromBundle("/Images/Controls/backbutton-landscape");
+        public static UIImage BarButton { get { return UIImage.FromBundle("/Images/Controls/barbutton"); } }
+        public static UIImage BarButtonLandscape { get { return UIImage.FromBundle("/Images/Controls/barbutton-land"); } }
 
-        public static UIImage BarButton = UIImage.FromBundle("/Images/Controls/barbutton");
-        public static UIImage BarButtonLandscape = UIImage.FromBundle("/Images/Controls/barbutton-land");
+        public static UIImage Titlebar { get { return UIImage.FromBundle("/Images/Controls/titlebar"); } }
+        public static UIImage Bottombar { get { return UIImage.FromFile("Images/Controls/bottombar.png"); } }
+        public static UIImage Searchbar { get { return UIImage.FromBundle("/Images/Controls/searchbar"); } }
+        public static UIImage Divider { get { return UIImage.FromBundle("/Images/Controls/divider"); } }
 
-        public static UIImage Titlebar = UIImage.FromBundle("/Images/Controls/titlebar");
-        public static UIImage Bottombar = UIImage.FromFile("Images/Controls/bottombar.png");
-        public static UIImage Searchbar = UIImage.FromBundle("/Images/Controls/searchbar");
-        public static UIImage Divider = UIImage.FromBundle("/Images/Controls/divider");
-
-        public static UIImage TableCell = UIImage.FromBundle("/Images/TableCell");
-        public static UIImage TableCellRed = UIImage.FromBundle("/Images/tablecell_red");
-
-		public static UIImage BackNavigationButton = UIImage.FromFile("Images/back_button@2x.png");
-		public static UIImage ForwardNavigationButton = UIImage.FromFile("Images/forward_button@2x.png");
+        public static UIImage TableCell { get { return UIImage.FromBundle("/Images/TableCell"); } }
+        public static UIImage TableCellRed { get { return UIImage.FromBundle("/Images/tablecell_red"); } }
 
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
         public static UIImage LogoBehind 
@@ -83,17 +78,17 @@ namespace CodeBucket
         }
 
         //Issues
-        public static UIImage Priority = UIImage.FromBundle("/Images/priority");
-        public static UIImage Anonymous = UIImage.FromBundle("/Images/anonymous");
+        public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
+        public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
 
         //Size agnostic
-        public static UIImage Background = UIImage.FromFile("Images/Controls/background.png");
-        public static UIImage Linen = UIImage.FromFile("Images/linen.png");
+        public static UIImage Background { get { return UIImage.FromFile("Images/Controls/background.png"); } }
+        public static UIImage Linen { get { return UIImage.FromFile("Images/linen.png"); } }
 
-        public static UIImage Filter = UIImage.FromFile("Images/filter_results.png");
+        public static UIImage Filter { get { return UIImage.FromFile("Images/filter_results.png"); } }
 
-		public static UIImage BitbucketLogo = UIImage.FromFile("Images/Logos/logoBitBucketPNG.png");
+        public static UIImage BitbucketLogo { get { return UIImage.FromFile("Images/Logos/logoBitBucketPNG.png"); } }
 		
     }
 }

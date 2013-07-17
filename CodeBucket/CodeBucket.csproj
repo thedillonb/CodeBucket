@@ -193,7 +193,6 @@
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
-    <Content Include="Images\warning.png" />
     <Content Include="Images\Tabs\group.png" />
     <Content Include="Images\Tabs\group%402x.png" />
     <Content Include="Images\repo%402x.png" />
@@ -252,10 +251,6 @@
     <Content Include="Images\priority.png" />
     <Content Include="Images\Controls\logo.png" />
     <Content Include="Images\Controls\logo%402x.png" />
-    <Content Include="Images\Controls\logobehind.png" />
-    <Content Include="Images\Controls\logobehind%402x.png" />
-    <Content Include="Images\Controls\logobehind-portrait.png" />
-    <Content Include="Images\Controls\logobehind-portrait%402x.png" />
     <Content Include="Images\Controls\backbutton-landscape.png" />
     <Content Include="Images\Controls\backbutton-landscape%402x.png" />
     <Content Include="Images\tablecell_red.png" />
@@ -271,16 +266,12 @@
     <Content Include="Images\sitemap_color.png" />
     <Content Include="Images\server_components.png" />
     <Content Include="Images\milestone.png" />
-    <Content Include="Images\gradient.png" />
     <Content Include="Images\anonymous%402x.png" />
     <Content Include="Images\anonymous.png" />
-    <Content Include="Images\Controls\logobehind-568h%402x.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\Controls\barbutton-land%402x.png" />
     <Content Include="Images\Controls\barbutton-land.png" />
     <Content Include="Images\filter_results.png" />
-    <Content Include="Images\back_button%402x.png" />
-    <Content Include="Images\forward_button%402x.png" />
     <Content Include="Default-568h%402x.png" />
     <Content Include="Default-Portrait%402x.png" />
     <Content Include="Default-Portrait.png" />
@@ -288,7 +279,6 @@
     <Content Include="Default-Landscape.png" />
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
-    <Content Include="Images\Controls\Dropbar.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
