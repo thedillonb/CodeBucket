@@ -69,7 +69,6 @@
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
     <MtouchUseThumb>True</MtouchUseThumb>
-    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -98,7 +97,6 @@
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
     <MtouchUseThumb>True</MtouchUseThumb>
-    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
     <CodesignProvision>42656791-5455-44DD-B4F2-0F7C99F9381E</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">

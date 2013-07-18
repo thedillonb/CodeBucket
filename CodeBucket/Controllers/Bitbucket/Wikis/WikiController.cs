@@ -237,7 +237,7 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
             markup.Append(dataHtml);
             markup.Append("</body></html>");
 
-            var url = WikiCache + Uri.UnescapeDataString(page) + ".html";
+            var url = System.IO.Path.Combine(WikiCache, Uri.UnescapeDataString(page) + ".html");
             using (var file = System.IO.File.Create(url))
             {
                 using (var writer = new System.IO.StreamWriter(file, System.Text.Encoding.UTF8))
