@@ -23,16 +23,23 @@ namespace CodeBucket.Controllers
             var root = new RootElement(Title);
 			var currentAccount = Application.Account;
 
-            root.Add(new Section(string.Empty, "If disabled, CodeBucket will prompt you for your password when you switch to this account.") {
+            root.Add(new Section(string.Empty, "If disabled, CodeBucket will prompt you for your password when you switch to this account") {
                     new TrueFalseElement("Remember Credentials", !currentAccount.DontRemember, (e) => { 
                         currentAccount.DontRemember = !e.Value; 
                         currentAccount.Update();
                     })
             });
 
-            root.Add(new Section(string.Empty, "If enabled, your teams will be shown in the CodeBucket slideout menu.") {
-                new TrueFalseElement("Show Teams in Menu", !currentAccount.DontShowTeamEvents, (e) => { 
+            root.Add(new Section(string.Empty, "If enabled, your teams will be shown in the CodeBucket slideout menu under Events") {
+                new TrueFalseElement("Show Teams in Events", !currentAccount.DontShowTeamEvents, (e) => { 
                     currentAccount.DontShowTeamEvents = !e.Value; 
+                    currentAccount.Update();
+                })
+            });
+
+            root.Add(new Section(string.Empty, "If enabled, your teams and groups will be listed under Collaborations") {
+                new TrueFalseElement("List Collaborations", !currentAccount.DontExpandTeamsAndGroups, (e) => { 
+                    currentAccount.DontExpandTeamsAndGroups = !e.Value; 
                     currentAccount.Update();
                 })
             });

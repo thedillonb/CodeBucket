@@ -66,11 +66,11 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             _desc.CaptionFont = _desc.ValueFont;
             _desc.CaptionColor = _desc.ValueColor;
 
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
-            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Flag, Image2 = Images.ServerComponents }) { BackgroundColor = UIColor.White };
+            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Buttons.Cog, Image2 = Images.Priority }) { BackgroundColor = UIColor.White };
+            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Buttons.Flag, Image2 = Images.ServerComponents }) { BackgroundColor = UIColor.White };
             _split3 = new SplitElement(new SplitElement.Row { Image1 = Images.SitemapColor, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
 
-            _responsible = new StyledElement("Unassigned", Images.Person)
+            _responsible = new StyledElement("Unassigned", Images.Buttons.Person)
             {
                 Font = StyledElement.DefaultDetailFont,
                 TextColor = StyledElement.DefaultDetailColor,

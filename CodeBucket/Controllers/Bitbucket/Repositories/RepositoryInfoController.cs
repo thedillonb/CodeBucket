@@ -105,12 +105,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             sec1.Add(followers);
 
 
-            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true), Images.Event);
+            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true), Images.Buttons.Event);
 
             var sec2 = new Section { events };
 
             if (Model.HasIssues)
-                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true), Images.Flag));
+                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true), Images.Buttons.Flag));
 
             if (Model.HasWiki)
                 sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true), Images.Pencil));

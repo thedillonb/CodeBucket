@@ -30,9 +30,7 @@ namespace CodeBucket
         public static UIImage ServerComponents { get { return UIImage.FromBundle("/Images/server_components"); } }
         public static UIImage SitemapColor { get { return UIImage.FromBundle("/Images/sitemap_color"); } }
         public static UIImage Script { get { return UIImage.FromBundle("/Images/script"); } }
-        public static UIImage Information { get { return UIImage.FromBundle("/Images/information"); } }
 
-        public static UIImage Flag { get { return UIImage.FromBundle("/Images/flag"); } }
 
         public static UIImage Folder { get { return UIImage.FromBundle("/Images/folder"); } }
         public static UIImage File { get { return UIImage.FromBundle("/Images/file"); } }
@@ -40,15 +38,9 @@ namespace CodeBucket
         public static UIImage Create { get { return UIImage.FromBundle("/Images/create"); } }
 
         public static UIImage Changes { get { return UIImage.FromBundle("/Images/changes"); } }
-        public static UIImage ChangeUser { get { return UIImage.FromBundle("/Images/change_user"); } }
 
-                //Tabs
-        public static UIImage Group { get { return UIImage.FromBundle("/Images/Tabs/group"); } }
-        public static UIImage Event { get { return UIImage.FromBundle("/Images/Tabs/events"); } }
-        public static UIImage Person { get { return UIImage.FromBundle("/Images/Tabs/person"); } }
-        public static UIImage Cog { get { return UIImage.FromBundle("/Images/Tabs/cog"); } }
 
-                //Controls
+
         public static UIImage BackButton { get { return UIImage.FromBundle("/Images/Controls/backbutton"); } }
         public static UIImage BackButtonLandscape { get { return UIImage.FromBundle("/Images/Controls/backbutton-landscape"); } }
 
@@ -64,18 +56,6 @@ namespace CodeBucket
         public static UIImage TableCellRed { get { return UIImage.FromBundle("/Images/tablecell_red"); } }
 
         public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
-        public static UIImage LogoBehind 
-        { 
-            get 
-            { 
-                if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-                {
-                    return UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? 
-                        "Images/Controls/logobehind-568h" : "Images/Controls/logobehind");
-                }
-                return UIImageHelper.FromFileAuto("Images/Controls/logobehind-portrait");
-            } 
-        }
 
         //Issues
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
@@ -84,12 +64,26 @@ namespace CodeBucket
 
         //Size agnostic
         public static UIImage Background { get { return UIImage.FromFile("Images/Controls/background.png"); } }
-        public static UIImage Linen { get { return UIImage.FromFile("Images/linen.png"); } }
 
         public static UIImage Filter { get { return UIImage.FromFile("Images/filter_results.png"); } }
 
-        public static UIImage BitbucketLogo { get { return UIImage.FromFile("Images/Logos/logoBitBucketPNG.png"); } }
 		
+        public static class Logos
+        {
+            public static UIImage Bitbucket { get { return UIImage.FromFile("Images/Logos/bitbucket.png"); } }
+        }
+
+        public static class Buttons
+        {
+            public static UIImage Info { get { return UIImage.FromBundle("/Images/Buttons/info"); } }
+            public static UIImage Flag { get { return UIImage.FromBundle("/Images/Buttons/flag"); } }
+            public static UIImage User { get { return UIImage.FromBundle("/Images/Buttons/user"); } }
+            public static UIImage Explore { get { return UIImage.FromBundle("/Images/Buttons/explore"); } }
+            public static UIImage Group { get { return UIImage.FromBundle("/Images/Buttons/group"); } }
+            public static UIImage Event { get { return UIImage.FromBundle("/Images/Buttons/events"); } }
+            public static UIImage Person { get { return UIImage.FromBundle("/Images/Buttons/person"); } }
+            public static UIImage Cog { get { return UIImage.FromBundle("/Images/Buttons/cog"); } }
+        }
     }
 }
 

@@ -10,30 +10,48 @@ namespace CodeBucket.Controllers
     public class StartupController : UIViewController
     {
         private UIImageView _imgView;
+        private UIImage _img;
 
         public StartupController()
         {
-            WantsFullScreenLayout = true;
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                WantsFullScreenLayout = true;
         }
 
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
-            _imgView.Frame = this.View.Bounds;
+
+            if (_imgView != null)
+                _imgView.Frame = this.View.Bounds;
+
+            if (_img != null)
+                _img.Dispose();
+            _img = null;
+
+            //Load the background image
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                _img = UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? "Default-568h" : "Default");
+            }
+            else
+            {
+                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.Portrait || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.PortraitUpsideDown)
+                    _img = UIImageHelper.FromFileAuto("Default-Portrait");
+                else
+                    _img = UIImageHelper.FromFileAuto("Default-Landscape");
+            }
+
+            if (_img != null)
+                _imgView.Image = _img;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            UIImage img;
-
-            //Load the background image
-            img = MonoTouch.Utilities.IsTall ? 
-                    UIImageHelper.FromFileAuto("Default-568h", "png") : 
-                    UIImageHelper.FromFileAuto("Default", "png");
-
-            _imgView = new UIImageView(img);
+            View.AutosizesSubviews = true;
+            _imgView = new UIImageView();
+            _imgView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             Add(_imgView);
         }
 
@@ -99,6 +117,29 @@ namespace CodeBucket.Controllers
                 Application.Accounts.SetDefault(defaultAccount);
             }
             return defaultAccount;
+        }
+
+        public override bool ShouldAutorotate()
+        {
+            return true;
+        }
+
+        public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
+            return UIInterfaceOrientationMask.All;
+        }
+
+        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                if (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
+                    return true;
+                return false;
+            }
+            return true;
         }
     }
 }

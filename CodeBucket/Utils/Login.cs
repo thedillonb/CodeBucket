@@ -20,17 +20,30 @@ namespace CodeBucket.Utils
             ctrl.DoWork("Logging in...", () => {
 
                 var client = new BitbucketSharp.Client(user, pass) { Timeout = 30 * 1000 };
-                var privileges = client.Account.GetPrivileges();
                 var userInfo = client.Account.GetInfo();
 
                 account.FullName = (userInfo.User.FirstName ?? string.Empty) + " " + (userInfo.User.LastName ?? string.Empty);
                 account.Username = userInfo.User.Username;
                 account.AvatarUrl = userInfo.User.Avatar;
-                if (privileges != null && privileges.Teams != null)
+
+
+                // The following try/catch should not be necessary, but I really don't want a login to fail because of something stupid...
+                try
                 {
-                    account.Teams = privileges.Teams.Keys.ToList();
-                    account.Teams.Remove(account.Username);
+                    var privileges = client.Account.GetPrivileges();
+                    if (privileges != null && privileges.Teams != null)
+                    {
+                        account.Teams = privileges.Teams.Keys.ToList();
+                        account.Teams.Remove(account.Username);
+                    }
                 }
+                catch {}
+
+                try
+                {
+                    account.Groups = client.Account.Groups.GetGroups();
+                }
+                catch {}
 
                 if (exists)
                     account.Update();

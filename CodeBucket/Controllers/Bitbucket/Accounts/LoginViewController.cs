@@ -30,20 +30,40 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
+        public override void ViewWillLayoutSubviews()
+        {
+            base.ViewWillLayoutSubviews();
+
+            var backgroundImage = CreateRepeatingBackground();
+            if (backgroundImage != null)
+                View.BackgroundColor = UIColor.FromPatternImage(backgroundImage);
+            backgroundImage.Dispose();
+        }
+
         private UIImage CreateRepeatingBackground()
         {
             UIImage bgImage = null;
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
-                bgImage =  UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? "Default-568h" : "Default");
+                bgImage = UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? "Default-568h" : "Default");
             }
-            bgImage = UIImageHelper.FromFileAuto("Default-portrait");
+            else
+            {
+                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.Portrait || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.PortraitUpsideDown)
+                    bgImage = UIImageHelper.FromFileAuto("Default-portrait");
+                else
+                    bgImage = UIImageHelper.FromFileAuto("Default-Landscape");
+            }
 
-            UIGraphics.BeginImageContext(new System.Drawing.SizeF(30f, bgImage.Size.Height));
+            if (bgImage == null)
+                return null;
+
+            UIGraphics.BeginImageContext(new System.Drawing.SizeF(40f, bgImage.Size.Height));
             var ctx = UIGraphics.GetCurrentContext();
             ctx.TranslateCTM (0, bgImage.Size.Height);
             ctx.ScaleCTM (1f, -1f);
-            ctx.DrawImage(new System.Drawing.RectangleF(0, 0, 30f, bgImage.Size.Height), bgImage.CGImage);
+
+            ctx.DrawImage(new System.Drawing.RectangleF(-10, 0, bgImage.Size.Width, bgImage.Size.Height), bgImage.CGImage);
 
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
@@ -57,10 +77,8 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = UIColor.FromPatternImage(CreateRepeatingBackground());
-
             Title = "Login";
-            Logo.Image = Images.BitbucketLogo;
+            Logo.Image = Images.Logos.Bitbucket;
             if (Username != null)
                 User.Text = Username;
 
@@ -90,20 +108,27 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             ReleaseDesignerOutlets();
         }
 
+        public override bool ShouldAutorotate()
+        {
+            return true;
+        }
+
+        public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
+            return UIInterfaceOrientationMask.All;
+        }
+
         public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
         {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
                 if (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
                     return true;
+                return false;
             }
-            else
-            {
-                // Return true for supported orientations
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 }

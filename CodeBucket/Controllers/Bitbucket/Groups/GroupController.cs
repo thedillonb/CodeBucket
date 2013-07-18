@@ -31,7 +31,7 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
 
         protected override Element CreateElement(GroupModel obj)
         {
-            return new StyledElement(obj.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, obj), true));
+            return new StyledElement(obj.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, obj.Slug) { Title = obj.Name, Model = obj }, true));
         }
 	}
 }

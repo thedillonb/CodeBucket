@@ -21,32 +21,45 @@ namespace CodeBucket.Controllers
 		{
             var root = new RootElement(Application.Account.Username);
             root.Add(new Section() {
-                new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Person),
+                new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Buttons.Person),
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false)), Images.Event));
+            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false)), Images.Buttons.Event));
             if (Application.Account.Teams != null && !Application.Account.DontShowTeamEvents)
-                Application.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => NavPush(new EventsController(team, false)), Images.Event)));
+                Application.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => NavPush(new EventsController(team, false)), Images.Buttons.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
             repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoryController(Application.Account.Username, false) { Title = "Owned" }), Images.Repo));
             repoSection.Add(new MenuElement("Following", () => NavPush(new FollowingRepositoryController()), Images.RepoFollow));
-            repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), UIImage.FromBundle("/Images/Tabs/search")));
+            repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), Images.Buttons.Explore));
             root.Add(repoSection);
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
-            groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Group));
-            groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Team));
-            root.Add(groupsTeamsSection);
+            if (Application.Account.DontExpandTeamsAndGroups)
+            {
+                groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Buttons.Group));
+                groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Team));
+            }
+            else
+            {
+                if (Application.Account.Groups != null)
+                    Application.Account.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => NavPush(new GroupInfoController(Application.Account.Username, x.Slug) { Title = x.Name, Model = x }), Images.Buttons.Group)));
+                if (Application.Account.Teams != null)
+                    Application.Account.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => NavPush(new ProfileController(x)), Images.Team)));
+            }
+
+            //There should be atleast 1 thing...
+            if (groupsTeamsSection.Elements.Count > 0)
+                root.Add(groupsTeamsSection);
 
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => NavPush(new SettingsController()), null));
-            infoSection.Add(new MenuElement("About", () => NavPush(new AboutController()), null));
-            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, null));
-            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), null));
+            infoSection.Add(new MenuElement("Settings", () => NavPush(new SettingsController()), Images.Buttons.Cog));
+            infoSection.Add(new MenuElement("About", () => NavPush(new AboutController()), Images.Buttons.Info));
+            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Buttons.Flag));
+            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.Buttons.User));
             Root = root;
 		}
 

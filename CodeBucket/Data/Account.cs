@@ -42,10 +42,21 @@ namespace CodeBucket.Data
         public bool DontShowTeamEvents { get; set; }
 
         /// <summary>
+        /// Gets or sets whether teams & groups should be expanded in the menu controller to their actual contents
+        /// </summary>
+        public bool DontExpandTeamsAndGroups { get; set; }
+
+        /// <summary>
         /// A transient list of the teams this account is a part of
         /// </summary>
         [Ignore]
         public List<string> Teams { get; set; }
+
+        /// <summary>
+        /// A transient list of the groups this account is part of
+        /// </summary>
+        [Ignore]
+        public List<GroupModel> Groups { get; set; }
 
         /// <summary>
         /// A transient record of the user's name
@@ -60,6 +71,9 @@ namespace CodeBucket.Data
 		{
 			//Set some default values
 			DontRemember = false;
+            DontShowTeamEvents = false;
+            DontExpandTeamsAndGroups = false;
+
 		}
 		
 		/// <summary>

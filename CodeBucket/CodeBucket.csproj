@@ -187,19 +187,12 @@
     <Content Include="Images\plus.png" />
     <Content Include="Images\heart.png" />
     <Content Include="Images\pencil.png" />
-    <Content Include="Images\flag.png" />
     <Content Include="Images\repo.png" />
     <Content Include="Images\branch.png" />
     <Content Include="Images\tag.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\file.png" />
-    <Content Include="Images\Tabs\group.png" />
-    <Content Include="Images\Tabs\group%402x.png" />
     <Content Include="Images\repo%402x.png" />
-    <Content Include="Images\Tabs\search%402x.png" />
-    <Content Include="Images\Tabs\search.png" />
-    <Content Include="Images\Tabs\events%402x.png" />
-    <Content Include="Images\Tabs\events.png" />
     <Content Include="Images\fork.png" />
     <Content Include="Images\fork%402x.png" />
     <Content Include="Images\scm_type.png" />
@@ -220,7 +213,6 @@
     <Content Include="Images\plus%402x.png" />
     <Content Include="Images\tag%402x.png" />
     <Content Include="Images\folder%402x.png" />
-    <Content Include="Images\flag%402x.png" />
     <Content Include="Images\file%402x.png" />
     <Content Include="Images\branch%402x.png" />
     <Content Include="Images\changes.png" />
@@ -236,14 +228,7 @@
     <Content Include="Images\heart_add.png" />
     <Content Include="Images\heart_delete.png" />
     <Content Include="Images\Controls\barbutton.png" />
-    <Content Include="Images\Tabs\cog%402x.png" />
-    <Content Include="Images\Tabs\cog.png" />
     <Content Include="Images\Controls\bottombar.png" />
-    <Content Include="Images\Tabs\person%402x.png" />
-    <Content Include="Images\Tabs\person.png" />
-    <Content Include="Images\change_user%402x.png" />
-    <Content Include="Images\change_user.png" />
-    <Content Include="Images\linen.png" />
     <Content Include="Images\Controls\backbutton%402x.png" />
     <Content Include="Images\Controls\divider.png" />
     <Content Include="Images\Controls\divider%402x.png" />
@@ -279,6 +264,18 @@
     <Content Include="Default-Landscape.png" />
     <Content Include="Default.png" />
     <Content Include="Default%402x.png" />
+    <Content Include="Images\Buttons\flag%402x.png" />
+    <Content Include="Images\Buttons\flag.png" />
+    <Content Include="Images\Buttons\explore.png" />
+    <Content Include="Images\Buttons\explore%402x.png" />
+    <Content Include="Images\Buttons\person%402x.png" />
+    <Content Include="Images\Buttons\person.png" />
+    <Content Include="Images\Buttons\cog.png" />
+    <Content Include="Images\Buttons\cog%402x.png" />
+    <Content Include="Images\Buttons\events.png" />
+    <Content Include="Images\Buttons\events%402x.png" />
+    <Content Include="Images\Buttons\group.png" />
+    <Content Include="Images\Buttons\group%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -314,19 +311,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Images\Logos\logoBitBucketPNG.png" />
     <BundleResource Include="Images\script.png" />
     <BundleResource Include="Images\script%402x.png" />
-    <BundleResource Include="Images\information%402x.png" />
-    <BundleResource Include="Images\information.png" />
     <BundleResource Include="Images\repo_follow%402x.png" />
     <BundleResource Include="Images\repo_follow.png" />
     <BundleResource Include="Images\team%402x.png" />
     <BundleResource Include="Images\team.png" />
+    <BundleResource Include="Images\Buttons\user%402x.png" />
+    <BundleResource Include="Images\Buttons\user.png" />
+    <BundleResource Include="Images\Buttons\info.png" />
+    <BundleResource Include="Images\Buttons\info%402x.png" />
+    <BundleResource Include="Images\Logos\bitbucket.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
     <Folder Include="Controllers\Bitbucket\Teams\" />
+    <Folder Include="Images\Buttons\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

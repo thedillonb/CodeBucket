@@ -94,10 +94,10 @@ namespace CodeBucket
 			NewsFeedElement.DefaultImage = Images.Anonymous;
             TableViewSectionView.BackgroundImage = Images.Searchbar;
 
-            IssueCellView.User = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
             IssueCellView.Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);
             IssueCellView.Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
-            IssueCellView.Cog = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up);
+            IssueCellView.Cog = new UIImage(Images.Buttons.Cog.CGImage, 1.3f, UIImageOrientation.Up);
 
             RepositoryCellView.Commit = new UIImage(Images.ScmType.CGImage, 1.3f, UIImageOrientation.Up);
             RepositoryCellView.Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);

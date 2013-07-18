@@ -12,17 +12,18 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
     public class GroupInfoController : Controller<GroupModel>
     {
         public string User { get; private set; }
+        public string GroupName { get; private set; }
         
-        public GroupInfoController(string user, GroupModel group)
+        public GroupInfoController(string user, string groupName)
             : base(true, true)
         {
             Style = UITableViewStyle.Plain;
             User = user;
-            Model = group;
-            Title = group.Name;
             EnableSearch = true;
             AutoHideSearch = true;
             SearchPlaceholder = "Search Memebers";
+            Title = groupName;
+            GroupName = groupName;
         }
         
         protected override void OnRefresh()
@@ -42,13 +43,14 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             }
             
             InvokeOnMainThread(delegate {
+                Title = Model.Name;
                 Root = new RootElement(Title) { sec };
             });
         }
         
         protected override GroupModel OnUpdate(bool forced)
         {
-            return Application.Client.Users[User].Groups[Model.Slug].GetInfo(forced);
+            return Application.Client.Users[User].Groups[GroupName].GetInfo(forced);
         }
     }
 }
