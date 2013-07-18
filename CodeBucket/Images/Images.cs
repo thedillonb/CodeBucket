@@ -64,9 +64,6 @@ namespace CodeBucket
 
         //Size agnostic
         public static UIImage Background { get { return UIImage.FromFile("Images/Controls/background.png"); } }
-
-        public static UIImage Filter { get { return UIImage.FromFile("Images/filter_results.png"); } }
-
 		
         public static class Logos
         {
