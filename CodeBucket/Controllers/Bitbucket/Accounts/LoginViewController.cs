@@ -27,6 +27,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         public LoginViewController()
             : base("LoginViewController", null)
         {
+            Title = "Login";
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
@@ -77,7 +78,6 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         {
             base.ViewDidLoad();
 
-            Title = "Login";
             Logo.Image = Images.Logos.Bitbucket;
             if (Username != null)
                 User.Text = Username;

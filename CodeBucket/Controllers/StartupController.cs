@@ -75,10 +75,13 @@ namespace CodeBucket.Controllers
             if (Application.Accounts.Count == 0 || defaultAccount == null)
             {
                 var login = new LoginViewController();
+                login.NavigationItem.LeftBarButtonItem = null;
                 login.Login = (username, password) => {
                     Utils.Login.LoginAccount(username, password, login);
                 };
-                Utils.Transitions.TransitionToController(login);
+
+                var navCtrl = new CustomNavigationController(this, login);
+                Utils.Transitions.TransitionToController(navCtrl);
                 return;
             }
 
@@ -92,7 +95,7 @@ namespace CodeBucket.Controllers
                     Utils.Login.LoginAccount(username, password, login);
                 };
 
-                var navigationController = new UINavigationController(accountsController);
+                var navigationController = new CustomNavigationController(this, accountsController);
                 navigationController.PushViewController(login, false);
                 Utils.Transitions.TransitionToController(navigationController);
             }
@@ -140,6 +143,28 @@ namespace CodeBucket.Controllers
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// A custom navigation controller specifically for iOS6 that locks the orientations to what the StartupControler's is.
+        /// </summary>
+        private class CustomNavigationController : UINavigationController
+        {
+            readonly StartupController _parent;
+            public CustomNavigationController(StartupController parent, UIViewController root) : base(root) 
+            { 
+                _parent = parent;
+            }
+
+            public override bool ShouldAutorotate()
+            {
+                return _parent.ShouldAutorotate();
+            }
+
+            public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+            {
+                return _parent.GetSupportedInterfaceOrientations();
+            }
         }
     }
 }
