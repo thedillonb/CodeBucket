@@ -116,6 +116,14 @@ namespace CodeBucket
             if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
                 Slideout.TopView.NavigationController.PopToRootViewController(false);
         }
+
+        public override bool HandleOpenURL(UIApplication application, NSUrl url)
+        {
+            if (url == null)
+                return false;
+            //var uri = new System.Uri(url.ToString());
+            return true;
+        }
 	}
 }
 

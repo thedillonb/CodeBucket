@@ -44,5 +44,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>codebucket</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>codebucket</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
