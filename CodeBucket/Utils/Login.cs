@@ -4,6 +4,7 @@ using MonoTouch.UIKit;
 using CodeFramework.Controllers;
 using System.Linq;
 using MonoTouch;
+using CodeFramework.Utils;
 
 namespace CodeBucket.Utils
 {
@@ -46,7 +47,7 @@ namespace CodeBucket.Utils
                 catch {}
 
                 if (exists)
-                    account.Update();
+                    Application.Accounts.Update(account);
                 else
                     Application.Accounts.Insert(account);
 

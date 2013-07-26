@@ -48,7 +48,7 @@ namespace CodeBucket.Bitbucket.Controllers
             if (Username.Equals(Application.Account.Username, System.StringComparison.OrdinalIgnoreCase))
             {
                 Application.Account.AvatarUrl = Model.User.Avatar;
-                BeginInvokeOnMainThread(() => Application.Account.Update());
+                BeginInvokeOnMainThread(() => Application.Accounts.Update(Application.Account));
             }
         }
 

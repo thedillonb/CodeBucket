@@ -180,7 +180,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                                          Name = x.AuthorInfo.Username,
                                          Time = (x.UtcCreatedOn),
                                          String = x.Content,
-                                         Image = Images.Anonymous,
+                                         Image = CodeFramework.Images.Misc.Anonymous,
                                          ImageUri = new Uri(x.AuthorInfo.Avatar),
                                          BackgroundColor = UIColor.White,
                                      });

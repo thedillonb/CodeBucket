@@ -59,7 +59,6 @@ namespace CodeBucket
 
         //Issues
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
-        public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
 
         //Size agnostic

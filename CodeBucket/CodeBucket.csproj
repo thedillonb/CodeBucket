@@ -50,7 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
@@ -134,7 +134,6 @@
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Data\WebCacheProvider.cs" />
-    <Compile Include="Data\Accounts.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
@@ -172,7 +171,6 @@
     <Compile Include="Controllers\Bitbucket\Repositories\FollowingRepositoryController.cs" />
     <Compile Include="Controllers\StartupController.cs" />
     <Compile Include="Utils\Login.cs" />
-    <Compile Include="Utils\Transitions.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -249,8 +247,6 @@
     <Content Include="Images\sitemap_color.png" />
     <Content Include="Images\server_components.png" />
     <Content Include="Images\milestone.png" />
-    <Content Include="Images\anonymous%402x.png" />
-    <Content Include="Images\anonymous.png" />
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\Controls\barbutton-land%402x.png" />
     <Content Include="Images\Controls\barbutton-land.png" />

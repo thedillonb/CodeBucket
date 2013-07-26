@@ -45,7 +45,7 @@ namespace CodeBucket
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             //Always start into the Startup controller
-            Window.RootViewController = new StartupController();
+            Window.RootViewController = new CodeBucket.Controllers.StartupController();
 
 			//Make what ever window visible.
             Window.MakeKeyAndVisible();
@@ -89,8 +89,6 @@ namespace CodeBucket
 			CodeFramework.Images.Views.Background = Images.Background;
 
 			StyledElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-			UserElement.Default = Images.Anonymous;
-			NewsFeedElement.DefaultImage = Images.Anonymous;
             TableViewSectionView.BackgroundImage = Images.Searchbar;
 
             IssueCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);

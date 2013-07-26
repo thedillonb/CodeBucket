@@ -13,7 +13,7 @@ namespace CodeBucket.Data
         //The current database version
         private static readonly int CurrentDBVersion = 1;
         private static readonly string DatabaseVersionKey = "DATABASE_VERSION";
-        private static readonly string DatabasePath = Utilities.BaseDir + "/Documents/data.db";
+        private static readonly string DatabaseFilePath = System.IO.Path.Combine(Utilities.BaseDir, "Documents/data.db");
         private static Database _database;
 
         public static Database Main
@@ -21,7 +21,7 @@ namespace CodeBucket.Data
             get 
             {
                 if (_database == null)
-                    _database = new Database(DatabasePath, System.IO.File.Exists(DatabasePath));
+                    _database = new Database(DatabaseFilePath, System.IO.File.Exists(DatabaseFilePath));
                 return _database;
             }
         }

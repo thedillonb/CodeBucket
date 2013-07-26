@@ -5,17 +5,23 @@ namespace CodeBucket
     /// <summary>
     /// Application.
     /// </summary>
-    public static class Application
+    public sealed class Application
     {
         public static BitbucketSharp.Client Client { get; private set; }
 
-        public static Account Account { get; private set; }
-        public static Accounts Accounts { get; private set; }
+        public static CodeFramework.Data.Accounts<Account> Accounts { get; private set; }
+
         public static WebCacheProvider Cache { get; private set; }
+
+        public static Account Account
+        {
+            get { return Accounts.ActiveAccount; }
+            set { Accounts.ActiveAccount = value; }
+        }
 
         static Application()
         {
-            Accounts = new Accounts();
+            Accounts = new CodeFramework.Data.Accounts<Account>(Database.Main);
             Cache = new WebCacheProvider();
         }
 

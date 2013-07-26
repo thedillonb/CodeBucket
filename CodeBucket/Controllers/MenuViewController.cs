@@ -12,6 +12,7 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeBucket.Bitbucket.Controllers.Teams;
+using CodeFramework.Utils;
 
 namespace CodeBucket.Controllers
 {
@@ -75,9 +76,9 @@ namespace CodeBucket.Controllers
             var nav = new UINavigationController(accounts);
             accounts.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => {
                 var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-                Utils.Transitions.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
+                Transitions.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
             }));
-            Utils.Transitions.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
+            Transitions.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
         }
 
         public override void ViewWillAppear(bool animated)
