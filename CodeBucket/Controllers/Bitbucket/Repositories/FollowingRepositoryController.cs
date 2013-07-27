@@ -13,7 +13,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             ShowOwner = true;
         }
 
-        protected override List<RepositoryDetailedModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override object GetData(bool force, int currentPage, out int nextPage)
         {
             nextPage = -1;
             return Application.Client.Account.GetRepositories(force);

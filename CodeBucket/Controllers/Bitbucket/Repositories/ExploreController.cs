@@ -90,7 +90,7 @@ namespace CodeBucket.Bitbucket.Controllers
             search.Delegate = new ExploreSearchDelegate(this);
         }
 
-        protected override List<RepositoryDetailedModel> OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             return Model;
         }

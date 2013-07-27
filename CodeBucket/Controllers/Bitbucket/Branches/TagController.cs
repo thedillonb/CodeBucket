@@ -9,7 +9,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class TagController : ListController<TagController.TagModel>
+    public class TagController : ListController
     {
         public string User { get; private set; }
         public string Repo { get; private set; }
@@ -23,17 +23,18 @@ namespace CodeBucket.Bitbucket.Controllers
             SearchPlaceholder = "Search Tags";
         }
 
-        protected override List<TagModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override object GetData(bool force, int currentPage, out int nextPage)
         {
             var d = Application.Client.Users[User].Repositories[Repo].GetTags(force);
             nextPage = -1;
             return d.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();
         }
 
-        protected override Element CreateElement(TagModel obj)
+        protected override Element CreateElement(object obj)
         {
-            var element = new StyledElement(obj.Name);
-            element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, obj.Node), true);
+            var o = obj as TagController.TagModel;
+            var element = new StyledElement(o.Name);
+            element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, o.Node), true);
             return element;
         }
 

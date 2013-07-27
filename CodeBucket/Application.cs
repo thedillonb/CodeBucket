@@ -9,7 +9,7 @@ namespace CodeBucket
     {
         public static BitbucketSharp.Client Client { get; private set; }
 
-        public static CodeFramework.Data.Accounts<Account> Accounts { get; private set; }
+        public static Accounts Accounts { get; private set; }
 
         public static Account Account
         {
@@ -19,7 +19,7 @@ namespace CodeBucket
 
         static Application()
         {
-            Accounts = new CodeFramework.Data.Accounts<Account>(Database.Main);
+            Accounts = new Accounts(Database.Main);
         }
 
         public static void SetUser(Account account)

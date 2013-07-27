@@ -9,7 +9,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupInfoController : Controller<GroupModel>
+    public class GroupInfoController : Controller
     {
         public string User { get; private set; }
         public string GroupName { get; private set; }
@@ -28,14 +28,15 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
         
         protected override void OnRefresh()
         {
+            var model = Model as GroupModel;
             var sec = new Section();
-            if (Model.Members.Count == 0)
+            if (model.Members.Count == 0)
             {
                 sec.Add(new NoItemsElement("No Members"));
             }
             else
             {
-                Model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
+                model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
                     StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
                     sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                     sec.Add(sse);
@@ -43,12 +44,12 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             }
             
             InvokeOnMainThread(delegate {
-                Title = Model.Name;
+                Title = model.Name;
                 Root = new RootElement(Title) { sec };
             });
         }
         
-        protected override GroupModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             return Application.Client.Users[User].Groups[GroupName].GetInfo(forced);
         }

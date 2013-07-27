@@ -18,7 +18,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryInfoController : Controller<RepositoryDetailedModel>, IImageUpdated
+    public class RepositoryInfoController : Controller, IImageUpdated
     {
         private HeaderView _header;
 
@@ -38,19 +38,20 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         protected override void OnRefresh()
         {
-            var lastUpdated = "Updated " + (Model.UtcLastUpdated).ToDaysAgo();
+            var model = Model as RepositoryDetailedModel;
+            var lastUpdated = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 
-            _header = new HeaderView(View.Bounds.Width) { Title = Model.Name, Subtitle = lastUpdated };
+            _header = new HeaderView(View.Bounds.Width) { Title = model.Name, Subtitle = lastUpdated };
 
-            if (!string.IsNullOrEmpty(Model.Logo))
-                _header.Image = ImageLoader.DefaultRequestImage(new Uri(Model.Logo), this);
+            if (!string.IsNullOrEmpty(model.Logo))
+                _header.Image = ImageLoader.DefaultRequestImage(new Uri(model.Logo), this);
 
             Root.Add(new Section(_header));
             var sec1 = new Section();
 
-            if (!string.IsNullOrEmpty(Model.Description) && !string.IsNullOrWhiteSpace(Model.Description))
+            if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
             {
-                var element = new MultilinedElement(Model.Description)
+                var element = new MultilinedElement(model.Description)
                 {
                     BackgroundColor = UIColor.White
                 };
@@ -61,77 +62,77 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
             sec1.Add(new SplitElement(new SplitElement.Row
                                           {
-                                              Text1 = Model.Scm,
+                                              Text1 = model.Scm,
                                               Image1 = Images.ScmType,
-                                              Text2 = Model.Language,
+                                              Text2 = model.Language,
                                               Image2 = Images.Language
                                           }));
 
 
             //Calculate the best representation of the size
             string size;
-            if (Model.Size / 1024f < 1)
-                size = string.Format("{0}B", Model.Size);
-            else if ((Model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}KB", Model.Size / 1024f);
-            else if ((Model.Size / 1024f / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}MB", Model.Size / 1024f / 1024f);
+            if (model.Size / 1024f < 1)
+                size = string.Format("{0}B", model.Size);
+            else if ((model.Size / 1024f / 1024f) < 1)
+                size = string.Format("{0:0.##}KB", model.Size / 1024f);
+            else if ((model.Size / 1024f / 1024f / 1024f) < 1)
+                size = string.Format("{0:0.##}MB", model.Size / 1024f / 1024f);
             else
-                size = string.Format("{0:0.##}GB", Model.Size / 1024f / 1024f / 1024f);
+                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f / 1024f);
 
 
             sec1.Add(new SplitElement(new SplitElement.Row
                                           {
-                                              Text1 = Model.IsPrivate ? "Private" : "Public",
-                                              Image1 = Model.IsPrivate ? Images.Locked : Images.Unlocked,
+                Text1 = model.IsPrivate ? "Private" : "Public",
+                Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
                                               Text2 = size,
                                               Image2 = Images.Size
                                           }));
 
             sec1.Add(new SplitElement(new SplitElement.Row
                                           {
-                                              Text1 = (Model.UtcCreatedOn).ToString("MM/dd/yy"),
+                Text1 = (model.UtcCreatedOn).ToString("MM/dd/yy"),
                                               Image1 = Images.Create,
-                                              Text2 = Model.ForkCount.ToString() + (Model.ForkCount == 1 ? " Fork" : " Forks"),
+                Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork" : " Forks"),
                                               Image2 = Images.Fork
                                           }));
 
 
-            var owner = new StyledElement("Owner", Model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            owner.Tapped += () => NavigationController.PushViewController(new ProfileController(Model.Owner), true);
+            var owner = new StyledElement("Owner", model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            owner.Tapped += () => NavigationController.PushViewController(new ProfileController(model.Owner), true);
             sec1.Add(owner);
-            var followers = new StyledElement("Followers", "" + Model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(Model.Owner, Model.Slug), true);
+            var followers = new StyledElement("Followers", "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(model.Owner, model.Slug), true);
             sec1.Add(followers);
 
 
-            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(Model.Owner, Model.Slug), true), Images.Buttons.Event);
+            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(model.Owner, model.Slug), true), Images.Buttons.Event);
 
             var sec2 = new Section { events };
 
-            if (Model.HasIssues)
-                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(Model.Owner, Model.Slug), true), Images.Buttons.Flag));
+            if (model.HasIssues)
+                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(model.Owner, model.Slug), true), Images.Buttons.Flag));
 
-            if (Model.HasWiki)
-                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(Model.Owner, Model.Slug), true), Images.Pencil));
+            if (model.HasWiki)
+                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
 
             var sec3 = new Section
                            {
-                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(Model.Owner, Model.Slug), true), Images.Changes),
-                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(Model.Owner, Model.Slug), true), Images.Branch),
-                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(Model.Owner, Model.Slug), true), Images.Tag)
+                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
+                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
+                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
             };
 
             Root.Add(new[] { sec1, sec2, sec3 });
 
-            if (!string.IsNullOrEmpty(Model.Website))
+            if (!string.IsNullOrEmpty(model.Website))
             {
-                var web = new StyledElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(Model.Website)), Images.Webpage);
+                var web = new StyledElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
                 Root.Add(new Section { web });
             }
         }
 
-        protected override RepositoryDetailedModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             return Model;
         }

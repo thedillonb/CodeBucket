@@ -21,7 +21,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         public List<CommentModel> Comments { get; set; }
     }
 
-    public class IssueInfoController : Controller<InternalIssueInfoModel>
+    public class IssueInfoController : Controller
     {
         public int Id { get; private set; }
         public string User { get; private set; }
@@ -46,8 +46,9 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Title = "Issue #" + id;
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Edit, () => {
+                var m = Model as InternalIssueInfoModel;
                 var editController = new IssueEditController {
-                     ExistingIssue = Model.Issue,
+                     ExistingIssue = m.Issue,
                      Username = User,
                      RepoSlug = Slug,
                      Title = "Edit Issue",
@@ -77,8 +78,9 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             };
             _responsible.Tapped += () =>
             {
-                if (Model != null && Model.Issue.Responsible != null)
-                    NavigationController.PushViewController(new ProfileController(Model.Issue.Responsible.Username), true);
+                var m = Model as InternalIssueInfoModel;
+                if (m != null && m.Issue.Responsible != null)
+                    NavigationController.PushViewController(new ProfileController(m.Issue.Responsible.Username), true);
             };
 
             var addComment = new StyledElement("Add Comment", Images.Pencil);
@@ -105,7 +107,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             //Otherwise let's just reassign the model and call the OnRefresh to update the screen!
             else
             {
-                Model.Issue = model;
+                var m = Model as InternalIssueInfoModel;
+                m.Issue = model;
                 OnRefresh();
             }
         }
@@ -148,18 +151,18 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         protected override void OnRefresh()
         {
             BeginInvokeOnMainThread(() => { NavigationItem.RightBarButtonItem.Enabled = true; });
-
-            _header.Title = Model.Issue.Title;
-            _header.Subtitle = "Updated " + (Model.Issue.UtcLastUpdated).ToDaysAgo();
-            _split1.Value.Text1 = Model.Issue.Status;
-            _split1.Value.Text2 = Model.Issue.Priority;
-            _split2.Value.Text1 = Model.Issue.Metadata.Kind;
-            _split2.Value.Text2 = Model.Issue.Metadata.Component ?? "No Component";
-            _split3.Value.Text1 = Model.Issue.Metadata.Version ?? "No Version";
-            _split3.Value.Text2 = Model.Issue.Metadata.Milestone ?? "No Milestone";
-            _desc.Caption = Model.Issue.Content;
-            _responsible.Caption = Model.Issue.Responsible != null ? Model.Issue.Responsible.Username : "Unassigned";
-            if (Model.Issue.Responsible != null)
+            var model = Model as InternalIssueInfoModel;
+            _header.Title = model.Issue.Title;
+            _header.Subtitle = "Updated " + (model.Issue.UtcLastUpdated).ToDaysAgo();
+            _split1.Value.Text1 = model.Issue.Status;
+            _split1.Value.Text2 = model.Issue.Priority;
+            _split2.Value.Text1 = model.Issue.Metadata.Kind;
+            _split2.Value.Text2 = model.Issue.Metadata.Component ?? "No Component";
+            _split3.Value.Text1 = model.Issue.Metadata.Version ?? "No Version";
+            _split3.Value.Text2 = model.Issue.Metadata.Milestone ?? "No Milestone";
+            _desc.Caption = model.Issue.Content;
+            _responsible.Caption = model.Issue.Responsible != null ? model.Issue.Responsible.Username : "Unassigned";
+            if (model.Issue.Responsible != null)
                 _responsible.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
             if (!string.IsNullOrEmpty(_desc.Caption))
@@ -171,8 +174,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 }
             }
 
-            var comments = new List<Element>(Model.Comments.Count);
-            Model.Comments.OrderBy(x => (x.UtcCreatedOn)).ToList().ForEach(x =>
+            var comments = new List<Element>(model.Comments.Count);
+            model.Comments.OrderBy(x => (x.UtcCreatedOn)).ToList().ForEach(x =>
             {
                 if (!string.IsNullOrEmpty(x.Content))
                     comments.Add(new CommentElement
@@ -202,7 +205,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             });
         }
 
-        protected override InternalIssueInfoModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             var l = Application.Client.Users[User].Repositories[Slug].Issues[Id];
             var m = new InternalIssueInfoModel

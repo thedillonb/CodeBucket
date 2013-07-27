@@ -16,7 +16,7 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
             _owner = owner;
         }
 
-        protected override List<FollowerModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override object GetData(bool force, int currentPage, out int nextPage)
         {
             var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers(force).Followers;
             nextPage = -1;

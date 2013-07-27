@@ -171,6 +171,7 @@
     <Compile Include="Controllers\StartupController.cs" />
     <Compile Include="Utils\Login.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
+    <Compile Include="Data\Accounts.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />

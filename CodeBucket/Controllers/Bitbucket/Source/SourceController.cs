@@ -8,7 +8,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Source
 {
-    public class SourceController : Controller<SourceModel>
+    public class SourceController : Controller
     {
         public string Username { get; private set; }
 
@@ -36,13 +36,14 @@ namespace CodeBucket.Bitbucket.Controllers.Source
 
         protected override void OnRefresh()
         {
+            var model = Model as SourceModel;
             var sec = new Section();
-            Model.Directories.ForEach(d => sec.Add(new StyledElement(d,
+            model.Directories.ForEach(d => sec.Add(new StyledElement(d,
                                                                      () => NavigationController.PushViewController(
                                                                             new SourceController(Username, Slug, Branch, Path + "/" + d), true),
                                                                      Images.Folder)));
 
-            Model.Files.ForEach(f =>
+            model.Files.ForEach(f =>
             {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
@@ -62,7 +63,7 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             });
         }
 
-        protected override SourceModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
         }

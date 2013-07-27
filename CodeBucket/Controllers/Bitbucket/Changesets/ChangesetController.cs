@@ -12,7 +12,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
-    public class ChangesetController : Controller<List<ChangesetModel>>
+    public class ChangesetController : Controller
     {
         private const int RequestLimit = 30;
         private string _lastNode;
@@ -97,7 +97,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             root.Add(new Section { _loadMore });
 
             //Add the items that were in the update
-            AddItems(root, Model);
+            AddItems(root, Model as List<ChangesetModel>);
 
             //Update the UI
             InvokeOnMainThread(delegate {
@@ -106,7 +106,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             });
         }
 
-        protected override List<ChangesetModel> OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             var changes = OnGetData();
             _lastNode = changes.Last().Node;

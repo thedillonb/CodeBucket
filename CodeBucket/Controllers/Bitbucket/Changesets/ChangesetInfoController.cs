@@ -11,7 +11,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
-    public class ChangesetInfoController : Controller<ChangesetModel>
+    public class ChangesetInfoController : Controller
     {
         public string Node { get; private set; }
         
@@ -39,10 +39,11 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         
         protected override void OnRefresh()
         {
+            var model = Model as ChangesetModel;
             var sec = new Section();
-            _header.Subtitle = "Commited " + (Model.Utctimestamp).ToDaysAgo();
+            _header.Subtitle = "Commited " + (model.Utctimestamp).ToDaysAgo();
             
-            var d = new MultilinedElement(Model.Author, Model.Message);
+            var d = new MultilinedElement(model.Author, model.Message);
             sec.Add(d);
             
             if (Repo != null)
@@ -59,7 +60,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             
             var sec2 = new Section();
             
-            Model.Files.ForEach(x => 
+            model.Files.ForEach(x => 
                                 {
                 var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
                 var sse = new SubcaptionElement(file, x.Type)
@@ -68,11 +69,11 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
                     Lines = 1 };
                 sse.Tapped += () => {
                     string parent = null;
-                    if (Model.Parents != null && Model.Parents.Count > 0)
-                        parent = Model.Parents[0];
+                    if (model.Parents != null && model.Parents.Count > 0)
+                        parent = model.Parents[0];
                     
                     var type = x.Type.Trim().ToLower();
-                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, Model.Node, parent, x.File)
+                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, model.Node, parent, x.File)
                                                             { Removed = type.Equals("removed"), Added = type.Equals("added") }, true);
                 };
                 sec2.Add(sse);
@@ -86,7 +87,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             });
         }
         
-        protected override ChangesetModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo(forced);
             x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();

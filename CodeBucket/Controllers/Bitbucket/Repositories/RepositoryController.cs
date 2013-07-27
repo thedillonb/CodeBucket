@@ -13,7 +13,7 @@ using CodeFramework.Views;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryController : ListController<RepositoryDetailedModel>
+    public class RepositoryController : ListController
     {
         FilterModel _filterModel = Application.Account.RepoFilterObject;
         public string Username { get; private set; }
@@ -28,15 +28,16 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             EnableFilter = true;
         }
 
-        protected override List<RepositoryDetailedModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override object GetData(bool force, int currentPage, out int nextPage)
         {
             var a = Application.Client.Users[Username].GetInfo(force).Repositories;
             nextPage = -1;
             return a.OrderBy(x => x.Name).ToList();
         }
 
-        protected override Element CreateElement(RepositoryDetailedModel x)
+        protected override Element CreateElement(object obj)
         {
+            var x = obj as RepositoryDetailedModel;
             var sse = new RepositoryElement(x.Name, x.Scm, x.FollowersCount, x.ForkCount, x.Description, x.Owner) { ShowOwner = ShowOwner };
             sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
             return sse;
@@ -85,42 +86,44 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             if (Model == null)
                 return;
 
+            var model = Model as List<RepositoryDetailedModel>;
+
             var order = (FilterModel.Order)_filterModel.OrderBy;
             List<Section> sections = null;
 
             if (order == FilterModel.Order.Forks)
             {
-                var a = Model.OrderBy(x => x.ForkCount).GroupBy(x => _ceilings.First(r => r > x.ForkCount));
+                var a = model.OrderBy(x => x.ForkCount).GroupBy(x => _ceilings.First(r => r > x.ForkCount));
                 a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Forks");
             }
             else if (order == FilterModel.Order.LastUpdated)
             {
-                var a = Model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
                 a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Days Ago", "Updated");
             }
             else if (order == FilterModel.Order.CreatedOn)
             {
-                var a = Model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
                 a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Days Ago", "Created");
             }
             else if (order == FilterModel.Order.Followers)
             {
-                var a = Model.OrderBy(x => x.FollowersCount).GroupBy(x => _ceilings.First(r => r > x.FollowersCount));
+                var a = model.OrderBy(x => x.FollowersCount).GroupBy(x => _ceilings.First(r => r > x.FollowersCount));
                 a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Followers");
             }
             else if (order == FilterModel.Order.Owner)
             {
-                var a = Model.OrderBy(x => x.Name).GroupBy(x => x.Owner);
+                var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner);
                 a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a);
             }
             else
             {
-                var a = _filterModel.Ascending ? Model.OrderBy(x => x.Name) : Model.OrderByDescending(x => x.Name);
+                var a = _filterModel.Ascending ? model.OrderBy(x => x.Name) : model.OrderByDescending(x => x.Name);
                 sections = new List<Section>() { new Section() };
                 foreach (var y in a)
                     sections[0].Add(CreateElement(y));

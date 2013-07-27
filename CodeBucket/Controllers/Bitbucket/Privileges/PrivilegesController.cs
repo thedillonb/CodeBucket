@@ -10,7 +10,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Privileges
 {
-    public class PrivilegesController : Controller<List<PrivilegeModel>>
+    public class PrivilegesController : Controller
     {
         public event Action<UserModel> SelectedItem;
 
@@ -42,8 +42,9 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
         {
             var sec = new Section();
             HashSet<UserModel> users = new HashSet<UserModel>();
+            var model = Model as List<PrivilegeModel>;
 
-            Model.ForEach(s => {
+            model.ForEach(s => {
                 if (s.User != null)
                     users.Add(s.User);
             });
@@ -72,7 +73,7 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
             });
         }
 
-        protected override List<PrivilegeModel> OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             try
             {

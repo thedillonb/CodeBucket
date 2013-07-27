@@ -16,7 +16,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Events
 {
-    public class EventsController : Controller<List<EventModel>>
+    public class EventsController : Controller
     {
         private DateTime _lastUpdate = DateTime.MinValue;
         private int _firstIndex;
@@ -74,7 +74,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             });
         }
 
-        protected override List<EventModel> OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             var events = OnGetData();
             _firstIndex = events.Count;
@@ -92,7 +92,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
 
         protected override void OnRefresh()
         {
-            AddItems(Model);
+            AddItems(Model as List<EventModel>);
         }
 
         private IEnumerable<NewsFeedElement.TextBlock> CreateDescription(EventModel eventModel, out UIImage img)

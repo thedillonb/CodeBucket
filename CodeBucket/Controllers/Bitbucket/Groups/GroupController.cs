@@ -10,7 +10,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupController : ListController<GroupModel>
+    public class GroupController : ListController
 	{
         public string Username { get; private set; }
 
@@ -22,16 +22,17 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             SearchPlaceholder = "Search Groups";
 		}
 
-        protected override List<GroupModel> GetData(bool force, int currentPage, out int nextPage)
+        protected override object GetData(bool force, int currentPage, out int nextPage)
         {
             var items = Application.Client.Users[Username].Groups.GetGroups(force);
             nextPage = -1;
             return items.OrderBy(a => a.Name).ToList();
         }
 
-        protected override Element CreateElement(GroupModel obj)
+        protected override Element CreateElement(object obj)
         {
-            return new StyledElement(obj.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, obj.Slug) { Title = obj.Name, Model = obj }, true));
+            var group = obj as GroupModel;
+            return new StyledElement(group.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, group.Slug) { Title = group.Name, Model = group }, true));
         }
 	}
 }

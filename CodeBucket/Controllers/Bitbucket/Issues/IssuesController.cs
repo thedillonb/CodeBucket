@@ -15,7 +15,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
-    public class IssuesController : Controller<List<IssueModel>>
+    public class IssuesController : Controller
     {
         public string User { get; private set; }
         public string Slug { get; private set; }
@@ -194,7 +194,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             if (changedModel == null)
             {
                 var c = TableView.ContentOffset;
-                Model.RemoveAll(a => a.LocalId == oldModel.LocalId);
+                var m = Model as List<IssueModel>;
+                m.RemoveAll(a => a.LocalId == oldModel.LocalId);
                 Refresh(false);
                 TableView.ContentOffset = c;
             }
@@ -208,7 +209,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 else
                 {
                     var c = TableView.ContentOffset;
-                    Model.RemoveAll(a => a.LocalId == changedModel.LocalId);
+                    var m = Model as List<IssueModel>;
+                    m.RemoveAll(a => a.LocalId == changedModel.LocalId);
                     Refresh(false);
                     TableView.ContentOffset = c;
                 }
@@ -288,49 +290,50 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
             var order = (FilterModel.Order)_filterModel.OrderBy;
             List<Section> sections = null;
+            var model = Model as List<IssueModel>;
 
             if (order == FilterModel.Order.Status)
             {
-                var a = Model.GroupBy(x => x.Status);
+                var a = model.GroupBy(x => x.Status);
                 sections = CreateSection(a);
             }
             else if (order == FilterModel.Order.Priority)
             {
-                var a = Model.GroupBy(x => x.Priority);
+                var a = model.GroupBy(x => x.Priority);
                 sections = CreateSection(a);
             }
             else if (order == FilterModel.Order.Utc_Last_Updated)
             {
-                var a = Model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
                 sections = CreateSection(a, "Days Ago", "Updated");
             }
             else if (order == FilterModel.Order.Created_On)
             {
-                var a = Model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
                 sections = CreateSection(a, "Days Ago", "Created");
             }
             else if (order == FilterModel.Order.Version)
             {
-                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Version)) ? x.Metadata.Version : "No Version");
+                var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Version)) ? x.Metadata.Version : "No Version");
                 sections = CreateSection(a);
             }
             else if (order == FilterModel.Order.Component)
             {
-                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Component)) ? x.Metadata.Component : "No Component");
+                var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Component)) ? x.Metadata.Component : "No Component");
                 sections = CreateSection(a);
             }
             else if (order == FilterModel.Order.Milestone)
             {
-                var a = Model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Milestone)) ? x.Metadata.Milestone : "No Milestone");
+                var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Milestone)) ? x.Metadata.Milestone : "No Milestone");
                 sections = CreateSection(a);
             }
             else
             {
                 IEnumerable<IssueModel> a;
                 if (order == FilterModel.Order.Local_Id)
-                    a = Model.OrderBy(x => x.LocalId);
+                    a = model.OrderBy(x => x.LocalId);
                 else
-                    a = Model.OrderBy(x => x.Title);
+                    a = model.OrderBy(x => x.Title);
                 sections = new List<Section>() { new Section() };
                 foreach (var y in a)
                     sections[0].Add(CreateElement(y));
@@ -361,15 +364,16 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             else
             {
                 //Remove any duplicates
-                Model.RemoveAll(x => issues.Any(y => y.LocalId == x.LocalId));
-                Model.AddRange(issues);
+                var model = Model as List<IssueModel>;
+                model.RemoveAll(x => issues.Any(y => y.LocalId == x.LocalId));
+                model.AddRange(issues);
             }
 
             //Refresh this 
             Refresh(false);
         }
 
-        protected override List<IssueModel> OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             //forced doesnt matter. Never cached.
             //Update everything we have here!

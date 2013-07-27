@@ -13,7 +13,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-	public class ProfileController : Controller<UsersModel>, IImageUpdated
+	public class ProfileController : Controller, IImageUpdated
 	{
         private HeaderView _header;
 
@@ -35,24 +35,28 @@ namespace CodeBucket.Bitbucket.Controllers
             var followers = new StyledElement("Followers", () => NavigationController.PushViewController(new UserFollowersController(Username), true), Images.Heart);
             var events = new StyledElement("Events", () => NavigationController.PushViewController(new EventsController(Username), true), Images.Buttons.Event);
             var groups = new StyledElement("Groups", () => NavigationController.PushViewController(new GroupController(Username), true), Images.Buttons.Group);
-            var repos = new StyledElement("Repositories", () => NavigationController.PushViewController(new RepositoryController(Username, true) { Model = Model.Repositories }, true), Images.Repo);
+            var repos = new StyledElement("Repositories", () => {
+                var model = Model as UsersModel;
+                NavigationController.PushViewController(new RepositoryController(Username, true) { Model = model == null ? null : model.Repositories }, true)
+            }, Images.Repo);
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos } });
         }
 
         protected override void OnRefresh()
         {
-            _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
-            _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
+            var m = Model as UsersModel;
+            _header.Subtitle = m.User.FirstName ?? "" + " " + (m.User.LastName ?? "");
+            _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(m.User.Avatar), this);
             BeginInvokeOnMainThread(() => _header.SetNeedsDisplay());
 
             if (Username.Equals(Application.Account.Username, System.StringComparison.OrdinalIgnoreCase))
             {
-                Application.Account.AvatarUrl = Model.User.Avatar;
+                Application.Account.AvatarUrl = m.User.Avatar;
                 BeginInvokeOnMainThread(() => Application.Accounts.Update(Application.Account));
             }
         }
 
-        protected override UsersModel OnUpdate(bool forced)
+        protected override object OnUpdate(bool forced)
         {
             return Application.Client.Users[Username].GetInfo(forced);
         }

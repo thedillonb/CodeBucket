@@ -11,7 +11,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {
-    public abstract class FollowersController : ListController<FollowerModel>
+    public abstract class FollowersController : ListController
     {
 		protected FollowersController()
 			: base(true)
@@ -20,8 +20,9 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
             SearchPlaceholder = "Search Followers";
 		}
 
-        protected override Element CreateElement(FollowerModel s)
+        protected override Element CreateElement(object obj)
         {
+            var s = obj as FollowerModel;
             StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
             sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
             return sse;
