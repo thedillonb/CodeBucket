@@ -110,7 +110,8 @@ namespace CodeBucket
         public override void ReceiveMemoryWarning(UIApplication application)
         {
             //Remove everything from the cache
-            Application.Cache.DeleteAll();
+            if (Application.Client != null && Application.Client.CacheProvider != null)
+                Application.Client.CacheProvider.DeleteAll();
 
             //Pop back to the root view...
             if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)

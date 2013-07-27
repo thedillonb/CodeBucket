@@ -133,7 +133,6 @@
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Data\WebCacheProvider.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />

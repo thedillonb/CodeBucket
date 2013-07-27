@@ -22,50 +22,31 @@ namespace CodeBucket.Controllers
 		{
 		}
 
-        protected override void Populate()
+        protected override UIViewController AddAccount()
         {
-            var accountSection = new Section();
-            foreach (var account in Application.Accounts)
+            var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
+            ctrl.Login = (username, password) => {
+                Utils.Login.LoginAccount(username, password, ctrl);
+            };
+            return ctrl;
+        }
+
+        protected override void AccountSelected(Account account)
+        {
+            //If the account doesn't remember the password we need to prompt
+            if (account.DontRemember)
             {
-                var thisAccount = account;
-                var t = new AccountElement(thisAccount);
-                t.Tapped += () => { 
-                    //If the account doesn't remember the password we need to prompt
-                    if (thisAccount.DontRemember)
-                    {
-                        var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = thisAccount.Username };
-                        loginController.Login = (username, password) => {
-                            Utils.Login.LoginAccount(username, password, loginController);
-                        };
-                        NavigationController.PushViewController(loginController, true);
-                    }
-                    //Change the user!
-                    else
-                    {
-                        Utils.Login.LoginAccount(thisAccount.Username, thisAccount.Password, this);
-                    }
+                var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = account.Username };
+                loginController.Login = (username, password) => {
+                    Utils.Login.LoginAccount(username, password, loginController);
                 };
-
-                //Check to see if this account is the active account. Application.Account could be null 
-                //so make it the target of the equals, not the source.
-                if (thisAccount.Equals(Application.Account))
-                    t.Accessory = UITableViewCellAccessory.Checkmark;
-                accountSection.Add(t);
+                NavigationController.PushViewController(loginController, true);
             }
-
-            var addAccountSection = new Section();
-            var addAccount = new StyledElement("Add Account", () => {
-                var ctrl = new Bitbucket.Controllers.Accounts.LoginViewController();
-                ctrl.Login = (username, password) => {
-                    Utils.Login.LoginAccount(username, password, ctrl);
-                };
-                NavigationController.PushViewController(ctrl, true);
-            });
-            //addAccount.Image = Images.CommentAdd;
-            addAccountSection.Add(addAccount);
-
-
-            Root = new RootElement(Title) { accountSection, addAccountSection };
+            //Change the user!
+            else
+            {
+                Utils.Login.LoginAccount(account.Username, account.Password, this);
+            }
         }
     }
 }

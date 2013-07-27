@@ -11,8 +11,6 @@ namespace CodeBucket
 
         public static CodeFramework.Data.Accounts<Account> Accounts { get; private set; }
 
-        public static WebCacheProvider Cache { get; private set; }
-
         public static Account Account
         {
             get { return Accounts.ActiveAccount; }
@@ -22,7 +20,6 @@ namespace CodeBucket
         static Application()
         {
             Accounts = new CodeFramework.Data.Accounts<Account>(Database.Main);
-            Cache = new WebCacheProvider();
         }
 
         public static void SetUser(Account account)
@@ -37,14 +34,22 @@ namespace CodeBucket
 
             Account = account;
             Accounts.SetDefault(Account);
-            
-            //Release the cache
-            Cache.DeleteAll();
 
+            //Release the cache
 			Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
 				Timeout = 1000 * 30, //30 seconds
-				CacheProvider = Cache,
+				CacheProvider = new AppCache(),
 			};
+        }
+
+        /// <summary>
+        /// A cache provider for BitBucketSharp.
+        /// Since the CodeFramework.Data.WebCacheProvider was modeled directly after the interface
+        /// it can just inherit both and be alright. Otherwise, i'd have to do a little bit of work to make
+        /// the proxy class.
+        /// </summary>
+        private class AppCache : CodeFramework.Data.WebCacheProvider, BitbucketSharp.ICacheProvider
+        {
         }
     }
 }
