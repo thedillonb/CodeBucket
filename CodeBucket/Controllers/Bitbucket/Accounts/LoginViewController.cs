@@ -37,8 +37,10 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
 
             var backgroundImage = CreateRepeatingBackground();
             if (backgroundImage != null)
+            {
                 View.BackgroundColor = UIColor.FromPatternImage(backgroundImage);
-            backgroundImage.Dispose();
+                backgroundImage.Dispose();
+            }
         }
 
         private UIImage CreateRepeatingBackground()
@@ -51,7 +53,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
             else
             {
                 if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.Portrait || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.PortraitUpsideDown)
-                    bgImage = UIImageHelper.FromFileAuto("Default-portrait");
+                    bgImage = UIImageHelper.FromFileAuto("Default-Portrait");
                 else
                     bgImage = UIImageHelper.FromFileAuto("Default-Landscape");
             }

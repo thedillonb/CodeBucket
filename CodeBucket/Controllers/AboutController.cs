@@ -11,7 +11,7 @@ namespace CodeBucket.Controllers
     {
         static readonly string About = "CodeBucket is the best way to browse and maintain your Bitbucket repositories on any iOS device! " +
                 "Keep an eye on your projects with the ability to view everything from followers to the individual file diffs in the latest change set. " +
-                "CodeBucket brings Bitbucket to your finger tips in a sleek and efficient design." + 
+                "CodeBucket brings Bitbucket to your finger tips in a sleek and efficient design. " + 
                 "\n\nCreated By Dillon Buchanan";
 
 
