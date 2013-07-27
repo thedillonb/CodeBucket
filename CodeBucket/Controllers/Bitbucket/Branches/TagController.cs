@@ -6,36 +6,36 @@ using System.Linq;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class TagController : ListController
+    public class TagController : BaseController
     {
-        public string User { get; private set; }
+        public List<TagModel> Model { get; set; }
+
+        public string Username { get; private set; }
+
         public string Repo { get; private set; }
 
         public TagController(string user, string repo)
             : base(true)
         {
-            User = user;
+            Username = user;
             Repo = repo;
             Title = "Tags";
             SearchPlaceholder = "Search Tags";
+            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
         }
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override async Task DoRefresh(bool force)
         {
-            var d = Application.Client.Users[User].Repositories[Repo].GetTags(force);
-            nextPage = -1;
-            return d.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();
-        }
-
-        protected override Element CreateElement(object obj)
-        {
-            var o = obj as TagController.TagModel;
-            var element = new StyledElement(o.Name);
-            element.Tapped += () => NavigationController.PushViewController(new SourceController(User, Repo, o.Node), true);
-            return element;
+            if (Model == null || force)
+                await Task.Run(() => { 
+                    var tags = Application.Client.Users[Username].Repositories[Repo].GetTags(force);
+                    Model = tags.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();
+                });
+            AddItems<TagModel>(Model, (o) => new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true)));
         }
 
         /// <summary>

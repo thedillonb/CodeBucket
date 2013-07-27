@@ -8,19 +8,23 @@ using System.Collections.Generic;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {
-    public abstract class FollowersController : ListController
+    public abstract class FollowersController : BaseController
     {
+        public List<FollowerModel> Model { get; set; }
+
 		protected FollowersController()
 			: base(true)
 		{
             Title = "Followers";
             SearchPlaceholder = "Search Followers";
+            Style = UITableViewStyle.Plain;
 		}
 
-        protected override Element CreateElement(object obj)
+        protected Element CreateElement(FollowerModel obj)
         {
             var s = obj as FollowerModel;
             StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);

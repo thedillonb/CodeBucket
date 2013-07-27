@@ -6,11 +6,13 @@ using System.Linq;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupInfoController : Controller
+    public class GroupInfoController : BaseController
     {
+        public GroupModel Model { get; set; }
         public string User { get; private set; }
         public string GroupName { get; private set; }
         
@@ -25,33 +27,17 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             Title = groupName;
             GroupName = groupName;
         }
-        
-        protected override void OnRefresh()
+
+        protected override async Task DoRefresh(bool force)
         {
-            var model = Model as GroupModel;
-            var sec = new Section();
-            if (model.Members.Count == 0)
-            {
-                sec.Add(new NoItemsElement("No Members"));
-            }
-            else
-            {
-                model.Members.OrderBy(x => x.Username).ToList().ForEach(s => {
-                    StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
-                    sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
-                    sec.Add(sse);
-                });
-            }
-            
-            InvokeOnMainThread(delegate {
-                Title = model.Name;
-                Root = new RootElement(Title) { sec };
+            if (Model == null || force)
+                await Task.Run(() => { Model = Application.Client.Users[User].Groups[GroupName].GetInfo(force); });
+
+            AddItems<UserModel>(Model.Members.OrderBy(x => x.Username).ToList(), (s) => {
+                StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
+                sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+                return sse;
             });
-        }
-        
-        protected override object OnUpdate(bool forced)
-        {
-            return Application.Client.Users[User].Groups[GroupName].GetInfo(forced);
         }
     }
 }

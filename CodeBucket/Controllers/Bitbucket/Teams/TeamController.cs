@@ -7,32 +7,30 @@ using System.Linq;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Teams
 {
-    public class TeamController : ListController
+    public class TeamController : BaseController
     {
+        public List<string> Model { get; set; }
+
         public TeamController(bool push = true) 
             : base(push)
         {
             Title = "Teams";
             SearchPlaceholder = "Search Teams";
+            Style = UITableViewStyle.Plain;
         }
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override async Task DoRefresh(bool force)
         {
-            var items = Application.Client.Account.GetPrivileges(force);
-            nextPage = -1;
-            var teams = items.Teams.Keys.OrderBy(a => a).ToList();
-
-            //Remove the current user from the 'teams'
-            teams.Remove(Application.Account.Username);
-            return teams;
-        }
-
-        protected override Element CreateElement(object obj)
-        {
-            return new StyledElement(obj as string, () => NavigationController.PushViewController(new ProfileController(obj as string), true));
+            if (Model == null || force)
+                await Task.Run(() => { 
+                    Model = Application.Client.Account.GetPrivileges(force).Teams.Keys.OrderBy(a => a).ToList();
+                    Model.Remove(Application.Account.Username); //Remove the current user from the 'teams'
+                });
+            AddItems<string>(Model, (o) => new StyledElement(o, () => NavigationController.PushViewController(new ProfileController(o), true)));
         }
     }
 }

@@ -2,6 +2,7 @@ using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using CodeBucket.Bitbucket.Controllers.Followers;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {
@@ -16,11 +17,11 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
             _owner = owner;
         }
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override async Task DoRefresh(bool force)
         {
-            var f = Application.Client.Users[_owner].Repositories[_name].GetFollowers(force).Followers;
-            nextPage = -1;
-            return f.OrderBy(x => x.Username).ToList();
+            if (Model == null || force)
+                await Task.Run(() => { Model = Application.Client.Users[_owner].Repositories[_name].GetFollowers(force).Followers.OrderBy(x => x.Username).ToList(); });
+            AddItems<FollowerModel>(Model, CreateElement);
         }
     }
 }

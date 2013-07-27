@@ -8,11 +8,13 @@ using System.Linq;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Branches
 {
-    public class BranchController : ListController
+    public class BranchController : BaseController
 	{
+        public List<BranchModel> Model { get; set; }
         public string Username { get; private set; }
         public string Slug { get; private set; }
 
@@ -23,19 +25,14 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
             Slug = slug;
             Title = "Branches";
             SearchPlaceholder = "Search Branches";
+            Style = UITableViewStyle.Plain;
 		}
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override async Task DoRefresh(bool force)
         {
-            var d = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(force);
-            nextPage = -1;
-            return d.Values.OrderBy(x => x.Branch).ToList();
-        }
-
-        protected override Element CreateElement(object obj)
-        {
-            var o = obj as BranchModel;
-            return new StyledElement(o.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, o.Branch), true));
+            if (Model == null || force)
+                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(force).Values.OrderBy(x => x.Branch).ToList(); });
+            AddItems<BranchModel>(Model, (o) => new StyledElement(o.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, o.Branch), true)));
         }
 	}
 }

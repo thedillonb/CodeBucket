@@ -4,12 +4,15 @@ using BitbucketSharp.Models;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 
 namespace CodeBucket.Bitbucket.Controllers.Source
 {
-    public class SourceController : Controller
+    public class SourceController : BaseController
     {
+        public SourceModel Model { get; set; }
+
         public string Username { get; private set; }
 
         public string Slug { get; private set; }
@@ -33,41 +36,28 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }
 
-
-        protected override void OnRefresh()
+        protected override async Task DoRefresh(bool force)
         {
-            var model = Model as SourceModel;
-            var sec = new Section();
-            model.Directories.ForEach(d => sec.Add(new StyledElement(d,
-                                                                     () => NavigationController.PushViewController(
-                                                                            new SourceController(Username, Slug, Branch, Path + "/" + d), true),
-                                                                     Images.Folder)));
+            if (Model == null || force)
+                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(force); });
 
-            model.Files.ForEach(f =>
-            {
+            var sec = new Section();
+            Model.Directories.ForEach(d => sec.Add(new StyledElement(d, () => NavigationController.PushViewController(
+                new SourceController(Username, Slug, Branch, Path + "/" + d), true), Images.Folder)));
+
+            Model.Files.ForEach(f => {
                 var i = f.Path.LastIndexOf('/') + 1;
                 var p = f.Path.Substring(i);
                 sec.Add(new StyledElement(p, () => NavigationController.PushViewController(
-                                          new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true),
+                    new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true),
                                           Images.File));
             });
 
             if (sec.Count == 0)
-            {
                 sec.Add(new NoItemsElement());
-            }
 
-            InvokeOnMainThread(delegate
-            {
-                Root = new RootElement(Title) { sec };
-            });
+            Root = new RootElement(Title) { sec };
         }
-
-        protected override object OnUpdate(bool forced)
-        {
-            return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
-        }
-
     }
 }
 
