@@ -15,30 +15,44 @@ using CodeBucket.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryInfoController : Controller, IImageUpdated
+    public class RepositoryInfoController : BaseController, IImageUpdated
     {
         private HeaderView _header;
+
+        public RepositoryDetailedModel Model { get; set; }
+
+        public string Username { get; private set; }
+
+        public string Repo { get; private set; }
+
+        public RepositoryInfoController(string username, string repo)
+            : base(true)
+        {
+            Username = username;
+            Repo = repo;
+            Title = repo;
+        }
 
         public RepositoryInfoController(RepositoryDetailedModel model)
             : base(true)
         {
             Title = model.Name;
             Model = model;
-            Root.UnevenRows = true;
+            Username = model.Owner;
+            Repo = model.Name;
         }
 
-        public override void ViewDidLoad()
+        protected override async Task DoRefresh(bool force)
         {
-            base.ViewDidLoad();
-            Refresh();
-        }
+            if (Model == null || force)
+                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Repo].GetInfo(force); });
 
-        protected override void OnRefresh()
-        {
             var model = Model as RepositoryDetailedModel;
+            var root = new RootElement(Title) { UnevenRows = true };
             var lastUpdated = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 
             _header = new HeaderView(View.Bounds.Width) { Title = model.Name, Subtitle = lastUpdated };
@@ -46,7 +60,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             if (!string.IsNullOrEmpty(model.Logo))
                 _header.Image = ImageLoader.DefaultRequestImage(new Uri(model.Logo), this);
 
-            Root.Add(new Section(_header));
+            root.Add(new Section(_header));
             var sec1 = new Section();
 
             if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
@@ -61,12 +75,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row
-                                          {
-                                              Text1 = model.Scm,
-                                              Image1 = Images.ScmType,
-                                              Text2 = model.Language,
-                                              Image2 = Images.Language
-                                          }));
+                                      {
+                Text1 = model.Scm,
+                Image1 = Images.ScmType,
+                Text2 = model.Language,
+                Image2 = Images.Language
+            }));
 
 
             //Calculate the best representation of the size
@@ -82,20 +96,20 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
 
             sec1.Add(new SplitElement(new SplitElement.Row
-                                          {
+                                      {
                 Text1 = model.IsPrivate ? "Private" : "Public",
                 Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
-                                              Text2 = size,
-                                              Image2 = Images.Size
-                                          }));
+                Text2 = size,
+                Image2 = Images.Size
+            }));
 
             sec1.Add(new SplitElement(new SplitElement.Row
-                                          {
+                                      {
                 Text1 = (model.UtcCreatedOn).ToString("MM/dd/yy"),
-                                              Image1 = Images.Create,
+                Image1 = Images.Create,
                 Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork" : " Forks"),
-                                              Image2 = Images.Fork
-                                          }));
+                Image2 = Images.Fork
+            }));
 
 
             var owner = new StyledElement("Owner", model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
@@ -117,24 +131,21 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                 sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
 
             var sec3 = new Section
-                           {
+            {
                 new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
                 new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
                 new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
             };
 
-            Root.Add(new[] { sec1, sec2, sec3 });
+            root.Add(new[] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(model.Website))
             {
                 var web = new StyledElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
-                Root.Add(new Section { web });
+                root.Add(new Section { web });
             }
-        }
 
-        protected override object OnUpdate(bool forced)
-        {
-            return Model;
+            Root = root;
         }
 
         public void UpdatedImage(Uri uri)

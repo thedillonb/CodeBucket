@@ -122,7 +122,25 @@ namespace CodeBucket
         {
             if (url == null)
                 return false;
-            //var uri = new System.Uri(url.ToString());
+            var uri = new System.Uri(url.ToString());
+
+            if (Slideout != null)
+            {
+                if (!string.IsNullOrEmpty(uri.Host))
+                {
+                    string username = uri.Host;
+                    string repo = null;
+
+                    if (uri.Segments.Length > 1)
+                        repo = uri.Segments[1].Replace("/", "");
+
+                    if (repo == null)
+                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.ProfileController(username));
+                    else
+                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.Repositories.RepositoryInfoController(username, repo));
+                }
+            }
+
             return true;
         }
 	}
