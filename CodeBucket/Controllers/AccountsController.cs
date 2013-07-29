@@ -77,17 +77,24 @@ namespace CodeBucket.Controllers
             //If the account doesn't remember the password we need to prompt
             if (a.DontRemember)
             {
-                var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = account.Username };
-                loginController.Login = (username, password) => {
-                    Utils.Login.LoginAccount(username, password, loginController);
-                };
-                NavigationController.PushViewController(loginController, true);
+                DoLoginStuff(account.Username);
             }
             //Change the user!
             else
             {
-                Utils.Login.LoginAccount(account.Username, a.Password, this);
+                Utils.Login.LoginAccount(account.Username, a.Password, this, (ex) => {
+                    DoLoginStuff(account.Username);
+                });
             }
+        }
+
+        private void DoLoginStuff(string user)
+        {
+            var loginController = new CodeBucket.Bitbucket.Controllers.Accounts.LoginViewController() { Username = user };
+            loginController.Login = (username, password) => {
+                Utils.Login.LoginAccount(username, password, loginController);
+            };
+            NavigationController.PushViewController(loginController, true);
         }
 
         public override Source CreateSizingSource(bool unevenRows)
