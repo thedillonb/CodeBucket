@@ -13,11 +13,14 @@ using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeBucket.Bitbucket.Controllers.Teams;
 using CodeFramework.Utils;
+using System.Collections.Generic;
 
 namespace CodeBucket.Controllers
 {
 	public class MenuController : MenuBaseController
     {
+        private Section _eventsSection, _groupsTeamsSection;
+
 		protected override void CreateMenuRoot()
 		{
             var root = new RootElement(Application.Account.Username);
@@ -81,12 +84,31 @@ namespace CodeBucket.Controllers
             Transitions.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
         }
 
-        public override void ViewWillAppear(bool animated)
+        public override void ViewDidLoad()
         {
             ProfileButton.Uri = new System.Uri(Application.Account.AvatarUrl);
 
-            //This must be last.
-            base.ViewWillAppear(animated);
+            //Must be in the middle
+            base.ViewDidLoad();
+
+            //Load optional stuff
+            LoadExtras();
+        }
+
+        private void LoadExtras()
+        {
+            this.DoWorkNoHud(() => {
+                var privileges = Application.Client.Account.GetPrivileges();
+                Application.Account.Groups = Application.Client.Account.Groups.GetGroups();
+
+                if (privileges != null && privileges.Teams != null)
+                {
+                    Application.Account.Teams = privileges.Teams.Keys.ToList();
+                    Application.Account.Teams.Remove(Application.Account.Username);
+                }
+
+                BeginInvokeOnMainThread(() => CreateMenuRoot());
+            });
         }
     }
 }

@@ -34,22 +34,29 @@ namespace CodeBucket.Controllers
             //Don't remember, prompt for password
             if (defaultAccount.DontRemember)
             {
-                var accountsController = new AccountsController();
-                accountsController.NavigationItem.LeftBarButtonItem = null;
-                var login = new LoginViewController { Username = defaultAccount.Username };
-                login.Login = (username, password) => {
-                    Utils.Login.LoginAccount(username, password, login);
-                };
-
-                var navigationController = new CustomNavigationController(this, accountsController);
-                navigationController.PushViewController(login, false);
-                Transitions.TransitionToController(navigationController);
+                ShowAccountsAndSelectedUser(defaultAccount.Username);
             }
             //If the user wanted to remember the account
             else
             {
-                Utils.Login.LoginAccount(defaultAccount.Username, defaultAccount.Password, this);
+                Utils.Login.LoginAccount(defaultAccount.Username, defaultAccount.Password, this, (ex) => {
+                    ShowAccountsAndSelectedUser(defaultAccount.Username);
+                });
             }
+        }
+
+        private void ShowAccountsAndSelectedUser(string user)
+        {
+            var accountsController = new AccountsController();
+            accountsController.NavigationItem.LeftBarButtonItem = null;
+            var login = new LoginViewController { Username = user };
+            login.Login = (username, password) => {
+                Utils.Login.LoginAccount(username, password, login);
+            };
+
+            var navigationController = new CustomNavigationController(this, accountsController);
+            navigationController.PushViewController(login, false);
+            Transitions.TransitionToController(navigationController);
         }
 
         /// <summary>
