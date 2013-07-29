@@ -17,11 +17,9 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
             _owner = owner;
         }
 
-        protected override async Task DoRefresh(bool force)
+        protected override object OnUpdate(bool forced)
         {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[_owner].Repositories[_name].GetFollowers(force).Followers.OrderBy(x => x.Username).ToList(); });
-            AddItems<FollowerModel>(Model, CreateElement);
+            return Application.Client.Users[_owner].Repositories[_name].GetFollowers(forced).Followers.OrderBy(x => x.Username).ToList();
         }
     }
 }

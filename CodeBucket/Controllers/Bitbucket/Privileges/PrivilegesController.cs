@@ -34,7 +34,6 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Title = "Privileges";
             EnableSearch = true;
-            AutoHideSearch = true;
             SearchPlaceholder = "Search Users";
         }
 

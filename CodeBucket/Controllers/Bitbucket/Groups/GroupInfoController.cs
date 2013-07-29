@@ -10,34 +10,36 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupInfoController : BaseController
+    public class GroupInfoController : ModelDrivenController
     {
-        public GroupModel Model { get; set; }
+        public new GroupModel Model { get; set; }
         public string User { get; private set; }
         public string GroupName { get; private set; }
         
         public GroupInfoController(string user, string groupName)
-            : base(true, true)
+            : base(typeof(GroupModel))
         {
             Style = UITableViewStyle.Plain;
             User = user;
             EnableSearch = true;
-            AutoHideSearch = true;
             SearchPlaceholder = "Search Memebers";
             Title = groupName;
             GroupName = groupName;
         }
 
-        protected override async Task DoRefresh(bool force)
-        {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[User].Groups[GroupName].GetInfo(force); });
 
+        protected override void OnRefresh()
+        {
             AddItems<UserModel>(Model.Members.OrderBy(x => x.Username).ToList(), (s) => {
                 StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
                 sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
                 return sse;
-            });
+            }, "No Members");
+        }
+
+        protected override object OnUpdate(bool forced)
+        {
+            return Application.Client.Users[User].Groups[GroupName].GetInfo(forced);
         }
     }
 }

@@ -55,6 +55,7 @@ namespace CodeBucket.Utils
                 ctrl.InvokeOnMainThread(TransitionToSlideout);
 
             }, (ex) => {
+                Console.WriteLine(ex.Message);
                 //If there is a login failure, unset the user
                 Application.SetUser(null);
                 Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + account.Username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");

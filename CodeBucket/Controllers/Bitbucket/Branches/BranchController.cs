@@ -12,14 +12,13 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Branches
 {
-    public class BranchController : BaseController
+    public class BranchController : ModelDrivenController
 	{
-        public List<BranchModel> Model { get; set; }
         public string Username { get; private set; }
         public string Slug { get; private set; }
 
 		public BranchController(string username, string slug) 
-            : base(true)
+            : base(typeof(List<BranchModel>))
 		{
             Username = username;
             Slug = slug;
@@ -28,12 +27,18 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
             Style = UITableViewStyle.Plain;
 		}
 
-        protected override async Task DoRefresh(bool force)
+        protected override void OnRefresh()
         {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(force).Values.OrderBy(x => x.Branch).ToList(); });
-            AddItems<BranchModel>(Model, (o) => new StyledElement(o.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, o.Branch), true)));
+            AddItems<BranchModel>(Model as List<BranchModel>, 
+                                  (o) => new StyledElement(o.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, o.Branch), true)),
+                                  "No Branches");
         }
+
+        protected override object OnUpdate(bool forced)
+        {
+            return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced).Values.OrderBy(x => x.Branch).ToList();
+        }
+
 	}
 }
 

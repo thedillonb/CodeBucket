@@ -37,7 +37,6 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Title = "Issues";
             EnableSearch = true;
             EnableFilter = true;
-            AutoHideSearch = true;
             Root.UnevenRows = true;
             SearchPlaceholder = "Search Issues";
 

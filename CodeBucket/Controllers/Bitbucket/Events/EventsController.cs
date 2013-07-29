@@ -93,6 +93,15 @@ namespace CodeBucket.Bitbucket.Controllers.Events
         protected override void OnRefresh()
         {
             AddItems(Model as List<EventModel>);
+
+            if (Root.Count == 0)
+            {
+                InvokeOnMainThread(() => {
+                    var sec = new Section();
+                    sec.Add(new NoItemsElement("No Events"));
+                    Root.Add(sec);
+                });
+            }
         }
 
         private IEnumerable<NewsFeedElement.TextBlock> CreateDescription(EventModel eventModel, out UIImage img)

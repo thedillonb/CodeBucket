@@ -6,17 +6,16 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
     public class FollowingRepositoryController : RepositoryController
     {
-        public FollowingRepositoryController(bool push = true)
-            : base(string.Empty, push, true)
+        public FollowingRepositoryController()
+            : base(string.Empty)
         {
             Title = "Following";
             ShowOwner = true;
         }
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override object OnUpdate(bool forced)
         {
-            nextPage = -1;
-            return Application.Client.Account.GetRepositories(force);
+            return Application.Client.Account.GetRepositories(forced);
         }
     }
 }

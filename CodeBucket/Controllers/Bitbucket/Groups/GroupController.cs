@@ -11,14 +11,12 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupController : BaseController
+    public class GroupController : ModelDrivenController
 	{
-        public List<GroupModel> Model { get; set; }
-
         public string Username { get; private set; }
 
-		public GroupController(string username, bool push = true) 
-            : base(push)
+		public GroupController(string username) 
+            : base(typeof(List<GroupModel>))
 		{
             Username = username;
             Title = "Groups";
@@ -26,13 +24,16 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             Style = UITableViewStyle.Plain;
 		}
 
-        protected override async Task DoRefresh(bool force)
+        protected override void OnRefresh()
         {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[Username].Groups.GetGroups(force).OrderBy(a => a.Name).ToList(); });
-            AddItems<GroupModel>(Model, (group) => {
+            AddItems<GroupModel>(Model as List<GroupModel>, (group) => {
                 return new StyledElement(group.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, group.Slug) { Title = group.Name, Model = group }, true));
-            });
+            }, "No Groups");
+        }
+
+        protected override object OnUpdate(bool forced)
+        {
+            return Application.Client.Users[Username].Groups.GetGroups(forced).OrderBy(a => a.Name).ToList();
         }
 	}
 }

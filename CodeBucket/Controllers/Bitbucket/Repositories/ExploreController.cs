@@ -16,7 +16,7 @@ namespace CodeBucket.Bitbucket.Controllers
     {
 
         public ExploreController()
-            : base(Application.Account.Username, true, false)
+            : base(Application.Account.Username, false)
         {
             EnableSearch = true;
             AutoHideSearch = false;
@@ -92,7 +92,7 @@ namespace CodeBucket.Bitbucket.Controllers
 
         protected override object OnUpdate(bool forced)
         {
-            return Model;
+            return null;
         }
 
         public override void SearchButtonClicked(string text)

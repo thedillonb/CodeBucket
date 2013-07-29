@@ -21,9 +21,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchProfiling>True</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
-    <MtouchUseSGen>True</MtouchUseSGen>
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchI18n />
     <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
@@ -67,8 +65,8 @@
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
     <MtouchI18n />
-    <MtouchUseLlvm>True</MtouchUseLlvm>
-    <MtouchUseThumb>True</MtouchUseThumb>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -96,8 +94,8 @@
     <CrashReportingApiKey />
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
-    <MtouchUseThumb>True</MtouchUseThumb>
     <CodesignProvision>42656791-5455-44DD-B4F2-0F7C99F9381E</CodesignProvision>
+    <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
     <DebugType>none</DebugType>
@@ -109,7 +107,7 @@
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchUseLlvm>True</MtouchUseLlvm>
-    <MtouchUseThumb>True</MtouchUseThumb>
+    <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

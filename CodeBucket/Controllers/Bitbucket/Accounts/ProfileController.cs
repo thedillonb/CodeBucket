@@ -14,14 +14,18 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class ProfileController : BaseController, IImageUpdated
+    public class ProfileController : ModelDrivenController, IImageUpdated
 	{
         private HeaderView _header;
-        public UsersModel Model { get; set; }
         public string Username { get; private set; }
 
-		public ProfileController(string username, bool push = true) 
-            : base(push)
+        public new UsersModel Model 
+        {
+            get { return (UsersModel)base.Model; }
+        }
+
+		public ProfileController(string username)
+            : base(typeof(UsersModel))
 		{
             Title = username;
 			Username = username;
@@ -37,17 +41,20 @@ namespace CodeBucket.Bitbucket.Controllers
             var events = new StyledElement("Events", () => NavigationController.PushViewController(new EventsController(Username), true), Images.Buttons.Event);
             var groups = new StyledElement("Groups", () => NavigationController.PushViewController(new GroupController(Username), true), Images.Buttons.Group);
             var repos = new StyledElement("Repositories", () => {
-                NavigationController.PushViewController(new RepositoryController(Username, true) { Model = Model == null ? null : Model.Repositories }, true);
+                NavigationController.PushViewController(new RepositoryController(Username) { Model = Model == null ? null : Model.Repositories }, true);
             }, Images.Repo);
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos } });
         }
 
-        protected override async Task DoRefresh(bool forced)
+        protected override void OnRefresh()
         {
-            Model = await Task<UsersModel>.Run(() => Application.Client.Users[Username].GetInfo(forced));
             _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
             _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
-            BeginInvokeOnMainThread(() => _header.SetNeedsDisplay());
+            _header.SetNeedsDisplay();
+        }
+        protected override object OnUpdate(bool forced)
+        {
+            return Application.Client.Users[Username].GetInfo(forced);
         }
 
         public void UpdatedImage (System.Uri uri)

@@ -12,24 +12,26 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {
-    public abstract class FollowersController : BaseController
+    public abstract class FollowersController : ModelDrivenController
     {
-        public List<FollowerModel> Model { get; set; }
-
 		protected FollowersController()
-			: base(true)
+			: base(typeof(List<FollowerModel>))
 		{
             Title = "Followers";
             SearchPlaceholder = "Search Followers";
             Style = UITableViewStyle.Plain;
 		}
 
-        protected Element CreateElement(FollowerModel obj)
+        protected Element CreateElement(FollowerModel s)
         {
-            var s = obj as FollowerModel;
             StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
             sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
             return sse;
+        }
+
+        protected override void OnRefresh()
+        {
+            AddItems<FollowerModel>(Model as List<FollowerModel>, CreateElement, "No Followers");
         }
 	}
 }

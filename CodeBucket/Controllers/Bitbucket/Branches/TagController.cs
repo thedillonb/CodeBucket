@@ -10,16 +10,14 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class TagController : BaseController
+    public class TagController : ModelDrivenController
     {
-        public List<TagModel> Model { get; set; }
-
         public string Username { get; private set; }
 
         public string Repo { get; private set; }
 
         public TagController(string user, string repo)
-            : base(true)
+            : base(typeof(List<TagModel>))
         {
             Username = user;
             Repo = repo;
@@ -28,14 +26,17 @@ namespace CodeBucket.Bitbucket.Controllers
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
         }
 
-        protected override async Task DoRefresh(bool force)
+        protected override void OnRefresh()
         {
-            if (Model == null || force)
-                await Task.Run(() => { 
-                    var tags = Application.Client.Users[Username].Repositories[Repo].GetTags(force);
-                    Model = tags.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();
-                });
-            AddItems<TagModel>(Model, (o) => new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true)));
+            AddItems<TagModel>(Model as List<TagModel>, 
+                               (o) => new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true)),
+                               "No Tags");
+        }
+
+        protected override object OnUpdate(bool forced)
+        {
+            var tags = Application.Client.Users[Username].Repositories[Repo].GetTags(forced);
+            return tags.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace CodeBucket.Controllers
 		{
             var root = new RootElement(Application.Account.Username);
             root.Add(new Section() {
-                new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username, false) { Title = "Profile" }), Images.Buttons.Person),
+                new MenuElement("Profile", () => NavPush(new ProfileController(Application.Account.Username) { Title = "Profile" }), Images.Buttons.Person),
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
@@ -40,8 +40,8 @@ namespace CodeBucket.Controllers
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
             if (Application.Account.DontExpandTeamsAndGroups)
             {
-                groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username, false)), Images.Buttons.Group));
-                groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController(false)), Images.Team));
+                groupsTeamsSection.Add(new MenuElement("Groups", () => NavPush(new GroupController(Application.Account.Username)), Images.Buttons.Group));
+                groupsTeamsSection.Add(new MenuElement("Teams", () => NavPush(new TeamController()), Images.Team));
             }
             else
             {

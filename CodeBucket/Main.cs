@@ -114,8 +114,8 @@ namespace CodeBucket
                 Application.Client.CacheProvider.DeleteAll();
 
             //Pop back to the root view...
-            if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
-                Slideout.TopView.NavigationController.PopToRootViewController(false);
+//            if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
+//                Slideout.TopView.NavigationController.PopToRootViewController(false);
         }
 
         public override bool HandleOpenURL(UIApplication application, NSUrl url)

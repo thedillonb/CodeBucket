@@ -13,41 +13,45 @@ using CodeFramework.Views;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryController : ListController
+    public class RepositoryController : ModelDrivenController
     {
         FilterModel _filterModel = Application.Account.RepoFilterObject;
         public string Username { get; private set; }
         public bool ShowOwner { get; set; }
 
-        public RepositoryController(string username, bool push = true, bool refresh = true)
-            : base(push, refresh)
+        public new List<RepositoryDetailedModel> Model
+        {
+            get { return (List<RepositoryDetailedModel>)base.Model; }
+            set { base.Model = value; }
+        }
+
+        public RepositoryController(string username, bool refresh = true)
+            : base(typeof(List<RepositoryDetailedModel>), refresh)
         {
             Title = "Repositories";
             Username = username;
             ShowOwner = false;
             EnableFilter = true;
+            Style = UITableViewStyle.Plain;
         }
 
-        protected override object GetData(bool force, int currentPage, out int nextPage)
+        protected override object OnUpdate(bool forced)
         {
-            var a = Application.Client.Users[Username].GetInfo(force).Repositories;
-            nextPage = -1;
+            var a = Application.Client.Users[Username].GetInfo(forced).Repositories;
             return a.OrderBy(x => x.Name).ToList();
         }
-
-        protected override Element CreateElement(object obj)
-        {
-            var x = obj as RepositoryDetailedModel;
-            var sse = new RepositoryElement(x.Name, x.Scm, x.FollowersCount, x.ForkCount, x.Description, x.Owner) { ShowOwner = ShowOwner };
-            sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(x), true);
-            return sse;
-        }
-
 
         static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
         {
             return ranges.LastOrDefault(x => x < key) + " to " + (key - 1);
+        }
+
+        protected Element CreateElement(RepositoryDetailedModel repo)
+        {
+            var sse = new RepositoryElement(repo.Name, repo.Scm, repo.FollowersCount, repo.ForkCount, repo.Description, repo.Owner) { ShowOwner = ShowOwner };
+            sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(repo), true);
+            return sse;
         }
 
         private List<Section> CreateSection(IEnumerable<IGrouping<int, RepositoryDetailedModel>> results, string title, string prefix = null)

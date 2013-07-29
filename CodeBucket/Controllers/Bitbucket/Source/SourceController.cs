@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Source
 {
-    public class SourceController : BaseController
+    public class SourceController : ModelDrivenController
     {
-        public SourceModel Model { get; set; }
+        public new SourceModel Model { get { return (SourceModel)base.Model; } }
 
         public string Username { get; private set; }
 
@@ -22,25 +22,26 @@ namespace CodeBucket.Bitbucket.Controllers.Source
         public string Path { get; private set; }
 
         public SourceController(string username, string slug, string branch = "master", string path = "")
-            : base(true, false)
+            : base(typeof(SourceModel))
         {
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Username = username;
             Slug = slug;
             Branch = branch;
             Path = path;
-            AutoHideSearch = true;
             EnableSearch = true;
             SearchPlaceholder = "Search Files & Folders";
 
             Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }
 
-        protected override async Task DoRefresh(bool force)
+        protected override object OnUpdate(bool forced)
         {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(force); });
+            return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
+        }
 
+        protected override void OnRefresh()
+        {
             var sec = new Section();
             Model.Directories.ForEach(d => sec.Add(new StyledElement(d, () => NavigationController.PushViewController(
                 new SourceController(Username, Slug, Branch, Path + "/" + d), true), Images.Folder)));

@@ -11,26 +11,28 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Teams
 {
-    public class TeamController : BaseController
+    public class TeamController : ModelDrivenController
     {
-        public List<string> Model { get; set; }
-
-        public TeamController(bool push = true) 
-            : base(push)
+        public TeamController() 
+            : base(typeof(List<string>))
         {
             Title = "Teams";
             SearchPlaceholder = "Search Teams";
             Style = UITableViewStyle.Plain;
         }
 
-        protected override async Task DoRefresh(bool force)
+        protected override object OnUpdate(bool forced)
         {
-            if (Model == null || force)
-                await Task.Run(() => { 
-                    Model = Application.Client.Account.GetPrivileges(force).Teams.Keys.OrderBy(a => a).ToList();
-                    Model.Remove(Application.Account.Username); //Remove the current user from the 'teams'
-                });
-            AddItems<string>(Model, (o) => new StyledElement(o, () => NavigationController.PushViewController(new ProfileController(o), true)));
+            var model = Application.Client.Account.GetPrivileges(forced).Teams.Keys.OrderBy(a => a).ToList();
+            model.Remove(Application.Account.Username); //Remove the current user from the 'teams'
+            return model;
+        }
+
+        protected override void OnRefresh()
+        {
+            AddItems<string>(Model as List<string>, 
+                             (o) => new StyledElement(o, () => NavigationController.PushViewController(new ProfileController(o), true)),
+                             "No Teams");
         }
     }
 }

@@ -19,18 +19,22 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryInfoController : BaseController, IImageUpdated
+    public class RepositoryInfoController : ModelDrivenController, IImageUpdated
     {
         private HeaderView _header;
 
-        public RepositoryDetailedModel Model { get; set; }
+        public new RepositoryDetailedModel Model 
+        { 
+            get { return (RepositoryDetailedModel)base.Model; } 
+            set { base.Model = value; }
+        }
 
         public string Username { get; private set; }
 
         public string Repo { get; private set; }
 
         public RepositoryInfoController(string username, string repo)
-            : base(true)
+            : base(typeof(RepositoryDetailedModel))
         {
             Username = username;
             Repo = repo;
@@ -38,7 +42,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         }
 
         public RepositoryInfoController(RepositoryDetailedModel model)
-            : base(true)
+            : base(typeof(RepositoryDetailedModel))
         {
             Title = model.Name;
             Model = model;
@@ -46,12 +50,9 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Repo = model.Name;
         }
 
-        protected override async Task DoRefresh(bool force)
+        protected override void OnRefresh()
         {
-            if (Model == null || force)
-                await Task.Run(() => { Model = Application.Client.Users[Username].Repositories[Repo].GetInfo(force); });
-
-            var model = Model as RepositoryDetailedModel;
+            var model = Model;
             var root = new RootElement(Title) { UnevenRows = true };
             var lastUpdated = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 
@@ -146,6 +147,11 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             }
 
             Root = root;
+        }
+
+        protected override object OnUpdate(bool forced)
+        {
+            return Application.Client.Users[Username].Repositories[Repo].GetInfo(forced);
         }
 
         public void UpdatedImage(Uri uri)
