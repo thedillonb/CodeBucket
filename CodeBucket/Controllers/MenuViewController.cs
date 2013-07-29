@@ -19,8 +19,6 @@ namespace CodeBucket.Controllers
 {
 	public class MenuController : MenuBaseController
     {
-        private Section _eventsSection, _groupsTeamsSection;
-
 		protected override void CreateMenuRoot()
 		{
             var root = new RootElement(Application.Account.Username);
