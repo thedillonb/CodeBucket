@@ -22,6 +22,7 @@ namespace CodeBucket.Bitbucket.Controllers
             EnableSearch = true;
             AutoHideSearch = false;
             Autorotate = true;
+            ShowOwner = true;
             SearchPlaceholder = "Search Repositories";
             Title = "Explore";
         }
@@ -93,6 +94,8 @@ namespace CodeBucket.Bitbucket.Controllers
 
         protected override object OnUpdateModel(bool forced)
         {
+            if (string.IsNullOrEmpty(_searchText))
+                return null;
             return Application.Client.Repositories.Search(_searchText).Repositories;
         }
 

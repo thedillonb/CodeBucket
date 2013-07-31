@@ -169,6 +169,7 @@
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Controllers\Bitbucket\Groups\GroupMembersController.cs" />
+    <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />

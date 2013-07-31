@@ -26,7 +26,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         }
 
         public RepositoryController(string username, bool refresh = true)
-            : base(typeof(List<RepositoryDetailedModel>), refresh)
+            : base(typeof(List<RepositoryDetailedModel>), refresh: refresh)
         {
             Title = "Repositories";
             Username = username;
@@ -50,7 +50,8 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         protected Element CreateElement(RepositoryDetailedModel repo)
         {
-            var sse = new RepositoryElement(repo.Name, repo.Scm, repo.FollowersCount, repo.ForkCount, repo.Description, repo.Owner) { ShowOwner = ShowOwner };
+            var description = Application.Account.HideRepositoryDescriptionInList ? string.Empty : repo.Description;
+            var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, new Uri(repo.LargeLogo(64))) { ShowOwner = ShowOwner };
             sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(repo), true);
             return sse;
         }

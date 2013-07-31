@@ -96,7 +96,7 @@ namespace CodeBucket
             IssueCellView.Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
             IssueCellView.Cog = new UIImage(Images.Buttons.Cog.CGImage, 1.3f, UIImageOrientation.Up);
 
-            RepositoryCellView.Commit = new UIImage(Images.ScmType.CGImage, 1.3f, UIImageOrientation.Up);
+            RepositoryCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
             RepositoryCellView.Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);
             RepositoryCellView.Fork = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up);
 			

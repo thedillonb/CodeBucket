@@ -44,6 +44,13 @@ namespace CodeBucket.Controllers
                 })
             });
 
+            root.Add(new Section(string.Empty, "If enabled, repository descriptions will be shown in the list of repositories") {
+                new TrueFalseElement("Show Repo Descriptions", !currentAccount.HideRepositoryDescriptionInList, (e) => { 
+                    currentAccount.HideRepositoryDescriptionInList = !e.Value; 
+                    Application.Accounts.Update(currentAccount);
+                })
+            });
+
 			//Assign the root
 			Root = root;
 

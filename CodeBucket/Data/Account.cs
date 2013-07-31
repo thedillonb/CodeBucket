@@ -48,6 +48,13 @@ namespace CodeBucket.Data
         public bool DontExpandTeamsAndGroups { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="CodeBucket.Data.Account"/> hides the repository
+        /// description in list.
+        /// </summary>
+        /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
+        public bool HideRepositoryDescriptionInList { get; set; }
+
+        /// <summary>
         /// A transient list of the teams this account is a part of
         /// </summary>
         [Ignore]
