@@ -39,27 +39,24 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Username = username;
             Repo = repo;
             Title = repo;
+
+            _header = new HeaderView(View.Bounds.Width) { Title = repo, ShadowImage = false };
         }
 
         public RepositoryInfoController(RepositoryDetailedModel model)
-            : base(typeof(RepositoryDetailedModel))
+            : this(model.Owner, model.Name)
         {
-            Title = model.Name;
             Model = model;
-            Username = model.Owner;
-            Repo = model.Name;
         }
 
         protected override void OnRender()
         {
             var model = Model;
             var root = new RootElement(Title) { UnevenRows = true };
-            var lastUpdated = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
-
-            _header = new HeaderView(View.Bounds.Width) { Title = model.Name, Subtitle = lastUpdated };
+            _header.Subtitle = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 
             if (!string.IsNullOrEmpty(model.Logo))
-                _header.Image = ImageLoader.DefaultRequestImage(new Uri(model.Logo), this);
+                _header.Image = ImageLoader.DefaultRequestImage(new Uri(model.LargeLogo(64)), this);
 
             root.Add(new Section(_header));
             var sec1 = new Section();
