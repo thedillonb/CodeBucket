@@ -27,9 +27,9 @@ namespace CodeBucket.Controllers
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username, false)), Images.Buttons.Event));
+            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsController(Application.Account.Username)), Images.Buttons.Event));
             if (Application.Account.Teams != null && !Application.Account.DontShowTeamEvents)
-                Application.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => NavPush(new EventsController(team, false)), Images.Buttons.Event)));
+                Application.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => NavPush(new EventsController(team)), Images.Buttons.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
@@ -47,7 +47,7 @@ namespace CodeBucket.Controllers
             else
             {
                 if (Application.Account.Groups != null)
-                    Application.Account.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => NavPush(new GroupInfoController(Application.Account.Username, x.Slug) { Title = x.Name, Model = x }), Images.Buttons.Group)));
+                    Application.Account.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => NavPush(new GroupMembersController(Application.Account.Username, x.Slug) { Title = x.Name, Model = x.Members }), Images.Buttons.Group)));
                 if (Application.Account.Teams != null)
                     Application.Account.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => NavPush(new ProfileController(x)), Images.Team)));
             }

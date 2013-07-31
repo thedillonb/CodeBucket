@@ -10,7 +10,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Privileges
 {
-    public class PrivilegesController : Controller
+    public class PrivilegesController : BaseListModelController
     {
         public event Action<UserModel> SelectedItem;
 
@@ -29,57 +29,32 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
         }
 
         public PrivilegesController()
-            : base(true, true)
+            : base(typeof(List<PrivilegeModel>))
         {
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Title = "Privileges";
             EnableSearch = true;
             SearchPlaceholder = "Search Users";
+            NoItemsText = "No Users";
         }
 
-        protected override void OnRefresh()
+        protected override Element CreateElement(object obj)
         {
-            var sec = new Section();
-            HashSet<UserModel> users = new HashSet<UserModel>();
-            var model = Model as List<PrivilegeModel>;
-
-            model.ForEach(s => {
-                if (s.User != null)
-                    users.Add(s.User);
-            });
-
-            //Make sure this comes last. If the user already exists in the list, this will 
-            //get rejected. The primary is only here because we KNOW this user is the owner
-            //of this resource. If all else fails, we should atleast be able to assign to it.
-            if (Primary != null)
-                users.Add(Primary);
-
-            foreach (var u in users.OrderBy(x => x.Username))
-            {
-                var user = u;
-                StyledElement sse = new UserElement(user.Username, user.FirstName, user.LastName, user.Avatar);
-                sse.Tapped += () => OnSelectedItem(user);
-                sec.Add(sse);
-            };
-
-            if (sec.Count == 0)
-                sec.Add(new NoItemsElement());
-
-            InvokeOnMainThread(delegate
-            {
-                var root = new RootElement(Title) { sec };
-                Root = root;
-            });
+            var user = ((PrivilegeModel)obj).User;
+            StyledElement sse = new UserElement(user.Username, user.FirstName, user.LastName, user.Avatar);
+            sse.Tapped += () => OnSelectedItem(user);
+            return sse;
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
             try
             {
+                List<PrivilegeModel> privileges;
                 if (RepoSlug != null)
                 {
-                    var list = new List<PrivilegeModel>();
-                    list.AddRange(Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges(forced));
+                    privileges = new List<PrivilegeModel>();
+                    privileges.AddRange(Application.Client.Users[Username].Repositories[RepoSlug].Privileges.GetPrivileges(forced));
 
                     //Get it from the group
                     try
@@ -90,20 +65,26 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
                                 return;
 
                             x.Group.Members.ForEach(m => {
-                                list.Add(new PrivilegeModel { Privilege = x.Privilege, Repo = x.Repo, User = m });
+                                privileges.Add(new PrivilegeModel { Privilege = x.Privilege, Repo = x.Repo, User = m });
                             });
                         });
                     }
                     catch (Exception)
                     {
                     }
-
-                    return list;
                 }
                 else
                 {
-                    return Application.Client.Users[Username].Privileges.GetPrivileges(forced);
+                    privileges = Application.Client.Users[Username].Privileges.GetPrivileges(forced);
                 }
+
+//                if (!privileges.Exists((x) => x.User.Equals(Primary)))
+//                {
+//                    privileges.Add
+//                }
+//
+                
+                return privileges;
             }
             catch (Exception)
             {

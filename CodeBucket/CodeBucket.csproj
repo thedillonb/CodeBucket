@@ -24,7 +24,6 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchI18n />
-    <MtouchExtraArgs>-aot "nimt-trampolines=512"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -149,7 +148,6 @@
     <Compile Include="Controllers\Bitbucket\Followers\RepoFollowersController.cs" />
     <Compile Include="Controllers\Bitbucket\Followers\UserFollowersController.cs" />
     <Compile Include="Controllers\Bitbucket\Groups\GroupController.cs" />
-    <Compile Include="Controllers\Bitbucket\Groups\GroupInfoController.cs" />
     <Compile Include="Controllers\Bitbucket\Issues\IssueEditController.cs" />
     <Compile Include="Controllers\Bitbucket\Issues\IssueInfoController.cs" />
     <Compile Include="Controllers\Bitbucket\Issues\IssuesController.cs" />
@@ -170,6 +168,7 @@
     <Compile Include="Utils\Login.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Data\Accounts.cs" />
+    <Compile Include="Controllers\Bitbucket\Groups\GroupMembersController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />

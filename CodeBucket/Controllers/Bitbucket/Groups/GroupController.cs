@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
-    public class GroupController : ModelDrivenController
+    public class GroupController : BaseListModelController
 	{
         public string Username { get; private set; }
 
@@ -22,16 +22,16 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             Title = "Groups";
             SearchPlaceholder = "Search Groups";
             Style = UITableViewStyle.Plain;
+            NoItemsText = "No Groups";
 		}
 
-        protected override void OnRefresh()
+        protected override Element CreateElement(object obj)
         {
-            AddItems<GroupModel>(Model as List<GroupModel>, (group) => {
-                return new StyledElement(group.Name, () => NavigationController.PushViewController(new GroupInfoController(Username, group.Slug) { Title = group.Name, Model = group }, true));
-            }, "No Groups");
+            var groupModel = (GroupModel)obj;
+            return new StyledElement(groupModel.Name, () => NavigationController.PushViewController(new GroupMembersController(Username, groupModel.Slug) { Title = groupModel.Name, Model = groupModel.Members }, true));
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
             return Application.Client.Users[Username].Groups.GetGroups(forced).OrderBy(a => a.Name).ToList();
         }

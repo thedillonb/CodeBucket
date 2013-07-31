@@ -16,7 +16,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Events
 {
-    public class EventsController : Controller
+    public class EventsController : BaseModelDrivenController
     {
         private DateTime _lastUpdate = DateTime.MinValue;
         private int _firstIndex;
@@ -27,8 +27,8 @@ namespace CodeBucket.Bitbucket.Controllers.Events
 
         public bool ReportRepository { get; set; }
 
-        public EventsController(string username, bool push = true)
-            : base(push, true)
+        public EventsController(string username)
+            : base(typeof(List<EventModel>))
         {
             Title = "Events";
             Style = UITableViewStyle.Plain;
@@ -74,7 +74,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             });
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             var events = OnGetData();
             _firstIndex = events.Count;
@@ -90,7 +90,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             return newEvents;
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             AddItems(Model as List<EventModel>);
 

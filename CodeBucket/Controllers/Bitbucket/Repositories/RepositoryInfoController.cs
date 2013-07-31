@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryInfoController : ModelDrivenController, IImageUpdated
+    public class RepositoryInfoController : BaseModelDrivenController, IImageUpdated
     {
         private HeaderView _header;
 
@@ -50,7 +50,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Repo = model.Name;
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             var model = Model;
             var root = new RootElement(Title) { UnevenRows = true };
@@ -149,7 +149,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Root = root;
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             return Application.Client.Users[Username].Repositories[Repo].GetInfo(forced);
         }

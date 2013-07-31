@@ -5,14 +5,13 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using System.Threading.Tasks;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeBucket.Bitbucket.Controllers.Source
 {
-    public class SourceController : ModelDrivenController
+    public class SourceController : BaseListModelController
     {
-        public new SourceModel Model { get { return (SourceModel)base.Model; } }
-
         public string Username { get; private set; }
 
         public string Slug { get; private set; }
@@ -22,7 +21,7 @@ namespace CodeBucket.Bitbucket.Controllers.Source
         public string Path { get; private set; }
 
         public SourceController(string username, string slug, string branch = "master", string path = "")
-            : base(typeof(SourceModel))
+            : base(typeof(List<object>))
         {
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Username = username;
@@ -31,33 +30,36 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             Path = path;
             EnableSearch = true;
             SearchPlaceholder = "Search Files & Folders";
-
             Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
-            return Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
+            var sourceModel = Application.Client.Users[Username].Repositories[Slug].Branches[Branch].Source[Path].GetInfo(forced);
+            var returnModel = new List<object>();
+            foreach (var a in sourceModel.Directories.OrderBy(x => x))
+                returnModel.Add(a);
+            foreach (var a in sourceModel.Files)
+                returnModel.Add(a);
+            return returnModel;
         }
 
-        protected override void OnRefresh()
+        protected override Element CreateElement(object obj)
         {
-            var sec = new Section();
-            Model.Directories.ForEach(d => sec.Add(new StyledElement(d, () => NavigationController.PushViewController(
-                new SourceController(Username, Slug, Branch, Path + "/" + d), true), Images.Folder)));
+            if (obj is string)
+            {
+                var dir = obj.ToString();
+                return new StyledElement(dir, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + dir), true), Images.Folder);
+            }
+            else if (obj is SourceModel.FileModel)
+            {
+                var fileModel = (SourceModel.FileModel)obj;
+                var i = fileModel.Path.LastIndexOf('/') + 1;
+                var p = fileModel.Path.Substring(i);
+                return new StyledElement(p, () => NavigationController.PushViewController(new SourceInfoController(Username, Slug, Branch, fileModel.Path) { Title = p }, true), Images.File);
+            }
 
-            Model.Files.ForEach(f => {
-                var i = f.Path.LastIndexOf('/') + 1;
-                var p = f.Path.Substring(i);
-                sec.Add(new StyledElement(p, () => NavigationController.PushViewController(
-                    new SourceInfoController(Username, Slug, Branch, f.Path) { Title = p }, true),
-                                          Images.File));
-            });
-
-            if (sec.Count == 0)
-                sec.Add(new NoItemsElement());
-
-            Root = new RootElement(Title) { sec };
+            return null;
         }
     }
 }

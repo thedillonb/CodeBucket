@@ -12,7 +12,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
-    public class ChangesetController : Controller
+    public class ChangesetController : BaseModelDrivenController
     {
         private const int RequestLimit = 30;
         private string _lastNode;
@@ -22,7 +22,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         public string Slug { get; private set; }
 
         public ChangesetController(string user, string slug)
-            : base(true, true)
+            : base(typeof(List<ChangesetModel>))
         {
             User = user;
             Slug = slug;
@@ -89,7 +89,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         }
 
 
-        protected override void OnRefresh ()
+        protected override void OnRender()
         {
             //Create some needed elements
             var root = new RootElement(null) { UnevenRows = true };
@@ -106,7 +106,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             });
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             var changes = OnGetData();
             _lastNode = changes.Last().Node;

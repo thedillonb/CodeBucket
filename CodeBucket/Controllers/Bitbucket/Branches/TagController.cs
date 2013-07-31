@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class TagController : ModelDrivenController
+    public class TagController : BaseListModelController
     {
         public string Username { get; private set; }
 
@@ -23,17 +23,17 @@ namespace CodeBucket.Bitbucket.Controllers
             Repo = repo;
             Title = "Tags";
             SearchPlaceholder = "Search Tags";
+            NoItemsText = "No Tags";
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
         }
 
-        protected override void OnRefresh()
+        protected override Element CreateElement(object obj)
         {
-            AddItems<TagModel>(Model as List<TagModel>, 
-                               (o) => new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true)),
-                               "No Tags");
+            var o = (TagModel)obj;
+            return new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true));
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
             var tags = Application.Client.Users[Username].Repositories[Repo].GetTags(forced);
             return tags.Select(x => new TagModel { Name = x.Key, Node = x.Value.Node }).OrderBy(x => x.Name).ToList();

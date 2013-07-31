@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers.Branches
 {
-    public class BranchController : ModelDrivenController
+    public class BranchController : BaseListModelController
 	{
         public string Username { get; private set; }
+
         public string Slug { get; private set; }
 
 		public BranchController(string username, string slug) 
@@ -24,21 +25,21 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
             Slug = slug;
             Title = "Branches";
             SearchPlaceholder = "Search Branches";
+            NoItemsText = "No Branches";
             Style = UITableViewStyle.Plain;
 		}
 
-        protected override void OnRefresh()
+        protected override Element CreateElement(object obj)
         {
-            AddItems<BranchModel>(Model as List<BranchModel>, 
-                                  (o) => new StyledElement(o.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, o.Branch), true)),
-                                  "No Branches");
+            var branchModel = (BranchModel)obj;
+            return new StyledElement(branchModel.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, branchModel.Branch), true));
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
+            nextPage = -1;
             return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced).Values.OrderBy(x => x.Branch).ToList();
         }
-
 	}
 }
 

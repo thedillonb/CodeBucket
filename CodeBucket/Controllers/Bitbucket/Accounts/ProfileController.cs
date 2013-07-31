@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Bitbucket.Controllers
 {
-    public class ProfileController : ModelDrivenController, IImageUpdated
+    public class ProfileController : BaseModelDrivenController, IImageUpdated
 	{
         private HeaderView _header;
         public string Username { get; private set; }
@@ -46,13 +46,13 @@ namespace CodeBucket.Bitbucket.Controllers
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos } });
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
             _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
             _header.SetNeedsDisplay();
         }
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             return Application.Client.Users[Username].GetInfo(forced);
         }

@@ -13,7 +13,7 @@ using CodeFramework.Views;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
-    public class RepositoryController : ModelDrivenController
+    public class RepositoryController : BaseModelDrivenController
     {
         FilterModel _filterModel = Application.Account.RepoFilterObject;
         public string Username { get; private set; }
@@ -35,11 +35,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Style = UITableViewStyle.Plain;
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             var a = Application.Client.Users[Username].GetInfo(forced).Repositories;
             return a.OrderBy(x => x.Name).ToList();
         }
+
 
         static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
@@ -85,7 +86,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             return sections;
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             if (Model == null)
                 return;
@@ -141,7 +142,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         private void ApplyFilter()
         {
-            OnRefresh();
+            Render();
         }
 
         protected override FilterController CreateFilterController()

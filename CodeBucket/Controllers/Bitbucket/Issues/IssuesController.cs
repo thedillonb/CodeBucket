@@ -15,7 +15,7 @@ using CodeFramework.Elements;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
-    public class IssuesController : Controller
+    public class IssuesController : BaseModelDrivenController
     {
         public string User { get; private set; }
         public string Slug { get; private set; }
@@ -29,7 +29,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         private FilterModel _filterModel = Application.Account.IssueFilterObject;
 
         public IssuesController(string user, string slug)
-            : base(true, true)
+            : base(typeof(IssuesModel))
         {
             User = user;
             Slug = slug;
@@ -195,7 +195,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 var c = TableView.ContentOffset;
                 var m = Model as List<IssueModel>;
                 m.RemoveAll(a => a.LocalId == oldModel.LocalId);
-                Refresh(false);
+
+                Render();
                 TableView.ContentOffset = c;
             }
             else
@@ -210,7 +211,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                     var c = TableView.ContentOffset;
                     var m = Model as List<IssueModel>;
                     m.RemoveAll(a => a.LocalId == changedModel.LocalId);
-                    Refresh(false);
+                    Render();
                     TableView.ContentOffset = c;
                 }
             }
@@ -283,7 +284,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             return sections;
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             InvokeOnMainThread(() => Root.Clear());
 
@@ -369,10 +370,10 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             }
 
             //Refresh this 
-            Refresh(false);
+            Render();
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             //forced doesnt matter. Never cached.
             //Update everything we have here!
@@ -389,7 +390,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Model = null;
             RefreshCaption();
             Root.Clear();
-            Refresh();
+            UpdateAndRender();
         }
 
         protected override FilterController CreateFilterController()

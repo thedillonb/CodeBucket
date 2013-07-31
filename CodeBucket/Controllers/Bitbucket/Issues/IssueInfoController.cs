@@ -21,7 +21,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         public List<CommentModel> Comments { get; set; }
     }
 
-    public class IssueInfoController : Controller
+    public class IssueInfoController : BaseModelDrivenController
     {
         public int Id { get; private set; }
         public string User { get; private set; }
@@ -38,7 +38,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         private bool _issueRemoved;
 
         public IssueInfoController(string user, string slug, int id)
-            : base(true, false)
+            : base(typeof(InternalIssueInfoModel))
         {
             User = user;
             Slug = slug;
@@ -109,7 +109,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             {
                 var m = Model as InternalIssueInfoModel;
                 m.Issue = model;
-                OnRefresh();
+                Render();
             }
         }
 
@@ -138,7 +138,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                         composer.CloseComposer();
                         _scrollToLastComment = true;
                         Model = null;
-                        Refresh();
+                        UpdateAndRender();
                     });
                 }, ex =>
                 {
@@ -148,7 +148,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             });
         }
 
-        protected override void OnRefresh()
+        protected override void OnRender()
         {
             BeginInvokeOnMainThread(() => { NavigationItem.RightBarButtonItem.Enabled = true; });
             var model = Model as InternalIssueInfoModel;
@@ -205,7 +205,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             });
         }
 
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             var l = Application.Client.Users[User].Repositories[Slug].Issues[Id];
             var m = new InternalIssueInfoModel

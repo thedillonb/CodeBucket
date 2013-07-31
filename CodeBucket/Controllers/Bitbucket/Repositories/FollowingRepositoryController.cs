@@ -12,8 +12,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Title = "Following";
             ShowOwner = true;
         }
-
-        protected override object OnUpdate(bool forced)
+        protected override object OnUpdateModel(bool forced)
         {
             return Application.Client.Account.GetRepositories(forced);
         }

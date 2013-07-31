@@ -26,7 +26,7 @@ namespace CodeBucket.Controllers
 
 
             //Select a view based on the account type
-            SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username, false));
+            SelectView(new CodeBucket.Bitbucket.Controllers.Events.EventsController(Application.Account.Username));
 		}
 	}
 }
