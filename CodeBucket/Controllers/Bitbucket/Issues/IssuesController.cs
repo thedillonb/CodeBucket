@@ -29,7 +29,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         private FilterModel _filterModel = Application.Account.IssueFilterObject;
 
         public IssuesController(string user, string slug)
-            : base(typeof(IssuesModel))
+            : base(typeof(List<IssueModel>))
         {
             User = user;
             Slug = slug;

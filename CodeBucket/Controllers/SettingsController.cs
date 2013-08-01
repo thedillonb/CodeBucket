@@ -51,6 +51,12 @@ namespace CodeBucket.Controllers
                 })
             });
 
+            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app") {
+                new TrueFalseElement("Send Anonymous Usage", !GoogleAnalytics.GAI.SharedInstance.OptOut, (e) => { 
+                    GoogleAnalytics.GAI.SharedInstance.OptOut = !e.Value;
+                })
+            });
+
 			//Assign the root
 			Root = root;
 

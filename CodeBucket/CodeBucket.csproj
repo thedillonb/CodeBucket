@@ -113,6 +113,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="monotouch" />
     <Reference Include="System.Core" />
+    <Reference Include="GoogleAnalytics">
+      <HintPath>..\CodeFramework\CodeFramework\lib\GoogleAnalytics.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
