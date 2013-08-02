@@ -37,10 +37,8 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         protected override object OnUpdateModel(bool forced)
         {
-            var a = Application.Client.Users[Username].GetInfo(forced).Repositories;
-            return a.OrderBy(x => x.Name).ToList();
+            return Application.Client.Users[Username].GetInfo(forced).Repositories.OrderBy(x => x.Name).ToList();
         }
-
 
         static int[] _ceilings = FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
@@ -89,10 +87,9 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         protected override void OnRender()
         {
-            if (Model == null)
+            var model = Model;
+            if (model == null)
                 return;
-
-            var model = Model as List<RepositoryDetailedModel>;
 
             var order = (FilterModel.Order)_filterModel.OrderBy;
             List<Section> sections = null;
@@ -135,10 +132,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                     sections[0].Add(CreateElement(y));
             }
 
-            if (sections == null || sections.Count == 0)
+            //Could have easily done a check for model.Count == 0. However, doing this here allows me to do filtering at some point
+            //and use the same logic. If I did model.Count that wouldn't take into account the items I filtered out.
+            if (sections == null || sections.Count == 0 || sections.Count(x => x.Elements.Count > 0) == 0)
                 sections.Add(new Section() { new NoItemsElement("No Repositories") });
 
-            InvokeOnMainThread(() => { Root = new RootElement(Title) { sections }; });
+            Root = new RootElement(Title) { sections };
         }
 
         private void ApplyFilter()

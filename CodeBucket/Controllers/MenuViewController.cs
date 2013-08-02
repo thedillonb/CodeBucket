@@ -33,7 +33,7 @@ namespace CodeBucket.Controllers
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-            repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoryController(Application.Account.Username, false) { Title = "Owned" }), Images.Repo));
+            repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoryController(Application.Account.Username) { Title = "Owned" }), Images.Repo));
             repoSection.Add(new MenuElement("Following", () => NavPush(new FollowingRepositoryController()), Images.RepoFollow));
             repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), Images.Buttons.Explore));
             root.Add(repoSection);

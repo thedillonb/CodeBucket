@@ -19,7 +19,10 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         private LoadMoreElement _loadMore;
 
         public string User { get; private set; }
+
         public string Slug { get; private set; }
+
+        public List<ChangesetModel> Model { get { return (List<ChangesetModel>)base.Model; } }
 
         public ChangesetController(string user, string slug)
             : base(typeof(List<ChangesetModel>))
@@ -92,18 +95,15 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         protected override void OnRender()
         {
             //Create some needed elements
-            var root = new RootElement(null) { UnevenRows = true };
+            var root = new RootElement(Title) { UnevenRows = true };
             _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
             root.Add(new Section { _loadMore });
 
             //Add the items that were in the update
-            AddItems(root, Model as List<ChangesetModel>);
+            AddItems(root, Model);
 
             //Update the UI
-            InvokeOnMainThread(delegate {
-                root.Caption = Title;
-                Root = root;
-            });
+            Root = root;
         }
 
         protected override object OnUpdateModel(bool forced)

@@ -223,7 +223,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
         {
             //Most likely indicates a deleted repository
             if (eventModel.Repository == null)
-                return new [] { new NewsFeedElement.TextBlock("<Not Found>") };
+                return new [] { new NewsFeedElement.TextBlock("<Deleted>") };
 
             var repoOwner = eventModel.Repository.Owner;
             var repoName = eventModel.Repository.Name;

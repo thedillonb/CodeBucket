@@ -23,7 +23,6 @@ namespace CodeBucket.Bitbucket.Controllers.Source
         public SourceController(string username, string slug, string branch = "master", string path = "")
             : base(typeof(List<object>))
         {
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             Username = username;
             Slug = slug;
             Branch = branch;

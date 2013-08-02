@@ -26,7 +26,6 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
             Title = "Branches";
             SearchPlaceholder = "Search Branches";
             NoItemsText = "No Branches";
-            Style = UITableViewStyle.Plain;
 		}
 
         protected override Element CreateElement(object obj)
@@ -37,7 +36,6 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
-            nextPage = -1;
             return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced).Values.OrderBy(x => x.Branch).ToList();
         }
 	}

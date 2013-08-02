@@ -19,7 +19,6 @@ namespace CodeBucket.Bitbucket.Controllers.Teams
             Title = "Teams";
             SearchPlaceholder = "Search Teams";
             NoItemsText = "No Teams";
-            Style = UITableViewStyle.Plain;
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

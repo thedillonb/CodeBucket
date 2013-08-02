@@ -35,11 +35,18 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         {
             base.ViewWillLayoutSubviews();
 
-            var backgroundImage = CreateRepeatingBackground();
-            if (backgroundImage != null)
+            try
             {
-                View.BackgroundColor = UIColor.FromPatternImage(backgroundImage);
-                backgroundImage.Dispose();
+                var backgroundImage = CreateRepeatingBackground();
+                if (backgroundImage != null)
+                {
+                    View.BackgroundColor = UIColor.FromPatternImage(backgroundImage);
+                    backgroundImage.Dispose();
+                }
+            }
+            catch (Exception e)
+            {
+                Utilities.Analytics.TrackException(false, e.Message);
             }
         }
 
