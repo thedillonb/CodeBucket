@@ -316,6 +316,10 @@
     <BundleResource Include="Images\Buttons\info.png" />
     <BundleResource Include="Images\Buttons\info%402x.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
+    <BundleResource Include="Images\accept%402x.png" />
+    <BundleResource Include="Images\cancel%402x.png" />
+    <BundleResource Include="Images\accept.png" />
+    <BundleResource Include="Images\cancel.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />

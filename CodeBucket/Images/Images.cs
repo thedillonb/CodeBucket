@@ -30,6 +30,8 @@ namespace CodeBucket
         public static UIImage ServerComponents { get { return UIImage.FromBundle("/Images/server_components"); } }
         public static UIImage SitemapColor { get { return UIImage.FromBundle("/Images/sitemap_color"); } }
         public static UIImage Script { get { return UIImage.FromBundle("/Images/script"); } }
+        public static UIImage Accept { get { return UIImage.FromBundle("/Images/accept"); } }
+        public static UIImage Cancel { get { return UIImage.FromBundle("/Images/cancel"); } }
 
 
         public static UIImage Folder { get { return UIImage.FromBundle("/Images/folder"); } }
