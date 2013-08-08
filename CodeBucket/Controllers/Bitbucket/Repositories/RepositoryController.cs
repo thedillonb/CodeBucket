@@ -196,7 +196,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                         (_ascendingElement = new TrueFalseElement("Ascending", _parent._filterModel.Ascending)),
                     },
                     new Section() {
-                        new StyledElement("Save as Default", () => {  
+                        new StyledStringElement("Save as Default", () => {  
                             Application.Account.RepoFilterObject = CreateFilterModel();
                             this.DismissViewController(true, null); 
                             this.ApplyFilter();

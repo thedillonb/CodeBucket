@@ -31,7 +31,7 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
         protected override Element CreateElement(object obj)
         {
             var branchModel = (BranchModel)obj;
-            return new StyledElement(branchModel.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, branchModel.Branch), true));
+            return new StyledStringElement(branchModel.Branch, () => NavigationController.PushViewController(new SourceController(Username, Slug, branchModel.Branch), true));
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

@@ -35,7 +35,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         public Action<IssueModel> Success;
 
         EntryElement _title;
-        StyledElement _assignedTo, _issueType, _priority, _status, _milestone, _component, _version;
+        StyledStringElement _assignedTo, _issueType, _priority, _status, _milestone, _component, _version;
         MultilinedElement _content;
 
         public IssueEditController()
@@ -248,9 +248,9 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             });
         }
 
-        private StyledElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
+        private StyledStringElement CreateEnumElement(string title, string defaultVal, IEnumerable<string> values)
         {
-            var element = new StyledElement(title, defaultVal, UITableViewCellStyle.Value1)
+            var element = new StyledStringElement(title, defaultVal, UITableViewCellStyle.Value1)
             {
                 Accessory = UITableViewCellAccessory.DisclosureIndicator
             };
@@ -278,7 +278,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         {
             _title = new InputElement("Title", string.Empty, string.Empty);
 
-            _assignedTo = new StyledElement("Responsible", Unassigned, UITableViewCellStyle.Value1)
+            _assignedTo = new StyledStringElement("Responsible", Unassigned, UITableViewCellStyle.Value1)
             {
                 Accessory = UITableViewCellAccessory.DisclosureIndicator,
             };
@@ -332,7 +332,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 //Insert the status thing inbetween title and assigned to elements
                 root[0].Insert(1, _status);
 
-                var deleteButton = new StyledElement("Delete Issue", () =>
+                var deleteButton = new StyledStringElement("Delete Issue", () =>
                 {
                     var alert = new UIAlertView
                                     {

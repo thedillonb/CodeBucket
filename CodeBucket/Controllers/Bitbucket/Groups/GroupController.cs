@@ -28,7 +28,7 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
         protected override Element CreateElement(object obj)
         {
             var groupModel = (GroupModel)obj;
-            return new StyledElement(groupModel.Name, () => NavigationController.PushViewController(new GroupMembersController(Username, groupModel.Slug) { Title = groupModel.Name, Model = groupModel.Members }, true));
+            return new StyledStringElement(groupModel.Name, () => NavigationController.PushViewController(new GroupMembersController(Username, groupModel.Slug) { Title = groupModel.Name, Model = groupModel.Members }, true));
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

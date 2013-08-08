@@ -37,10 +37,10 @@ namespace CodeBucket.Bitbucket.Controllers
             _header = new HeaderView(View.Bounds.Width) { Title = Username };
             Root.Add(new Section(_header));
 
-            var followers = new StyledElement("Followers", () => NavigationController.PushViewController(new UserFollowersController(Username), true), Images.Heart);
-            var events = new StyledElement("Events", () => NavigationController.PushViewController(new EventsController(Username), true), Images.Buttons.Event);
-            var groups = new StyledElement("Groups", () => NavigationController.PushViewController(new GroupController(Username), true), Images.Buttons.Group);
-            var repos = new StyledElement("Repositories", () => {
+            var followers = new StyledStringElement("Followers", () => NavigationController.PushViewController(new UserFollowersController(Username), true), Images.Heart);
+            var events = new StyledStringElement("Events", () => NavigationController.PushViewController(new EventsController(Username), true), Images.Buttons.Event);
+            var groups = new StyledStringElement("Groups", () => NavigationController.PushViewController(new GroupController(Username), true), Images.Buttons.Group);
+            var repos = new StyledStringElement("Repositories", () => {
                 NavigationController.PushViewController(new RepositoryController(Username) { Model = Model == null ? null : Model.Repositories }, true);
             }, Images.Repo);
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos } });

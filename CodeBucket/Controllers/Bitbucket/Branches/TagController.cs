@@ -30,7 +30,7 @@ namespace CodeBucket.Bitbucket.Controllers
         protected override Element CreateElement(object obj)
         {
             var o = (TagModel)obj;
-            return new StyledElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true));
+            return new StyledStringElement(o.Name, () => NavigationController.PushViewController(new SourceController(Username, Repo, o.Node), true));
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

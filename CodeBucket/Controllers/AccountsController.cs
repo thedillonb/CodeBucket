@@ -54,7 +54,7 @@ namespace CodeBucket.Controllers
             }
 
             var addAccountSection = new Section();
-            var addAccount = new StyledElement("Add Account", () => NavigationController.PushViewController(AddAccount(), true));
+            var addAccount = new StyledStringElement("Add Account", () => NavigationController.PushViewController(AddAccount(), true));
             //addAccount.Image = Images.CommentAdd;
             addAccountSection.Add(addAccount);
 
@@ -157,7 +157,7 @@ namespace CodeBucket.Controllers
         /// <summary>
         /// An element that represents an account object
         /// </summary>
-        protected class AccountElement : StyledElement
+        protected class AccountElement : StyledStringElement
         {
             public Account Account { get; private set; }
             public AccountElement(Account account)

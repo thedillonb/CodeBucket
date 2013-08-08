@@ -26,7 +26,7 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
         protected override Element CreateElement(object obj)
         {
             var s = (FollowerModel)obj;
-            StyledElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
+            StyledStringElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
             sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
             return sse;
         }

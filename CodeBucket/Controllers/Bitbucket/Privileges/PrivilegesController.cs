@@ -41,7 +41,7 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
         protected override Element CreateElement(object obj)
         {
             var user = ((PrivilegeModel)obj).User;
-            StyledElement sse = new UserElement(user.Username, user.FirstName, user.LastName, user.Avatar);
+            StyledStringElement sse = new UserElement(user.Username, user.FirstName, user.LastName, user.Avatar);
             sse.Tapped += () => OnSelectedItem(user);
             return sse;
         }

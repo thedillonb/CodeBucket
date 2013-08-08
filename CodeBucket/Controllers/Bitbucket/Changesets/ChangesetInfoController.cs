@@ -47,11 +47,12 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
 
             if (Repo != null)
             {
-                var repo = new StyledElement(Repo.Name, Images.Repo) { 
+                var repo = new StyledStringElement(Repo.Name) { 
                     Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
-                    Font = StyledElement.DefaultDetailFont, 
-                    TextColor = StyledElement.DefaultDetailColor,
+                    Font = StyledStringElement.DefaultDetailFont, 
+                    TextColor = StyledStringElement.DefaultDetailColor,
+                    Image = Images.Repo
                 };
                 repo.Tapped += () => NavigationController.PushViewController(new RepositoryInfoController(Repo), true);
                 sec.Add(repo);

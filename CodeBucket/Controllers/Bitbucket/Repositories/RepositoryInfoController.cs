@@ -110,36 +110,36 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             }));
 
 
-            var owner = new StyledElement("Owner", model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner", model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => NavigationController.PushViewController(new ProfileController(model.Owner), true);
             sec1.Add(owner);
-            var followers = new StyledElement("Followers", "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var followers = new StyledStringElement("Followers", "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(model.Owner, model.Slug), true);
             sec1.Add(followers);
 
 
-            var events = new StyledElement("Events", () => NavigationController.PushViewController(new RepoEventsController(model.Owner, model.Slug), true), Images.Buttons.Event);
+            var events = new StyledStringElement("Events", () => NavigationController.PushViewController(new RepoEventsController(model.Owner, model.Slug), true), Images.Buttons.Event);
 
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-                sec2.Add(new StyledElement("Issues", () => NavigationController.PushViewController(new IssuesController(model.Owner, model.Slug), true), Images.Buttons.Flag));
+                sec2.Add(new StyledStringElement("Issues", () => NavigationController.PushViewController(new IssuesController(model.Owner, model.Slug), true), Images.Buttons.Flag));
 
             if (model.HasWiki)
-                sec2.Add(new StyledElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
+                sec2.Add(new StyledStringElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
 
             var sec3 = new Section
             {
-                new StyledElement("Changes", () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
-                new StyledElement("Branches", () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
-                new StyledElement("Tags", () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
+                new StyledStringElement("Changes", () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
+                new StyledStringElement("Branches", () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
+                new StyledStringElement("Tags", () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
             };
 
             root.Add(new[] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(model.Website))
             {
-                var web = new StyledElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
+                var web = new StyledStringElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
                 root.Add(new Section { web });
             }
 

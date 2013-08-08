@@ -48,14 +48,14 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             if (obj is string)
             {
                 var dir = obj.ToString();
-                return new StyledElement(dir, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + dir), true), Images.Folder);
+                return new StyledStringElement(dir, () => NavigationController.PushViewController(new SourceController(Username, Slug, Branch, Path + "/" + dir), true), Images.Folder);
             }
             else if (obj is SourceModel.FileModel)
             {
                 var fileModel = (SourceModel.FileModel)obj;
                 var i = fileModel.Path.LastIndexOf('/') + 1;
                 var p = fileModel.Path.Substring(i);
-                return new StyledElement(p, () => NavigationController.PushViewController(new SourceInfoController(Username, Slug, Branch, fileModel.Path) { Title = p }, true), Images.File);
+                return new StyledStringElement(p, () => NavigationController.PushViewController(new SourceInfoController(Username, Slug, Branch, fileModel.Path) { Title = p }, true), Images.File);
             }
 
             return null;

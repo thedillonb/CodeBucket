@@ -31,7 +31,7 @@ namespace CodeBucket.Bitbucket.Controllers.Teams
         protected override Element CreateElement(object obj)
         {
             var o = obj.ToString();
-            return new StyledElement(o, () => NavigationController.PushViewController(new ProfileController(o), true));
+            return new StyledStringElement(o, () => NavigationController.PushViewController(new ProfileController(o), true));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         private readonly Section _comments, _details;
         private readonly MultilinedElement _desc;
         private readonly SplitElement _split1, _split2, _split3;
-        private readonly StyledElement _responsible;
+        private readonly StyledStringElement _responsible;
 
         private bool _scrollToLastComment;
         private bool _issueRemoved;
@@ -71,10 +71,10 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Buttons.Flag, Image2 = Images.ServerComponents }) { BackgroundColor = UIColor.White };
             _split3 = new SplitElement(new SplitElement.Row { Image1 = Images.SitemapColor, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
 
-            _responsible = new StyledElement("Unassigned", Images.Buttons.Person)
-            {
-                Font = StyledElement.DefaultDetailFont,
-                TextColor = StyledElement.DefaultDetailColor,
+            _responsible = new StyledStringElement("Unassigned") {
+                Font = StyledStringElement.DefaultDetailFont,
+                TextColor = StyledStringElement.DefaultDetailColor,
+                Image = Images.Buttons.Person
             };
             _responsible.Tapped += () =>
             {
@@ -83,7 +83,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                     NavigationController.PushViewController(new ProfileController(m.Issue.Responsible.Username), true);
             };
 
-            var addComment = new StyledElement("Add Comment", Images.Pencil);
+            var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             addComment.Tapped += AddCommentTapped;
 
             _comments = new Section();
@@ -181,7 +181,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                     comments.Add(new CommentElement
                                      {
                                          Name = x.AuthorInfo.Username,
-                                         Time = (x.UtcCreatedOn),
+                                         Time = x.UtcCreatedOn.ToDaysAgo(),
                                          String = x.Content,
                                          Image = CodeFramework.Images.Misc.Anonymous,
                                          ImageUri = new Uri(x.AuthorInfo.Avatar),

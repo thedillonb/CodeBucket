@@ -535,7 +535,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                         (_orderby = CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order))),
                     },
                     new Section() {
-                        new StyledElement("Save as Default", () => {  
+                        new StyledStringElement("Save as Default", () => {  
                             var model = CreateFilterModel();
                             Application.Account.IssueFilterObject = model;
                             this.DismissViewController(true, null); 
