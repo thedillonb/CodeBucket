@@ -47,7 +47,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Dillon Buchanan (BD3M6C4CAK)</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
     <MtouchI18n />
     <MtouchArch>ARMv7</MtouchArch>
@@ -66,19 +66,6 @@
     <MtouchI18n />
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseThumb>true</MtouchUseThumb>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
-    <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
-    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
-    <BuildIpa>True</BuildIpa>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchExtraArgs>-aot "nimt-trampolines=768"</MtouchExtraArgs>
-    <MtouchI18n />
-    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -119,14 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="Images\Official\app_icon.png" />
-    <None Include="Images\Official\app_icon_ipad.png" />
-    <None Include="Images\Official\app_icon_retina.png" />
-    <None Include="Images\Official\spotlight_icon.png" />
-    <None Include="Images\Official\spotlight_icon_ipad.png" />
-    <None Include="Images\Official\spotlight_icon_retina.png" />
-    <None Include="Images\Official\app_icon_ipad_retnia.png" />
-    <None Include="Images\Official\spotlight_icon_ipad_retina.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\Images.cs" />
@@ -231,8 +210,6 @@
     <Content Include="Images\Controls\divider%402x.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
-    <Content Include="Images\Controls\logo.png" />
-    <Content Include="Images\Controls\logo%402x.png" />
     <Content Include="Images\Controls\backbutton-landscape.png" />
     <Content Include="Images\Controls\backbutton-landscape%402x.png" />
     <Content Include="Images\tablecell_red.png" />
@@ -251,13 +228,6 @@
     <Content Include="Images\Controls\barbutton%402x.png" />
     <Content Include="Images\Controls\barbutton-land%402x.png" />
     <Content Include="Images\Controls\barbutton-land.png" />
-    <Content Include="Default-568h%402x.png" />
-    <Content Include="Default-Portrait%402x.png" />
-    <Content Include="Default-Portrait.png" />
-    <Content Include="Default-Landscape%402x.png" />
-    <Content Include="Default-Landscape.png" />
-    <Content Include="Default.png" />
-    <Content Include="Default%402x.png" />
     <Content Include="Images\Buttons\flag%402x.png" />
     <Content Include="Images\Buttons\flag.png" />
     <Content Include="Images\Buttons\explore.png" />
@@ -270,9 +240,6 @@
     <Content Include="Images\Buttons\events%402x.png" />
     <Content Include="Images\Buttons\group.png" />
     <Content Include="Images\Buttons\group%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
@@ -320,11 +287,28 @@
     <BundleResource Include="Images\cancel%402x.png" />
     <BundleResource Include="Images\accept.png" />
     <BundleResource Include="Images\cancel.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default-Landscape.png" />
+    <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Icon-72.png" />
+    <BundleResource Include="Resources\Icon-72%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-50.png" />
+    <BundleResource Include="Resources\Icon-Small-50%402x.png" />
+    <BundleResource Include="Resources\Icon-Small.png" />
+    <BundleResource Include="Resources\Icon-Small%402x.png" />
+    <BundleResource Include="Resources\Icon.png" />
+    <BundleResource Include="Resources\Icon%402x.png" />
+    <BundleResource Include="Resources\iTunesArtwork%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
     <Folder Include="Controllers\Bitbucket\Teams\" />
     <Folder Include="Images\Buttons\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -335,4 +319,8 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <ITunesArtwork Include="Resources\iTunesArtwork.png" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
 </Project>

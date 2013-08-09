@@ -57,8 +57,6 @@ namespace CodeBucket
         public static UIImage TableCell { get { return UIImage.FromBundle("/Images/TableCell"); } }
         public static UIImage TableCellRed { get { return UIImage.FromBundle("/Images/tablecell_red"); } }
 
-        public static UIImage Logo { get { return UIImageHelper.FromFileAuto("Images/Controls/logo"); } }
-
         //Issues
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
 

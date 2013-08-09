@@ -68,9 +68,6 @@ namespace CodeBucket
 		/// </summary>
 		private void SetTheme()
 		{
-			//Set the status bar
-			UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
-			
 			//Set the theming
 			UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 			

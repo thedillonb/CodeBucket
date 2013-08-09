@@ -22,7 +22,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
 
         public string Slug { get; private set; }
 
-        public List<ChangesetModel> Model { get { return (List<ChangesetModel>)base.Model; } }
+        public new List<ChangesetModel> Model { get { return (List<ChangesetModel>)base.Model; } }
 
         public ChangesetController(string user, string slug)
             : base(typeof(List<ChangesetModel>))
