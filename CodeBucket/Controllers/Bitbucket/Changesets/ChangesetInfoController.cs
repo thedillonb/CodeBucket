@@ -8,6 +8,7 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Elements;
+using System.Collections.Generic;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
@@ -24,7 +25,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         private readonly HeaderView _header;
         
         public ChangesetInfoController(string user, string slug, string node)
-            : base(typeof(ChangesetModel), true, false)
+            : base(typeof(InnerChangesetModel), true, false)
         {
             Node = node;
             User = user;
@@ -38,11 +39,11 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
 
         protected override void OnRender()
         {
-            var model = (ChangesetModel)Model;
+            var model = (InnerChangesetModel)Model;
             var sec = new Section();
-            _header.Subtitle = "Commited " + (model.Utctimestamp).ToDaysAgo();
+            _header.Subtitle = "Commited " + (model.Changeset.Utctimestamp).ToDaysAgo();
 
-            var d = new MultilinedElement(model.Author, model.Message);
+            var d = new MultilinedElement(model.Changeset.Author, model.Changeset.Message);
             sec.Add(d);
 
             if (Repo != null)
@@ -60,20 +61,27 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
 
             var sec2 = new Section();
 
-            model.Files.ForEach(x => 
-                                {
+            model.Changeset.Files.ForEach(x => 
+            {
+                int? added = null;
+                int? removed = null;
+
+                if (model.Diffs.ContainsKey(x.File))
+                {
+                    var diff = model.Diffs[x.File];
+                    added = diff.Diffstat.Added;
+                    removed = diff.Diffstat.Removed;
+                }
+
                 var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
-                var sse = new SubcaptionElement(file, x.Type)
-                { Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
-                    LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation,
-                    Lines = 1 };
+                var sse = new ChangesetElement(file, x.Type, added, removed);
                 sse.Tapped += () => {
                     string parent = null;
-                    if (model.Parents != null && model.Parents.Count > 0)
-                        parent = model.Parents[0];
+                    if (model.Changeset.Parents != null && model.Changeset.Parents.Count > 0)
+                        parent = model.Changeset.Parents[0];
 
                     var type = x.Type.Trim().ToLower();
-                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, model.Node, parent, x.File)
+                    NavigationController.PushViewController(new ChangesetDiffController(User, Slug, model.Changeset.Node, parent, x.File)
                                                             { Removed = type.Equals("removed"), Added = type.Equals("added") }, true);
                 };
                 sec2.Add(sse);
@@ -82,14 +90,25 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             _header.SetNeedsDisplay();
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
             root.Add(new [] { new Section(_header), sec, sec2 });
-            Root = root;
+            Root = root; 
         }
 
         protected override object OnUpdateModel(bool forced)
         {
             var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo(forced);
             x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();
-            return x;
+
+            var d = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetDiffs(forced);
+            return new InnerChangesetModel { Changeset = x, Diffs = d.ToDictionary(e => e.File) };
+        }
+
+        /// <summary>
+        /// An inner class that combines two external models
+        /// </summary>
+        private class InnerChangesetModel
+        {
+            public ChangesetModel Changeset { get; set; }
+            public Dictionary<string, ChangesetDiffModel> Diffs { get; set; }
         }
     }
 }
