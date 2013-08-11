@@ -31,27 +31,111 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
         public string Username { get; private set; }
 
-        public string Repo { get; private set; }
+        public string Slug { get; private set; }
 
-        public RepositoryInfoController(string username, string repo)
+        public RepositoryInfoController(string username, string slug,  string name)
             : base(typeof(RepositoryDetailedModel))
         {
             Username = username;
-            Repo = repo;
-            Title = repo;
+            Slug = slug;
+            Title = name;
 
-            _header = new HeaderView(View.Bounds.Width) { Title = repo, ShadowImage = false };
+            _header = new HeaderView(View.Bounds.Width) { Title = name, ShadowImage = false };
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Gear, ShowExtraMenu));
+            NavigationItem.RightBarButtonItem.Enabled = false;
         }
 
         public RepositoryInfoController(RepositoryDetailedModel model)
-            : this(model.Owner, model.Name)
+            : this(model.Owner, model.Slug, model.Name)
         {
             Model = model;
         }
 
+        private void ShowExtraMenu()
+        {
+            var sheet = MonoTouch.Utilities.GetSheet(string.Empty);
+
+            if (Application.Account.GetPinnedRepository(Model.Owner, Model.Slug) == null)
+                sheet.AddButton("Pin to Slideout Menu");
+            else
+                sheet.AddButton("Unpin from Slideout menu");
+
+            //sheet.AddButton("Watch This Repo");
+            sheet.AddButton("Fork This Repo");
+            sheet.AddButton("Show in Bitbucket");
+            var cancelButton = sheet.AddButton("Cancel");
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+            sheet.Clicked += HandleSheetButtonClick;
+
+            sheet.ShowInView(this.View);
+        }
+
+        void HandleSheetButtonClick (object sender, UIButtonEventArgs e)
+        {
+            if (Model == null)
+                return;
+
+            // Pin to menu
+            if (e.ButtonIndex == 0)
+            {
+                //Is it pinned already or not?
+                var pinnedRepo = Application.Account.GetPinnedRepository(Model.Owner, Model.Slug);
+                if (pinnedRepo == null)
+                    Application.Account.AddPinnedRepository(Model.Owner, Model.Slug, Model.Name, Model.Logo);
+                else
+                    Application.Account.RemovePinnedRepository(pinnedRepo.Id);
+            }
+            // Watch this repo
+//            else if (e.ButtonIndex == 1)
+//            {
+//            }
+            // Fork this repo
+            else if (e.ButtonIndex == 1)
+            {
+                var alert = new UIAlertView();
+                alert.Title = "Fork";
+                alert.Message = "What would you like your fork to be called?";
+                alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+                var forkButton = alert.AddButton("Fork!");
+                var cancelButton = alert.AddButton("Cancel");
+                alert.CancelButtonIndex = cancelButton;
+                alert.DismissWithClickedButtonIndex(cancelButton, true);
+                alert.GetTextField(0).Text = Model.Name;
+                alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
+                    if (e2.ButtonIndex == forkButton)
+                    {
+                        var text = alert.GetTextField(0).Text;
+                        this.DoWork("Forking...", () => {
+                            var fork = Application.Client.Users[Model.Owner].Repositories[Model.Slug].ForkRepository(text);
+                            BeginInvokeOnMainThread(() => {
+                                NavigationController.PushViewController(new RepositoryInfoController(fork), true);
+                            });
+                        }, (ex) => {
+                            //We typically get a 'BAD REQUEST' but that usually means that a repo with that name already exists
+                            MonoTouch.Utilities.ShowAlert("Unable to fork", "A repository by that name may already exist in your collection or an internal error has occured.");
+                        });
+                    }
+                };
+
+                alert.Show();
+            }
+            // Show in Bitbucket
+            else if (e.ButtonIndex == 2)
+            {
+                try 
+                {
+                    UIApplication.SharedApplication.OpenUrl(new NSUrl("http://bitbucket.org/" + Model.Owner + "/" + Model.Slug));
+                }
+                catch { }
+            }
+        }
+
+
         protected override void OnRender()
         {
             var model = Model;
+            Title = Model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
             _header.Subtitle = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 
@@ -144,11 +228,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             }
 
             Root = root;
+            NavigationItem.RightBarButtonItem.Enabled = true;
         }
 
         protected override object OnUpdateModel(bool forced)
         {
-            return Application.Client.Users[Username].Repositories[Repo].GetInfo(forced);
+            return Application.Client.Users[Username].Repositories[Slug].GetInfo(forced);
         }
 
         public void UpdatedImage(Uri uri)

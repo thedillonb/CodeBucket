@@ -39,6 +39,7 @@ namespace CodeBucket.Data
 
             //Execute the typical stuff
             CreateTable<CodeBucket.Data.Account>();
+            CreateTable<CodeBucket.Data.PinnedRepository>();
         }
 
 		private void Upgrade() 

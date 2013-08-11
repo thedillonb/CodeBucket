@@ -3,10 +3,11 @@ using CodeBucket.Bitbucket.Controllers.Issues;
 using CodeBucket.Bitbucket.Controllers.Repositories;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeBucket.Data
 {
-    public class Account
+    public class Account : CodeFramework.Data.IAccount
     {
 
         [PrimaryKey]
@@ -81,8 +82,50 @@ namespace CodeBucket.Data
 			DontRemember = false;
             DontShowTeamEvents = false;
             DontExpandTeamsAndGroups = false;
-
 		}
+
+        /// <summary>
+        /// Gets the pinned resources.
+        /// </summary>
+        /// <returns>The pinned resources.</returns>
+        /// <param name="c">C.</param>
+        public List<PinnedRepository> GetPinnedRepositories()
+        {
+            return Database.Main.Table<PinnedRepository>().Where(x => x.AccountId == this.Id).OrderBy(x => x.Name).ToList();
+        }
+
+        /// <summary>
+        /// Adds the pinned repository.
+        /// </summary>
+        /// <param name="owner">Owner.</param>
+        /// <param name="slug">Slug.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="imageUri">Image URI.</param>
+        public void AddPinnedRepository(string owner, string slug, string name, string imageUri)
+        {
+            var resource = new PinnedRepository { Owner = owner, Slug = slug, Name = name, ImageUri = imageUri, AccountId = this.Id };
+            Database.Main.Insert(resource);
+        }
+
+        /// <summary>
+        /// Removes the pinned repository.
+        /// </summary>
+        /// <param name="id">Identifier.</param>
+        public void RemovePinnedRepository(int id)
+        {
+            Database.Main.Delete(new PinnedRepository { Id = id });
+        }
+
+        /// <summary>
+        /// Gets the pinned repository.
+        /// </summary>
+        /// <returns>The pinned repository.</returns>
+        /// <param name="owner">Owner.</param>
+        /// <param name="slug">Slug.</param>
+        public PinnedRepository GetPinnedRepository(string owner, string slug)
+        {
+            return Database.Main.Find<PinnedRepository>(x => x.Owner == owner && x.Slug == slug);
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current <see cref="Account"/>.

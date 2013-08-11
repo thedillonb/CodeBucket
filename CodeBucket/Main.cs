@@ -142,7 +142,7 @@ namespace CodeBucket
                     if (repo == null)
                         Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.ProfileController(username));
                     else
-                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.Repositories.RepositoryInfoController(username, repo));
+                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.Repositories.RepositoryInfoController(username, repo, repo));
                 }
             }
 

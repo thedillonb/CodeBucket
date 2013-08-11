@@ -37,6 +37,14 @@ namespace CodeBucket.Controllers
             repoSection.Add(new MenuElement("Following", () => NavPush(new FollowingRepositoryController()), Images.RepoFollow));
             repoSection.Add(new MenuElement("Explore", () => NavPush(new ExploreController()), Images.Buttons.Explore));
             root.Add(repoSection);
+            
+            var pinnedRepos = Application.Account.GetPinnedRepositories();
+            if (pinnedRepos.Count > 0)
+            {
+                var pinnedRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
+                pinnedRepos.ForEach(x => pinnedRepoSection.Add(new MenuElement(x.Name, () => NavPush(new RepositoryInfoController(x.Owner, x.Slug, x.Name)), Images.Repo) { ImageUri = new System.Uri(x.ImageUri) }));
+                root.Add(pinnedRepoSection);
+            }
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
             if (Application.Account.DontExpandTeamsAndGroups)

@@ -152,6 +152,7 @@
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Controllers\Bitbucket\Groups\GroupMembersController.cs" />
     <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
