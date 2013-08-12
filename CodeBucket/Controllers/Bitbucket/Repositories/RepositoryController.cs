@@ -28,11 +28,12 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         public RepositoryController(string username, bool refresh = true)
             : base(typeof(List<RepositoryDetailedModel>), refresh: refresh)
         {
-            Title = "Repositories";
             Username = username;
             ShowOwner = false;
             EnableFilter = true;
             Style = UITableViewStyle.Plain;
+            Title = "Repositories".t();
+            SearchPlaceholder = "Search Repositories".t();
         }
 
         protected override object OnUpdateModel(bool forced)

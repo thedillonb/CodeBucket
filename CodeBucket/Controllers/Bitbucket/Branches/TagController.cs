@@ -21,9 +21,9 @@ namespace CodeBucket.Bitbucket.Controllers
         {
             Username = user;
             Repo = repo;
-            Title = "Tags";
-            SearchPlaceholder = "Search Tags";
-            NoItemsText = "No Tags";
+            Title = "Tags".t();
+            SearchPlaceholder = "Search Tags".t();
+            NoItemsText = "No Tags".t();
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
         }
 

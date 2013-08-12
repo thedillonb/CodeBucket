@@ -53,7 +53,7 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
                 _page = page.Substring(1);
             else
                 _page = page;
-            Title = "Wiki";
+            Title = "Wiki".t();
             Web.ScalesPageToFit = true;
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
@@ -69,7 +69,7 @@ namespace CodeBucket.Bitbucket.Controllers.Wikis
                 var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page].GetInfo();
 
 
-                var composer = new Composer { Title = "Edit " + Title, Text = wiki.Data, ActionButtonText = "Save" };
+                var composer = new Composer { Title = "Edit ".t() + Title, Text = wiki.Data, ActionButtonText = "Save".t() };
                 composer.NewComment(this, () => {
                     var text = composer.Text;
 

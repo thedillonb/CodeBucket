@@ -9,8 +9,8 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         public FollowingRepositoryController()
             : base(string.Empty)
         {
-            Title = "Following";
             ShowOwner = true;
+            Title = "Following".t();
         }
         protected override object OnUpdateModel(bool forced)
         {

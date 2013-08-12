@@ -23,8 +23,7 @@ namespace CodeBucket.Bitbucket.Controllers
             AutoHideSearch = false;
             Autorotate = true;
             ShowOwner = true;
-            SearchPlaceholder = "Search Repositories";
-            Title = "Explore";
+            Title = "Explore".t();
         }
 
         void ShowSearch(bool value)

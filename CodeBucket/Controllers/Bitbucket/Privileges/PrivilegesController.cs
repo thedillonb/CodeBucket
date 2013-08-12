@@ -32,10 +32,10 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
             : base(typeof(List<PrivilegeModel>))
         {
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
-            Title = "Privileges";
             EnableSearch = true;
-            SearchPlaceholder = "Search Users";
-            NoItemsText = "No Users";
+            Title = "Privileges".t();
+            SearchPlaceholder = "Search Users".t();
+            NoItemsText = "No Users".t();
         }
 
         protected override Element CreateElement(object obj)

@@ -30,7 +30,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
         public EventsController(string username)
             : base(typeof(List<EventModel>))
         {
-            Title = "Events";
+            Title = "Events".t();
             Style = UITableViewStyle.Plain;
             Username = username;
             Root.UnevenRows = true;
@@ -96,11 +96,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
 
             if (Root.Count == 0)
             {
-                InvokeOnMainThread(() => {
-                    var sec = new Section();
-                    sec.Add(new NoItemsElement("No Events"));
-                    Root.Add(sec);
-                });
+                Root = new RootElement(Title) { new Section { new NoItemsElement("No Events".t()) } };
             }
         }
 
@@ -387,7 +383,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
                     //If there are more items to load then insert the load object
                     if (_lastIndex != _firstIndex)
                     {
-                        _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+                        _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore());
                         r.Add(new Section { _loadMore });
                     }
 

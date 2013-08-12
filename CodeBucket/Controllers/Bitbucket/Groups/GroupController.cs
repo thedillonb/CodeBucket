@@ -19,10 +19,10 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             : base(typeof(List<GroupModel>))
 		{
             Username = username;
-            Title = "Groups";
-            SearchPlaceholder = "Search Groups";
             Style = UITableViewStyle.Plain;
-            NoItemsText = "No Groups";
+            Title = "Groups".t();
+            SearchPlaceholder = "Search Groups".t();
+            NoItemsText = "No Groups".t();
 		}
 
         protected override Element CreateElement(object obj)

@@ -9,7 +9,7 @@ namespace CodeBucket.Controllers
 {
     public class AboutController : BaseDialogViewController
     {
-        static readonly string About = "CodeBucket is the best way to browse and maintain your Bitbucket repositories on any iOS device! " +
+        static readonly string About = @"CodeBucket is the best way to browse and maintain your Bitbucket repositories on any iOS device! " +
                 "Keep an eye on your projects with the ability to view everything from followers to the individual file diffs in the latest change set. " +
                 "CodeBucket brings Bitbucket to your finger tips in a sleek and efficient design. " + 
                 "\n\nCreated By Dillon Buchanan";
@@ -18,7 +18,7 @@ namespace CodeBucket.Controllers
         public AboutController()
             : base (true)
         {
-            Title = "About";
+            Title = "About".t();
         }
 
         public override void ViewDidLoad()
@@ -29,17 +29,17 @@ namespace CodeBucket.Controllers
             {
                 new Section()
                 {
-                    new MultilinedElement("CodeBucket") { Value = About }
+                    new MultilinedElement("CodeBucket".t()) { Value = About }
                 },
                 new Section()
                 {
-                    new StyledStringElement("Source Code", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")))
+                    new StyledStringElement("Source Code".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")))
                 },
                 new Section(String.Empty, "Thank you for downloading. Enjoy!")
                 {
-                    new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))),
-                    new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))),
-                    new StyledStringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
+                    new StyledStringElement("Follow On Twitter".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))),
+                    new StyledStringElement("Rate This App".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))),
+                    new StyledStringElement("App Version".t(), NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
                 }
             };
 

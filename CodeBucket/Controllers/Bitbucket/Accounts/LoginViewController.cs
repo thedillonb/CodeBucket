@@ -27,7 +27,7 @@ namespace CodeBucket.Bitbucket.Controllers.Accounts
         public LoginViewController()
             : base("LoginViewController", null)
         {
-            Title = "Login";
+            Title = "Login".t();
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
         }
 

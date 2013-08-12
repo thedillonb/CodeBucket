@@ -39,12 +39,7 @@ namespace CodeBucket
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             //Start the analytics tracker
-            var result = GoogleAnalytics.GAI.SharedInstance;
-            result.GetTracker("UA-42879084-1");
-            result.TrackUncaughtExceptions = true;
-            result.DefaultTracker.AppName = "CodeBucket";
-            result.DispatchInterval = 30;
-            result.DefaultTracker.AppVersion = NSBundle.MainBundle.InfoDictionary[new NSString("CFBundleVersion")].ToString();
+            MonoTouch.Utilities.SetupAnalytics("UA-42879084-1", "CodeBucket");
 
 			//Set the theme
 			SetTheme();

@@ -20,7 +20,7 @@ namespace MonoTouch
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unable to load configuration object: " + e.Message);
+                MonoTouch.Utilities.LogException("Unable to load configuration object", e);
             }
 
             return new T();
@@ -40,7 +40,7 @@ namespace MonoTouch
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unable to save configuration object: " + e.Message);
+                MonoTouch.Utilities.LogException("Unable to save configuration object", e);
             }
         }
 

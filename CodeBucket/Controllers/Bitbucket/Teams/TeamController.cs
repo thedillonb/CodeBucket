@@ -16,9 +16,9 @@ namespace CodeBucket.Bitbucket.Controllers.Teams
         public TeamController() 
             : base(typeof(List<string>))
         {
-            Title = "Teams";
-            SearchPlaceholder = "Search Teams";
-            NoItemsText = "No Teams";
+            Title = "Teams".t();
+            SearchPlaceholder = "Search Teams".t();
+            NoItemsText = "No Teams".t();
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

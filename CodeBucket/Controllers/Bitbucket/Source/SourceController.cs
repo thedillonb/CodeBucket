@@ -28,8 +28,8 @@ namespace CodeBucket.Bitbucket.Controllers.Source
             Branch = branch;
             Path = path;
             EnableSearch = true;
-            SearchPlaceholder = "Search Files & Folders";
-            Title = string.IsNullOrEmpty(path) ? "Source" : path.Substring(path.LastIndexOf('/') + 1);
+            SearchPlaceholder = "Search Files & Folders".t();
+            Title = string.IsNullOrEmpty(path) ? "Source".t() : path.Substring(path.LastIndexOf('/') + 1);
         }
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)

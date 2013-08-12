@@ -29,8 +29,8 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
             Style = UITableViewStyle.Plain;
             User = user;
             EnableSearch = true;
-            SearchPlaceholder = "Search Memebers";
-            NoItemsText = "No Members";
+            SearchPlaceholder = "Search Memebers".t();
+            NoItemsText = "No Members".t();
             Title = groupName;
             GroupName = groupName;
         }

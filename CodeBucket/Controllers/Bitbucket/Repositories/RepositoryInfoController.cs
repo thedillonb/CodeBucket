@@ -56,14 +56,14 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             var sheet = MonoTouch.Utilities.GetSheet(string.Empty);
 
             if (Application.Account.GetPinnedRepository(Model.Owner, Model.Slug) == null)
-                sheet.AddButton("Pin to Slideout Menu");
+                sheet.AddButton("Pin to Slideout Menu".t());
             else
-                sheet.AddButton("Unpin from Slideout menu");
+                sheet.AddButton("Unpin from Slideout Menu".t());
 
             //sheet.AddButton("Watch This Repo");
-            sheet.AddButton("Fork This Repo");
-            sheet.AddButton("Show in Bitbucket");
-            var cancelButton = sheet.AddButton("Cancel");
+            sheet.AddButton("Fork Repository".t());
+            sheet.AddButton("Show in Bitbucket".t());
+            var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += HandleSheetButtonClick;
@@ -94,11 +94,11 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             else if (e.ButtonIndex == 1)
             {
                 var alert = new UIAlertView();
-                alert.Title = "Fork";
-                alert.Message = "What would you like your fork to be called?";
+                alert.Title = "Fork".t();
+                alert.Message = "What would you like to name your fork?".t();
                 alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                var forkButton = alert.AddButton("Fork!");
-                var cancelButton = alert.AddButton("Cancel");
+                var forkButton = alert.AddButton("Fork!".t());
+                var cancelButton = alert.AddButton("Cancel".t());
                 alert.CancelButtonIndex = cancelButton;
                 alert.DismissWithClickedButtonIndex(cancelButton, true);
                 alert.GetTextField(0).Text = Model.Name;
@@ -106,14 +106,14 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                     if (e2.ButtonIndex == forkButton)
                     {
                         var text = alert.GetTextField(0).Text;
-                        this.DoWork("Forking...", () => {
+                        this.DoWork("Forking...".t(), () => {
                             var fork = Application.Client.Users[Model.Owner].Repositories[Model.Slug].ForkRepository(text);
                             BeginInvokeOnMainThread(() => {
                                 NavigationController.PushViewController(new RepositoryInfoController(fork), true);
                             });
                         }, (ex) => {
                             //We typically get a 'BAD REQUEST' but that usually means that a repo with that name already exists
-                            MonoTouch.Utilities.ShowAlert("Unable to fork", "A repository by that name may already exist in your collection or an internal error has occured.");
+                            MonoTouch.Utilities.ShowAlert("Unable to fork".t(), "A repository by that name may already exist in your collection or an internal error has occured.".t());
                         });
                     }
                 };
@@ -137,7 +137,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             var model = Model;
             Title = Model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
-            _header.Subtitle = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
+            _header.Subtitle = "Updated ".t() + (model.UtcLastUpdated).ToDaysAgo();
 
             if (!string.IsNullOrEmpty(model.Logo))
                 _header.Image = ImageLoader.DefaultRequestImage(new Uri(model.LargeLogo(64)), this);
@@ -179,7 +179,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
             sec1.Add(new SplitElement(new SplitElement.Row
                                       {
-                Text1 = model.IsPrivate ? "Private" : "Public",
+                Text1 = model.IsPrivate ? "Private".t() : "Public".t(),
                 Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
                 Text2 = size,
                 Image2 = Images.Size
@@ -189,41 +189,41 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                                       {
                 Text1 = (model.UtcCreatedOn).ToString("MM/dd/yy"),
                 Image1 = Images.Create,
-                Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork" : " Forks"),
+                Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork".t() : " Forks".t()),
                 Image2 = Images.Fork
             }));
 
 
-            var owner = new StyledStringElement("Owner", model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner".t(), model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => NavigationController.PushViewController(new ProfileController(model.Owner), true);
             sec1.Add(owner);
-            var followers = new StyledStringElement("Followers", "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var followers = new StyledStringElement("Followers".t(), "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(model.Owner, model.Slug), true);
             sec1.Add(followers);
 
 
-            var events = new StyledStringElement("Events", () => NavigationController.PushViewController(new RepoEventsController(model.Owner, model.Slug), true), Images.Buttons.Event);
+            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new RepoEventsController(model.Owner, model.Slug), true), Images.Buttons.Event);
 
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-                sec2.Add(new StyledStringElement("Issues", () => NavigationController.PushViewController(new IssuesController(model.Owner, model.Slug), true), Images.Buttons.Flag));
+                sec2.Add(new StyledStringElement("Issues".t(), () => NavigationController.PushViewController(new IssuesController(model.Owner, model.Slug), true), Images.Buttons.Flag));
 
             if (model.HasWiki)
-                sec2.Add(new StyledStringElement("Wiki", () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
+                sec2.Add(new StyledStringElement("Wiki".t(), () => NavigationController.PushViewController(new WikiInfoController(model.Owner, model.Slug), true), Images.Pencil));
 
             var sec3 = new Section
             {
-                new StyledStringElement("Changes", () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
-                new StyledStringElement("Branches", () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
-                new StyledStringElement("Tags", () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
+                new StyledStringElement("Changes".t(), () => NavigationController.PushViewController(new ChangesetController(model.Owner, model.Slug), true), Images.Changes),
+                new StyledStringElement("Branches".t(), () => NavigationController.PushViewController(new BranchController(model.Owner, model.Slug), true), Images.Branch),
+                new StyledStringElement("Tags".t(), () => NavigationController.PushViewController(new TagController(model.Owner, model.Slug), true), Images.Tag)
             };
 
             root.Add(new[] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(model.Website))
             {
-                var web = new StyledStringElement("Website", () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
+                var web = new StyledStringElement("Website".t(), () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Website)), Images.Webpage);
                 root.Add(new Section { web });
             }
 

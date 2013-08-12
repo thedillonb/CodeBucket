@@ -14,7 +14,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         public string Repo { get; set; }
         public string SelectedItem { get; set; }
         public ComponentSelectViewController() 
-        : base("Components") 
+            : base("Components") 
         { 
         }
 

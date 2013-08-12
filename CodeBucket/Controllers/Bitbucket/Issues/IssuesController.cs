@@ -34,11 +34,11 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             User = user;
             Slug = slug;
             Style = UITableViewStyle.Plain;
-            Title = "Issues";
             EnableSearch = true;
             EnableFilter = true;
             Root.UnevenRows = true;
-            SearchPlaceholder = "Search Issues";
+            Title = "Issues".t();
+            SearchPlaceholder = "Search Issues".t();
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Add, () => {
                 var b = new IssueEditController {

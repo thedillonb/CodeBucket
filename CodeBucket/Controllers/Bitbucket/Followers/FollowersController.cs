@@ -17,9 +17,9 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
 		protected FollowersController()
 			: base(typeof(List<FollowerModel>))
 		{
-            Title = "Followers";
-            SearchPlaceholder = "Search Followers";
-            NoItemsText = "No Followers";
+            Title = "Followers".t();
+            SearchPlaceholder = "Search Followers".t();
+            NoItemsText = "No Followers".t();
             Style = UITableViewStyle.Plain;
 		}
 

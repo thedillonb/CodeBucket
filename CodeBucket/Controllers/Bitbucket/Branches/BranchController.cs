@@ -23,9 +23,9 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
 		{
             Username = username;
             Slug = slug;
-            Title = "Branches";
-            SearchPlaceholder = "Search Branches";
-            NoItemsText = "No Branches";
+            Title = "Branches".t();
+            SearchPlaceholder = "Search Branches".t();
+            NoItemsText = "No Branches".t();
 		}
 
         protected override Element CreateElement(object obj)
