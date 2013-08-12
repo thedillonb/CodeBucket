@@ -224,15 +224,6 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 return u;
             }
         }
-
-        private class CommentElement : NameTimeStringElement
-        {
-            protected override void OnCreateCell(UITableViewCell cell)
-            {
-                //Don't call the base since it will assign a background.
-                return;
-            }
-        }
     }
 }
 
