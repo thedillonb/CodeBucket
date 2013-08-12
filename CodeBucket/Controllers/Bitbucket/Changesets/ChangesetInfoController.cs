@@ -36,11 +36,11 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             User = user;
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
-            Title = "Commit";
+            Title = "Commit".t();
             Root.UnevenRows = true;
             
-            _header = new HeaderView(0f) { Title = "Commit: " + node.Substring(0, node.Length > 10 ? 10 : node.Length) };
-            _viewSegment = new UISegmentedControl(new string[] { "Changes", "Comments", "Approvals" });
+            _header = new HeaderView(0f) { Title = "Commit: ".t() + node.Substring(0, node.Length > 10 ? 10 : node.Length) };
+            _viewSegment = new UISegmentedControl(new string[] { "Changes".t(), "Comments".t(), "Approvals".t() });
             _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
@@ -65,7 +65,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             var model = (InnerChangesetModel)Model;
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-            _header.Subtitle = "Commited " + (model.Changeset.Utctimestamp).ToDaysAgo();
+            _header.Subtitle = "Commited ".t() + (model.Changeset.Utctimestamp).ToDaysAgo();
             var headerSection = new Section(_header);
             root.Add(headerSection);
 
@@ -142,7 +142,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
                 if (commentSection.Elements.Count > 0)
                     root.Add(commentSection);
 
-                var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+                var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
                 addComment.Tapped += AddCommentTapped;
                 root.Add(new Section { addComment });
             }
@@ -161,12 +161,12 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
                 StyledStringElement approveButton;
                 if (model.Likes.Exists(x => x.Username.Equals(Application.Account.Username) && x.Approved))
                 {
-                    approveButton = new StyledStringElement("Unapprove") { Image = Images.Cancel };
+                    approveButton = new StyledStringElement("Unapprove".t()) { Image = Images.Cancel };
                     approveButton.Tapped += UnApprovedTapped;
                 }
                 else
                 {
-                    approveButton = new StyledStringElement("Approve") { Image = Images.Accept };
+                    approveButton = new StyledStringElement("Approve".t()) { Image = Images.Accept };
                     approveButton.Tapped += ApproveTapped;
                 }
                 root.Add(new Section { approveButton });
@@ -177,25 +177,25 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
 
         void ApproveTapped()
         {
-            this.DoWork("Approving...", () => {
+            this.DoWork("Approving...".t(), () => {
                 Application.Client.Users[User].Repositories[Slug].Changesets[Node].Approve();
                 var model = (InnerChangesetModel)Model;
                 model.Likes = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetParticipants(true);
                 BeginInvokeOnMainThread(() => Render());
             }, ex => {
-                Utilities.ShowAlert("Unable to approve changeset!", ex.Message);
+                Utilities.ShowAlert("Unable to approve changeset!".t(), ex.Message);
             });
         }
 
         void UnApprovedTapped()
         {
-            this.DoWork("Unapproving...", () => {
+            this.DoWork("Unapproving...".t(), () => {
                 Application.Client.Users[User].Repositories[Slug].Changesets[Node].Unapprove();
                 var model = (InnerChangesetModel)Model;
                 model.Likes = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetParticipants(true);
                 BeginInvokeOnMainThread(() => Render());
             }, ex => {
-                Utilities.ShowAlert("Unable to unapprove changeset!", ex.Message);
+                Utilities.ShowAlert("Unable to unapprove changeset!".t(), ex.Message);
             });
         }
 
