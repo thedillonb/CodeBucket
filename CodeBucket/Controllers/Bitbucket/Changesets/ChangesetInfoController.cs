@@ -149,11 +149,11 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             else if (_viewSegment.SelectedSegment == 2)
             {
                 var likeSection = new Section();
-                foreach (var l in model.Likes)
-                {
-                    if (l.Approved)
-                        likeSection.Add(new UserElement(l.Username, l.FirstName, l.LastName, l.Avatar));
-                }
+                likeSection.AddAll(model.Likes.Where(x => x.Approved).Select(l => {
+                    var el = new UserElement(l.Username, l.FirstName, l.LastName, l.Avatar);
+                    el.Tapped += () => NavigationController.PushViewController(new ProfileController(l.Username), true);
+                    return el;
+                }));
 
                 if (likeSection.Elements.Count > 0)
                     root.Add(likeSection);
@@ -228,6 +228,9 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             var x = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetInfo(forced);
             x.Files = x.Files.OrderBy(y => y.File.Substring(y.File.LastIndexOf('/') + 1)).ToList();
             model.Changeset = x;
+
+            //There is a bug that requires the 'rawNode'
+            Node = x.RawNode;
 
             // Try to get these things
             try
