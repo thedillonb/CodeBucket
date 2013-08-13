@@ -82,7 +82,10 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
                 //Is it pinned already or not?
                 var pinnedRepo = Application.Account.GetPinnedRepository(Model.Owner, Model.Slug);
                 if (pinnedRepo == null)
-                    Application.Account.AddPinnedRepository(Model.Owner, Model.Slug, Model.Name, Model.Logo);
+                {
+                    var logo = UIScreen.MainScreen.Scale == 1.0f ? Model.Logo : Model.LargeLogo(32);
+                    Application.Account.AddPinnedRepository(Model.Owner, Model.Slug, Model.Name, logo);
+                }
                 else
                     Application.Account.RemovePinnedRepository(pinnedRepo.Id);
             }

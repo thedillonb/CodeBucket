@@ -53,7 +53,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             RefreshCaption();
             NavigationItem.TitleView = _titleView;
 
-            _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+            _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore()) { AutoLoadOnVisible = true };
         }
 
         private void RefreshCaption()

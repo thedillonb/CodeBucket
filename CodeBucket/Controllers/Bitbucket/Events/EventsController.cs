@@ -383,7 +383,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
                     //If there are more items to load then insert the load object
                     if (_lastIndex != _firstIndex)
                     {
-                        _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore());
+                        _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore()) { AutoLoadOnVisible = true };
                         r.Add(new Section { _loadMore });
                     }
 

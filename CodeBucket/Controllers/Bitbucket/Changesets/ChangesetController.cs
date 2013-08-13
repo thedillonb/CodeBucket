@@ -30,7 +30,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
             User = user;
             Slug = slug;
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
-            Title = "Changes";
+            Title = "Changes".t();
             Root.UnevenRows = true;
         }
 
@@ -96,7 +96,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         {
             //Create some needed elements
             var root = new RootElement(Title) { UnevenRows = true };
-            _loadMore = new PaginateElement("Load More", "Loading...", e => GetMore());
+            _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore()) { AutoLoadOnVisible = true };
             root.Add(new Section { _loadMore });
 
             //Add the items that were in the update
