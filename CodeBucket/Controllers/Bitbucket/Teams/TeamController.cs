@@ -8,13 +8,13 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using System.Threading.Tasks;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Teams
 {
     public class TeamController : BaseListModelController
     {
         public TeamController() 
-            : base(typeof(List<string>))
         {
             Title = "Teams".t();
             SearchPlaceholder = "Search Teams".t();
@@ -31,7 +31,7 @@ namespace CodeBucket.Bitbucket.Controllers.Teams
         protected override Element CreateElement(object obj)
         {
             var o = obj.ToString();
-            return new StyledStringElement(o, () => NavigationController.PushViewController(new ProfileController(o), true));
+            return new StyledStringElement(o, () => NavigationController.PushViewController(new ProfileView(o), true));
         }
     }
 }

@@ -4,6 +4,7 @@ using CodeBucket.Bitbucket.Controllers.Repositories;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
+using CodeBucket.Filters.Models;
 
 namespace CodeBucket.Data
 {
@@ -128,6 +129,72 @@ namespace CodeBucket.Data
         }
 
         /// <summary>
+        /// Gets the filters.
+        /// </summary>
+        /// <returns>The filters.</returns>
+        public List<Filter> GetFilters()
+        {
+            return Database.Main.Table<Filter>().Where(x => x.AccountId == this.Id).ToList();
+        }
+
+        /// <summary>
+        /// Gets the filter.
+        /// </summary>
+        /// <returns>The filter.</returns>
+        /// <param name="key">Key.</param>
+        public Filter GetFilter(string key)
+        {
+            return Database.Main.Find<Filter>(x => x.AccountId == this.Id && x.Type == key);
+        }
+
+        /// <summary>
+        /// Gets the filter.
+        /// </summary>
+        /// <returns>The filter.</returns>
+        /// <param name="key">Key.</param>
+        public Filter GetFilter(object key)
+        {
+            return GetFilter(key.GetType().Name);
+        }
+
+
+        /// <summary>
+        /// Adds the filter
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="data">Data.</param>
+        public void AddFilter(string key, object data)
+        {
+            var existingFilter = GetFilter(key);
+            if (existingFilter != null)
+                RemoveFilter(existingFilter.Id);
+
+            var filter = new Filter { AccountId = this.Id, Type = key };
+            filter.SetData(data);
+            Database.Main.Insert(filter);
+        }
+
+        /// <summary>
+        /// Adds a filter using any object's type as a key
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="data">Data.</param>
+        public void AddFilter(object key, object data)
+        {
+            AddFilter(key.GetType().Name, data);
+        }
+
+        /// <summary>
+        /// Removes the filter
+        /// </summary>
+        /// <param name="id">Identifier.</param>
+        public void RemoveFilter(int id)
+        {
+            Database.Main.Delete(new Filter { Id = id });
+        }
+
+
+        /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current <see cref="Account"/>.
         /// </summary>
         /// <returns>A <see cref="System.String"/> that represents the current <see cref="Account"/>.</returns>
@@ -160,30 +227,6 @@ namespace CodeBucket.Data
         public override int GetHashCode()
         {
             return this.Id;
-        }
-
-        private IssuesController.FilterModel _issueFilterModel;
-        [Ignore]
-        public IssuesController.FilterModel IssueFilterObject
-        {
-            get { return _issueFilterModel ?? (_issueFilterModel = MonoTouch.Configurations.Load<IssuesController.FilterModel>(Username, "IssueFilter")); }
-            set
-            {
-                _issueFilterModel = value;
-                MonoTouch.Configurations.Save(Username, "IssueFilter", _issueFilterModel);
-            }
-        }
-
-        private RepositoryController.FilterModel _repoFilterModel;
-        [Ignore]
-        public RepositoryController.FilterModel RepoFilterObject
-        {
-            get { return _repoFilterModel ?? (_repoFilterModel = MonoTouch.Configurations.Load<RepositoryController.FilterModel>(Username, "RepoFilter")); }
-            set
-            {
-                _repoFilterModel = value;
-                MonoTouch.Configurations.Save(Username, "RepoFilter", _repoFilterModel);
-            }
         }
     }
 }

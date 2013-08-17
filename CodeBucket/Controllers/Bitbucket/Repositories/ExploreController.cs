@@ -17,7 +17,7 @@ namespace CodeBucket.Bitbucket.Controllers
         private string _searchText;
 
         public ExploreController()
-            : base(Application.Account.Username, false)
+            : base(Application.Account.Username, false, "ExploreController")
         {
             EnableSearch = true;
             AutoHideSearch = false;
@@ -103,47 +103,6 @@ namespace CodeBucket.Bitbucket.Controllers
             _searchText = text;
             View.EndEditing(true);
             UpdateAndRender();
-//
-//            var hud = new MBProgressHUD(View.Superview) {Mode = MBProgressHUDMode.Indeterminate, TitleText = "Searching..."};
-//
-//            InvokeOnMainThread(delegate {
-//                TableView.TableFooterView.Hidden = true;
-//                Root.Clear();
-//                View.Superview.AddSubview(hud);
-//                hud.Show(true);
-//            });
-//
-//            ThreadPool.QueueUserWorkItem(delegate {
-//
-//                Utilities.PushNetworkActive();
-//
-//                try
-//                {
-//                    var l = Application.Client.Repositories.Search(text);
-//                    Model = l.Repositories;
-//                    OnRefresh();
-//
-//
-//                    InvokeOnMainThread(delegate {
-//                        ShowSearch(Root.Count > 0 && Root[0].Count == 0);
-//                    });
-//
-//                }
-//                catch (Exception e)
-//                {
-//                    InvokeOnMainThread(() => Utilities.ShowAlert("Error to Load", e.Message));
-//                }
-//
-//                Utilities.PopNetworkActive();
-//
-//                if (hud != null)
-//                {
-//                    InvokeOnMainThread(delegate {
-//                        hud.Hide(true);
-//                        hud.RemoveFromSuperview();
-//                    });
-//                }
-//            });
         }
     }
 }

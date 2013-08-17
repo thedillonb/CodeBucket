@@ -16,7 +16,6 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
         public string Username { get; private set; }
 
 		public GroupController(string username) 
-            : base(typeof(List<GroupModel>))
 		{
             Username = username;
             Style = UITableViewStyle.Plain;

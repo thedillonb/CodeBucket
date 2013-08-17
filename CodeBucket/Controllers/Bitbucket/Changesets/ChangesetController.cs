@@ -25,7 +25,6 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         public new List<ChangesetModel> Model { get { return (List<ChangesetModel>)base.Model; } }
 
         public ChangesetController(string user, string slug)
-            : base(typeof(List<ChangesetModel>))
         {
             User = user;
             Slug = slug;

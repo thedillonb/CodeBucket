@@ -8,6 +8,7 @@ using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Groups
 {
@@ -24,7 +25,6 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
         public string GroupName { get; private set; }
         
         public GroupMembersController(string user, string groupName)
-            : base(typeof(List<UserModel>))
         {
             Style = UITableViewStyle.Plain;
             User = user;
@@ -44,7 +44,7 @@ namespace CodeBucket.Bitbucket.Controllers.Groups
         {
             var s = (UserModel)obj;
             StyledStringElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
-            sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+            sse.Tapped += () => NavigationController.PushViewController(new ProfileView(s.Username), true);
             return sse;
         }
     }

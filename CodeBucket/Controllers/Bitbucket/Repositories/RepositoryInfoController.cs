@@ -16,6 +16,7 @@ using CodeFramework.Views;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using System.Threading.Tasks;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
@@ -34,7 +35,6 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
         public string Slug { get; private set; }
 
         public RepositoryInfoController(string username, string slug,  string name)
-            : base(typeof(RepositoryDetailedModel))
         {
             Username = username;
             Slug = slug;
@@ -198,7 +198,7 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
 
 
             var owner = new StyledStringElement("Owner".t(), model.Owner) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            owner.Tapped += () => NavigationController.PushViewController(new ProfileController(model.Owner), true);
+            owner.Tapped += () => NavigationController.PushViewController(new ProfileView(model.Owner), true);
             sec1.Add(owner);
             var followers = new StyledStringElement("Followers".t(), "" + model.FollowersCount) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersController(model.Owner, model.Slug), true);

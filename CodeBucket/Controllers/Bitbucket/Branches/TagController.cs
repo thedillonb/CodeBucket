@@ -17,7 +17,6 @@ namespace CodeBucket.Bitbucket.Controllers
         public string Repo { get; private set; }
 
         public TagController(string user, string repo)
-            : base(typeof(List<TagModel>))
         {
             Username = user;
             Repo = repo;

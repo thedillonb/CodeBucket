@@ -40,6 +40,7 @@ namespace CodeBucket.Data
             //Execute the typical stuff
             CreateTable<CodeBucket.Data.Account>();
             CreateTable<CodeBucket.Data.PinnedRepository>();
+            CreateTable<CodeBucket.Data.Filter>();
         }
 
 		private void Upgrade() 

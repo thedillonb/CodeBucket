@@ -19,7 +19,6 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
         public string Slug { get; private set; }
 
 		public BranchController(string username, string slug) 
-            : base(typeof(List<BranchModel>))
 		{
             Username = username;
             Slug = slug;
@@ -36,7 +35,7 @@ namespace CodeBucket.Bitbucket.Controllers.Branches
 
         protected override object OnUpdateListModel(bool forced, int currentPage, ref int nextPage)
         {
-            return Application.Client.Users[Username].Repositories[Slug].Branches.GetBranches(forced).Values.OrderBy(x => x.Branch).ToList();
+            return null;
         }
 	}
 }

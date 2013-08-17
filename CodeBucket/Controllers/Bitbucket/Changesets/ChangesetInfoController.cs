@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using MonoTouch.UIKit;
 using MonoTouch;
 using MonoTouch.Foundation;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Changesets
 {
@@ -30,7 +31,6 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
         private readonly UIBarButtonItem _segmentBarButton;
         
         public ChangesetInfoController(string user, string slug, string node)
-            : base(typeof(InnerChangesetModel))
         {
             Node = node;
             User = user;
@@ -151,7 +151,7 @@ namespace CodeBucket.Bitbucket.Controllers.Changesets
                 var likeSection = new Section();
                 likeSection.AddAll(model.Likes.Where(x => x.Approved).Select(l => {
                     var el = new UserElement(l.Username, l.FirstName, l.LastName, l.Avatar);
-                    el.Tapped += () => NavigationController.PushViewController(new ProfileController(l.Username), true);
+                    el.Tapped += () => NavigationController.PushViewController(new ProfileView(l.Username), true);
                     return el;
                 }));
 

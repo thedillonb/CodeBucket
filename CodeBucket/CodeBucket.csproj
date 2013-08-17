@@ -74,13 +74,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution: Dillon Buchanan</CodesignKey>
+    <CodesignKey>iPhone Distribution: Dillon Buchanan (T39PW4C23Z)</CodesignKey>
     <MtouchArch>ARMv7</MtouchArch>
     <IpaPackageName />
     <CrashReportingApiKey />
     <MtouchI18n />
     <MtouchUseLlvm>True</MtouchUseLlvm>
-    <CodesignProvision>35779EA0-A4FB-47DA-826C-948D06B82569</CodesignProvision>
+    <CodesignProvision>627E4532-A975-43C0-BA38-BD27B955F75F</CodesignProvision>
     <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Distribution|iPhone' ">
@@ -116,7 +116,6 @@
     <Compile Include="Controllers\SlideoutNavigationController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\Bitbucket\Accounts\ProfileController.cs" />
     <Compile Include="Controllers\Bitbucket\Accounts\LoginViewController.cs" />
     <Compile Include="Controllers\Bitbucket\Accounts\LoginViewController.designer.cs" />
     <Compile Include="Controllers\Bitbucket\Branches\BranchController.cs" />
@@ -153,6 +152,18 @@
     <Compile Include="Controllers\Bitbucket\Groups\GroupMembersController.cs" />
     <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Filters\Models\IssuesFilterModel.cs" />
+    <Compile Include="Data\Filter.cs" />
+    <Compile Include="Filters\Controllers\IssuesFilterController.cs" />
+    <Compile Include="Filters\Models\RepositoriesFilterModel.cs" />
+    <Compile Include="Filters\Controllers\RepositoriesFilterController.cs" />
+    <Compile Include="Filters\Controllers\SourceFilterController.cs" />
+    <Compile Include="Filters\Models\SourceFilterModel.cs" />
+    <Compile Include="Views\Accounts\ProfileView.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\BranchesController.cs" />
+    <Compile Include="Controllers\TagsController.cs" />
+    <Compile Include="ViewControllers\TagsViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Controllers\Bitbucket\Accounts\LoginViewController.xib" />
@@ -310,6 +321,14 @@
     <Folder Include="Controllers\Bitbucket\Teams\" />
     <Folder Include="Images\Buttons\" />
     <Folder Include="Resources\" />
+    <Folder Include="Filters\" />
+    <Folder Include="Filters\Models\" />
+    <Folder Include="Filters\Controllers\" />
+    <Folder Include="Controllers\Accounts\" />
+    <Folder Include="Views\" />
+    <Folder Include="Views\Accounts\" />
+    <Folder Include="Controllers\Branches\" />
+    <Folder Include="ViewControllers\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -135,7 +135,7 @@ namespace CodeBucket
                         repo = uri.Segments[1].Replace("/", "");
 
                     if (repo == null)
-                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.ProfileController(username));
+                        Slideout.SelectView(new CodeBucket.Views.Accounts.ProfileView(username));
                     else
                         Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.Repositories.RepositoryInfoController(username, repo, repo));
                 }

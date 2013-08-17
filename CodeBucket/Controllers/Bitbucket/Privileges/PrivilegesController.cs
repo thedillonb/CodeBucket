@@ -29,7 +29,6 @@ namespace CodeBucket.Bitbucket.Controllers.Privileges
         }
 
         public PrivilegesController()
-            : base(typeof(List<PrivilegeModel>))
         {
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             EnableSearch = true;

@@ -13,6 +13,7 @@ using MonoTouch;
 using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Events
 {
@@ -28,7 +29,6 @@ namespace CodeBucket.Bitbucket.Controllers.Events
         public bool ReportRepository { get; set; }
 
         public EventsController(string username)
-            : base(typeof(List<EventModel>))
         {
             Title = "Events".t();
             Style = UITableViewStyle.Plain;
@@ -296,7 +296,7 @@ namespace CodeBucket.Bitbucket.Controllers.Events
             if (!repoOwner.ToLower().Equals(Application.Account.Username.ToLower()))
             {
                 return new [] {
-                    new NewsFeedElement.TextBlock(repoOwner, () => NavigationController.PushViewController(new ProfileController(repoOwner), true)),
+                    new NewsFeedElement.TextBlock(repoOwner, () => NavigationController.PushViewController(new ProfileView(repoOwner), true)),
                     new NewsFeedElement.TextBlock("/", UIFont.BoldSystemFontOfSize(12f)),
                     new NewsFeedElement.TextBlock(repoName, () => RepoTapped(eventModel)),
                 };

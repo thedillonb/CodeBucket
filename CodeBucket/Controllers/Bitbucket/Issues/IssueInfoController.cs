@@ -12,6 +12,7 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Elements;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
@@ -38,7 +39,6 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         private bool _issueRemoved;
 
         public IssueInfoController(string user, string slug, int id)
-            : base(typeof(InternalIssueInfoModel))
         {
             User = user;
             Slug = slug;
@@ -80,7 +80,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             {
                 var m = Model as InternalIssueInfoModel;
                 if (m != null && m.Issue.Responsible != null)
-                    NavigationController.PushViewController(new ProfileController(m.Issue.Responsible.Username), true);
+                    NavigationController.PushViewController(new ProfileView(m.Issue.Responsible.Username), true);
             };
 
             var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };

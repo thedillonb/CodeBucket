@@ -1,35 +1,40 @@
-using CodeBucket.Bitbucket.Controllers;
-using MonoTouch.Dialog;
-using BitbucketSharp.Models;
+using CodeBucket.Controllers;
+using CodeFramework.Controllers;
 using MonoTouch.Dialog.Utilities;
+using BitbucketSharp.Models;
+using CodeFramework.Views;
 using CodeBucket.Bitbucket.Controllers.Followers;
 using CodeBucket.Bitbucket.Controllers.Events;
 using CodeBucket.Bitbucket.Controllers.Groups;
+using MonoTouch.Dialog;
 using CodeBucket.Bitbucket.Controllers.Repositories;
-using CodeBucket.Controllers;
-using CodeFramework.Controllers;
-using CodeFramework.Views;
-using CodeFramework.Elements;
-using System.Threading.Tasks;
 
-namespace CodeBucket.Bitbucket.Controllers
+namespace CodeBucket.Views.Accounts
 {
-    public class ProfileController : BaseModelDrivenController, IImageUpdated
-	{
+    public class ProfileView : ListView, IImageUpdated, IView<UsersModel>
+    {
         private HeaderView _header;
         public string Username { get; private set; }
 
-        public new UsersModel Model 
+        public new ProfileController Controller
         {
-            get { return (UsersModel)base.Model; }
+            get { return (ProfileController)base.Controller; }
+            protected set { base.Controller = value; }
         }
 
-		public ProfileController(string username)
-            : base(typeof(UsersModel))
-		{
+        public ProfileView(string username)
+        {
             Title = username;
-			Username = username;
-		}
+            Username = username;
+            Controller = new ProfileController(this, username);
+        }
+
+        void IView<UsersModel>.Render(UsersModel model)
+        {
+            _header.Subtitle = model.User.FirstName ?? "" + " " + (model.User.LastName ?? "");
+            _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(model.User.Avatar), this);
+            _header.SetNeedsDisplay();
+        }
 
         public override void ViewDidLoad()
         {
@@ -41,20 +46,9 @@ namespace CodeBucket.Bitbucket.Controllers
             var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsController(Username), true), Images.Buttons.Event);
             var groups = new StyledStringElement("Groups".t(), () => NavigationController.PushViewController(new GroupController(Username), true), Images.Buttons.Group);
             var repos = new StyledStringElement("Repositories".t(), () => {
-                NavigationController.PushViewController(new RepositoryController(Username) { Model = Model == null ? null : Model.Repositories }, true);
+                NavigationController.PushViewController(new RepositoryController(Username) { Model = Controller.IsModelValid ? null : Controller.Model.Repositories }, true);
             }, Images.Repo);
             Root.Add(new [] { new Section { followers, events, groups }, new Section { repos } });
-        }
-
-        protected override void OnRender()
-        {
-            _header.Subtitle = Model.User.FirstName ?? "" + " " + (Model.User.LastName ?? "");
-            _header.Image = ImageLoader.DefaultRequestImage(new System.Uri(Model.User.Avatar), this);
-            _header.SetNeedsDisplay();
-        }
-        protected override object OnUpdateModel(bool forced)
-        {
-            return Application.Client.Users[Username].GetInfo(forced);
         }
 
         public void UpdatedImage (System.Uri uri)
@@ -63,6 +57,6 @@ namespace CodeBucket.Bitbucket.Controllers
             if (_header.Image != null)
                 _header.SetNeedsDisplay();
         }
-	}
+    }
 }
 

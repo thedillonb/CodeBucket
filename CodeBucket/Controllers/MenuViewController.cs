@@ -14,6 +14,7 @@ using CodeFramework.Views;
 using CodeBucket.Bitbucket.Controllers.Teams;
 using CodeFramework.Utils;
 using System.Collections.Generic;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Controllers
 {
@@ -23,7 +24,7 @@ namespace CodeBucket.Controllers
 		{
             var root = new RootElement(Application.Account.Username);
             root.Add(new Section() {
-                new MenuElement("Profile".t(), () => NavPush(new ProfileController(Application.Account.Username) { Title = "Profile".t() }), Images.Buttons.Person),
+                new MenuElement("Profile".t(), () => NavPush(new CodeBucket.Views.Accounts.ProfileView(Application.Account.Username) { Title = "Profile".t() }), Images.Buttons.Person),
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events".t()) };
@@ -57,7 +58,7 @@ namespace CodeBucket.Controllers
                 if (Application.Account.Groups != null)
                     Application.Account.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => NavPush(new GroupMembersController(Application.Account.Username, x.Slug) { Title = x.Name, Model = x.Members }), Images.Buttons.Group)));
                 if (Application.Account.Teams != null)
-                    Application.Account.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => NavPush(new ProfileController(x)), Images.Team)));
+                    Application.Account.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => NavPush(new ProfileView(x)), Images.Team)));
             }
 
             //There should be atleast 1 thing...

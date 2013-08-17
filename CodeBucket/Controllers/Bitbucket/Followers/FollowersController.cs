@@ -9,13 +9,13 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using System.Threading.Tasks;
+using CodeBucket.Views.Accounts;
 
 namespace CodeBucket.Bitbucket.Controllers.Followers
 {
     public abstract class FollowersController : BaseListModelController
     {
 		protected FollowersController()
-			: base(typeof(List<FollowerModel>))
 		{
             Title = "Followers".t();
             SearchPlaceholder = "Search Followers".t();
@@ -27,7 +27,7 @@ namespace CodeBucket.Bitbucket.Controllers.Followers
         {
             var s = (FollowerModel)obj;
             StyledStringElement sse = new UserElement(s.Username, s.FirstName, s.LastName, s.Avatar);
-            sse.Tapped += () => NavigationController.PushViewController(new ProfileController(s.Username), true);
+            sse.Tapped += () => NavigationController.PushViewController(new ProfileView(s.Username), true);
             return sse;
         }
 	}

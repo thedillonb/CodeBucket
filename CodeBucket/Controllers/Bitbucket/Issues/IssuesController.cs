@@ -12,6 +12,7 @@ using CodeBucket.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Elements;
+using CodeBucket.Filters.Models;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
@@ -22,14 +23,23 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
         private int _totalCount;
         private int _lastIndex;
-        private LoadMoreElement _loadMore;
-        private TitleView _titleView;
+        private readonly LoadMoreElement _loadMore;
+        private readonly UISegmentedControl _viewSegment;
+        private readonly UIBarButtonItem _segmentBarButton;
+        private IssuesFilterModel _filterModel;
 
         //The filter for this view
-        private FilterModel _filterModel = Application.Account.IssueFilterObject;
+        private IssuesFilterModel FilterModel
+        {
+            get { return _filterModel; }
+            set 
+            {
+                _filterModel = value;
+                Application.Account.AddFilter(this, value);
+            }
+        }
 
         public IssuesController(string user, string slug)
-            : base(typeof(List<IssueModel>))
         {
             User = user;
             Slug = slug;
@@ -49,16 +59,72 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 NavigationController.PushViewController(b, true);
             }));
 
-            _titleView = new TitleView();
-            RefreshCaption();
-            NavigationItem.TitleView = _titleView;
-
             _loadMore = new PaginateElement("Load More".t(), "Loading...".t(), e => GetMore()) { AutoLoadOnVisible = true };
+            _viewSegment = new UISegmentedControl(new string[] { "All".t(), "Open".t(), "Mine".t(), "Custom".t() });
+            _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
+            _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            var filter = Application.Account.GetFilter(this.GetType().Name);
+            _filterModel = filter != null ? filter.GetData<IssuesFilterModel>() : new IssuesFilterModel();
         }
 
-        private void RefreshCaption()
+        public override void ViewDidLoad()
         {
-            _titleView.SetCaption("Issues", _filterModel.IsFiltering() ? "Filter Enabled" : null);
+            base.ViewDidLoad();
+
+            BeginInvokeOnMainThread(delegate {
+                _viewSegment.SelectedSegment = 1;
+                _viewSegment.SelectedSegment = 0;
+
+                //Select which one is currently selected
+                if (_filterModel.Equals(IssuesFilterModel.CreateAllFilter()))
+                    _viewSegment.SelectedSegment = 0;
+                else if (_filterModel.Equals(IssuesFilterModel.CreateOpenFilter()))
+                    _viewSegment.SelectedSegment = 1;
+                else if (_filterModel.Equals(IssuesFilterModel.CreateMineFilter(Application.Account.Username)))
+                    _viewSegment.SelectedSegment = 2;
+                else
+                    _viewSegment.SelectedSegment = 3;
+                    
+                _viewSegment.ValueChanged += (sender, e) => SegmentValueChanged();
+            });
+
+            _segmentBarButton.Width = View.Frame.Width - 10f;
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(false, animated);
+            base.ViewWillAppear(animated);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(true, animated);
+        }
+
+        private void SegmentValueChanged()
+        {
+            if (_viewSegment.SelectedSegment == 0)
+            {
+                ApplyFilter(IssuesFilterModel.CreateAllFilter());
+            }
+            else if (_viewSegment.SelectedSegment == 1)
+            {
+                ApplyFilter(IssuesFilterModel.CreateOpenFilter());
+            }
+            else if (_viewSegment.SelectedSegment == 2)
+            {
+                ApplyFilter(IssuesFilterModel.CreateMineFilter(Application.Account.Username));
+            }
+            else if (_viewSegment.SelectedSegment == 3)
+            {
+
+            }
         }
 
         private void OnCreateIssue(IssueModel issue)
@@ -127,7 +193,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 if (!string.IsNullOrEmpty(_filterModel.ReportedBy))
                     filter.AddLast(new Tuple<string, string>("reported_by", _filterModel.ReportedBy));
 
-                filter.AddLast(new Tuple<string, string>("sort", ((FilterModel.Order)_filterModel.OrderBy).ToString().ToLower()));
+                filter.AddLast(new Tuple<string, string>("sort", ((IssuesFilterModel.Order)_filterModel.OrderBy).ToString().ToLower()));
             }
 
             if (additionalFilters != null)
@@ -247,7 +313,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             Utilities.ShowAlert("Failure to load!", "Unable to load additional enries because the following error: " + ex.Message);
         }
 
-        static int[] _ceilings = FilterController.IntegerCeilings;
+        static int[] _ceilings = CodeFramework.Filters.Controllers.FilterController.IntegerCeilings;
         private static string CreateRangeString(int key, IEnumerable<int> ranges)
         {
             return ranges.LastOrDefault(x => x < key) + " to " + (key - 1);
@@ -286,43 +352,41 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
         protected override void OnRender()
         {
-            InvokeOnMainThread(() => Root.Clear());
-
-            var order = (FilterModel.Order)_filterModel.OrderBy;
+            var order = (IssuesFilterModel.Order)_filterModel.OrderBy;
             List<Section> sections = null;
             var model = Model as List<IssueModel>;
 
-            if (order == FilterModel.Order.Status)
+            if (order == IssuesFilterModel.Order.Status)
             {
                 var a = model.GroupBy(x => x.Status);
                 sections = CreateSection(a);
             }
-            else if (order == FilterModel.Order.Priority)
+            else if (order == IssuesFilterModel.Order.Priority)
             {
                 var a = model.GroupBy(x => x.Priority);
                 sections = CreateSection(a);
             }
-            else if (order == FilterModel.Order.Utc_Last_Updated)
+            else if (order == IssuesFilterModel.Order.Utc_Last_Updated)
             {
                 var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
                 sections = CreateSection(a, "Days Ago", "Updated");
             }
-            else if (order == FilterModel.Order.Created_On)
+            else if (order == IssuesFilterModel.Order.Created_On)
             {
                 var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
                 sections = CreateSection(a, "Days Ago", "Created");
             }
-            else if (order == FilterModel.Order.Version)
+            else if (order == IssuesFilterModel.Order.Version)
             {
                 var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Version)) ? x.Metadata.Version : "No Version");
                 sections = CreateSection(a);
             }
-            else if (order == FilterModel.Order.Component)
+            else if (order == IssuesFilterModel.Order.Component)
             {
                 var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Component)) ? x.Metadata.Component : "No Component");
                 sections = CreateSection(a);
             }
-            else if (order == FilterModel.Order.Milestone)
+            else if (order == IssuesFilterModel.Order.Milestone)
             {
                 var a = model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Milestone)) ? x.Metadata.Milestone : "No Milestone");
                 sections = CreateSection(a);
@@ -330,7 +394,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             else
             {
                 IEnumerable<IssueModel> a;
-                if (order == FilterModel.Order.Local_Id)
+                if (order == IssuesFilterModel.Order.Local_Id)
                     a = model.OrderBy(x => x.LocalId);
                 else
                     a = model.OrderBy(x => x.Title);
@@ -344,17 +408,15 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 sections.Add(new Section() { new NoItemsElement("No Issues") });
 
 
-            InvokeOnMainThread(() => { 
-                var root = new RootElement(Title);
-                root.UnevenRows = true;
-                
-                //If there are more items to load then insert the load object
-                if (_lastIndex != _totalCount)
-                    sections.Add(new Section { _loadMore });
+            var root = new RootElement(Title);
+            root.UnevenRows = true;
+            
+            //If there are more items to load then insert the load object
+            if (_lastIndex != _totalCount)
+                sections.Add(new Section { _loadMore });
 
-                root.Add(sections);
-                Root = root;
-            });
+            root.Add(sections);
+            Root = root;
         }
 
         private void AddItems(List<IssueModel> issues)
@@ -384,174 +446,13 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             return moreEvents.Issues;
         }
 
-        private void ApplyFilter()
+        private void ApplyFilter(IssuesFilterModel filterModel)
         {
+            FilterModel = filterModel;
             _totalCount = _lastIndex = 0;
             Model = null;
-            RefreshCaption();
             Root.Clear();
             UpdateAndRender();
-        }
-
-        protected override FilterController CreateFilterController()
-        {
-            return new Filter(this);
-        }
-
-        public class FilterModel
-        {
-            public string AssignedTo { get; set; }
-            public string ReportedBy { get; set; }
-            public StatusModel Status { get; set; }
-            public KindModel Kind { get; set; }
-            public PriorityModel Priority { get; set; }
-            public int OrderBy { get; set; }
-
-            public FilterModel()
-            {
-                Kind = new KindModel();
-                Status = new StatusModel();
-                Priority = new PriorityModel();
-                OrderBy = (int)Order.Local_Id;
-            }
-
-            public bool IsFiltering()
-            {
-                return !(string.IsNullOrEmpty(AssignedTo) && string.IsNullOrEmpty(ReportedBy) && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
-            }
-
-            public enum Order : int
-            { 
-                [EnumDescription("Number")]
-                Local_Id, 
-                Title,
-                [EnumDescription("Last Updated")]
-                Utc_Last_Updated, 
-                [EnumDescription("Created Date")]
-                Created_On, 
-                Version, 
-                Milestone, 
-                Component, 
-                Status, 
-                Priority 
-            };
-
-            public class StatusModel
-            {
-                public StatusModel Clone()
-                {
-                    return (StatusModel)this.MemberwiseClone();
-                }
-
-                public bool IsDefault()
-                {
-                    return New && Open && Resolved && OnHold && Invalid && Duplicate && Wontfix;
-                }
-
-                public bool New = true, Open = true, Resolved = true, OnHold = true, Invalid = true, Duplicate = true, Wontfix = true;
-            }
-
-            public class KindModel
-            {
-                public KindModel Clone()
-                {
-                    return (KindModel)this.MemberwiseClone();
-                }
-
-                public bool IsDefault()
-                {
-                    return Bug && Enhancement && Proposal && Task;
-                }
-
-                public bool Bug = true, Enhancement = true, Proposal = true, Task = true;
-            }
-
-            public class PriorityModel
-            {
-                public PriorityModel Clone()
-                {
-                    return (PriorityModel)this.MemberwiseClone();
-                }
-                
-                public bool IsDefault()
-                {
-                    return Trivial && Minor && Major && Critical && Blocker;
-                }
-
-                public bool Trivial = true, Minor = true, Major = true, Critical = true, Blocker = true;
-            }
-        }
-
-        private class Filter : FilterController
-        {
-            private IssuesController _parent;
-            //private bool _descending = true;
-
-            private EntryElement _assignedTo;
-            private EntryElement _reportedBy;
-            private MultipleChoiceElement<FilterModel.StatusModel> _statusChoice;
-            private MultipleChoiceElement<FilterModel.KindModel> _kindChoice;
-            private MultipleChoiceElement<FilterModel.PriorityModel> _priorityChoice;
-
-            private EnumChoiceElement _orderby;
-            
-            public Filter(IssuesController parent)
-            {
-                _parent = parent;
-            }
-
-            private FilterModel CreateFilterModel()
-            {
-                var model = new FilterModel();
-                model.AssignedTo = _assignedTo.Value;
-                model.ReportedBy = _reportedBy.Value;
-                model.Status = _statusChoice.Obj;
-                model.Priority = _priorityChoice.Obj;
-                model.Kind = _kindChoice.Obj;
-                model.OrderBy = _orderby.Obj;
-                return model;
-            }
-
-            public override void ApplyFilter()
-            {
-                _parent._filterModel = CreateFilterModel();
-                _parent.ApplyFilter();
-            }
-
-            public override void ViewDidLoad()
-            {
-                base.ViewDidLoad();
-                
-                //Load the root
-                var root = new RootElement(Title) {
-                    new Section("Filter") {
-                        (_assignedTo = new InputElement("Assigned To", "Anybody", _parent._filterModel.AssignedTo) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
-                        (_reportedBy = new InputElement("Reported By", "Anybody", _parent._filterModel.ReportedBy) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
-                        (_kindChoice = CreateMultipleChoiceElement("Kind", _parent._filterModel.Kind.Clone())),
-                        (_statusChoice = CreateMultipleChoiceElement("Status", _parent._filterModel.Status.Clone())),
-                        (_priorityChoice = CreateMultipleChoiceElement("Priority", _parent._filterModel.Priority.Clone())),
-                    },
-                    new Section("Order By") {
-                        (_orderby = CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order))),
-                    },
-                    new Section() {
-                        new StyledStringElement("Save as Default", () => {  
-                            var model = CreateFilterModel();
-                            Application.Account.IssueFilterObject = model;
-                            this.DismissViewController(true, null); 
-                            this.ApplyFilter();
-                        }, Images.Size) { Accessory = UITableViewCellAccessory.None },
-                    }
-                };
-                
-                Root = root;
-            }
-
-            public override void ViewWillAppear(bool animated)
-            {
-                base.ViewWillAppear(animated);
-                TableView.ReloadData();
-            }
         }
     }
 }

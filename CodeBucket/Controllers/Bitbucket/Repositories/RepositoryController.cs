@@ -9,15 +9,17 @@ using System.Drawing;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
 using CodeFramework.Views;
+using CodeFramework.Filters.Controllers;
+using CodeBucket.Filters.Models;
 
 
 namespace CodeBucket.Bitbucket.Controllers.Repositories
 {
     public class RepositoryController : BaseModelDrivenController
     {
-        FilterModel _filterModel = Application.Account.RepoFilterObject;
         public string Username { get; private set; }
         public bool ShowOwner { get; set; }
+        private readonly string _filterKey;
 
         public new List<RepositoryDetailedModel> Model
         {
@@ -25,8 +27,8 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             set { base.Model = value; }
         }
 
-        public RepositoryController(string username, bool refresh = true)
-            : base(typeof(List<RepositoryDetailedModel>), refresh: refresh)
+        public RepositoryController(string username, bool refresh = true, string filterKey = "RepositoryController")
+            : base(refresh: refresh)
         {
             Username = username;
             ShowOwner = false;
@@ -34,11 +36,20 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Style = UITableViewStyle.Plain;
             Title = "Repositories".t();
             SearchPlaceholder = "Search Repositories".t();
+            _filterKey = filterKey;
+
+            var filter = Application.Account.GetFilter(_filterKey);
+            SetFilterModel(filter != null ? filter.GetData<RepositoriesFilterModel>() : new RepositoriesFilterModel());
         }
 
         protected override object OnUpdateModel(bool forced)
         {
             return Application.Client.Users[Username].GetInfo(forced).Repositories.OrderBy(x => x.Name).ToList();
+        }
+
+        protected override void SaveFilterAsDefault(CodeFramework.Filters.Models.FilterModel model)
+        {
+            Application.Account.AddFilter(_filterKey, model);
         }
 
         static int[] _ceilings = FilterController.IntegerCeilings;
@@ -92,42 +103,44 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             if (model == null)
                 return;
 
-            var order = (FilterModel.Order)_filterModel.OrderBy;
+            var filterModel = GetFilterModel<RepositoriesFilterModel>();
+
+            var order = (RepositoriesFilterModel.Order)filterModel.OrderBy;
             List<Section> sections = null;
 
-            if (order == FilterModel.Order.Forks)
+            if (order == RepositoriesFilterModel.Order.Forks)
             {
                 var a = model.OrderBy(x => x.ForkCount).GroupBy(x => _ceilings.First(r => r > x.ForkCount));
-                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                a = filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Forks");
             }
-            else if (order == FilterModel.Order.LastUpdated)
+            else if (order == RepositoriesFilterModel.Order.LastUpdated)
             {
                 var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => _ceilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
-                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                a = filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Days Ago", "Updated");
             }
-            else if (order == FilterModel.Order.CreatedOn)
+            else if (order == RepositoriesFilterModel.Order.CreatedOn)
             {
                 var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => _ceilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
-                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                a = filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Days Ago", "Created");
             }
-            else if (order == FilterModel.Order.Followers)
+            else if (order == RepositoriesFilterModel.Order.Followers)
             {
                 var a = model.OrderBy(x => x.FollowersCount).GroupBy(x => _ceilings.First(r => r > x.FollowersCount));
-                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                a = filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a, "Followers");
             }
-            else if (order == FilterModel.Order.Owner)
+            else if (order == RepositoriesFilterModel.Order.Owner)
             {
                 var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner);
-                a = _filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+                a = filterModel.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 sections = CreateSection(a);
             }
             else
             {
-                var a = _filterModel.Ascending ? model.OrderBy(x => x.Name) : model.OrderByDescending(x => x.Name);
+                var a = filterModel.Ascending ? model.OrderBy(x => x.Name) : model.OrderByDescending(x => x.Name);
                 sections = new List<Section>() { new Section() };
                 foreach (var y in a)
                     sections[0].Add(CreateElement(y));
@@ -141,92 +154,9 @@ namespace CodeBucket.Bitbucket.Controllers.Repositories
             Root = new RootElement(Title) { sections };
         }
 
-        private void ApplyFilter()
-        {
-            Render();
-        }
-
         protected override FilterController CreateFilterController()
         {
-            return new Filter(this);
-        }
-
-        public class FilterModel
-        {
-            public int OrderBy { get; set; }
-            public bool Ascending { get; set; }
-            
-            public FilterModel()
-            {
-                OrderBy = (int)Order.Name;
-                Ascending = true;
-            }
-            
-            public enum Order : int
-            { 
-                Name, 
-                Owner,
-                [EnumDescription("Last Updated")]
-                LastUpdated,
-                Followers,
-                Forks,
-                [EnumDescription("Created Date")]
-                CreatedOn, 
-            };
-        }
-
-        public class Filter : FilterController
-        {
-            RepositoryController _parent;
-            private EnumChoiceElement _orderby;
-            private TrueFalseElement _ascendingElement;
-
-            public Filter(RepositoryController parent)
-            {
-                _parent = parent;
-            }
-
-            public override void ViewDidLoad()
-            {
-                base.ViewDidLoad();
-
-                //Load the root
-                var root = new RootElement(Title) {
-                    new Section("Order By") {
-                        (_orderby = CreateEnumElement("Field", (int)_parent._filterModel.OrderBy, typeof(FilterModel.Order))),
-                        (_ascendingElement = new TrueFalseElement("Ascending", _parent._filterModel.Ascending)),
-                    },
-                    new Section() {
-                        new StyledStringElement("Save as Default", () => {  
-                            Application.Account.RepoFilterObject = CreateFilterModel();
-                            this.DismissViewController(true, null); 
-                            this.ApplyFilter();
-                        }, Images.Size) { Accessory = UITableViewCellAccessory.None },
-                    }
-                };
-
-                Root = root;
-            }
-
-            private FilterModel CreateFilterModel()
-            {
-                var model = new FilterModel();
-                model.OrderBy = _orderby.Obj;
-                model.Ascending = _ascendingElement.Value;
-                return model;
-            }
-
-            public override void ApplyFilter()
-            {
-                _parent._filterModel = CreateFilterModel();
-                _parent.ApplyFilter();
-            }
-
-            public override void ViewWillAppear(bool animated)
-            {
-                base.ViewWillAppear(animated);
-                TableView.ReloadData();
-            }
+            return new CodeBucket.Filters.Controllers.RepositoriesFilterController();
         }
     }
 }
