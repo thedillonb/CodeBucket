@@ -61,7 +61,7 @@ namespace CodeBucket.Utils
         private static void TransitionToSlideout()
         {
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            var controller = new CodeBucket.Controllers.SlideoutNavigationController();
+            var controller = new CodeBucket.ViewControllers.SlideoutNavigationViewController();
             if (appDelegate != null)
                 appDelegate.Slideout = controller;
             Transitions.Transition(controller, UIViewAnimationOptions.TransitionFlipFromRight);

@@ -1,10 +1,10 @@
 using SQLite;
 using CodeBucket.Bitbucket.Controllers.Issues;
-using CodeBucket.Bitbucket.Controllers.Repositories;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using CodeBucket.Filters.Models;
+using CodeFramework.Filters.Models;
 
 namespace CodeBucket.Data
 {
@@ -142,9 +142,13 @@ namespace CodeBucket.Data
         /// </summary>
         /// <returns>The filter.</returns>
         /// <param name="key">Key.</param>
-        public Filter GetFilter(string key)
+        public F GetFilter<F>(string key) where F : FilterModel<F>, new()
         {
-            return Database.Main.Find<Filter>(x => x.AccountId == this.Id && x.Type == key);
+            var filter = Database.Main.Find<Filter>(x => x.AccountId == this.Id && x.Type == key);
+            if (filter == null)
+                return new F();
+            var filterModel = filter.GetData<F>();
+            return filterModel == null ? new F() : filterModel;
         }
 
         /// <summary>
@@ -152,23 +156,29 @@ namespace CodeBucket.Data
         /// </summary>
         /// <returns>The filter.</returns>
         /// <param name="key">Key.</param>
-        public Filter GetFilter(object key)
+        public F GetFilter<F>(object key) where F : FilterModel<F>, new()
         {
-            return GetFilter(key.GetType().Name);
+            return GetFilter<F>(key.GetType().Name);
         }
 
+        /// <summary>
+        /// Returns a filter object if it exists, null if otherwise
+        /// </summary>
+        /// <returns>The exist.</returns>
+        /// <param name="key">Key.</param>
+        private Filter DoesFilterExist(string key)
+        {
+            return Database.Main.Find<Filter>(x => x.AccountId == this.Id && x.Type == key);
+        }
 
         /// <summary>
         /// Adds the filter
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="data">Data.</param>
-        public void AddFilter(string key, object data)
+        public void AddFilter<F>(string key, F data)
         {
-            var existingFilter = GetFilter(key);
-            if (existingFilter != null)
-                RemoveFilter(existingFilter.Id);
-
+            RemoveFilters(key);
             var filter = new Filter { AccountId = this.Id, Type = key };
             filter.SetData(data);
             Database.Main.Insert(filter);
@@ -179,9 +189,9 @@ namespace CodeBucket.Data
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="data">Data.</param>
-        public void AddFilter(object key, object data)
+        public void AddFilter<F>(object key, F data)
         {
-            AddFilter(key.GetType().Name, data);
+            AddFilter<F>(key.GetType().Name, data);
         }
 
         /// <summary>
@@ -191,6 +201,17 @@ namespace CodeBucket.Data
         public void RemoveFilter(int id)
         {
             Database.Main.Delete(new Filter { Id = id });
+        }
+
+        /// <summary>
+        /// Removes all filters with a specific key
+        /// </summary>
+        /// <param name="key">Key.</param>
+        public void RemoveFilters(string key)
+        {
+            var filters = Database.Main.Table<Filter>().Where(x => x.AccountId == this.Id && x.Type == key).ToList();
+            foreach (var filter in filters)
+                Database.Main.Delete(filter);
         }
 
 

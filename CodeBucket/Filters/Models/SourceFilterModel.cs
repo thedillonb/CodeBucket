@@ -3,7 +3,7 @@ using CodeFramework.Filters.Models;
 
 namespace CodeBucket.Filters.Models
 {
-    public class SourceFilterModel : FilterModel
+    public class SourceFilterModel : FilterModel<SourceFilterModel>
     {
         public int OrderBy { get; set; }
         public bool Ascending { get; set; }
@@ -14,7 +14,7 @@ namespace CodeBucket.Filters.Models
             Ascending = true;
         }
 
-        public override FilterModel Clone()
+        public override SourceFilterModel Clone()
         {
             return (SourceFilterModel)this.MemberwiseClone();
         }

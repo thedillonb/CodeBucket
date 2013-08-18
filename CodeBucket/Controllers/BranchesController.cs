@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace CodeBucket.Controllers
 {
-    public class BranchesController : Controller<List<BranchModel>>
+    public class BranchesController : ListController<BranchModel>
     {
         private readonly string _username;
         private readonly string _slug;
 
-        public BranchesController(IView<List<BranchModel>> view, string username, string slug)
+        public BranchesController(IView<ListModel<BranchModel>> view, string username, string slug)
             : base(view)
         {
             _username = username;
@@ -20,7 +20,9 @@ namespace CodeBucket.Controllers
 
         public override void Update(bool force)
         {
-            Model = Application.Client.Users[_username].Repositories[_slug].Branches.GetBranches(force).Values.OrderBy(x => x.Branch).ToList();
+            Model = new ListModel<BranchModel> {
+                Data = Application.Client.Users[_username].Repositories[_slug].Branches.GetBranches(force).Values.OrderBy(x => x.Branch).ToList()
+            };
         }
     }
 }

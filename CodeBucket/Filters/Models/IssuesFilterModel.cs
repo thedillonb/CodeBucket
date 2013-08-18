@@ -3,7 +3,7 @@ using CodeFramework.Filters.Models;
 
 namespace CodeBucket.Filters.Models
 {
-    public class IssuesFilterModel : FilterModel
+    public class IssuesFilterModel : FilterModel<IssuesFilterModel>
     {
         public string AssignedTo { get; set; }
         public string ReportedBy { get; set; }
@@ -59,7 +59,7 @@ namespace CodeBucket.Filters.Models
             return !(string.IsNullOrEmpty(AssignedTo) && string.IsNullOrEmpty(ReportedBy) && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
         }
 
-        public override FilterModel Clone()
+        public override IssuesFilterModel Clone()
         {
             var t = (IssuesFilterModel)this.MemberwiseClone();
             t.Status = this.Status.Clone();

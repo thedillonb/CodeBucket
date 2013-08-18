@@ -1,5 +1,4 @@
 using System.Linq;
-using CodeBucket.Bitbucket.Controllers.Accounts;
 using CodeBucket.Controllers;
 using CodeBucket.Data;
 using CodeFramework.Elements;
@@ -21,7 +20,7 @@ namespace CodeBucket
 		// class-level declarations
         public override UIWindow Window { get; set; }
 
-        public CodeBucket.Controllers.SlideoutNavigationController Slideout { get; set; }
+        public CodeBucket.ViewControllers.SlideoutNavigationViewController Slideout { get; set; }
 
 		// This is the main entry point of the application.
 		static void Main(string[] args)
@@ -48,7 +47,7 @@ namespace CodeBucket
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             //Always start into the Startup controller
-            Window.RootViewController = new CodeBucket.Controllers.StartupController();
+            Window.RootViewController = new CodeBucket.ViewControllers.StartupViewController();
 
 			//Make what ever window visible.
             Window.MakeKeyAndVisible();
@@ -135,9 +134,9 @@ namespace CodeBucket
                         repo = uri.Segments[1].Replace("/", "");
 
                     if (repo == null)
-                        Slideout.SelectView(new CodeBucket.Views.Accounts.ProfileView(username));
+                        Slideout.SelectView(new CodeBucket.ViewControllers.ProfileViewController(username));
                     else
-                        Slideout.SelectView(new CodeBucket.Bitbucket.Controllers.Repositories.RepositoryInfoController(username, repo, repo));
+                        Slideout.SelectView(new CodeBucket.ViewControllers.RepositoryInfoViewController(username, repo, repo));
                 }
             }
 

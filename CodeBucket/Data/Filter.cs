@@ -1,5 +1,6 @@
 using System;
 using SQLite;
+using CodeFramework.Filters.Models;
 
 namespace CodeBucket.Data
 {
