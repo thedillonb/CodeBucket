@@ -17,6 +17,7 @@ namespace CodeBucket.ViewControllers
             _slug = slug;
             Title = "Changes".t();
             Root.UnevenRows = true;
+            EnableSearch = false;
             Controller = new ChangesetController(this, user, slug);
         }
 

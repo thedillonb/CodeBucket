@@ -7,6 +7,8 @@ namespace CodeBucket.Controllers
 {
     public class ExploreRepositoriesController : RepositoriesController
     {
+        public bool Searched { get; private set; }
+
         public ExploreRepositoriesController(IListView<RepositoryDetailedModel> view)
             : base(view, string.Empty, "ExploreController")
         {
@@ -20,6 +22,7 @@ namespace CodeBucket.Controllers
 
         public void Search(string text)
         {
+            Searched = true;
             Model = new ListModel<RepositoryDetailedModel> {
                 Data = Application.Client.Repositories.Search(text).Repositories
             };

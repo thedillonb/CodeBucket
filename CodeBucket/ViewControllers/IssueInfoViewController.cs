@@ -96,7 +96,11 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
         public void Render(IssueInfoController.IssueInfoModel model)
         {
-            BeginInvokeOnMainThread(() => { NavigationItem.RightBarButtonItem.Enabled = true; });
+            //This means we've deleted it. Due to the code flow, render will get called after the update, regardless.
+            if (model == null || model.Issue == null)
+                return;
+
+            NavigationItem.RightBarButtonItem.Enabled = true;
             _header.Title = model.Issue.Title;
             _header.Subtitle = "Updated " + (model.Issue.UtcLastUpdated).ToDaysAgo();
             _split1.Value.Text1 = model.Issue.Status;
@@ -135,19 +139,16 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             });
 
 
-            InvokeOnMainThread(delegate
-                               {
-                _header.SetNeedsDisplay();
-                ReloadData();
-                _comments.Clear();
-                _comments.Insert(0, UITableViewRowAnimation.None, comments);
+            _header.SetNeedsDisplay();
+            ReloadData();
+            _comments.Clear();
+            _comments.Insert(0, UITableViewRowAnimation.None, comments);
 
-                if (_scrollToLastComment && _comments.Elements.Count > 0)
-                {
-                    TableView.ScrollToRow(NSIndexPath.FromRowSection(_comments.Elements.Count - 1, 2), UITableViewScrollPosition.Top, true);
-                    _scrollToLastComment = false;
-                }
-            });
+            if (_scrollToLastComment && _comments.Elements.Count > 0)
+            {
+                TableView.ScrollToRow(NSIndexPath.FromRowSection(_comments.Elements.Count - 1, 2), UITableViewScrollPosition.Top, true);
+                _scrollToLastComment = false;
+            }
         }
 
         void EditingComplete(IssueModel model)

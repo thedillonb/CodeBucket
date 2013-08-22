@@ -22,7 +22,6 @@ namespace CodeBucket.ViewControllers
 
         public PrivilegesViewController(string username, string slug, UserModel primary)
         {
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             EnableSearch = true;
             Title = "Privileges".t();
             SearchPlaceholder = "Search Users".t();

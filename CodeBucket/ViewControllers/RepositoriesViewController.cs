@@ -35,6 +35,7 @@ namespace CodeBucket.ViewControllers
             EnableFilter = true;
             Title = "Repositories".t();
             SearchPlaceholder = "Search Repositories".t();
+            NoItemsText = "No Repositories".t();
 
             Controller = new RepositoriesController(this, username);
         }

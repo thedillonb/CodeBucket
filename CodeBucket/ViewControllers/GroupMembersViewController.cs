@@ -15,7 +15,6 @@ namespace CodeBucket.ViewControllers
     {
         public GroupMembersViewController(string user, string groupName, List<UserModel> model = null)
         {
-            EnableSearch = true;
             SearchPlaceholder = "Search Memebers".t();
             NoItemsText = "No Members".t();
             Title = groupName;

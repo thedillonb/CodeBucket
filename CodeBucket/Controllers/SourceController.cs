@@ -12,7 +12,7 @@ using CodeBucket.ViewControllers;
 
 namespace CodeBucket.Controlleres
 {
-    public class SourceController : ListController<SourceController.SourceModel>
+    public class SourceController : ListController<SourceController.SourceModel, SourceFilterModel>
     {
         private readonly string _username;
         private readonly string _slug;
@@ -27,10 +27,22 @@ namespace CodeBucket.Controlleres
             _branch = branch;
             _path = path;
 
-            //var filter = Application.Account.GetFilter(this);
-            //SetFilterModel(filter != null ? filter.GetData<SourceFilterModel>() : new SourceFilterModel());
+            Filter = Application.Account.GetFilter<SourceFilterModel>(this);
         }
 
+        protected override void SaveFilterAsDefault(SourceFilterModel filter)
+        {
+            Application.Account.AddFilter(this, filter);
+        }
+
+        protected override List<SourceModel> FilterModel(List<SourceModel> model, SourceFilterModel filter)
+        {
+            IEnumerable<SourceModel> ret = model;
+            var order = (SourceFilterModel.Order)filter.OrderBy;
+            if (order == SourceFilterModel.Order.Alphabetical)
+                 ret = model.OrderBy(x => x.Name);
+            return filter.Ascending ? ret.ToList() : ret.Reverse().ToList();
+        }
   
         public override void Update(bool force)
         {

@@ -12,14 +12,12 @@ using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Elements;
 using CodeBucket.Filters.Models;
+using CodeBucket.Filters.ViewControllers;
 
 namespace CodeBucket.Bitbucket.Controllers.Issues
 {
     public class IssuesViewController : BaseListControllerDrivenViewController, IListView<IssueModel>
     {
-        public string User { get; private set; }
-        public string Slug { get; private set; }
-
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
   
@@ -31,11 +29,6 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
         public IssuesViewController(string user, string slug)
         {
-            User = user;
-            Slug = slug;
-            Style = UITableViewStyle.Plain;
-            EnableSearch = true;
-            EnableFilter = true;
             Root.UnevenRows = true;
             Title = "Issues".t();
             SearchPlaceholder = "Search Issues".t();
@@ -43,8 +36,8 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Add, () => {
                 var b = new IssueEditViewController {
-                    Username = User,
-                    RepoSlug = Slug,
+                    Username = Controller.User,
+                    RepoSlug = Controller.Slug,
                     Success = (issue) => Controller.CreateIssue(issue)
                 };
                 NavigationController.PushViewController(b, true);
@@ -54,7 +47,6 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
-
 
         public void Render(ListModel<IssueModel> model)
         {
@@ -69,7 +61,7 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
                 el.Tapped += () => {
                     //Make sure the first responder is gone.
                     View.EndEditing(true);
-                    var info = new IssueInfoViewController(User, Slug, x.LocalId);
+                    var info = new IssueInfoViewController(Controller.User, Controller.Slug, x.LocalId);
                     info.Controller.ModelChanged = newModel => ChildChangedModel(newModel, x);
                     NavigationController.PushViewController(info, true);
                 };
@@ -81,42 +73,40 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
         {
             base.ViewDidLoad();
 
-            BeginInvokeOnMainThread(delegate {
-                _viewSegment.SelectedSegment = 1;
-                _viewSegment.SelectedSegment = 0;
-
-                //Select which one is currently selected
-                if (Controller.Filter.Equals(IssuesFilterModel.CreateAllFilter()))
-                    _viewSegment.SelectedSegment = 0;
-                else if (Controller.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
-                    _viewSegment.SelectedSegment = 1;
-                else if (Controller.Filter.Equals(IssuesFilterModel.CreateMineFilter(Application.Account.Username)))
-                    _viewSegment.SelectedSegment = 2;
-                else
-                    _viewSegment.SelectedSegment = 3;
-                    
-                _viewSegment.ValueChanged += (sender, e) => SegmentValueChanged();
-            });
-
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
 
+        protected override void SearchEnd()
+        {
+            base.SearchEnd();
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(false, true);
+        }
+
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
+            if (ToolbarItems != null && !IsSearching)
                 NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
+
+            //Before we select which one, make sure we detach the event handler or silly things will happen
+            _viewSegment.ValueChanged -= SegmentValueChanged;
+
+            //Select which one is currently selected
+            if (Controller.Filter.Equals(IssuesFilterModel.CreateAllFilter()))
+                _viewSegment.SelectedSegment = 0;
+            else if (Controller.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
+                _viewSegment.SelectedSegment = 1;
+            else if (Controller.Filter.Equals(IssuesFilterModel.CreateMineFilter(Application.Account.Username)))
+                _viewSegment.SelectedSegment = 2;
+            else
+                _viewSegment.SelectedSegment = 3;
+
+            _viewSegment.ValueChanged += SegmentValueChanged;
         }
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
-        }
-
-        private void SegmentValueChanged()
+        void SegmentValueChanged (object sender, EventArgs e)
         {
             if (_viewSegment.SelectedSegment == 0)
             {
@@ -135,52 +125,26 @@ namespace CodeBucket.Bitbucket.Controllers.Issues
             }
             else if (_viewSegment.SelectedSegment == 3)
             {
+                var filter = new IssuesFilterViewController(Controller);
+                var nav = new UINavigationController(filter);
+                PresentViewController(nav, true, null);
             }
         }
 
-//        private void ScrollToModel(IssueModel issue, bool animate = false)
-//        {
-//            int s, r = 0;
-//            bool done = false;
-//            for (s = 0; s < Root.Count; s++)
-//            {
-//                for (r = 0; r < Root[s].Count; r++)
-//                {
-//                    var el = Root[s][r] as IssueElement;
-//                    if (el != null && ((IssueModel)el.Tag).LocalId == issue.LocalId)
-//                    {
-//                        done = true;
-//                        break;
-//                    }
-//                }
-//                if (done)
-//                    break;
-//            }
-//            
-//            try 
-//            {
-//                TableView.ScrollToRow(NSIndexPath.FromRowSection(r, s), UITableViewScrollPosition.Top, animate);
-//            }
-//            catch { }
-//        }
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(true, animated);
+        }
 
         private void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
         {
             //If null then it's been deleted!
             if (changedModel == null)
-            {
                 Controller.DeleteIssue(oldModel);
-
-//                var c = TableView.ContentOffset;
-//                var m = Model as List<IssueModel>;
-//
-//                Render();
-//                TableView.ContentOffset = c;
-            }
             else
-            {
                 Controller.UpdateIssue(changedModel);
-            }
         }
 
     }

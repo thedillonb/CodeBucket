@@ -26,6 +26,7 @@ namespace CodeBucket.ViewControllers
             Username = username;
             Root.UnevenRows = true;
             ReportRepository = true;
+            EnableSearch = false;
             Controller = new EventsController(this, username);
         }
 

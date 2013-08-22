@@ -19,6 +19,12 @@ namespace CodeBucket.ViewControllers
         private readonly string _branch;
         private readonly string _path;
 
+        public new SourceController Controller
+        {
+            get { return (SourceController)base.Controller; }
+            protected set { base.Controller = value; }
+        }
+
         public SourceViewController(string username, string slug, string branch = "master", string path = "")
         {
             _username = username;
@@ -44,6 +50,11 @@ namespace CodeBucket.ViewControllers
                 else
                     return new StyledStringElement(x.Name, () => NavigationController.PushViewController(new SourceViewController(_username, _slug, _branch, _path + "/" + x.Name), true), Images.Folder);
             });
+        }
+
+        protected override CodeFramework.Filters.Controllers.FilterViewController CreateFilterController()
+        {
+            return new CodeBucket.Filters.ViewControllers.SourceFilterViewController(Controller);
         }
     }
 }

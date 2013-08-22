@@ -19,6 +19,7 @@ namespace CodeBucket.ViewControllers
             Title = "Tags".t();
             SearchPlaceholder = "Search Tags".t();
             NoItemsText = "No Tags".t();
+            EnableSearch = true;
             Controller = new TagsController(this, username, slug);
         }
 

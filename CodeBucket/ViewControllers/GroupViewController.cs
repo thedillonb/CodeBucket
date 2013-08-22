@@ -14,7 +14,6 @@ namespace CodeBucket.ViewControllers
 		public GroupViewController(string username) 
 		{
             _username = username;
-            Style = UITableViewStyle.Plain;
             Title = "Groups".t();
             SearchPlaceholder = "Search Groups".t();
             NoItemsText = "No Groups".t();

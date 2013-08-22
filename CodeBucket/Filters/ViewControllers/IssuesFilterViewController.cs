@@ -8,7 +8,7 @@ using MonoTouch.UIKit;
 
 namespace CodeBucket.Filters.ViewControllers
 {
-    public class IssuesFilterController : FilterViewController
+    public class IssuesFilterViewController : FilterViewController
     {
         private EntryElement _assignedTo;
         private EntryElement _reportedBy;
@@ -18,7 +18,7 @@ namespace CodeBucket.Filters.ViewControllers
         private EnumChoiceElement _orderby;
         private IFilterController<IssuesFilterModel> _filterController;
 
-        public IssuesFilterController(IFilterController<IssuesFilterModel> filterController)
+        public IssuesFilterViewController(IFilterController<IssuesFilterModel> filterController)
         {
             _filterController = filterController;
         }
@@ -56,6 +56,12 @@ namespace CodeBucket.Filters.ViewControllers
                 },
                 new Section("Order By") {
                     (_orderby = CreateEnumElement("Field", (int)issuesFilterModel.OrderBy, typeof(IssuesFilterModel.Order))),
+                },
+                new Section() {
+                    new StyledStringElement("Save as Default", () =>{
+                        _filterController.ApplyFilter(CreateFilterModel(), true);
+                        CloseViewController();
+                    }, Images.Size) { Accessory = UITableViewCellAccessory.None },
                 }
             };
 

@@ -45,7 +45,10 @@ namespace CodeBucket.Controllers
             Model.Issue = model;
             if (ModelChanged != null)
                 ModelChanged(model);
-            Render();
+
+            //If model == null then it has been deleted. No need to render.
+            if (model != null)
+                Render();
         }
 
         public void AddComment(string text)

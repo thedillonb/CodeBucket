@@ -50,7 +50,7 @@ namespace CodeBucket.ViewControllers
         private void ShowExtraMenu()
         {
             var model = Controller.Model;
-            var sheet = MonoTouch.Utilities.GetSheet(string.Empty);
+            var sheet = MonoTouch.Utilities.GetSheet(model.Name);
 
             if (Application.Account.GetPinnedRepository(model.Owner, model.Slug) == null)
                 sheet.AddButton("Pin to Slideout Menu".t());

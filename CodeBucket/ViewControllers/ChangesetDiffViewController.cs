@@ -4,17 +4,22 @@ using CodeBucket.Bitbucket.Controllers;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using BitbucketSharp;
+using RestSharp.Contrib;
+using BitbucketSharp.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers
 {
-    public class ChangesetDiffController : FileSourceViewController
+    public class ChangesetDiffViewController : FileSourceViewController
     {
         private string _parent;
         private string _user, _slug, _branch, _path;
         public bool Removed { get; set; }
         public bool Added { get; set; }
+        public List<ChangesetCommentModel> Comments;
         
-        public ChangesetDiffController(string user, string slug, string branch, string parent, string path)
+        public ChangesetDiffViewController(string user, string slug, string branch, string parent, string path)
         {
             _parent = parent;
             _user = user;
@@ -47,7 +52,7 @@ namespace CodeBucket.ViewControllers
             {
                 var file = DownloadFile(_user, _slug, _branch, _path, out mime);
                 if (mime.StartsWith("text/plain"))
-                    newSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8));
+                    newSource = System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8);
                 else
                 {
                     LoadFile(file);
@@ -60,34 +65,44 @@ namespace CodeBucket.ViewControllers
             {
                 var file = DownloadFile(_user, _slug, _parent, _path, out mime);
                 if (mime.StartsWith("text/plain"))
-                    oldSource = System.Security.SecurityElement.Escape(System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8));
+                    oldSource = System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8);
                 else
                 {
                     LoadFile(file);
                     return;
                 }
             }
-            
-            var differ = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
-            var a = differ.BuildDiffModel(oldSource, newSource);
-            
-            var builder = new StringBuilder();
-            foreach (var k in a.Lines)
-            {
-                if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Deleted)
-                    builder.Append("<span style='background-color: #ffe0e0;'>" + k.Text + "</span>");
-                else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Inserted)
-                    builder.Append("<span style='background-color: #e0ffe0;'>" + k.Text + "</span>");
-                else if (k.Type == DiffPlex.DiffBuilder.Model.ChangeType.Modified)
-                    builder.Append("<span style='background-color: #ffffe0;'>" + k.Text + "</span>");
-                else
-                    builder.Append(k.Text);
-                
-                builder.AppendLine();
-            }
 
-            LoadRawData(builder.ToString());
+            LoadDiffData(oldSource, newSource);
         }
+
+        int loadCounter = 0;
+        bool commentsLoaded = false;
+        protected override void OnLoadStarted(object sender, EventArgs e)
+        {
+            base.OnLoadStarted(sender, e);
+            loadCounter++;
+        }
+
+        protected override void OnLoadFinished(object sender, EventArgs e)
+        {
+            base.OnLoadFinished(sender, e);
+            loadCounter--;
+
+            if (loadCounter == 0 && commentsLoaded == false)
+            {
+                //Convert it to something light weight
+                var slimComments = Comments.Where(x => x.Deleted == false && string.Equals(x.Filename, _path)).Select(x => new { 
+                    Id = x.CommentId, User = x.Username, Avatar = x.UserAvatarUrl, LineTo = x.LineTo, LineFrom = x.LineFrom,
+                    Content = x.ContentRendered, Date = x.UtcLastUpdated, Parent = x.ParentId
+                }).ToList();
+
+                var comments = new RestSharp.Serializers.JsonSerializer().Serialize(slimComments);
+                BeginInvokeOnMainThread(() => Web.EvaluateJavascript("var a = " + comments + "; addComments(a);"));
+                commentsLoaded = true;
+            }
+        }
+
     }
 }
 
