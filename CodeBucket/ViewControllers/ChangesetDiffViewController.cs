@@ -87,7 +87,7 @@ namespace CodeBucket.ViewControllers
                 var func = url.Host;
                 if(func.Equals("comment")) {
                     var r = new RestSharp.Deserializers.JsonDeserializer().Deserialize<CreateChangesetCommentModel>(new RestSharp.RestResponse { Content = Decode(url.Fragment) });
-                    AddComment(r);
+                    PromptForComment(r);
                     return false;
                 }
             }
@@ -95,21 +95,51 @@ namespace CodeBucket.ViewControllers
             return base.ShouldStartLoad(request, navigationType);
         }
 
-        private void AddComment(CreateChangesetCommentModel model)
+        private void PromptForComment(CreateChangesetCommentModel model)
         {
-            model.Filename = _path;
-            this.DoWork(() => {
-                var c = Application.Client.Users[_user].Repositories[_slug].Changesets[_branch].Comments.Create(model.Content, model.LineFrom, model.LineTo, model.ParentId, model.Filename);
+            string title = string.Empty;
 
-                //This will inheriently add it to the controller's comments which we're referencing
-                if (Comments != null)
-                    Comments.Add(c);
+            //Create a title based on the line number
+            if (model.LineTo != null)
+                title = "Line ".t() + model.LineTo.Value;
+            else if (model.LineFrom != null)
+                title = "Line ".t() + model.LineFrom.Value; 
 
-                var a = new List<ChangesetCommentModel>();
-                a.Add(c);
-                AddComments(a);
-            }, (e) => {
-                MonoTouch.Utilities.ShowAlert("Unable to Comment", e.Message);
+            var sheet = MonoTouch.Utilities.GetSheet(title);
+            var addButton = sheet.AddButton("Add Comment".t());
+            var cancelButton = sheet.AddButton("Cancel".t());
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+            sheet.Clicked += (sender, e) => {
+                if (e.ButtonIndex == addButton)
+                    ShowCommentComposer(model);
+            };
+
+            sheet.ShowInView(this.View);
+        }
+
+        private void ShowCommentComposer(CreateChangesetCommentModel model)
+        {
+            var composer = new Composer();
+            composer.NewComment(this, () => {
+                model.Content = composer.Text;
+                model.Filename = _path;
+                composer.DoWork(() => {
+                    var c = Application.Client.Users[_user].Repositories[_slug].Changesets[_branch].Comments.Create(model.Content, model.LineFrom, model.LineTo, model.ParentId, model.Filename);
+
+                    //This will inheriently add it to the controller's comments which we're referencing
+                    if (Comments != null)
+                        Comments.Add(c);
+
+                    var a = new List<ChangesetCommentModel>();
+                    a.Add(c);
+                    AddComments(a);
+
+                    InvokeOnMainThread(() => composer.CloseComposer());
+                }, ex => {
+                    MonoTouch.Utilities.ShowAlert("Unable to Comment".t(), ex.Message);
+                    composer.EnableSendButton = true;
+                });
             });
         }
 

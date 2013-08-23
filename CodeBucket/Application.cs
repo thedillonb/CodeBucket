@@ -22,24 +22,22 @@ namespace CodeBucket
             Accounts = new Accounts(Database.Main);
         }
 
-        public static void SetUser(Account account)
+        public static void UnsetUser()
         {
-            if (account == null)
-            {
-                Account = null;
-				Client = null;
-                Accounts.SetDefault(null);
-                return;
-            }
+            Account = null;
+            Client = null;
+            Accounts.SetDefault(null);
+        }
 
+        public static void SetUser(Account account, BitbucketSharp.Client client)
+        {
             Account = account;
             Accounts.SetDefault(Account);
 
-            //Release the cache
-			Client = new BitbucketSharp.Client(Account.Username, Account.Password) { 
-				Timeout = 1000 * 30, //30 seconds
-				CacheProvider = new AppCache(),
-			};
+            //Assign the client
+            Client = client;
+            Client.Timeout = 1000 * 30;
+            Client.CacheProvider = new AppCache();
         }
 
         /// <summary>

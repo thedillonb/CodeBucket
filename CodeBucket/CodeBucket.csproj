@@ -113,7 +113,6 @@
     <Compile Include="Data\Database.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Application.cs" />
-    <Compile Include="Utils\Configurations.cs" />
     <Compile Include="Utils\Login.cs" />
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />

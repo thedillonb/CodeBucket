@@ -20,10 +20,11 @@ namespace CodeBucket.Utils
 
             ctrl.DoWork("Logging in...", () => {
                 BitbucketSharp.Models.UsersModel userInfo;
+                BitbucketSharp.Client client;
 
                 try
                 {
-                    var client = BitbucketSharp.Client.BasicLogin(user, pass, out userInfo);
+                    client = BitbucketSharp.Client.BasicLogin(user, pass, out userInfo);
                 }
                 catch (Exception)
                 {
@@ -40,12 +41,12 @@ namespace CodeBucket.Utils
                 else
                     Application.Accounts.Insert(account);
 
-                Application.SetUser(account);
+                Application.SetUser(account, client);
                 ctrl.InvokeOnMainThread(TransitionToSlideout);
 
             }, (ex) => {
                 //If there is a login failure, unset the user
-                Application.SetUser(null);
+                Application.UnsetUser();
 
                 //Show an alert and trigger the callback when the user dismisses it
                 Utilities.ShowAlert("Unable to Authenticate", ex.Message, () => {
