@@ -79,7 +79,7 @@ namespace CodeBucket.ViewControllers
                 var pinnedRepo = Application.Account.GetPinnedRepository(model.Owner, model.Slug);
                 if (pinnedRepo == null)
                 {
-                    var logo = UIScreen.MainScreen.Scale == 1.0f ? model.Logo : model.LargeLogo(32);
+                    var logo = model.LargeLogo(32);
                     Application.Account.AddPinnedRepository(model.Owner, model.Slug, model.Name, logo);
                 }
                 else

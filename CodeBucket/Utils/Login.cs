@@ -23,8 +23,7 @@ namespace CodeBucket.Utils
 
                 try
                 {
-                    var client = new BitbucketSharp.Client(user, pass) { Timeout = 30 * 1000 };
-                    userInfo = client.Account.GetInfo();
+                    var client = BitbucketSharp.Client.BasicLogin(user, pass, out userInfo);
                 }
                 catch (Exception)
                 {
@@ -45,8 +44,6 @@ namespace CodeBucket.Utils
                 ctrl.InvokeOnMainThread(TransitionToSlideout);
 
             }, (ex) => {
-                Console.WriteLine(ex.Message);
-
                 //If there is a login failure, unset the user
                 Application.SetUser(null);
 
