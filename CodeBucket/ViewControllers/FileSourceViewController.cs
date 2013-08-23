@@ -23,7 +23,7 @@ namespace CodeBucket.ViewControllers
             //Find
             using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
             {
-                var response = Application.Client.Users[user].Repositories[slug].Branches[branch].Source.GetFileRaw(path, stream);
+                var response = Application.Client.Users[user].Repositories[slug].Branches[branch].Source.GetFileRaw(Application.Account.Username, Application.Account.Password, path, stream);
                 mime = response.ContentType;
             }
             

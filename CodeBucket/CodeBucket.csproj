@@ -143,7 +143,6 @@
     <Compile Include="ViewControllers\SingleItemSelectViewController.cs" />
     <Compile Include="Controllers\RepoFollowersController.cs" />
     <Compile Include="Controllers\UserFollowersController.cs" />
-    <Compile Include="ViewControllers\ChangesetDiffController.cs" />
     <Compile Include="ViewControllers\RepositoryInfoController.cs" />
     <Compile Include="Controllers\RepositoryInfoController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
@@ -178,6 +177,7 @@
     <Compile Include="Controllers\FollowingRepositoriesController.cs" />
     <Compile Include="ViewControllers\FollowingRepositoriesViewController.cs" />
     <Compile Include="ViewControllers\IssueEditViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetDiffViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\Accounts\LoginViewController.xib" />

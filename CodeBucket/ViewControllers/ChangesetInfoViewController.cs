@@ -115,7 +115,7 @@ namespace CodeBucket.ViewControllers
                             parent = model.Changeset.Parents[0];
 
                         var type = x.Type.Trim().ToLower();
-                        NavigationController.PushViewController(new ChangesetDiffViewController(User, Slug, model.Changeset.Node, parent, x.File) { 
+                        NavigationController.PushViewController(new ChangesetDiffViewController(User, Slug, model.Changeset.RawNode, parent, x.File) { 
                             Removed = type.Equals("removed"), Added = type.Equals("added"), Comments = Controller.Model.Comments
                         }, true);
                     };

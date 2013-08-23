@@ -91,8 +91,7 @@ namespace CodeBucket.Controllers
  
         public void AddComment(string text)
         {
-            var comment = new CreateChangesetCommentModel { Content = text };
-            var c = Application.Client.Users[User].Repositories[Slug].Changesets[Node].Comments.Create(comment);
+            var c = Application.Client.Users[User].Repositories[Slug].Changesets[Node].Comments.Create(text);
             Model.Comments.Add(c);
             Render();
         }

@@ -53,7 +53,7 @@ namespace CodeBucket.Controllers
 
         public void AddComment(string text)
         {
-            var comment = Application.Client.Users[User].Repositories[Slug].Issues[Id].Comments.Create(new CommentModel { Content = text });
+            var comment = Application.Client.Users[User].Repositories[Slug].Issues[Id].Comments.Create(text);
             Model.Comments.Add(comment);
             Render();
         }
