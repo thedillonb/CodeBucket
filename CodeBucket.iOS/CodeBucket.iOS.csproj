@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0CF7A46F-ABF5-4580-878A-98AE94A72B76}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CodeBucket.iOS</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CodeBucketiOS</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <BuildIpa>True</BuildIpa>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="ViewControllers\AboutViewController.cs" />
+    <Compile Include="ViewControllers\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs">
+      <DependentUpon>LoginViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\BranchesViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetDiffViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetInfoViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetViewController.cs" />
+    <Compile Include="ViewControllers\EventsViewController.cs" />
+    <Compile Include="ViewControllers\ExploreRepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\FileSourceViewController.cs" />
+    <Compile Include="ViewControllers\FollowersViewController.cs" />
+    <Compile Include="ViewControllers\FollowingRepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\GroupMembersViewController.cs" />
+    <Compile Include="ViewControllers\GroupViewController.cs" />
+    <Compile Include="ViewControllers\IssueEditViewController.cs" />
+    <Compile Include="ViewControllers\IssueInfoViewController.cs" />
+    <Compile Include="ViewControllers\IssuesViewController.cs" />
+    <Compile Include="ViewControllers\MenuViewController.cs" />
+    <Compile Include="ViewControllers\PrivilegesController.cs" />
+    <Compile Include="ViewControllers\ProfileViewController.cs" />
+    <Compile Include="ViewControllers\RepoEventsViewController.cs" />
+    <Compile Include="ViewControllers\RepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\RepositoryInfoController.cs" />
+    <Compile Include="ViewControllers\SettingsViewController.cs" />
+    <Compile Include="ViewControllers\SingleItemSelectViewController.cs" />
+    <Compile Include="ViewControllers\SlideoutNavigationViewController.cs" />
+    <Compile Include="ViewControllers\SourceInfoViewController.cs" />
+    <Compile Include="ViewControllers\SourceViewController.cs" />
+    <Compile Include="ViewControllers\StartupViewController.cs" />
+    <Compile Include="ViewControllers\TagsViewController.cs" />
+    <Compile Include="ViewControllers\TeamViewController.cs" />
+    <Compile Include="ViewControllers\WikiViewController.cs" />
+    <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
+    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
+    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\LoginViewController.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Default.png" />
+    <InterfaceDefinition Include="Resources\Default@2x.png" />
+    <InterfaceDefinition Include="Resources\Default-568h@2x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Default-Landscape.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Default-Landscape%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Default-Portrait.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Default-Portrait%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-72%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-Small-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-Small-50%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-Small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon-Small%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Icon%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="Resources\iTunesArtwork.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\iTunesArtwork%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Images\accept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Images\accept%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\bin_closed%402x.png" />
+    <Content Include="Images\bin_closed.png" />
+    <Content Include="Images\branch%402x.png" />
+    <Content Include="Images\branch.png" />
+    <Content Include="Images\Buttons\cog%402x.png" />
+    <Content Include="Images\Buttons\cog.png" />
+    <Content Include="Images\Buttons\events%402x.png" />
+    <Content Include="Images\Buttons\events.png" />
+    <Content Include="Images\Buttons\explore%402x.png" />
+    <Content Include="Images\Buttons\explore.png" />
+    <Content Include="Images\Buttons\flag%402x.png" />
+    <Content Include="Images\Buttons\flag.png" />
+    <Content Include="Images\Buttons\group%402x.png" />
+    <Content Include="Images\Buttons\group.png" />
+    <Content Include="Images\Buttons\person%402x.png" />
+    <Content Include="Images\Buttons\person.png" />
+    <Content Include="Images\changes%402x.png" />
+    <Content Include="Images\changes.png" />
+    <Content Include="Images\comment_add%402x.png" />
+    <Content Include="Images\comment_add.png" />
+    <Content Include="Images\Controls\backbutton%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\Controls\background.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\Controls\barbutton-land%402x.png" />
+    <Content Include="Images\Controls\barbutton-land.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\Controls\bottombar.png" />
+    <Content Include="Images\Controls\divider%402x.png" />
+    <Content Include="Images\Controls\divider.png" />
+    <Content Include="Images\Controls\searchbar.png" />
+    <Content Include="Images\Controls\titlebar.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\create.png" />
+    <Content Include="Images\file%402x.png" />
+    <Content Include="Images\file.png" />
+    <Content Include="Images\folder%402x.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\fork%402x.png" />
+    <Content Include="Images\fork.png" />
+    <Content Include="Images\heart%402x.png" />
+    <Content Include="Images\heart.png" />
+    <Content Include="Images\heart_add%402x.png" />
+    <Content Include="Images\heart_add.png" />
+    <Content Include="Images\heart_delete%402x.png" />
+    <Content Include="Images\heart_delete.png" />
+    <Content Include="Images\language%402x.png" />
+    <Content Include="Images\language.png" />
+    <Content Include="Images\locked%402x.png" />
+    <Content Include="Images\locked.png" />
+    <Content Include="Images\milestone%402x.png" />
+    <Content Include="Images\milestone.png" />
+    <Content Include="Images\pencil%402x.png" />
+    <Content Include="Images\pencil.png" />
+    <Content Include="Images\plus%402x.png" />
+    <Content Include="Images\plus.png" />
+    <Content Include="Images\priority%402x.png" />
+    <Content Include="Images\priority.png" />
+    <Content Include="Images\repo%402x.png" />
+    <Content Include="Images\repo.png" />
+    <Content Include="Images\report_edit%402x.png" />
+    <Content Include="Images\report_edit.png" />
+    <Content Include="Images\scm_type%402x.png" />
+    <Content Include="Images\scm_type.png" />
+    <Content Include="Images\server_components%402x.png" />
+    <Content Include="Images\server_components.png" />
+    <Content Include="Images\sitemap_color%402x.png" />
+    <Content Include="Images\sitemap_color.png" />
+    <Content Include="Images\size%402x.png" />
+    <Content Include="Images\size.png" />
+    <Content Include="Images\TableCell.png" />
+    <Content Include="Images\tablecell_red.png" />
+    <Content Include="Images\tag%402x.png" />
+    <Content Include="Images\tag.png" />
+    <Content Include="Images\unlocked%402x.png" />
+    <Content Include="Images\unlocked.png" />
+    <Content Include="Images\webpage%402x.png" />
+    <Content Include="Images\webpage.png" />
+    <None Include="Info.plist" />
+    <InterfaceDefinition Include="Images\team%402x.png" />
+    <InterfaceDefinition Include="Images\team.png" />
+    <InterfaceDefinition Include="Images\script%402x.png" />
+    <InterfaceDefinition Include="Images\script.png" />
+    <InterfaceDefinition Include="Images\repo_follow%402x.png" />
+    <InterfaceDefinition Include="Images\repo_follow.png" />
+    <InterfaceDefinition Include="Images\Logos\bitbucket.png" />
+    <InterfaceDefinition Include="Images\cancel%402x.png" />
+    <InterfaceDefinition Include="Images\cancel.png" />
+    <InterfaceDefinition Include="Images\Buttons\user%402x.png" />
+    <InterfaceDefinition Include="Images\Buttons\user.png" />
+    <InterfaceDefinition Include="Images\Buttons\info%402x.png" />
+    <InterfaceDefinition Include="Images\Buttons\info.png" />
+    <BundleResource Include="iTunesArtwork%402x" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+</Project>

@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F23D3AC1-1422-468B-AAE6-D74FB1DBAE74}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CodeBucket.Core.iOS</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CodeBucket.Core.iOS</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Data\BitbucketAccount.cs" />
+    <Compile Include="Filters\IssuesFilterModel.cs" />
+    <Compile Include="Filters\RepositoriesFilterModel.cs" />
+    <Compile Include="Filters\SourceFilterModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Login.cs" />
+    <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />
+    <Compile Include="ViewModels\BranchesAndTagsViewModel.cs" />
+    <Compile Include="ViewModels\BranchesController.cs" />
+    <Compile Include="ViewModels\ChangesetController.cs" />
+    <Compile Include="ViewModels\ChangesetInfoController.cs" />
+    <Compile Include="ViewModels\EventsController.cs" />
+    <Compile Include="ViewModels\ExploreRepositoriesController.cs" />
+    <Compile Include="ViewModels\FollowingRepositoriesController.cs" />
+    <Compile Include="ViewModels\GroupController.cs" />
+    <Compile Include="ViewModels\GroupMembersController.cs" />
+    <Compile Include="ViewModels\IssueInfoController.cs" />
+    <Compile Include="ViewModels\IssuesController.cs" />
+    <Compile Include="ViewModels\PrivilegesController.cs" />
+    <Compile Include="ViewModels\ProfileController.cs" />
+    <Compile Include="ViewModels\RepoEventsController.cs" />
+    <Compile Include="ViewModels\RepoFollowersController.cs" />
+    <Compile Include="ViewModels\RepositoriesController.cs" />
+    <Compile Include="ViewModels\RepositoryInfoController.cs" />
+    <Compile Include="ViewModels\SourceController.cs" />
+    <Compile Include="ViewModels\TagsController.cs" />
+    <Compile Include="ViewModels\TeamController.cs" />
+    <Compile Include="ViewModels\UserFollowersController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
+      <Project>{e0ec486d-3341-4b9c-bf4d-146a0bcb8a5a}</Project>
+      <Name>BitbucketSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{c99fe7e3-0985-48f1-9ebb-91680a795f0f}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+</Project>
