@@ -2,14 +2,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
-using GitHubSharp.Models;
+using BitbucketSharp.Models;
+using System.Linq;
 
-namespace CodeHub.Core.ViewModels.Source
+namespace CodeBucket.Core.ViewModels.Source
 {
     public class ChangesetBranchesViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<BranchModel> _items = new CollectionViewModel<BranchModel>();
+		private readonly CollectionViewModel<ViewModel> _items = new CollectionViewModel<ViewModel>();
 
         public string Username
         {
@@ -23,14 +23,14 @@ namespace CodeHub.Core.ViewModels.Source
             private set;
         }
 
-        public CollectionViewModel<BranchModel> Branches
+		public CollectionViewModel<ViewModel> Branches
         {
             get { return _items; }
         }
 
         public ICommand GoToBranchCommand
         {
-            get { return new MvxCommand<BranchModel>(x => ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Name })); }
+			get { return new MvxCommand<ViewModel>(x => ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node })); }
         }
 
         public void Init(NavObject navObject)
@@ -39,10 +39,16 @@ namespace CodeHub.Core.ViewModels.Source
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+		protected override Task Load(bool forceCacheInvalidation)
         {
-			return Branches.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches(), forceDataRefresh);
+			return Branches.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches.GetBranches(forceCacheInvalidation).Select(x => new ViewModel { Name = x.Key, Node = x.Value.Node }).ToList());
         }
+
+		public class ViewModel
+		{
+			public string Name { get; set; }
+			public string Node { get; set; }
+		}
 
         public class NavObject
         {

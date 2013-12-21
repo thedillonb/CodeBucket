@@ -2,9 +2,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeBucket.Core.Services;
-using GitHubSharp.Models;
 using System.Linq;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -49,12 +48,12 @@ namespace CodeBucket.Core.ViewModels.Source
 			if (obj.Object is BranchModel)
 			{
 				var x = obj.Object as BranchModel;
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Name });
+				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node });
 			}
 			else if (obj.Object is TagModel)
 			{
 				var x = obj.Object as TagModel;
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Commit.Sha });
+				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node });
 			}
 		}
 
@@ -74,20 +73,18 @@ namespace CodeBucket.Core.ViewModels.Source
 		{
 			if (SelectedFilter == 0)
 			{
-				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches();
-				return this.RequestModel(request, forceCacheInvalidation, response =>
+				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches.GetBranches(forceCacheInvalidation), response =>
 				{
-					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
+						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
+						Items.Items.Reset(response.Values.OrderBy(x => x.Branch).Select(x => new ViewObject { Name = x.Branch, Object = x }));
 				});
 			}
 			else
 			{
-				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags();
-				return this.RequestModel(request, forceCacheInvalidation, response => 
+				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags(forceCacheInvalidation), response => 
 				{
-					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
+						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
+						Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x }));
 				});
 			}
 		}

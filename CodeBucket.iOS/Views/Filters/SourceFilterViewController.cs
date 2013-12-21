@@ -1,20 +1,18 @@
-using System;
-using CodeFramework.Filters.Controllers;
 using MonoTouch.Dialog;
-using CodeBucket.Filters.Models;
 using MonoTouch.UIKit;
-using CodeFramework.Filters.Models;
-using CodeFramework.Controllers;
+using CodeFramework.iOS.ViewControllers;
+using CodeBucket.Core.Filters;
+using CodeFramework.Core.ViewModels;
 
-namespace CodeBucket.Filters.ViewControllers
+namespace CodeBucket.iOS.Views.Filters
 {
     public class SourceFilterViewController : FilterViewController
     {
-        private EnumChoiceElement _orderby;
+        private EnumChoiceElement<SourceFilterModel.Order> _orderby;
         private TrueFalseElement _ascendingElement;
-        private IFilterController<SourceFilterModel> _filterController;
+        private readonly IFilterableViewModel<SourceFilterModel> _filterController;
 
-        public SourceFilterViewController(IFilterController<SourceFilterModel> filterController)
+        public SourceFilterViewController(IFilterableViewModel<SourceFilterModel> filterController)
         {
             _filterController = filterController;
         }
@@ -32,10 +30,10 @@ namespace CodeBucket.Filters.ViewControllers
             //Load the root
             var root = new RootElement(Title) {
                 new Section("Order By") {
-                    (_orderby = CreateEnumElement("Type", (int)currentModel.OrderBy, typeof(SourceFilterModel.Order))),
+                    (_orderby = CreateEnumElement("Type", currentModel.OrderBy)),
                     (_ascendingElement = new TrueFalseElement("Ascending", currentModel.Ascending)),
                 },
-                new Section() {
+                new Section {
                     new StyledStringElement("Save as Default", () => {
                         _filterController.ApplyFilter(CreateFilterModel(), true);
                         CloseViewController();
@@ -48,9 +46,7 @@ namespace CodeBucket.Filters.ViewControllers
 
         private SourceFilterModel CreateFilterModel()
         {
-            var model = new SourceFilterModel();
-            model.OrderBy = _orderby.Obj;
-            model.Ascending = _ascendingElement.Value;
+            var model = new SourceFilterModel {OrderBy = _orderby.Value, Ascending = _ascendingElement.Value};
             return model;
         }
     }

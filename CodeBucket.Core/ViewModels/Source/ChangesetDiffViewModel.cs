@@ -1,18 +1,18 @@
 using System;
 using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
-using GitHubSharp.Models;
 using CodeFramework.Core.Services;
 using Cirrious.CrossCore;
 using System.Collections.Generic;
 using System.Linq;
+using BitbucketSharp.Models;
 
-namespace CodeHub.Core.ViewModels.Source
+namespace CodeBucket.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
 		private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
-		private CommitModel.CommitFileModel _commitFileModel;
+		private ChangesetDiffModel _commitFileModel;
 		private string _actualFilename;
 
 		public string Username { get; private set; }
@@ -41,26 +41,29 @@ namespace CodeHub.Core.ViewModels.Source
 
 			Title = _actualFilename;
 
-			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as CommitModel.CommitFileModel;
+			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as ChangesetDiffModel;
         }
 
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
 			//Make sure we have this information. If not, go get it
-			if (_commitFileModel == null)
-			{
-				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Get());
-				_commitFileModel = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
-			}
-
-			FilePath = CreatePlainContentFile(_commitFileModel.Patch, _actualFilename);
-			await Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.GetAll(), forceCacheInvalidation);
+//			if (_commitFileModel == null)
+//			{
+//				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Get());
+//				_commitFileModel = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
+//			}
+//
+//			FilePath = CreatePlainContentFile(_commitFileModel.Patch, _actualFilename);
+//			await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation));
+			throw new NotImplementedException();
+		
 		}
 
 		public async Task PostComment(string comment, int line)
 		{
-			var c = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(comment, Filename, line));
-			Comments.Items.Add(c.Data);
+//			var c = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(comment, Filename, line));
+//			Comments.Items.Add(c.Data);
+			throw new NotImplementedException();
 		}
 
 		public class NavObject

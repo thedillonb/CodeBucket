@@ -4,18 +4,17 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Filters;
-using CodeHub.Core.Utils;
-using GitHubSharp.Models;
+using CodeBucket.Core.Filters;
+using System;
 
-namespace CodeHub.Core.ViewModels.Source
+namespace CodeBucket.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<ContentModel, SourceFilterModel> _content;
+		private readonly FilterableCollectionViewModel<SourceModel, SourceFilterModel> _content;
         private SourceFilterModel _filter;
 
-        public FilterableCollectionViewModel<ContentModel, SourceFilterModel> Content
+		public FilterableCollectionViewModel<SourceModel, SourceFilterModel> Content
         {
             get { return _content; }
         }
@@ -41,30 +40,30 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceTreeCommand
         {
-            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path })); }
+			get { return new MvxCommand<SourceModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path })); }
         }
 
-        public ICommand GoToSubmoduleCommand
-        {
-            get { return new MvxCommand<ContentModel>(GoToSubmodule);}
-        }
+//        public ICommand GoToSubmoduleCommand
+//        {
+//			get { return new MvxCommand<SourceModel>(GoToSubmodule);}
+//        }
 
         public ICommand GoToSourceCommand
         {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl }));}
+			get { return new MvxCommand<SourceModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, User = Username, Repository = Repository, Branch = Branch, Path = x.Path }));}
         }
 
-        private void GoToSubmodule(ContentModel x)
-        {
-            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
-            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
-            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
-        }
+//		private void GoToSubmodule(SourceModel x)
+//        {
+//            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
+//            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
+//            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+//            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+//        }
 
         public SourceTreeViewModel()
         {
-            _content = new FilterableCollectionViewModel<ContentModel, SourceFilterModel>("SourceViewModel");
+			_content = new FilterableCollectionViewModel<SourceModel, SourceFilterModel>("SourceViewModel");
             _content.FilteringFunction = FilterModel;
 			_content.Bind(x => x.Filter, _content.Refresh);
         }
@@ -77,7 +76,7 @@ namespace CodeHub.Core.ViewModels.Source
             Path = navObject.Path ?? "";
         }
 
-        private IEnumerable<ContentModel> FilterModel(IEnumerable<ContentModel> model)
+		private IEnumerable<SourceModel> FilterModel(IEnumerable<SourceModel> model)
         {
             var ret = model;
             var order = _content.Filter.OrderBy;
@@ -90,8 +89,16 @@ namespace CodeHub.Core.ViewModels.Source
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
+			//return Content.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source[Path].GetInfo(forceCacheInvalidation));
+			throw new NotImplementedException();
         }
+
+		public class SourceModel
+		{
+			public string Name { get; set; }
+			public string Type { get; set; }
+			public string Path { get; set; }
+		}
 
         public class NavObject
         {

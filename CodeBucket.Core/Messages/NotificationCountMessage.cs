@@ -1,7 +1,7 @@
 using System;
 using Cirrious.MvvmCross.Plugins.Messenger;
 
-namespace CodeHub.Core.Messages
+namespace CodeBucket.Core.Messages
 {
 	public class NotificationCountMessage : MvxMessage
 	{

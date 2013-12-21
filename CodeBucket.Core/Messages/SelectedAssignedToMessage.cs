@@ -1,13 +1,13 @@
 using System;
 using Cirrious.MvvmCross.Plugins.Messenger;
-using GitHubSharp.Models;
+using BitbucketSharp.Models;
 
-namespace CodeHub.Core.Messages
+namespace CodeBucket.Core.Messages
 {
 	public class SelectedAssignedToMessage : MvxMessage
 	{
 		public SelectedAssignedToMessage(object sender) : base(sender) {}
-		public BasicUserModel User;
+		public UserModel User;
 	}
 }
 

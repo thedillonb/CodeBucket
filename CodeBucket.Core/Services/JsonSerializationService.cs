@@ -1,7 +1,7 @@
 using System;
 using CodeFramework.Core.Services;
 
-namespace CodeHub.Core.Services
+namespace CodeBucket.Core.Services
 {
 	public class JsonSerializationService : IJsonSerializationService
     {

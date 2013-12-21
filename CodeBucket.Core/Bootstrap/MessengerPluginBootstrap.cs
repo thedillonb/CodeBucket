@@ -3,7 +3,7 @@
 //    Defines the MessengerPluginBootstrap type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace CodeHub.iOS.Bootstrap
+namespace CodeBucket.iOS.Bootstrap
 {
     using Cirrious.CrossCore.Plugins;
 

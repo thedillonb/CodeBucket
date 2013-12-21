@@ -1,8 +1,8 @@
 using System;
 using Cirrious.MvvmCross.Plugins.Messenger;
-using GitHubSharp.Models;
+using BitbucketSharp.Models;
 
-namespace CodeHub.Core.Messages
+namespace CodeBucket.Core.Messages
 {
 	public class IssueEditMessage : MvxMessage
 	{

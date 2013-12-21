@@ -1,17 +1,16 @@
-﻿using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
-using CodeHub.Core.Data;
+﻿using CodeFramework.Core.Services;
+using CodeBucket.Core.Data;
 
-namespace CodeHub.Core.Services
+namespace CodeBucket.Core.Services
 {
     public interface IApplicationService
     {
-        GitHubSharp.Client Client { get; }
+		BitbucketSharp.Client Client { get; }
  
-        GitHubAccount Account { get; }
+		BitbucketAccount Account { get; }
 
         IAccountsService Accounts { get; }
 
-        void ActivateUser(GitHubAccount account, GitHubSharp.Client client);
+		void ActivateUser(BitbucketAccount account, BitbucketSharp.Client client);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.ViewModels;
-using CodeHub.Core.ViewModels.App;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Core.ViewModels.App;
 
-namespace CodeHub.Core
+namespace CodeBucket.Core
 {
     /// <summary>
     /// Define the App type.

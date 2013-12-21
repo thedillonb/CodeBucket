@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BitbucketSharp.Models;
 using CodeFramework.Core.Data;
 using SQLite;
 
-namespace CodeBucket.Core.iOS.Data
+namespace CodeBucket.Core.Data
 {
     public class BitbucketAccount : Account
     {

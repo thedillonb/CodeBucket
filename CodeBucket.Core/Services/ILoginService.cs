@@ -1,20 +1,20 @@
-﻿using CodeHub.Core.Data;
+﻿using CodeBucket.Core.Data;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.Services
+namespace CodeBucket.Core.Services
 {
     public interface ILoginService
     {
-		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount existingAccount);
+		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, BitbucketAccount existingAccount);
 
-		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
+		Task<BitbucketSharp.Client> LoginAccount(BitbucketAccount account);
 
-		LoginData Authenticate(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount existingAccount);
+		LoginData Authenticate(string user, string pass, BitbucketAccount existingAccount);
     }
 
 	public class LoginData
 	{
-		public GitHubSharp.Client Client { get; set; }
-		public GitHubAccount Account { get; set; }
+		public BitbucketSharp.Client Client { get; set; }
+		public BitbucketAccount Account { get; set; }
 	}
 }

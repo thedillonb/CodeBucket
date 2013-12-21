@@ -74,73 +74,108 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
-    <Compile Include="Images\Images.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="ViewControllers\AboutViewController.cs" />
-    <Compile Include="ViewControllers\AccountsViewController.cs" />
-    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
-    <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewControllers\BranchesViewController.cs" />
-    <Compile Include="ViewControllers\ChangesetDiffViewController.cs" />
-    <Compile Include="ViewControllers\ChangesetInfoViewController.cs" />
-    <Compile Include="ViewControllers\ChangesetViewController.cs" />
-    <Compile Include="ViewControllers\EventsViewController.cs" />
-    <Compile Include="ViewControllers\ExploreRepositoriesViewController.cs" />
-    <Compile Include="ViewControllers\FileSourceViewController.cs" />
-    <Compile Include="ViewControllers\FollowersViewController.cs" />
-    <Compile Include="ViewControllers\FollowingRepositoriesViewController.cs" />
-    <Compile Include="ViewControllers\GroupMembersViewController.cs" />
-    <Compile Include="ViewControllers\GroupViewController.cs" />
     <Compile Include="ViewControllers\IssueEditViewController.cs" />
     <Compile Include="ViewControllers\IssueInfoViewController.cs" />
     <Compile Include="ViewControllers\IssuesViewController.cs" />
     <Compile Include="ViewControllers\MenuViewController.cs" />
-    <Compile Include="ViewControllers\PrivilegesController.cs" />
-    <Compile Include="ViewControllers\ProfileViewController.cs" />
-    <Compile Include="ViewControllers\RepoEventsViewController.cs" />
-    <Compile Include="ViewControllers\RepositoriesViewController.cs" />
-    <Compile Include="ViewControllers\RepositoryInfoController.cs" />
-    <Compile Include="ViewControllers\SettingsViewController.cs" />
-    <Compile Include="ViewControllers\SingleItemSelectViewController.cs" />
-    <Compile Include="ViewControllers\SlideoutNavigationViewController.cs" />
-    <Compile Include="ViewControllers\SourceInfoViewController.cs" />
-    <Compile Include="ViewControllers\SourceViewController.cs" />
-    <Compile Include="ViewControllers\StartupViewController.cs" />
-    <Compile Include="ViewControllers\TagsViewController.cs" />
-    <Compile Include="ViewControllers\TeamViewController.cs" />
     <Compile Include="ViewControllers\WikiViewController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Accounts\AddAccountView.cs" />
+    <Compile Include="Views\Accounts\AddAccountView.designer.cs" />
+    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
+    <Compile Include="Views\Accounts\LoginView.cs" />
+    <Compile Include="Views\App\AboutViewController.cs" />
+    <Compile Include="Views\App\MenuView.cs" />
+    <Compile Include="Views\App\SettingsView.cs" />
+    <Compile Include="Views\Events\BaseEventsView.cs" />
+    <Compile Include="Views\Events\RepositoryEventsView.cs" />
+    <Compile Include="Views\Events\UserEventsView.cs" />
+    <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
     <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <InterfaceDefinition Include="ViewControllers\Accounts\LoginViewController.xib" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\Default.png" />
-    <InterfaceDefinition Include="Resources\Default@2x.png" />
-    <InterfaceDefinition Include="Resources\Default-568h@2x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\Default-Landscape.png" />
+    <Compile Include="Views\Issues\IssueAddView.cs" />
+    <Compile Include="Views\Issues\IssueAssignedToView.cs" />
+    <Compile Include="Views\Issues\IssueEditView.cs" />
+    <Compile Include="Views\Issues\IssueLabelsView.cs" />
+    <Compile Include="Views\Issues\IssueMilestonesView.cs" />
+    <Compile Include="Views\Issues\IssueView.cs" />
+    <Compile Include="Views\Issues\IssuesView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestsView.cs" />
+    <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
+    <Compile Include="Views\Repositories\RepositoryView.cs" />
+    <Compile Include="Views\Repositories\StargazersView.cs" />
+    <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
+    <Compile Include="Views\Source\BranchesAndTagsView.cs" />
+    <Compile Include="Views\Source\ChangesetBranchesView.cs" />
+    <Compile Include="Views\Source\ChangesetDiffView.cs" />
+    <Compile Include="Views\Source\ChangesetView.cs" />
+    <Compile Include="Views\Source\ChangesetsView.cs" />
+    <Compile Include="Views\Source\CommitsView.cs" />
+    <Compile Include="Views\Source\FileSourceView.cs" />
+    <Compile Include="Views\Source\SourceTreeView.cs" />
+    <Compile Include="Views\Source\SourceView.cs" />
+    <Compile Include="Views\User\BaseUserCollectionView.cs" />
+    <Compile Include="Views\User\OrganizationMembersView.cs" />
+    <Compile Include="Views\User\ProfileView.cs" />
+    <Compile Include="Views\User\TeamMembersView.cs" />
+    <Compile Include="Views\User\TeamsView.cs" />
+    <Compile Include="Views\User\UserFollowersView.cs" />
+    <Compile Include="Views\User\UserFollowingsView.cs" />
+    <Compile Include="Setup.cs" />
+    <Compile Include="LinkerPleaseInclude.cs" />
+    <Compile Include="Theme.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="Views\Groups\OrganizationView.cs" />
+    <Compile Include="Views\Groups\GroupsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\Default-Landscape%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\Default-Portrait.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\Default-Portrait%402x.png" />
+    <Reference Include="Cirrious.CrossCore.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleAnalytics.iOS">
+      <HintPath>..\lib\CodeFramework\lib\iOS\GoogleAnalytics.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="UserVoice">
+      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
+    </Reference>
+    <Reference Include="MTiRate">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Dialog">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Dialog.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\Icon-72.png" />
@@ -173,107 +208,139 @@
     <InterfaceDefinition Include="Resources\iTunesArtwork%402x.png" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Images\accept.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Images\accept%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Images\bin_closed%402x.png" />
-    <Content Include="Images\bin_closed.png" />
-    <Content Include="Images\branch%402x.png" />
-    <Content Include="Images\branch.png" />
-    <Content Include="Images\Buttons\cog%402x.png" />
-    <Content Include="Images\Buttons\cog.png" />
-    <Content Include="Images\Buttons\events%402x.png" />
-    <Content Include="Images\Buttons\events.png" />
-    <Content Include="Images\Buttons\explore%402x.png" />
-    <Content Include="Images\Buttons\explore.png" />
-    <Content Include="Images\Buttons\flag%402x.png" />
-    <Content Include="Images\Buttons\flag.png" />
-    <Content Include="Images\Buttons\group%402x.png" />
-    <Content Include="Images\Buttons\group.png" />
-    <Content Include="Images\Buttons\person%402x.png" />
-    <Content Include="Images\Buttons\person.png" />
-    <Content Include="Images\changes%402x.png" />
-    <Content Include="Images\changes.png" />
-    <Content Include="Images\comment_add%402x.png" />
-    <Content Include="Images\comment_add.png" />
-    <Content Include="Images\Controls\backbutton%402x.png" />
-    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
-    <Content Include="Images\Controls\backbutton-landscape.png" />
-    <Content Include="Images\Controls\backbutton.png" />
-    <Content Include="Images\Controls\background.png" />
-    <Content Include="Images\Controls\barbutton%402x.png" />
-    <Content Include="Images\Controls\barbutton-land%402x.png" />
-    <Content Include="Images\Controls\barbutton-land.png" />
-    <Content Include="Images\Controls\barbutton.png" />
-    <Content Include="Images\Controls\bottombar.png" />
-    <Content Include="Images\Controls\divider%402x.png" />
-    <Content Include="Images\Controls\divider.png" />
-    <Content Include="Images\Controls\searchbar.png" />
-    <Content Include="Images\Controls\titlebar.png" />
-    <Content Include="Images\create%402x.png" />
-    <Content Include="Images\create.png" />
-    <Content Include="Images\file%402x.png" />
-    <Content Include="Images\file.png" />
-    <Content Include="Images\folder%402x.png" />
-    <Content Include="Images\folder.png" />
-    <Content Include="Images\fork%402x.png" />
-    <Content Include="Images\fork.png" />
-    <Content Include="Images\heart%402x.png" />
-    <Content Include="Images\heart.png" />
-    <Content Include="Images\heart_add%402x.png" />
-    <Content Include="Images\heart_add.png" />
-    <Content Include="Images\heart_delete%402x.png" />
-    <Content Include="Images\heart_delete.png" />
-    <Content Include="Images\language%402x.png" />
-    <Content Include="Images\language.png" />
-    <Content Include="Images\locked%402x.png" />
-    <Content Include="Images\locked.png" />
-    <Content Include="Images\milestone%402x.png" />
-    <Content Include="Images\milestone.png" />
-    <Content Include="Images\pencil%402x.png" />
-    <Content Include="Images\pencil.png" />
-    <Content Include="Images\plus%402x.png" />
-    <Content Include="Images\plus.png" />
-    <Content Include="Images\priority%402x.png" />
-    <Content Include="Images\priority.png" />
-    <Content Include="Images\repo%402x.png" />
-    <Content Include="Images\repo.png" />
-    <Content Include="Images\report_edit%402x.png" />
-    <Content Include="Images\report_edit.png" />
-    <Content Include="Images\scm_type%402x.png" />
-    <Content Include="Images\scm_type.png" />
-    <Content Include="Images\server_components%402x.png" />
-    <Content Include="Images\server_components.png" />
-    <Content Include="Images\sitemap_color%402x.png" />
-    <Content Include="Images\sitemap_color.png" />
-    <Content Include="Images\size%402x.png" />
-    <Content Include="Images\size.png" />
-    <Content Include="Images\TableCell.png" />
-    <Content Include="Images\tablecell_red.png" />
-    <Content Include="Images\tag%402x.png" />
-    <Content Include="Images\tag.png" />
-    <Content Include="Images\unlocked%402x.png" />
-    <Content Include="Images\unlocked.png" />
-    <Content Include="Images\webpage%402x.png" />
-    <Content Include="Images\webpage.png" />
     <None Include="Info.plist" />
-    <InterfaceDefinition Include="Images\team%402x.png" />
-    <InterfaceDefinition Include="Images\team.png" />
-    <InterfaceDefinition Include="Images\script%402x.png" />
-    <InterfaceDefinition Include="Images\script.png" />
-    <InterfaceDefinition Include="Images\repo_follow%402x.png" />
-    <InterfaceDefinition Include="Images\repo_follow.png" />
-    <InterfaceDefinition Include="Images\Logos\bitbucket.png" />
-    <InterfaceDefinition Include="Images\cancel%402x.png" />
-    <InterfaceDefinition Include="Images\cancel.png" />
-    <InterfaceDefinition Include="Images\Buttons\user%402x.png" />
-    <InterfaceDefinition Include="Images\Buttons\user.png" />
-    <InterfaceDefinition Include="Images\Buttons\info%402x.png" />
-    <InterfaceDefinition Include="Images\Buttons\info.png" />
     <BundleResource Include="iTunesArtwork%402x" />
+    <BundleResource Include="Images\anonymous.png" />
+    <BundleResource Include="Images\anonymous%402x.png" />
+    <BundleResource Include="Images\bin_closed.png" />
+    <BundleResource Include="Images\bin_closed%402x.png" />
+    <BundleResource Include="Images\branch.png" />
+    <BundleResource Include="Images\branch%402x.png" />
+    <BundleResource Include="Images\cog.png" />
+    <BundleResource Include="Images\cog%402x.png" />
+    <BundleResource Include="Images\comments.png" />
+    <BundleResource Include="Images\comments%402x.png" />
+    <BundleResource Include="Images\commit.png" />
+    <BundleResource Include="Images\commit%402x.png" />
+    <BundleResource Include="Images\create.png" />
+    <BundleResource Include="Images\create%402x.png" />
+    <BundleResource Include="Images\events.png" />
+    <BundleResource Include="Images\events%402x.png" />
+    <BundleResource Include="Images\explore.png" />
+    <BundleResource Include="Images\explore%402x.png" />
+    <BundleResource Include="Images\eye.png" />
+    <BundleResource Include="Images\eye%402x.png" />
+    <BundleResource Include="Images\file.png" />
+    <BundleResource Include="Images\file%402x.png" />
+    <BundleResource Include="Images\flag.png" />
+    <BundleResource Include="Images\flag%402x.png" />
+    <BundleResource Include="Images\folder.png" />
+    <BundleResource Include="Images\folder%402x.png" />
+    <BundleResource Include="Images\following.png" />
+    <BundleResource Include="Images\following%402x.png" />
+    <BundleResource Include="Images\fork.png" />
+    <BundleResource Include="Images\fork%402x.png" />
+    <BundleResource Include="Images\group.png" />
+    <BundleResource Include="Images\group%402x.png" />
+    <BundleResource Include="Images\hand.png" />
+    <BundleResource Include="Images\hand%402x.png" />
+    <BundleResource Include="Images\heart.png" />
+    <BundleResource Include="Images\heart%402x.png" />
+    <BundleResource Include="Images\info.png" />
+    <BundleResource Include="Images\info%402x.png" />
+    <BundleResource Include="Images\language.png" />
+    <BundleResource Include="Images\language%402x.png" />
+    <BundleResource Include="Images\locked.png" />
+    <BundleResource Include="Images\locked%402x.png" />
+    <BundleResource Include="Images\merge.png" />
+    <BundleResource Include="Images\merge%402x.png" />
+    <BundleResource Include="Images\milestone.png" />
+    <BundleResource Include="Images\milestone%402x.png" />
+    <BundleResource Include="Images\news.png" />
+    <BundleResource Include="Images\news%402x.png" />
+    <BundleResource Include="Images\notifications.png" />
+    <BundleResource Include="Images\notifications%402x.png" />
+    <BundleResource Include="Images\pencil.png" />
+    <BundleResource Include="Images\pencil%402x.png" />
+    <BundleResource Include="Images\person.png" />
+    <BundleResource Include="Images\person%402x.png" />
+    <BundleResource Include="Images\priority.png" />
+    <BundleResource Include="Images\priority%402x.png" />
+    <BundleResource Include="Images\public.png" />
+    <BundleResource Include="Images\public%402x.png" />
+    <BundleResource Include="Images\repo.png" />
+    <BundleResource Include="Images\repo%402x.png" />
+    <BundleResource Include="Images\script.png" />
+    <BundleResource Include="Images\script%402x.png" />
+    <BundleResource Include="Images\size.png" />
+    <BundleResource Include="Images\size%402x.png" />
+    <BundleResource Include="Images\star.png" />
+    <BundleResource Include="Images\star2.png" />
+    <BundleResource Include="Images\star2%402x.png" />
+    <BundleResource Include="Images\star%402x.png" />
+    <BundleResource Include="Images\tag.png" />
+    <BundleResource Include="Images\tag%402x.png" />
+    <BundleResource Include="Images\team.png" />
+    <BundleResource Include="Images\team%402x.png" />
+    <BundleResource Include="Images\unlocked.png" />
+    <BundleResource Include="Images\unlocked%402x.png" />
+    <BundleResource Include="Images\user.png" />
+    <BundleResource Include="Images\user%402x.png" />
+    <BundleResource Include="Images\webpage.png" />
+    <BundleResource Include="Images\webpage%402x.png" />
+    <BundleResource Include="Images\Buttons\back.png" />
+    <BundleResource Include="Images\Buttons\back%402x.png" />
+    <BundleResource Include="Images\Buttons\cancel.png" />
+    <BundleResource Include="Images\Buttons\cancel%402x.png" />
+    <BundleResource Include="Images\Buttons\check.png" />
+    <BundleResource Include="Images\Buttons\check%402x.png" />
+    <BundleResource Include="Images\Buttons\fork.png" />
+    <BundleResource Include="Images\Buttons\fork%402x.png" />
+    <BundleResource Include="Images\Buttons\grey_button.png" />
+    <BundleResource Include="Images\Buttons\grey_button%402x.png" />
+    <BundleResource Include="Images\Buttons\save.png" />
+    <BundleResource Include="Images\Buttons\save%402x.png" />
+    <BundleResource Include="Images\Buttons\sort.png" />
+    <BundleResource Include="Images\Buttons\sort%402x.png" />
+    <BundleResource Include="Images\Buttons\three_lines.png" />
+    <BundleResource Include="Images\Buttons\three_lines%402x.png" />
+    <BundleResource Include="Images\Buttons\view.png" />
+    <BundleResource Include="Images\Buttons\view%402x.png" />
+    <BundleResource Include="Images\Web\back.png" />
+    <BundleResource Include="Images\Web\back%402x.png" />
+    <BundleResource Include="Images\Web\forward.png" />
+    <BundleResource Include="Images\Web\forward%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default-Landscape.png" />
+    <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Images\Logos\bitbucket.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="Images\" />
+    <Folder Include="Images\Logos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
+      <Project>{F23D3AC1-1422-468B-AAE6-D74FB1DBAE74}</Project>
+      <Name>CodeBucket.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
+      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
+      <Name>CodeFramework.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
+      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
+      <Name>BitbucketSharp.MonoTouch</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

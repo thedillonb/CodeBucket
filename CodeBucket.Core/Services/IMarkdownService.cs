@@ -1,6 +1,5 @@
-using System;
 
-namespace CodeHub.Core.Services
+namespace CodeBucket.Core.Services
 {
     public interface IMarkdownService
     {

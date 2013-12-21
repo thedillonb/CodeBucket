@@ -2,7 +2,7 @@ using System;
 using MonoTouch.JavaScriptCore;
 using MonoTouch.Foundation;
 
-namespace CodeHub.Core.Services
+namespace CodeBucket.Core.Services
 {
 	public class MarkdownService : IMarkdownService
     {
