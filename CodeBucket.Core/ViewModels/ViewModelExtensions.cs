@@ -65,7 +65,7 @@ namespace CodeBucket.Core.ViewModels
 //			assignMore(task);
 //        }
 
-		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<List<T>> request) where T : new()
+		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<List<T>> request)
         {
 			return viewModel.RequestModel(request, response => {
 				//viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);

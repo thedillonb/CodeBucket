@@ -4,7 +4,7 @@ namespace CodeBucket.iOS.Views.Repositories
     {
 		public RepositoriesStarredView()
         {
-			Title = "Starred".t();
+			Title = "Watched".t();
         }
     }
 }

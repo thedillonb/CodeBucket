@@ -5,7 +5,7 @@ using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-	public class StargazersViewModel : BaseUserCollectionViewModel
+	public class WatchersViewModel : BaseUserCollectionViewModel
     {
         public string User
         {

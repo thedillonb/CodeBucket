@@ -13,7 +13,7 @@ namespace CodeBucket.iOS.Views.User
             var vm = (BaseUserCollectionViewModel)ViewModel;
             BindCollection(vm.Users, x =>
             {
-				var e = new UserElement(x.Username, x.FirstName, x.LastName, x.Avatar);
+				var e = new UserElement(x.Username, string.Empty, string.Empty, x.Avatar);
                 e.Tapped += () => vm.GoToUserCommand.Execute(x);
                 return e;
             });

@@ -94,7 +94,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand GoToStargazersCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<StargazersViewModel>(new StargazersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<WatchersViewModel>(new WatchersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
 		}
 
 		public ICommand GoToEventsCommand

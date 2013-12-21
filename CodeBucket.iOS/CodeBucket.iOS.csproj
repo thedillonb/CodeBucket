@@ -44,6 +44,11 @@
     <ConsolePause>false</ConsolePause>
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -110,7 +115,6 @@
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
-    <Compile Include="Views\Repositories\StargazersView.cs" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
@@ -132,8 +136,9 @@
     <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="Images\Images.cs" />
-    <Compile Include="Views\Groups\OrganizationView.cs" />
     <Compile Include="Views\Groups\GroupsView.cs" />
+    <Compile Include="Views\Repositories\WatchersView.cs" />
+    <Compile Include="Views\Groups\GroupView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -203,13 +208,13 @@
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\iTunesArtwork%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <BundleResource Include="iTunesArtwork%402x" />
     <BundleResource Include="Images\anonymous.png" />
     <BundleResource Include="Images\anonymous%402x.png" />
     <BundleResource Include="Images\bin_closed.png" />
@@ -318,6 +323,10 @@
     <BundleResource Include="Resources\Default%402x.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
+    <BundleResource Include="Images\cancel.png" />
+    <BundleResource Include="Images\accept.png" />
+    <BundleResource Include="Images\cancel%402x.png" />
+    <BundleResource Include="Images\accept%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

@@ -10,7 +10,6 @@ namespace CodeBucket.iOS.Views.App
 {
 	public class MenuView : MenuBaseViewController
     {
-        private MenuElement _notifications;
 		private Section _favoriteRepoSection;
 
 	    public new MenuViewModel ViewModel
@@ -32,18 +31,17 @@ namespace CodeBucket.iOS.Views.App
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
-//			if (ViewModel.Account.Teams != null && !ViewModel.Account.DontShowTeamEvents)
-//				ViewModel.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToOrganizationEventsCommand.Execute(x)), Images.Buttons.Event));
+			if (ViewModel.Account.Teams != null && !ViewModel.Account.DontShowTeamEvents)
+				ViewModel.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), Images.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
 			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Images.Repo));
-			//repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
-            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
+			repoSection.Add(new MenuElement("Watched", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
 			repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
             root.Add(repoSection);
             
-			if (ViewModel.PinnedRepositories.Count() > 0)
+			if (ViewModel.PinnedRepositories.Any())
 			{
 				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
@@ -55,25 +53,24 @@ namespace CodeBucket.iOS.Views.App
 				_favoriteRepoSection = null;
 			}
 
-//            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations".t()) };
-//			if (ViewModel.Account.DontExpandTeamsAndGroups)
-//            {
-//                groupsTeamsSection.Add(new MenuElement("Groups".t(), () => NavPush(new GroupViewController(Application.Account.Username)), Images.Buttons.Group));
-//                groupsTeamsSection.Add(new MenuElement("Teams".t(), () => NavPush(new TeamViewController()), Images.Team));
-//            }
-//            else
-//            {
-//				if (ViewModel.Account.Groups != null)
-//					ViewModel.Account.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => NavPush(new GroupMembersViewController(Application.Account.Username, x.Slug, x.Members) { Title = x.Name }), Images.Buttons.Group)));
-//				if (ViewModel.Account.Teams != null)
-//					ViewModel.Account.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => NavPush(new ProfileViewController(x)), Images.Team)));
-//            }
-//
+            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations".t()) };
+			if (ViewModel.Account.DontExpandTeamsAndGroups)
+            {
+				groupsTeamsSection.Add(new MenuElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
+				groupsTeamsSection.Add(new MenuElement("Teams".t(), () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
+            }
+            else
+            {
+				if (ViewModel.Groups != null)
+					ViewModel.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), Images.Group)));
+				if (ViewModel.Teams != null)
+					ViewModel.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), Images.Team)));
+            }
 
             //There should be atleast 1 thing...
-//            if (orgSection.Elements.Count > 0)
-//                root.Add(orgSection);
-//
+			if (groupsTeamsSection.Elements.Count > 0)
+				root.Add(groupsTeamsSection);
+
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
 			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
@@ -102,13 +99,8 @@ namespace CodeBucket.iOS.Views.App
 			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
 
 			ProfileButton.Uri = new System.Uri(ViewModel.Account.AvatarUrl);
-
-            ViewModel.Bind(x => x.Notifications, x =>
-            {
-                _notifications.NotificationNumber = x;
-                Root.Reload(_notifications, UITableViewRowAnimation.None);
-            });
-
+			ViewModel.Bind(x => x.Groups, CreateMenuRoot);
+			ViewModel.Bind(x => x.Teams, CreateMenuRoot);
             ViewModel.LoadCommand.Execute(null);
         }
 

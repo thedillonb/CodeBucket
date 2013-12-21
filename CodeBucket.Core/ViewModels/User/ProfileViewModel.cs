@@ -12,7 +12,6 @@ namespace CodeBucket.Core.ViewModels.User
     public class ProfileViewModel : LoadableViewModel
     {
         private UserModel _userModel;
-		private bool _isFollowing;
 
         public string Username
         {
@@ -25,24 +24,6 @@ namespace CodeBucket.Core.ViewModels.User
             get { return _userModel; }
             private set { _userModel = value; RaisePropertyChanged(() => User); }
         }
-
-		public bool IsFollowing
-		{
-			get { return _isFollowing; }
-			private set
-			{
-				_isFollowing = value;
-				RaisePropertyChanged(() => IsFollowing);
-			}
-		}
-
-		public bool IsLoggedInUser
-		{
-			get
-			{
-				return string.Equals(Username, this.GetApplication().Account.Username);
-			}
-		}
 
         public ICommand GoToFollowersCommand
         {
@@ -69,27 +50,6 @@ namespace CodeBucket.Core.ViewModels.User
             get { return new MvxCommand(() => ShowViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Username })); }
         }
 
-		public ICommand ToggleFollowingCommand
-		{
-			get { return new MvxCommand(ToggleFollowing); }
-		}
-
-		private async void ToggleFollowing()
-		{
-//			try
-//			{
-//				if (IsFollowing)
-//					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Unfollow(Username));
-//				else
-//					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
-//				IsFollowing = !IsFollowing;
-//			}
-//			catch (System.Exception e)
-//			{
-//				ReportError(e);
-//			}
-		}
-  
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
@@ -97,7 +57,6 @@ namespace CodeBucket.Core.ViewModels.User
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			//this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data).FireAndForget();
 			return this.RequestModel(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation), response => User = response.User);
         }
 

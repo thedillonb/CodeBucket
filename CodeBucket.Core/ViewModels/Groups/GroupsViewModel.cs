@@ -29,8 +29,7 @@ namespace CodeBucket.Core.ViewModels.Groups
 
         public ICommand GoToGroupCommand
         {
-//			get { return new MvxCommand<GroupModel>(x => ShowViewModel<GroupModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
-			get { throw new System.NotImplementedException(); }
+			get { return new MvxCommand<GroupModel>(x => ShowViewModel<GroupViewModel>(new GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name }));}
         }
 
         protected override Task Load(bool forceCacheInvalidation)

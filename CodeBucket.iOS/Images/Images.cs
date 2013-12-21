@@ -44,6 +44,9 @@ namespace CodeBucket.iOS
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
         public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
+		public static UIImage Accept { get { return UIImageHelper.FromFileAuto("Images/accept"); } }
+		public static UIImage Cancel { get { return UIImageHelper.FromFileAuto("Images/cancel"); } }
+
         public static class Logos
         {
 			public static UIImage Bitbucket { get { return UIImage.FromFile("Images/Logos/bitbucket.png"); } }

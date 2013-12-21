@@ -182,7 +182,7 @@ namespace CodeBucket.iOS.Views.Repositories
 //                sec1.Add(parent);
 //            }
 
-			var followers = new StyledStringElement("Followers".t(), "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+			var followers = new StyledStringElement("Watchers".t(), "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
             sec1.Add(followers);
 

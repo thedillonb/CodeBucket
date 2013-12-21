@@ -67,52 +67,35 @@ namespace CodeBucket.iOS.Views.Events
 
         private static UIImage ChooseImage(EventModel eventModel)
         {
-//            if (eventModel.PayloadObject is EventModel.CommitCommentEvent)
-//                return Images.Comments;
-//
-//            var createEvent = eventModel.PayloadObject as EventModel.CreateEvent;
-//            if (createEvent != null)
-//            {
-//                var createModel = createEvent;
-//                if (createModel.RefType.Equals("repository"))
-//                    return Images.Repo;
-//                if (createModel.RefType.Equals("branch"))
-//                    return Images.Branch;
-//                if (createModel.RefType.Equals("tag"))
-//                    return Images.Tag;
-//            }
-//            else if (eventModel.PayloadObject is EventModel.DeleteEvent)
-//                return Images.BinClosed;
-//            else if (eventModel.PayloadObject is EventModel.FollowEvent)
-//                return Images.Following;
-//            else if (eventModel.PayloadObject is EventModel.ForkEvent)
-//                return Images.Fork;
-//            else if (eventModel.PayloadObject is EventModel.ForkApplyEvent)
-//                return Images.Fork;
-//            else if (eventModel.PayloadObject is EventModel.GistEvent)
-//                return Images.Script;
-//            else if (eventModel.PayloadObject is EventModel.GollumEvent)
-//                return Images.Webpage;
-//            else if (eventModel.PayloadObject is EventModel.IssueCommentEvent)
-//                return Images.Comments;
-//            else if (eventModel.PayloadObject is EventModel.IssuesEvent)
-//                return Images.Flag;
-//            else if (eventModel.PayloadObject is EventModel.MemberEvent)
-//                return Images.Group;
-//            else if (eventModel.PayloadObject is EventModel.PublicEvent)
-//                return Images.Heart;
-//            else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
-//                return Images.Hand;
-//            else if (eventModel.PayloadObject is EventModel.PullRequestReviewCommentEvent)
-//                return Images.Comments;
-//            else if (eventModel.PayloadObject is EventModel.PushEvent)
-//                return Images.Commit;
-//            else if (eventModel.PayloadObject is EventModel.TeamAddEvent)
-//                return Images.Team;
-//            else if (eventModel.PayloadObject is EventModel.WatchEvent)
-//                return Images.Eye;
-//			else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
-//				return Images.Public;
+			switch (eventModel.Event)
+			{
+				case EventModel.Type.CreateRepo:
+					return Images.Repo;
+				case EventModel.Type.Commit:
+				case EventModel.Type.Pushed:
+					return Images.Commit;
+				case EventModel.Type.WikiUpdated:
+				case EventModel.Type.WikiCreated:
+					return Images.Pencil;
+				case EventModel.Type.WikiDeleted:
+					return Images.BinClosed;
+				case EventModel.Type.StartFollowUser:
+				case EventModel.Type.StartFollowRepo:
+				case EventModel.Type.StopFollowRepo:
+					return Images.Following;
+				case EventModel.Type.IssueComment:
+				case EventModel.Type.ChangeSetCommentCreated:
+				case EventModel.Type.ChangeSetCommentDeleted:
+				case EventModel.Type.ChangeSetCommentUpdated:
+					return Images.Comments;
+				case EventModel.Type.IssueUpdated:
+				case EventModel.Type.IssueReported:
+					return Images.Flag;
+				case EventModel.Type.ChangeSetLike:
+					return Images.Accept;
+				case EventModel.Type.ChangeSetUnlike:
+					return Images.Cancel;
+			}
             return Images.Priority;
         }
     }

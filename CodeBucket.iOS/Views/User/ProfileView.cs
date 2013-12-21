@@ -3,7 +3,6 @@ using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeBucket.Core.ViewModels.User;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
 
 namespace CodeBucket.iOS.Views.User
 {
@@ -41,26 +40,26 @@ namespace CodeBucket.iOS.Views.User
 
 			Root.Add(new [] { new Section(header), new Section { events, organizations, followers, following }, new Section { repos } });
 
-			if (!ViewModel.IsLoggedInUser)
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+//			if (!ViewModel.IsLoggedInUser)
+//				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
-
-		private void ShowExtraMenu()
-		{
-			var sheet = MonoTouch.Utilities.GetSheet(ViewModel.Username);
-			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
-				if (e.ButtonIndex == followButton)
-				{
-					ViewModel.ToggleFollowingCommand.Execute(null);
-				}
-			};
-
-			sheet.ShowInView(this.View);
-		}
+//
+//		private void ShowExtraMenu()
+//		{
+//			var sheet = MonoTouch.Utilities.GetSheet(ViewModel.Username);
+//			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
+//			var cancelButton = sheet.AddButton("Cancel".t());
+//			sheet.CancelButtonIndex = cancelButton;
+//			sheet.DismissWithClickedButtonIndex(cancelButton, true);
+//			sheet.Clicked += (s, e) => {
+//				if (e.ButtonIndex == followButton)
+//				{
+//					ViewModel.ToggleFollowingCommand.Execute(null);
+//				}
+//			};
+//
+//			sheet.ShowInView(this.View);
+//		}
     }
 }
 

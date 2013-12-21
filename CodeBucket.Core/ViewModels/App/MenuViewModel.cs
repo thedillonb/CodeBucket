@@ -1,34 +1,45 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Events;
-using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.User;
-using System.Linq;
 using CodeFramework.Core.Utils;
 using CodeFramework.Core.ViewModels.App;
-using CodeBucket.Core.Messages;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using System.Threading.Tasks;
+using System.Linq;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.App
 {
 	public class MenuViewModel : BaseMenuViewModel
     {
         private readonly IApplicationService _application;
-		private int _notifications;
-		private List<string> _organizations;
-		private readonly MvxSubscriptionToken _notificationCountToken;
 
-		public int Notifications
-        {
-            get { return _notifications; }
-            set { _notifications = value; RaisePropertyChanged(() => Notifications); }
-        }
+		private List<GroupModel> _groups;
+		public List<GroupModel> Groups
+		{
+			get { return _groups; }
+			set
+			{
+				_groups = value;
+				RaisePropertyChanged(() => Groups);
+			}
+		}
+
+		private List<string> _teams;
+		public List<string> Teams
+		{
+			get { return _teams; }
+			set
+			{
+				_teams = value;
+				RaisePropertyChanged(() => Teams);
+			}
+		}
 
 		public BitbucketAccount Account
         {
@@ -38,13 +49,7 @@ namespace CodeBucket.Core.ViewModels.App
         public MenuViewModel(IApplicationService application)
         {
             _application = application;
-			_notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
         }
-
-		private void OnNotificationCountMessage(NotificationCountMessage msg)
-		{
-			Notifications = msg.Count;
-		}
 
         public ICommand GoToAccountsCommand
         {
@@ -82,14 +87,14 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
 		}
 
-		public ICommand GoToOrganizationEventsCommand
+		public ICommand GoToTeamEventsCommand
 		{
 			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
 		}
 
 		public ICommand GoToGroupCommand
 		{
-			get { return new MvxCommand<string>(x => ShowMenuViewModel<Groups.GroupsViewModel>(new Groups.GroupsViewModel.NavObject { Username = x }));}
+			get { return new MvxCommand<GroupModel>(x => ShowMenuViewModel<Groups.GroupViewModel>(new Groups.GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name }));}
 		}
 
 		[PotentialStartupViewAttribute("Organizations")]
@@ -97,6 +102,18 @@ namespace CodeBucket.Core.ViewModels.App
 		{
 			get { return new MvxCommand(() => ShowMenuViewModel<Groups.GroupsViewModel>(new Groups.GroupsViewModel.NavObject { Username = Account.Username }));}
 		}
+
+		[PotentialStartupViewAttribute("Teams")]
+		public ICommand GoToTeamsCommand
+		{
+			get { return new MvxCommand(() => ShowMenuViewModel<TeamsViewModel>(null)); }
+		}
+
+		public ICommand GoToTeamCommand
+		{
+			get { return new MvxCommand<string>(x => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x })); }
+		}
+
 	
 		public ICommand GoToSettingsCommand
 		{
@@ -113,19 +130,19 @@ namespace CodeBucket.Core.ViewModels.App
             get { return new MvxCommand(Load);}    
         }
 
-        private async void Load()
+        private void Load()
         {
-//			var t1 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.GetAll()).ContinueWith(x =>
-//			{
-//				Notifications = x.Result.Data.Count;
-//			}, TaskContinuationOptions.OnlyOnRanToCompletion);
+			Task.Run(() => this.GetApplication().Client.Account.GetPrivileges()).ContinueWith(x =>
+			{
+				if (x.Result != null && x.Result.Teams != null)
+				{
+					var teams = x.Result.Teams.Keys.ToList();
+					teams.Remove(Account.Username);
+					Teams = teams;
+				}
+			}, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
 
-//			var t2 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
-//			{
-//				Organizations = x.Result.Data.Select(y => y.Login).ToList();
-//			},TaskContinuationOptions.OnlyOnRanToCompletion);
-//
-//			await Task.WhenAll(t1, t2);
+			Task.Run(() => this.GetApplication().Client.Account.Groups.GetGroups()).ContinueWith(x => Groups = x.Result, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
         }
     }
 }
