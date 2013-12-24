@@ -32,21 +32,9 @@ namespace CodeBucket.iOS.Views.Source
 		private Element CreateElement(SourceTreeViewModel.SourceModel x)
         {
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
-            {
                 return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), Images.Folder);
-            }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
-            {
-                //If there's a size, it's a file
-//                if (x.Size != null)
-//                {
-//					return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
-//                }
-
-                //If there is no size, it's most likey a submodule
-//                return new StyledStringElement(x.Name, () => ViewModel.GoToSubmoduleCommand.Execute(x), Images.Repo);
-            }
-            
+				return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
             return new StyledStringElement(x.Name) { Image = Images.File };
         }
     }

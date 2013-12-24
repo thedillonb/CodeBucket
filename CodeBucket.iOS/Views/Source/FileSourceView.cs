@@ -16,7 +16,7 @@ namespace CodeBucket.iOS.Views.Source
 			set { base.ViewModel = value; }
 		}
 
-		public FileSourceView()
+		protected FileSourceView()
 			: base(false)
 		{
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
@@ -42,7 +42,7 @@ namespace CodeBucket.iOS.Views.Source
 
 			var openButton = sheet.AddButton("Open In".t());
 			var shareButton = sheet.AddButton("Share".t());
-			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in GitHub".t()) : -1;
+			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket".t()) : -1;
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);

@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System;
 using CodeFramework.Core.ViewModels;
-using BitbucketSharp;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -21,51 +20,46 @@ namespace CodeBucket.Core.ViewModels.Source
 			{
 				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
 				{
-					//There is a bug in the Bitbucket server that says everything returned is text. Content Type: text/plain
-					//Attempt to load this the normal way... If we fail then we'll fall back. If that fails then just display an error.
-					try 
-					{
-						//If this is successful there will be no exception. Just exit out!
-						var d = this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source.GetFile(_path);
+					return this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source.GetFileRaw(_path, stream);
 
-						//If the encoding is a base64 then assume it is a binary
-						if (d.Encoding != null && d.Encoding.Equals("base64"))
-						{
-							//Save the data to the disk
-							var decodedData = System.Convert.FromBase64String(d.Data);
-							stream.Write(decodedData, 0, decodedData.Length);
-						}
-						//If there is no encoding, or it's not base64 then don't worry about it. It's most likely text.
-						else
-						{
-							var data = System.Security.SecurityElement.Escape(d.Data);
-							var bytes = System.Text.Encoding.UTF8.GetBytes(data);
-							stream.Write(bytes, 0, bytes.Length);
-						}
-
-						//Nothing else to do!
-						return string.Empty;
-					}
-					catch (InternalServerException ex)
-					{
-						Console.WriteLine("Could not grab file the bitbucket way: " + ex.Message);
-					}
-
-						throw new Exception("shit!");
-
-//					var response = this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source.GetFileRaw(Application.Account.Username, Application.Account.Password, path, stream);
-//					return response.ContentType;
+//
+//					//There is a bug in the Bitbucket server that says everything returned is text. Content Type: text/plain
+//					//Attempt to load this the normal way... If we fail then we'll fall back. If that fails then just display an error.
+//					try 
+//					{
+//						//If this is successful there will be no exception. Just exit out!
+//
+//						//If the encoding is a base64 then assume it is a binary
+//						if (d.Encoding != null && d.Encoding.Equals("base64"))
+//						{
+//							//Save the data to the disk
+//							var decodedData = System.Convert.FromBase64String(d.Data);
+//							stream.Write(decodedData, 0, decodedData.Length);
+//						}
+//						//If there is no encoding, or it's not base64 then don't worry about it. It's most likely text.
+//						else
+//						{
+//								//var data = System.Security.SecurityElement.Escape(d.Data);
+//								var bytes = System.Text.Encoding.UTF8.GetBytes(d.Data);
+//							stream.Write(bytes, 0, bytes.Length);
+//						}
+//
+//						//Nothing else to do!
+//						return string.Empty;
+//					}
+//					catch (InternalServerException ex)
+//					{
+//						Console.WriteLine("Could not grab file the bitbucket way: " + ex.Message);
+//					}
+//
+//					throw new Exception("shit!");
 				}
 			});
 
 			FilePath = filepath;
 
-//			// We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
-//			if (_forceBinary)
-//				return;
-//
-			var isText = mime.Contains("charset");
-			if (true)
+			var isText = mime.Contains("text");
+			if (isText)
 			{
 				ContentPath = CreateContentFile();
 			}

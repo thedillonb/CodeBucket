@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using BitbucketSharp.Models;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.User
 {
@@ -15,10 +17,9 @@ namespace CodeBucket.Core.ViewModels.User
             Name = navObject.Name;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			//return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Name].GetFollowing(), forceDataRefresh);
-			throw new System.NotImplementedException();
+			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Name].GetFollowing(forceCacheInvalidation).Values.Select(x => new UserModel { Username = x.Username }).OrderBy(x => x.Username).ToList());
         }
 
         public class NavObject
