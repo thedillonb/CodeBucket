@@ -32,14 +32,22 @@ namespace CodeBucket.iOS.Views.User
 			set.Bind(header).For(x => x.ImageUri).To(x => x.User.Avatar).OneWay();
             set.Apply();
 
-			var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-			var following = new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
-			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-			var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
-			var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
+			ViewModel.Bind(x => x.User, x =>
+			{
+				var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
+				var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+				var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
+				var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
 
-			Root.Add(new [] { new Section(header), new Section { events, organizations, followers, following }, new Section { repos } });
+				var midSec = new Section() { events, organizations, followers };
 
+				if (!x.IsTeam)
+				{
+					midSec.Add(new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following));
+				}
+
+				Root = new RootElement(Title) { new Section(header), midSec, new Section { repos } };
+			});
 //			if (!ViewModel.IsLoggedInUser)
 //				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }

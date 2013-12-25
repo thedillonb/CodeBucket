@@ -47,16 +47,14 @@ namespace CodeBucket.Core.ViewModels.Source
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
 			//Make sure we have this information. If not, go get it
-//			if (_commitFileModel == null)
-//			{
-//				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Get());
-//				_commitFileModel = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
-//			}
-//
-//			FilePath = CreatePlainContentFile(_commitFileModel.Patch, _actualFilename);
+			if (_commitFileModel == null)
+			{
+				var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetDiffs(forceCacheInvalidation));
+				_commitFileModel = data.First(x => string.Equals(x.File, Filename));
+			}
+
+//			FilePath = CreatePlainContentFile(_commitFileModel, _actualFilename);
 //			await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation));
-			throw new NotImplementedException();
-		
 		}
 
 		public async Task PostComment(string comment, int line)

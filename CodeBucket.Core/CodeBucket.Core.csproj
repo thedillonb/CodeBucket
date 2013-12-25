@@ -69,7 +69,6 @@
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
-    <Compile Include="ViewModels\Events\NewsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />

@@ -19,7 +19,7 @@ namespace CodeBucket.Core.ViewModels.User
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Name].GetFollowing(forceCacheInvalidation).Values.Select(x => new UserModel { Username = x.Username }).OrderBy(x => x.Username).ToList());
+			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Name].GetFollowing(forceCacheInvalidation).Values.Select(x => new UserModel { Username = x.Username, Avatar = x.Links.Avatar.Href }).OrderBy(x => x.Username).ToList());
         }
 
         public class NavObject

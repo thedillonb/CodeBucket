@@ -76,7 +76,7 @@ namespace CodeBucket.iOS
 
 			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
 
-			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
+			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(45,80,148);
 			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
 			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
 			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);

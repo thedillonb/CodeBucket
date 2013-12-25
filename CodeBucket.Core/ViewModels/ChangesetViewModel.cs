@@ -8,15 +8,13 @@ using CodeBucket.Core.ViewModels.Source;
 using BitbucketSharp.Models;
 using System.Linq;
 using System.Collections.Generic;
+using System;
+using CodeBucket.Core.ViewModels.User;
 
 namespace CodeBucket.Core.ViewModels
 {
     public class ChangesetViewModel : LoadableViewModel
     {
-		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
-        private readonly IApplicationService _application;
-		private List<ChangesetDiffModel> _commitModel;
-
 		public string Node { get; private set; }
 
 		public string User { get; private set; }
@@ -25,15 +23,37 @@ namespace CodeBucket.Core.ViewModels
 
         public bool ShowRepository { get; private set; }
 
-		public List<ChangesetDiffModel> Changeset
+		private List<ChangesetDiffModel> _commitModel;
+		public List<ChangesetDiffModel> Commits
         {
             get { return _commitModel; }
             private set
             {
                 _commitModel = value;
-                RaisePropertyChanged(() => Changeset);
+                RaisePropertyChanged(() => Commits);
             }
         }
+
+		private ChangesetModel _changeset;
+		public ChangesetModel Changeset
+		{
+			get { return _changeset; }
+			private set {
+				_changeset = value;
+				RaisePropertyChanged(() => Changeset);
+			}
+		}
+
+		private readonly CollectionViewModel<ChangesetParticipantsModel> _participants = new CollectionViewModel<ChangesetParticipantsModel>();
+		public CollectionViewModel<ChangesetParticipantsModel> Participants
+		{
+			get { return _participants; }
+		}
+
+		public ICommand GoToUserCommand
+		{
+			get { return new MvxCommand<string>(x => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x })); }
+		}
 
         public ICommand GoToRepositoryCommand
         {
@@ -60,14 +80,10 @@ namespace CodeBucket.Core.ViewModels
 			}
 		}
 
+		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
 		public CollectionViewModel<ChangesetCommentModel> Comments
         {
             get { return _comments; }
-        }
-
-        public ChangesetViewModel(IApplicationService application)
-        {
-            _application = application;
         }
 
         public void Init(NavObject navObject)
@@ -80,29 +96,50 @@ namespace CodeBucket.Core.ViewModels
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Changeset = response);
+			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
+			var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetInfo(forceCacheInvalidation), response => Changeset = response);
 			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
-            return t1;
+			Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(forceCacheInvalidation)).FireAndForget();
+			return Task.WhenAll(t1, t2);
         }
 
         public async Task AddComment(string text)
         {
-			var c = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
-            Comments.Items.Add(c);
+			try
+			{
+				var c = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
+	            Comments.Items.Add(c);
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
         }
 
-		public async void Approve()
+		public async Task Approve()
 		{
-//			Application.Client.Users[User].Repositories[Slug].Changesets[Node].Approve();
-//			Model.Likes = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetParticipants(true);
-//			Render();
+			try
+			{
+				this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve();
+				await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(true));
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
 		}
 
-		public async void Unapprove()
+		public async Task Unapprove()
 		{
-//			Application.Client.Users[User].Repositories[Slug].Changesets[Node].Unapprove();
-//			Model.Likes = Application.Client.Users[User].Repositories[Slug].Changesets[Node].GetParticipants(true);
-//			Render();
+			try
+			{
+				this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove();
+				await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(true));
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
 		}
 
         public class NavObject

@@ -41,7 +41,7 @@ namespace CodeBucket.iOS.Views.Source
 			var sheet = MonoTouch.Utilities.GetSheet(Title);
 
 			var openButton = sheet.AddButton("Open In".t());
-			var shareButton = sheet.AddButton("Share".t());
+			var shareButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Share".t()) : -1;
 			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket".t()) : -1;
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;

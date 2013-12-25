@@ -32,10 +32,13 @@ namespace CodeBucket.Core.ViewModels.Events
         {
             ReportRepository = true;
         }
-//
-//		public override void Update(bool force)
+
+//		public void Update(bool force)
 //		{
 //			var sizeRequest = GetTotalItemCount();
+//			var items = CreateRequest(0, 100);
+//
+//
 //			Model = new ListModel<EventModel> { Data = GetData() };
 //			if (Model.Data.Count < _dataLimit)
 //				return;
@@ -51,6 +54,11 @@ namespace CodeBucket.Core.ViewModels.Events
 //				};
 //			}
 //		}
+
+		protected abstract List<EventModel> CreateRequest(int start, int limit);
+
+		protected abstract int GetTotalItemCount();
+
 //
 //		protected virtual List<EventModel> GetData(int start = 0, int limit = _dataLimit)
 //		{
@@ -63,56 +71,57 @@ namespace CodeBucket.Core.ViewModels.Events
 //			return Application.Client.Users[Username].GetEvents(0, 0).Count;
 //		}
 
-        protected override Task Load(bool forceDataRefresh)
+		protected override Task Load(bool forceDataRefresh)
         {
-//            return Task.Run(() => this.RequestModel(CreateRequest(0, 100), forceDataRefresh, response => {
-//				this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
-//                Events.Items.Reset(CreateDataFromLoad(response.Data));
-//            }));
-			return Task.Delay(0);
+			return Task.Run(() => this.RequestModel(() => CreateRequest(0, 50), response => {
+				//this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
+                Events.Items.Reset(CreateDataFromLoad(response));
+            }));
         }
-//
-//        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
-//        {
-//			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x)));
-//        }
-        
-		protected abstract List<EventModel> CreateRequest(int start, int limit);
 
-		protected abstract int GetTotalItemCount();
-//
-//		private void GoToCommits(EventModel.RepoModel repoModel, string branch)
-//        {
-//			var repoId = new RepositoryIdentifier(repoModel.Name);
-//            ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
-//            {
-//				Username = repoId.Owner,
-//				Repository = repoId.Name,
-//				Branch = branch
-//            });
-//        }
-//
-//        public ICommand GoToRepositoryCommand
-//        {
-//            get { return new MvxCommand<EventModel.RepoModel>(GoToRepository, x => x != null); }
-//        }
-//
-//        private void GoToRepository(EventModel.RepoModel eventModel)
-//        {
-//            var repoId = new RepositoryIdentifier(eventModel.Name);
-//            ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
-//            {
-//				Username = repoId.Owner,
-//				Repository = repoId.Name
-//            });
-//        }
-//
-//        private void GoToUser(string username)
-//        {
-//            if (string.IsNullOrEmpty(username))
-//                return;
-//            ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject {Username = username});
-//        }
+        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
+        {
+			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x)));
+        }
+
+
+		private void GoToCommits(RepositoryDetailedModel repoModel, string branch)
+        {
+			if (branch != null)
+			{
+				ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
+				{
+					Username = repoModel.Owner,
+					Repository = repoModel.Name,
+					Branch = branch
+				});
+			}
+			else
+			{
+				ShowViewModel<ChangesetBranchesViewModel>(new ChangesetBranchesViewModel.NavObject
+				{
+					Username = repoModel.Owner,
+					Repository = repoModel.Name
+				});
+			}
+        }
+
+
+		private void GoToRepository(RepositoryDetailedModel eventModel)
+        {
+            ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
+            {
+				Username = eventModel.Owner,
+				Repository = eventModel.Name
+            });
+        }
+
+        private void GoToUser(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+                return;
+            ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject {Username = username});
+        }
 //
 //        private void GoToBranches(RepositoryIdentifier repoId)
 //        {
@@ -134,12 +143,7 @@ namespace CodeBucket.Core.ViewModels.Events
 //				IsShowingBranches = false
 //            });
 //        }
-//
-//        public ICommand GoToGistCommand
-//        {
-//            get { return new MvxCommand<EventModel.GistEvent>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Gist.Id }), x => x != null && x.Gist != null); }
-//        }
-//
+
 //        private void GoToIssue(RepositoryIdentifier repo, ulong id)
 //        {
 //            if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
@@ -175,26 +179,80 @@ namespace CodeBucket.Core.ViewModels.Events
 //            });
 //        }
 //
-//        private void GoToChangeset(RepositoryIdentifier repo, string sha)
-//        {
-//            if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
-//                return;
-//			ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
-//            {
-//                Username = repo.Owner,
-//                Repository = repo.Name,
-//				Node = sha
-//            });
-//        }
+		private void GoToChangeset(string owner, string name, string sha)
+        {
+			ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
+            {
+				Username = owner,
+				Repository = name,
+				Node = sha
+            });
+        }
+
+        private EventBlock CreateEventTextBlocks(EventModel eventModel)
+        {
+            var eventBlock = new EventBlock();
+			var username = eventModel.User != null ? eventModel.User.Username : null;
+
+            // Insert the actor
+			eventBlock.Header.Add(new AnchorBlock(username, () => GoToUser(username)));
+
+
+			if (eventModel.Event == EventModel.Type.Pushed)
+			{
+				var data = GetService<CodeFramework.Core.Services.IJsonSerializationService>().Deserialize<PushedEventDescriptionModel>(eventModel.Description);
+
+				if (eventModel.Repository != null)
+					eventBlock.Tapped = () => GoToCommits(eventModel.Repository, null);
+
+				eventBlock.Header.Add(new TextBlock(" pushed " + data.TotalCommits + " commit" + (data.TotalCommits > 1 ? "s" : string.Empty)));
+
+                if (ReportRepository)
+                {
+					eventBlock.Header.Add(new TextBlock(" to "));
+					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+                }
+
+				if (data.Commits != null)
+				{
+					foreach (var commit in data.Commits)
+					{
+						var desc = (commit.Description ?? "");
+						var sha = commit.Hash;
+						var firstNewLine = desc.IndexOf("\n", StringComparison.Ordinal);
+						if (firstNewLine <= 0)
+							firstNewLine = desc.Length;
+
+						desc = desc.Substring(0, firstNewLine);
+						var shortSha = commit.Hash;
+						if (shortSha.Length > 6)
+							shortSha = shortSha.Substring(0, 6);
+
+						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, sha)));
+						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
+					}
+				}
+				return eventBlock;
+			}
+
+			if (eventModel.Event == EventModel.Type.Commit)
+			{
+				var node = eventModel.Node.Substring(0, eventModel.Node.Length > 6 ? 6 : eventModel.Node.Length);
+				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, eventModel.Node);
+				eventBlock.Header.Add(new TextBlock(" commited "));
+				eventBlock.Header.Add(new AnchorBlock(node, eventBlock.Tapped));
+
+				if (ReportRepository)
+				{
+					eventBlock.Header.Add(new TextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+				}
+				var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
+				eventBlock.Body.Add(new TextBlock(desc));
+				return eventBlock;
+
+			}
 //
-//        private EventBlock CreateEventTextBlocks(EventModel eventModel)
-//        {
-//            var eventBlock = new EventBlock();
-//            var repoId = eventModel.Repo != null ? new RepositoryIdentifier(eventModel.Repo.Name) : new RepositoryIdentifier();
-//            var username = eventModel.Actor != null ? eventModel.Actor.Login : null;
-//
-//            // Insert the actor
-//			eventBlock.Header.Add(new AnchorBlock(username, () => GoToUser(username)));
 //
 //            var commitCommentEvent = eventModel.PayloadObject as EventModel.CommitCommentEvent;
 //            if (commitCommentEvent != null)
@@ -557,27 +615,19 @@ namespace CodeBucket.Core.ViewModels.Events
 //				eventBlock.Header.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
 //				return eventBlock;
 //			}
-//
-//            return eventBlock;
-//        }
-//
-//        private TextBlock CreateRepositoryTextBlock(EventModel.RepoModel repoModel)
-//        {
-//            //Most likely indicates a deleted repository
-//            if (repoModel == null)
-//                return new TextBlock("Unknown Repository");
-//            if (repoModel.Name == null)
-//                return new TextBlock("<Deleted Repository>");
-//
-//            var repoSplit = repoModel.Name.Split('/');
-//            if (repoSplit.Length < 2)
-//                return new TextBlock(repoModel.Name);
-//
-////            var repoOwner = repoSplit[0];
-////            var repoName = repoSplit[1];
-//			return new AnchorBlock(repoModel.Name, () => GoToRepositoryCommand.Execute(repoModel));
-//        }
-//
+			return eventBlock;
+        }
+
+		private TextBlock CreateRepositoryTextBlock(RepositoryDetailedModel repoModel)
+        {
+            //Most likely indicates a deleted repository
+            if (repoModel == null)
+                return new TextBlock("Unknown Repository");
+            if (repoModel.Name == null)
+                return new TextBlock("<Deleted Repository>");
+			return new AnchorBlock(repoModel.Owner + "/" + repoModel.Name, () => GoToRepository(repoModel));
+        }
+
 
         public class EventBlock
         {

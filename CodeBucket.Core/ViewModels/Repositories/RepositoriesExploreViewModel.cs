@@ -4,29 +4,41 @@ using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Repositories;
 using BitbucketSharp.Models;
+using System;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels
 {
     public class RepositoriesExploreViewModel : BaseViewModel
     {
-		private readonly CollectionViewModel<RepositoryDetailedModel> _repositories = new CollectionViewModel<RepositoryDetailedModel>();
-        private string _searchText;
-
         public bool ShowRepositoryDescription
         {
 			get { return !this.GetApplication().Account.HideRepositoryDescriptionInList; }
         }
 
+		private readonly CollectionViewModel<RepositoryDetailedModel> _repositories = new CollectionViewModel<RepositoryDetailedModel>();
 		public CollectionViewModel<RepositoryDetailedModel> Repositories
         {
             get { return _repositories; }
         }
 
+		private string _searchText;
         public string SearchText
         {
             get { return _searchText; }
             set { _searchText = value; RaisePropertyChanged(() => SearchText); }
         }
+
+		private bool _isSearching;
+		public bool IsSearching
+		{
+			get { return _isSearching; }
+			private set
+			{
+				_isSearching = value;
+				RaisePropertyChanged(() => IsSearching);
+			}
+		}
 
 		public ICommand GoToRepositoryCommand
 		{
@@ -38,12 +50,26 @@ namespace CodeBucket.Core.ViewModels
 			get { return new MvxCommand(Search, () => !string.IsNullOrEmpty(SearchText)); }
         }
 
+		public RepositoriesExploreViewModel()
+		{
+			_repositories.SortingFunction = x => x.OrderByDescending(y => y.FollowersCount);
+		}
+
         private async void Search()
         {
-            await Task.Run(() =>
-            {
-				Repositories.Items.Reset(this.GetApplication().Client.Repositories.Search(SearchText).Repositories);
-            });
+			try
+			{
+				IsSearching = true;
+				await Task.Run(() => Repositories.Items.Reset(this.GetApplication().Client.Repositories.Search(SearchText).Repositories));
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
+			finally
+			{
+				IsSearching = false;
+			}
         }
     }
 }
