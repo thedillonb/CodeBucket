@@ -13,8 +13,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoryViewModel : LoadableViewModel
     {
-        private bool? _starred;
-        private bool? _watched;
 		private RepositoryDetailedModel _repository;
         private List<BranchModel> _branches;
 
@@ -35,26 +33,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			get;
 			set;
 		}
-
-        public bool? IsStarred
-        {
-            get { return _starred; }
-            private set
-            {
-                _starred = value;
-                RaisePropertyChanged(() => IsStarred);
-            }
-        }
-
-        public bool? IsWatched
-        {
-            get { return _watched; }
-            private set
-            {
-                _watched = value;
-                RaisePropertyChanged(() => IsWatched);
-            }
-        }
 
 		public RepositoryDetailedModel Repository
         {
@@ -105,6 +83,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
 		public ICommand GoToIssuesCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
+
+		public ICommand GoToPullRequestsCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
 		}
 
         public ICommand GoToCommitsCommand
@@ -160,45 +143,28 @@ namespace CodeBucket.Core.ViewModels.Repositories
             return t1;
         }
 
-        public ICommand ToggleWatchCommand
-        {
-            get { return new MvxCommand(ToggleWatch, () => IsWatched != null); }
-        }
-
-        private async void ToggleWatch()
-        {
-//            if (IsWatched == null)
-//                return;
-//
-//            if (IsWatched.Value)
-//				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].StopWatching());
-//            else
-//				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
-//
-//            IsWatched = !IsWatched;
-        }
-
-        public ICommand ToggleStarCommand
-        {
-            get { return new MvxCommand(ToggleStar, () => IsStarred != null); }
-        }
-
         public bool IsPinned
         {
 			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
         }
 
-        private async void ToggleStar()
-        {
-//            if (IsStarred == null)
-//                return;
-//
-//            if (IsStarred.Value)
-//				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Unstar());
-//            else
-//				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
-//            IsStarred = !IsStarred;
-        }
+		public ICommand ForkCommand
+		{
+			get { return new MvxCommand<string>(x => Fork(x), x => !string.IsNullOrEmpty(x)); }
+		}
+		
+		public async Task Fork(string name)
+		{
+			try
+			{
+				var fork = await Task.Run(() => this.GetApplication().Client.Users[Repository.Owner].Repositories[Repository.Name].ForkRepository(name));
+				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, Repository = fork.Name });
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
+		}
 
         public class NavObject
         {

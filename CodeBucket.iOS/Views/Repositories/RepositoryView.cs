@@ -1,13 +1,11 @@
 using System;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeBucket.Core.ViewModels.Repositories;
 using MonoTouch.Dialog;
-using MonoTouch.Dialog.Utilities;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using BitbucketSharp.Models;
+using CodeFramework.iOS.Utils;
 
 namespace CodeBucket.iOS.Views.Repositories
 {
@@ -45,14 +43,12 @@ namespace CodeBucket.iOS.Views.Repositories
         private void ShowExtraMenu()
         {
             var repoModel = ViewModel.Repository;
-            if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
+            if (repoModel == null)
                 return;
 
             var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
 			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu".t() : "Pin to Slideout Menu".t());
-            var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo".t() : "Star This Repo".t());
-            var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo".t() : "Watch This Repo".t());
-            //var forkButton = sheet.AddButton("Fork Repository".t());
+            var forkButton = sheet.AddButton("Fork Repository".t());
 			var showButton = sheet.AddButton("Show in Bitbucket".t());
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
@@ -63,19 +59,10 @@ namespace CodeBucket.iOS.Views.Repositories
                 {
                     ViewModel.PinCommand.Execute(null);
                 }
-                else if (e.ButtonIndex == starButton)
+                else if (e.ButtonIndex == forkButton)
                 {
-                    ViewModel.ToggleStarCommand.Execute(null);
+                    ForkRepository();
                 }
-                else if (e.ButtonIndex == watchButton)
-                {
-                    ViewModel.ToggleWatchCommand.Execute(null);
-                }
-                // Fork this repo
-//                else if (e.ButtonIndex == forkButton)
-//                {
-//                    ForkRepository();
-//                }
                 // Show in Bitbucket
                 else if (e.ButtonIndex == showButton)
                 {
@@ -86,36 +73,27 @@ namespace CodeBucket.iOS.Views.Repositories
             sheet.ShowInView(this.View);
         }
 
-//        private void ForkRepository()
-//        {
-//            var repoModel = Controller.Model.RepositoryModel;
-//            var alert = new UIAlertView();
-//            alert.Title = "Fork".t();
-//            alert.Message = "What would you like to name your fork?".t();
-//            alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-//            var forkButton = alert.AddButton("Fork!".t());
-//            var cancelButton = alert.AddButton("Cancel".t());
-//            alert.CancelButtonIndex = cancelButton;
-//            alert.DismissWithClickedButtonIndex(cancelButton, true);
-//            alert.GetTextField(0).Text = repoModel.Name;
-//            alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
-//                if (e2.ButtonIndex == forkButton)
-//                {
-//                    var text = alert.GetTextField(0).Text;
-//                    this.DoWork("Forking...".t(), () => {
-//                        //var fork = Application.Client.Users[model.Owner.Login].Repositories[model.Name].Fo(text);
-//                        BeginInvokeOnMainThread(() => {
-//                            //  NavigationController.PushViewController(new RepositoryInfoViewController(fork), true);
-//                        });
-//                    }, (ex) => {
-//                        //We typically get a 'BAD REQUEST' but that usually means that a repo with that name already exists
-//                        MonoTouch.Utilities.ShowAlert("Unable to fork".t(), "A repository by that name may already exist in your collection or an internal error has occured.".t());
-//                    });
-//                }
-//            };
-//
-//            alert.Show();
-//        }
+        private void ForkRepository()
+        {
+            var alert = new UIAlertView();
+            alert.Title = "Fork".t();
+            alert.Message = "What would you like to name your fork?".t();
+            alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+            var forkButton = alert.AddButton("Fork!".t());
+            var cancelButton = alert.AddButton("Cancel".t());
+            alert.CancelButtonIndex = cancelButton;
+            alert.DismissWithClickedButtonIndex(cancelButton, true);
+			alert.GetTextField(0).Text = ViewModel.Repository.Name;
+			alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
+                if (e2.ButtonIndex == forkButton)
+                {
+					var text = alert.GetTextField(0).Text;
+					this.DoWorkAsync("Forking...", () => ViewModel.Fork(text));
+                }
+            };
+
+            alert.Show();
+        }
 
 		public void Render(RepositoryDetailedModel model)
         {
@@ -195,7 +173,7 @@ namespace CodeBucket.iOS.Views.Repositories
             var sec3 = new Section
             {
 				new StyledStringElement("Commits".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-//				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
+				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
 				new StyledStringElement("Source".t(), () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
             };
 

@@ -45,25 +45,24 @@ namespace CodeBucket.Core.ViewModels
 //            }
         }
 
-//        public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
-//										 Action<Task> assignMore, Action<T> newDataAction) where T : new()
-//        {
-//            if (response.More == null)
-//            {
-//                assignMore(null);
-//                return;
-//            }
-//
-//			var task = new Task(async () => 
-//				{
-//                     response.More.UseCache = false;
-//					 var moreResponse = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
-//                     viewModel.CreateMore(moreResponse, assignMore, newDataAction);
-//                     newDataAction(moreResponse.Data);
-//            	});
-//
-//			assignMore(task);
-//        }
+		public static void CreateMore<T>(this MvxViewModel viewModel, BitbucketSharp.Models.V2.Collection<T> response, 
+										 Action<Task> assignMore, Action<IEnumerable<T>> newDataAction)
+        {
+			if (string.IsNullOrEmpty(response.Next))
+            {
+                assignMore(null);
+                return;
+            }
+
+			var task = new Task(async () => 
+				{
+					var moreResponse = await Task.Run(() => Mvx.Resolve<IApplicationService>().Client.Request2<BitbucketSharp.Models.V2.Collection<T>>(response.Next));
+                    viewModel.CreateMore(moreResponse, assignMore, newDataAction);
+					newDataAction(moreResponse.Values);
+            	});
+
+			assignMore(task);
+        }
 
 		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<List<T>> request)
         {
@@ -72,6 +71,14 @@ namespace CodeBucket.Core.ViewModels
                 viewModel.Items.Reset(response);
             });
         }
+
+		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<BitbucketSharp.Models.V2.Collection<T>> request)
+		{
+			return viewModel.RequestModel(request, response => {
+				viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
+				viewModel.Items.Reset(response.Values);
+			});
+		}
     }
 }
 
