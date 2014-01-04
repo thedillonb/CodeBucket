@@ -1,20 +1,19 @@
 using System;
-using CodeFramework.iOS;
-using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.ViewControllers;
 
 namespace CodeBucket.iOS.Views.App
 {
-    public class AboutViewController : BaseDialogViewController
+	public class AboutView : ViewModelDrivenViewController
     {
 		private const string About = "CodeBucket is the best way to browse and maintain your Bitbucket repositories on any iOS device! " +
 		                             "Keep an eye on your projects with the ability to view everything from followers to the individual file diffs in the latest change set. " +
 		                             "CodeBucket brings Bitbucket to your finger tips in a sleek and efficient design. " + 
 		                             "\n\nCreated By Dillon Buchanan";
 
-        public AboutViewController()
+        public AboutView()
             : base (true)
         {
             Title = "About".t();

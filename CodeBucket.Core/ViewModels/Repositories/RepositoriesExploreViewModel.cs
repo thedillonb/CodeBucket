@@ -13,7 +13,7 @@ namespace CodeBucket.Core.ViewModels
     {
         public bool ShowRepositoryDescription
         {
-			get { return !this.GetApplication().Account.HideRepositoryDescriptionInList; }
+			get { return this.GetApplication().Account.RepositoryDescriptionInList; }
         }
 
 		private readonly CollectionViewModel<RepositoryDetailedModel> _repositories = new CollectionViewModel<RepositoryDetailedModel>();

@@ -46,7 +46,7 @@ namespace CodeBucket.Core.ViewModels
         }
 
 		public static void CreateMore<T>(this MvxViewModel viewModel, BitbucketSharp.Models.V2.Collection<T> response, 
-										 Action<Task> assignMore, Action<IEnumerable<T>> newDataAction)
+										 Action<Action> assignMore, Action<IEnumerable<T>> newDataAction)
         {
 			if (string.IsNullOrEmpty(response.Next))
             {
@@ -54,12 +54,12 @@ namespace CodeBucket.Core.ViewModels
                 return;
             }
 
-			var task = new Task(async () => 
-				{
-					var moreResponse = await Task.Run(() => Mvx.Resolve<IApplicationService>().Client.Request2<BitbucketSharp.Models.V2.Collection<T>>(response.Next));
-                    viewModel.CreateMore(moreResponse, assignMore, newDataAction);
-					newDataAction(moreResponse.Values);
-            	});
+			Action task = () => 
+			{
+				var moreResponse = Mvx.Resolve<IApplicationService>().Client.Request2<BitbucketSharp.Models.V2.Collection<T>>(response.Next);
+                viewModel.CreateMore(moreResponse, assignMore, newDataAction);
+				newDataAction(moreResponse.Values);
+        	};
 
 			assignMore(task);
         }

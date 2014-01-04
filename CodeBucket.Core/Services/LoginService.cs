@@ -84,15 +84,11 @@ namespace CodeBucket.Core.Services
 
 				var client = new Client(user, pass);
 				account.Password = pass;
-//
-//				if (enterprise)
-//				{
-//				}
-//				else
-//				{
-//	                var auth = client.Execute(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", new System.Collections.Generic.List<string>(Scopes), "CodeBucket", null));
-//	                account.OAuth = auth.Data.Token;
-//				}
+				var data = client.Account.GetInfo(true);
+				var userInfo = data.User;
+				account.Username = userInfo.Username;
+				account.AvatarUrl = userInfo.Avatar;
+				client.Username = userInfo.Username;
 
                 if (exists)
                     _accounts.Update(account);

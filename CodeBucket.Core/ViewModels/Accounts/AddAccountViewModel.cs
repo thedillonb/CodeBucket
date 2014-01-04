@@ -18,14 +18,6 @@ namespace CodeBucket.Core.ViewModels.Accounts
         private string _domain;
         private bool _isLoggingIn;
 
-        public event EventHandler<Exception> LoginException;
-
-        protected virtual void OnLoginException(Exception e)
-        {
-            var handler = LoginException;
-            if (handler != null) handler(this, e);
-        }
-
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
@@ -77,9 +69,6 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         private async void Login()
         {
-            // Get the accounts service so we can do some special things
-            Exception exception = null;
-
             try
             {
                 IsLoggingIn = true;
@@ -89,15 +78,12 @@ namespace CodeBucket.Core.ViewModels.Accounts
             }
             catch (Exception e)
             {
-                exception = e;
+				DisplayException(e);
             }
             finally
             {
                 IsLoggingIn = false;
             }
-
-            if (exception != null)
-                OnLoginException(exception);
         }
 
         public class NavObject

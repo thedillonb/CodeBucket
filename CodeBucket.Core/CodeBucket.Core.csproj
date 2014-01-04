@@ -50,9 +50,7 @@
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
-    <Compile Include="Services\JsonSerializationService.cs" />
     <Compile Include="Services\LoginService.cs" />
-    <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Services\BitbucketAccountsService.cs" />
     <Compile Include="ViewModelsBk\IssuesController.cs" />
     <Compile Include="ViewModels\ChangesetViewModel.cs" />
@@ -104,6 +102,7 @@
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
+    <Compile Include="ViewModels\App\AboutVIewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">

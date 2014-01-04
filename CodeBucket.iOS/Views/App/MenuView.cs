@@ -31,7 +31,7 @@ namespace CodeBucket.iOS.Views.App
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
-			if (ViewModel.Account.Teams != null && !ViewModel.Account.DontShowTeamEvents)
+			if (ViewModel.Account.Teams != null && ViewModel.Account.ShowTeamEvents)
 				ViewModel.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), Images.Event)));
             root.Add(eventsSection);
 
@@ -54,18 +54,18 @@ namespace CodeBucket.iOS.Views.App
 			}
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations".t()) };
-			if (ViewModel.Account.DontExpandTeamsAndGroups)
-            {
-				groupsTeamsSection.Add(new MenuElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
-				groupsTeamsSection.Add(new MenuElement("Teams".t(), () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
-            }
-            else
-            {
+			if (ViewModel.Account.ExpandTeamsAndGroups)
+			{
 				if (ViewModel.Groups != null)
 					ViewModel.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), Images.Group)));
 				if (ViewModel.Teams != null)
 					ViewModel.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), Images.Team)));
-            }
+			}
+			else
+			{
+				groupsTeamsSection.Add(new MenuElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
+				groupsTeamsSection.Add(new MenuElement("Teams".t(), () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
+			}
 
             //There should be atleast 1 thing...
 			if (groupsTeamsSection.Elements.Count > 0)
@@ -74,7 +74,7 @@ namespace CodeBucket.iOS.Views.App
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
 			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
+			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;

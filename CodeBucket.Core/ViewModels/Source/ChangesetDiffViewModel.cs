@@ -11,9 +11,13 @@ namespace CodeBucket.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
-		private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
+		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
 		private ChangesetDiffModel _commitFileModel;
 		private string _actualFilename;
+
+		public string File1 { get; private set; }
+
+		public string File2 { get; private set; }
 
 		public string Username { get; private set; }
 
@@ -23,7 +27,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		public string Filename { get; private set; }
 
-		public CollectionViewModel<CommentModel> Comments
+		public CollectionViewModel<ChangesetCommentModel> Comments
 		{
 			get { return _comments; }
 		}
@@ -53,15 +57,65 @@ namespace CodeBucket.Core.ViewModels.Source
 				_commitFileModel = data.First(x => string.Equals(x.File, Filename));
 			}
 
-//			FilePath = CreatePlainContentFile(_commitFileModel, _actualFilename);
-//			await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation));
+			if (_commitFileModel.Type == "added" || _commitFileModel.Type == "modified")
+			{
+				var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename));
+				var mime = await Task.Run<string>(() =>
+				{
+					using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+					{
+						return this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source.GetFileRaw(Filename, stream);
+					}
+				});
+
+				var isText = mime.Contains("text");
+				if (!isText)
+				{
+					FilePath = filepath;
+					return;
+				}
+
+				File1 = filepath;
+			}
+
+			if (_commitFileModel.Type == "removed" || _commitFileModel.Type == "modified")
+			{
+				var changeset = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetInfo(forceCacheInvalidation));
+				if (changeset.Parents == null || changeset.Parents.Count == 0)
+					throw new Exception("Diff has no parent. Unable to generate view.");
+
+				var parent = changeset.Parents[0];
+				var filepath2 = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename) + ".parent");
+				var mime = await Task.Run<string>(() =>
+				{
+					using (var stream = new System.IO.FileStream(filepath2, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+					{
+						return this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[parent].Source.GetFileRaw(Filename, stream);
+					}
+				});
+
+				var isText = mime.Contains("text");
+				if (!isText)
+				{
+					FilePath = filepath2;
+					return;
+				}
+
+				File2 = filepath2;
+			}
+
+			if (File1 != null)
+				FilePath = File1;
+			else if (File2 != null)
+				FilePath = File2;
+
+			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
 		}
 
-		public async Task PostComment(string comment, int line)
+		public async Task PostComment(string comment, int? lineFrom, int? lineTo)
 		{
-//			var c = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(comment, Filename, line));
-//			Comments.Items.Add(c.Data);
-			throw new NotImplementedException();
+			var c = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.Create(comment, lineFrom, lineTo, filename: Filename));
+			Comments.Items.Add(c);
 		}
 
 		public class NavObject

@@ -16,7 +16,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public bool ShowRepositoryDescription
         {
-			get { return !this.GetApplication().Account.HideRepositoryDescriptionInList; }
+			get { return this.GetApplication().Account.RepositoryDescriptionInList; }
         }
 
 		public FilterableCollectionViewModel<RepositoryDetailedModel, RepositoriesFilterModel> Repositories

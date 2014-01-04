@@ -1,8 +1,9 @@
 using System;
 using MonoTouch.JavaScriptCore;
 using MonoTouch.Foundation;
+using CodeBucket.Core.Services;
 
-namespace CodeBucket.Core.Services
+namespace CodeBucket.iOS.Services
 {
 	public class MarkdownService : IMarkdownService
     {

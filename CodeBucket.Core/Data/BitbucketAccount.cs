@@ -13,28 +13,43 @@ namespace CodeBucket.Core.Data
 		/// <value>The password.</value>
         public string Password { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Account"/> dont remember.
-		/// THIS HAS TO BE A NEGATIVE STATEMENT SINCE IT DEFAULTS TO 'FALSE' WHEN RETRIEVING A NULL VIA SQLITE
-		/// </summary>
-		public bool DontRemember { get; set; }
-
         /// <summary>
         /// Gets or sets whether teams should be listed in the menu controller under 'events'
         /// </summary>
-        public bool DontShowTeamEvents { get; set; }
+		public bool DontShowTeamEvents { get; set; }
+
+		[Ignore]
+		public bool ShowTeamEvents
+		{
+			get { return !DontShowTeamEvents; }
+			set { DontShowTeamEvents = !value; }
+		}
 
         /// <summary>
         /// Gets or sets whether teams & groups should be expanded in the menu controller to their actual contents
         /// </summary>
-        public bool DontExpandTeamsAndGroups { get; set; }
+		public bool DontExpandTeamsAndGroups { get; set; }
+
+		[Ignore]
+		public bool ExpandTeamsAndGroups
+		{
+			get { return !DontExpandTeamsAndGroups; }
+			set { DontExpandTeamsAndGroups = !value; }
+		}
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="CodeBucket.Data.Account"/> hides the repository
         /// description in list.
         /// </summary>
         /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
-        public bool HideRepositoryDescriptionInList { get; set; }
+		public bool HideRepositoryDescriptionInList { get; set; }
+
+		[Ignore]
+		public bool RepositoryDescriptionInList
+		{
+			get { return !HideRepositoryDescriptionInList; }
+			set { HideRepositoryDescriptionInList = !value; }
+		}
 
         /// <summary>
         /// A transient list of the teams this account is a part of
@@ -60,9 +75,9 @@ namespace CodeBucket.Core.Data
 		public BitbucketAccount()
 		{
 			//Set some default values
-			DontRemember = false;
-            DontShowTeamEvents = false;
-            DontExpandTeamsAndGroups = false;
+			ShowTeamEvents = true;
+			ExpandTeamsAndGroups = true;
+			RepositoryDescriptionInList = true;
 		}
 
     }

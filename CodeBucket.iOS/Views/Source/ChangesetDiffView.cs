@@ -3,12 +3,12 @@ using CodeBucket.iOS.Views.Source;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Collections.Generic;
-using System.Linq;
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.Source;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Utils;
 using CodeFramework.Core.Services;
+using System.Text;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers
 {
@@ -28,25 +28,39 @@ namespace CodeBucket.ViewControllers
 		{
 			base.ViewDidLoad();
 
-
-			ViewModel.Bind(x => x.FilePath, x =>
+			ViewModel.Bind(x => x.IsLoading, x =>
 			{
-				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-				var patch = JavaScriptStringEncode(data);
-				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
+					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
+					{
+						var sb = new StringBuilder(2000);
+						sb.Append("a=\"");
+						if (ViewModel.File1 != null)
+							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
+						sb.Append("\";");
+						sb.Append("b=\"");
+						if (ViewModel.File2 != null)
+							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
+						sb.Append("\";");
+						sb.Append("diff(b,a);");
+						ExecuteJavascript(sb.ToString());
+					}
+					else if (ViewModel.FilePath != null)
+					{
+						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
+					}
 			});
 
-//			ViewModel.BindCollection(x => x.Comments, e =>
-//			{
-//				//Convert it to something light weight
-//				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
-//					Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
-//					Content = x.Body, Date = x.UpdatedAt
-//				}).ToList();
-//
-//				var c = _serializationService.Serialize(slimComments);
-//				ExecuteJavascript("var a = " + c + "; setComments(a);");
-//			});
+			ViewModel.BindCollection(x => x.Comments, e =>
+			{
+				//Convert it to something light weight
+				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new { 
+					Id = x.CommentId, User = x.Username, Avatar = x.UserAvatarUrl, LineTo = x.LineTo, LineFrom = x.LineFrom,
+					Content = x.ContentRendered, Date = x.UtcLastUpdated
+				}).ToList();
+
+				var c = _serializationService.Serialize(slimComments);
+				ExecuteJavascript("var a = " + c + "; setComments(a);");
+			});
 		}
 
 		private bool _isLoaded;
@@ -65,14 +79,14 @@ namespace CodeBucket.ViewControllers
 
         private class JavascriptCommentModel
         {
-            public int PatchLine { get; set; }
-            public int FileLine { get; set; }
+			public int? LineFrom { get; set; }
+			public int? LineTo { get; set; }
         }
 
         protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
             var url = request.Url;
-            if(url.Scheme.Equals("app")) {
+			if(url != null && url.Scheme.Equals("app")) {
                 var func = url.Host;
 
 				if (func.Equals("ready"))
@@ -103,8 +117,7 @@ namespace CodeBucket.ViewControllers
 
         private void PromptForComment(JavascriptCommentModel model)
         {
-            string title = string.Empty;
-            title = "Line ".t() + model.FileLine;
+			string title = "Line ".t() + (model.LineFrom ?? model.LineTo);
 
             var sheet = MonoTouch.Utilities.GetSheet(title);
             var addButton = sheet.AddButton("Add Comment".t());
@@ -113,19 +126,19 @@ namespace CodeBucket.ViewControllers
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += (sender, e) => {
                 if (e.ButtonIndex == addButton)
-                    ShowCommentComposer(model.PatchLine);
+					ShowCommentComposer(model.LineFrom, model.LineTo);
             };
 
             sheet.ShowInView(this.View);
         }
 
-        private void ShowCommentComposer(int line)
+		private void ShowCommentComposer(int? lineFrom, int? lineTo)
         {
             var composer = new Composer();
 			composer.NewComment(this, async (text) => {
 				try
 				{
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, line));
+					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, lineFrom, lineTo));
 					composer.CloseComposer();
 				}
 				catch (Exception e)

@@ -15,6 +15,8 @@ namespace CodeBucket.Core.ViewModels
 {
     public class ChangesetViewModel : LoadableViewModel
     {
+		private string _patch;
+
 		public string Node { get; private set; }
 
 		public string User { get; private set; }

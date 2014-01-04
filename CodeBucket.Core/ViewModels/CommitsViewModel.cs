@@ -26,7 +26,7 @@ namespace CodeBucket.Core.ViewModels
 
 		public ICommand GoToChangesetCommand
 		{
-			get { return new MvxCommand<ChangesetModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Node })); }
+			get { return new MvxCommand<ChangesetModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.RawNode })); }
 		}
 
 		public CollectionViewModel<ChangesetModel> Commits
