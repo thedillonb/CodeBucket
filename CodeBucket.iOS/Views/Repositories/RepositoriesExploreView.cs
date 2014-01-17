@@ -9,7 +9,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeBucket.iOS.Views.Repositories
 {
-    public sealed class RepositoriesExploreView : ViewModelCollectionDrivenViewController
+    public sealed class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
 		private Hud _hud;
 		public RepositoriesExploreView()
@@ -49,7 +49,7 @@ namespace CodeBucket.iOS.Views.Repositories
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
 				var imageUrl = new Uri(repo.Logo);
-					var sse = new RepositoryElement(repo.Name, (uint)repo.FollowersCount, (uint)repo.ForkCount, description, repo.Owner, imageUrl) { ShowOwner = true };
+					var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, imageUrl) { ShowOwner = true };
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });

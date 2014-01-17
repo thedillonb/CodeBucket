@@ -103,6 +103,7 @@
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
     <Compile Include="ViewModels\App\AboutVIewModel.cs" />
+    <Compile Include="Services\JsonSerializationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">

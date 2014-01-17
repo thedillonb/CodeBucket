@@ -10,7 +10,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeBucket.iOS.Views.PullRequests
 {
-    public class PullRequestView : ViewModelDrivenViewController
+	public class PullRequestView : ViewModelDrivenDialogViewController
     {
         private readonly HeaderView _header;
         private readonly SplitElement _split1;

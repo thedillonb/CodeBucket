@@ -9,7 +9,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeBucket.iOS.Views.Repositories
 {
-    public class RepositoryView : ViewModelDrivenViewController
+	public class RepositoryView : ViewModelDrivenDialogViewController
     {
 		private readonly HeaderView _header = new HeaderView();
 
@@ -66,7 +66,7 @@ namespace CodeBucket.iOS.Views.Repositories
                 // Show in Bitbucket
                 else if (e.ButtonIndex == showButton)
                 {
-					ViewModel.GoToUrlCommand.Execute(null);
+					ViewModel.GoToUrlCommand.Execute(ViewModel.HtmlUrl);
                 }
             };
 

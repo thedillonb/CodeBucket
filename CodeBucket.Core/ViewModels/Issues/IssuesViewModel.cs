@@ -20,6 +20,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
+		public int SelectedView
+		{
+			get; set;
+		}
+
 		protected FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
 		public FilterableCollectionViewModel<IssueModel, IssuesFilterModel> Issues
 		{
@@ -66,24 +71,23 @@ namespace CodeBucket.Core.ViewModels.Issues
 			});
 		}
 
+
+		public ICommand GoToIssueCommand
+		{
+			get 
+			{ 
+				return new MvxCommand<IssueModel>(x =>
+				{
+//					var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
+//					var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
 //
-//		public ICommand GoToIssueCommand
-//		{
-//			get 
-//			{ 
-//				return new MvxCommand<IssueModel>(x =>
-//					{
-//						var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
-//						var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-//						var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
-//
-//						if (isPullRequest)
-//							ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-//						else
-//							ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-//					});
-//			}
-//		}
+//					if (isPullRequest)
+//						ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
+//					else
+//						ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
+				});
+			}
+		}
 //
 //		protected List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
 //		{
@@ -112,6 +116,31 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         protected override Task Load(bool forceCacheInvalidation)
         {
+
+            LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();
+			var issuesFilter = Issues.Filter;
+			if (issuesFilter != null)
+            {
+				if (issuesFilter.Status != null && !issuesFilter.Status.IsDefault())
+					foreach (var a in FieldToUrl("status", issuesFilter.Status)) filter.AddLast(a);
+				if (issuesFilter.Kind != null && !issuesFilter.Kind.IsDefault())
+					foreach (var a in FieldToUrl("kind", issuesFilter.Kind)) filter.AddLast(a);
+				if (issuesFilter.Priority != null && !issuesFilter.Priority.IsDefault())
+					foreach (var a in FieldToUrl("priority", issuesFilter.Priority)) filter.AddLast(a);
+				if (!string.IsNullOrEmpty(issuesFilter.AssignedTo))
+                {
+					if (issuesFilter.AssignedTo.Equals("unassigned"))
+                        filter.AddLast(new Tuple<string, string>("responsible", ""));
+                    else
+						filter.AddLast(new Tuple<string, string>("responsible", issuesFilter.AssignedTo));
+                }
+				if (!string.IsNullOrEmpty(issuesFilter.ReportedBy))
+					filter.AddLast(new Tuple<string, string>("reported_by", issuesFilter.ReportedBy));
+
+				filter.AddLast(new Tuple<string, string>("sort", ((IssuesFilterModel.Order)issuesFilter.OrderBy).ToString().ToLower()));
+            }
+
+			return Issues.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetIssues(0, 50, filter).Issues);
 //            string direction = _issues.Filter.Ascending ? "asc" : "desc";
 //            string state = _issues.Filter.Open ? "open" : "closed";
 //            string sort = _issues.Filter.SortType == IssuesFilterModel.Sort.None ? null : _issues.Filter.SortType.ToString().ToLower();
@@ -124,7 +153,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 //			var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
 //                                                                                          assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
 //            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
-			throw new NotImplementedException();
+//			throw new NotImplementedException();
 
         }
 

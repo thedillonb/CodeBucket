@@ -4,7 +4,7 @@ using MonoTouch.Dialog;
 
 namespace CodeBucket.iOS.Views.User
 {
-    public class TeamsView : ViewModelCollectionDrivenViewController
+    public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {

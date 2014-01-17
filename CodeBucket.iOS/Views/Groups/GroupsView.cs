@@ -4,7 +4,7 @@ using MonoTouch.Dialog;
 
 namespace CodeBucket.iOS.Views.Groups
 {
-    public class GroupsView : ViewModelCollectionDrivenViewController
+    public class GroupsView : ViewModelCollectionDrivenDialogViewController
 	{
         public override void ViewDidLoad()
         {

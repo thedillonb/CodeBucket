@@ -8,7 +8,7 @@ using BitbucketSharp.Models;
 
 namespace CodeBucket.iOS.Views.Events
 {
-    public abstract class BaseEventsView : ViewModelCollectionDrivenViewController
+    public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
     {
         protected BaseEventsView()
         {

@@ -6,7 +6,7 @@
 //
 //namespace CodeBucket.iOS.Views.PullRequests
 //{
-//    public class PullRequestFilesView : ViewModelCollectionDrivenViewController
+//    public class PullRequestFilesView : ViewModelCollectionDrivenDialogViewController
 //    {
 //        public override void ViewDidLoad()
 //        {

@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +61,13 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseThumb>true</MtouchUseThumb>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+    <IpaPackageName>
+    </IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -169,9 +179,6 @@
     </Reference>
     <Reference Include="GoogleAnalytics.iOS">
       <HintPath>..\lib\CodeFramework\lib\iOS\GoogleAnalytics.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="UserVoice">
-      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
     </Reference>
     <Reference Include="MTiRate">
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
@@ -354,6 +361,10 @@
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\monotouch-uservoice\UserVoice\UserVoice.csproj">
+      <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
+      <Name>UserVoice</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

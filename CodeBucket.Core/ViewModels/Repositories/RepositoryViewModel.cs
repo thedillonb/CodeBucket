@@ -22,6 +22,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set; 
         }
 
+		public string HtmlUrl
+		{
+			get { return ("https://bitbucket.org/" + Username + "/" + RepositoryName).ToLower(); }
+		}
+
         public string RepositoryName 
         { 
             get; 
@@ -107,7 +112,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             else
 				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
         }
-
+		
         public ICommand PinCommand
         {
             get { return new MvxCommand(PinRepository, () => Repository != null); }

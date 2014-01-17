@@ -7,7 +7,7 @@
 //
 //namespace CodeBucket.iOS.Views.Issues
 //{
-//    public class IssueMilestonesView : ViewModelCollectionDrivenViewController
+//    public class IssueMilestonesView : ViewModelCollectionDrivenDialogViewController
 //    {
 //		public IssueMilestonesView()
 //		{

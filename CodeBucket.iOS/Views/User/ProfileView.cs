@@ -6,7 +6,7 @@ using MonoTouch.Dialog;
 
 namespace CodeBucket.iOS.Views.User
 {
-    public class ProfileView : ViewModelDrivenViewController
+	public class ProfileView : ViewModelDrivenDialogViewController
     {
 		public new ProfileViewModel ViewModel
 		{

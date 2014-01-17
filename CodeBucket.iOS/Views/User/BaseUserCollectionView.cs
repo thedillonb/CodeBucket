@@ -4,7 +4,7 @@ using CodeBucket.Core.ViewModels.User;
 
 namespace CodeBucket.iOS.Views.User
 {
-    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenViewController
+    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {

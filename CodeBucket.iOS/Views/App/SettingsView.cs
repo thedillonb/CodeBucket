@@ -6,7 +6,7 @@ using CodeBucket.Core.ViewModels.App;
 
 namespace CodeBucket.iOS.Views.App
 {
-	public class SettingsView : ViewModelDrivenViewController
+	public class SettingsView : ViewModelDrivenDialogViewController
     {
         public SettingsView()
         {

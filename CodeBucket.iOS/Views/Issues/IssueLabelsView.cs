@@ -7,7 +7,7 @@
 //
 //namespace CodeBucket.iOS.Views.Issues
 //{
-//    public class IssueLabelsView : ViewModelCollectionDrivenViewController
+//    public class IssueLabelsView : ViewModelCollectionDrivenDialogViewController
 //    {
 //		public IssueLabelsView()
 //		{

@@ -11,7 +11,7 @@ using CodeFramework.iOS.Elements;
 
 namespace CodeBucket.iOS.Views.Source
 {
-    public class ChangesetView : ViewModelDrivenViewController
+	public class ChangesetView : ViewModelDrivenDialogViewController
     {
         private readonly HeaderView _header = new HeaderView();
 		private readonly UISegmentedControl _viewSegment;
@@ -101,7 +101,7 @@ namespace CodeBucket.iOS.Views.Source
 					{
 						var y = x;
 						var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
-						var sse = new ChangesetElement(file, x.Type, (uint)x.Diffstat.Added, (uint)x.Diffstat.Removed);
+						var sse = new ChangesetElement(file, x.Type, x.Diffstat.Added, x.Diffstat.Removed);
 						sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
 						fileSection.Add(sse);
 					}
@@ -218,7 +218,7 @@ namespace CodeBucket.iOS.Views.Source
 //				}
 			};
 
-			sheet.ShowInView(this.View);
+			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
 		}
 
 		public override void ViewWillAppear(bool animated)

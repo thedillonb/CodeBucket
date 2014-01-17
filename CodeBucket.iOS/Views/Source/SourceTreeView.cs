@@ -6,7 +6,7 @@ using CodeBucket.iOS.Views.Filters;
 
 namespace CodeBucket.iOS.Views.Source
 {
-    public class SourceTreeView : ViewModelCollectionDrivenViewController
+    public class SourceTreeView : ViewModelCollectionDrivenDialogViewController
     {
         public new SourceTreeViewModel ViewModel
         {

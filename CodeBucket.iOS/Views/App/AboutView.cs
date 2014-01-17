@@ -6,7 +6,7 @@ using CodeFramework.iOS.ViewControllers;
 
 namespace CodeBucket.iOS.Views.App
 {
-	public class AboutView : ViewModelDrivenViewController
+	public class AboutView : ViewModelDrivenDialogViewController
     {
 		private const string About = "CodeBucket is the best way to browse and maintain your Bitbucket repositories on any iOS device! " +
 		                             "Keep an eye on your projects with the ability to view everything from followers to the individual file diffs in the latest change set. " +

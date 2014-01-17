@@ -4,7 +4,7 @@ using MonoTouch.Dialog;
 
 namespace CodeBucket.iOS.Views.Source
 {
-    public class ChangesetBranchesView : ViewModelCollectionDrivenViewController
+    public class ChangesetBranchesView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {

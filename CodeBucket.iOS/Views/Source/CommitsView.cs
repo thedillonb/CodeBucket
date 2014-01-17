@@ -5,7 +5,7 @@ using MonoTouch.Dialog;
 
 namespace CodeBucket.iOS.Views.Source
 {
-	public abstract class CommitsView : ViewModelCollectionDrivenViewController
+	public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
 	{
 		public override void ViewDidLoad()
 		{

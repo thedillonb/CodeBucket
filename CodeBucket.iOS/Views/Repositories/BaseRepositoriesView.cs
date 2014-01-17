@@ -8,7 +8,7 @@ using System;
 
 namespace CodeBucket.iOS.Views.Repositories
 {
-    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenViewController
+    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
     {
         public new RepositoriesViewModel ViewModel
         {  
@@ -34,7 +34,7 @@ namespace CodeBucket.iOS.Views.Repositories
 		protected Element CreateElement(RepositoryDetailedModel repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-			var sse = new RepositoryElement(repo.Name, (uint)repo.FollowersCount, (uint)repo.ForkCount, description, repo.Owner, new Uri(repo.LargeLogo(64))) { ShowOwner = ViewModel.ShowRepositoryOwner };
+			var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, new Uri(repo.LargeLogo(64))) { ShowOwner = ViewModel.ShowRepositoryOwner };
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

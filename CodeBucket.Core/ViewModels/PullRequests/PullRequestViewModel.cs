@@ -80,7 +80,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         public async Task AddComment(string text)
         {
 			var comment = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].AddComment(text));
-			//Comments.Items.Add(comment.Data);
+			//Comments.Items.Add(comment);
         }
 
         public async Task Merge()
