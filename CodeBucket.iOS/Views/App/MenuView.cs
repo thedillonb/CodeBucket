@@ -82,8 +82,17 @@ namespace CodeBucket.iOS.Views.App
 
         private void PresentUserVoice()
         {
-			var config = UserVoice.UVConfig.Create("http://codebucket.uservoice.com", "pnuDmPENErDiDpXrms1DTg", "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk");
-			UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
+			var config = new UserVoice.UVConfig() {
+				Key = "pnuDmPENErDiDpXrms1DTg",
+				Secret = "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk",
+				Site = "codebucket.uservoice.com",
+				ShowContactUs = true,
+				ShowForum = true,
+				ShowPostIdea = true,
+				ShowKnowledgeBase = true,
+			};
+			UserVoice.UserVoice.Initialize(config);
+			UserVoice.UserVoice.PresentUserVoiceInterfaceForParentViewController(this);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)

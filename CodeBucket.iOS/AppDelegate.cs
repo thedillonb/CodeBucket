@@ -38,25 +38,6 @@ namespace CodeBucket.iOS
 			UIApplication.Main(args, null, "AppDelegate");
 		}
 
-		private class UserVoiceStyleSheet : UserVoice.UVStyleSheet
-		{
-			public override UIColor NavigationBarTextColor
-			{
-				get
-				{
-					return UIColor.White;
-				}
-			}
-
-			public override UIColor NavigationBarTintColor
-			{
-				get
-				{
-					return UIColor.White;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Finished the launching.
 		/// </summary>
@@ -74,7 +55,8 @@ namespace CodeBucket.iOS
 			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
 			CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
 
-			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
+			UserVoice.UVStyleSheet.Instance.TintColor = UIColor.White;
+			UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
 
 			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(45,80,148);
 			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
