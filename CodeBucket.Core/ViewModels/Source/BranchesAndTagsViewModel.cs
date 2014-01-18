@@ -45,16 +45,13 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		private void GoToSource(ViewObject obj)
 		{
-			if (obj.Object is BranchModel)
-			{
-				var x = obj.Object as BranchModel;
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node });
-			}
-			else if (obj.Object is TagModel)
-			{
-				var x = obj.Object as TagModel;
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node });
-			}
+			var branch = obj.Object as BranchModel;
+			var tag = obj.Object as TagModel;
+
+			if (branch != null)
+				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = branch.Node });
+			else if (tag != null)
+				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = tag.Node });
 		}
 
 		public BranchesAndTagsViewModel()
@@ -84,7 +81,7 @@ namespace CodeBucket.Core.ViewModels.Source
 				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags(forceCacheInvalidation), response => 
 				{
 						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-						Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x }));
+						Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x.Value }));
 				});
 			}
 		}
