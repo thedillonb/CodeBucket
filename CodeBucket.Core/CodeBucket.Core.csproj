@@ -103,7 +103,6 @@
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
     <Compile Include="ViewModels\App\AboutVIewModel.cs" />
-    <Compile Include="Services\JsonSerializationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -130,6 +129,7 @@
     <Folder Include="Messages\" />
     <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="Markdown\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -149,5 +149,9 @@
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core.iOS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Markdown\markdown.html" />
+    <Content Include="Markdown\marked.js" />
   </ItemGroup>
 </Project>

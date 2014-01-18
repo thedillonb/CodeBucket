@@ -336,6 +336,7 @@
     <Folder Include="Images\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="Services\" />
+    <Folder Include="WebCell\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
@@ -366,5 +367,9 @@
       <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
       <Name>UserVoice</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WebCell\body.html" />
+    <Content Include="WebCell\comments.html" />
   </ItemGroup>
 </Project>

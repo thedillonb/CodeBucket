@@ -10,7 +10,7 @@ namespace CodeBucket.Core.Filters
         public StatusModel Status { get; set; }
         public KindModel Kind { get; set; }
         public PriorityModel Priority { get; set; }
-        public int OrderBy { get; set; }
+		public Order OrderBy { get; set; }
 
         public IssuesFilterModel()
         {
@@ -68,7 +68,7 @@ namespace CodeBucket.Core.Filters
             return t;
         }
 
-        public enum Order : int
+        public enum Order
         { 
             [EnumDescription("Number")]
             Local_Id, 

@@ -50,6 +50,7 @@ namespace CodeBucket.iOS
 			iRate.AppStoreID = 551531422;
 
 			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+
 			UINavigationBar.Appearance.TintColor = UIColor.White;
 			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(45,80,148);
 			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
@@ -80,7 +81,7 @@ namespace CodeBucket.iOS
 			var setup = new Setup(this, presenter);
 			setup.Initialize();
 
-			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-44040302-1", "CodeHub");
+			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-42879084-1", "CodeBucket");
 
 			var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();

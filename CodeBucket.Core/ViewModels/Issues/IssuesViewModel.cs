@@ -9,6 +9,7 @@ using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System;
+using CodeFramework.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -20,17 +21,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
-		public int SelectedView
-		{
-			get; set;
-		}
 
 		protected FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
 		public FilterableCollectionViewModel<IssueModel, IssuesFilterModel> Issues
 		{
 			get { return _issues; }
 		}
-
 
 		public ICommand GoToNewIssueCommand
 		{
@@ -42,7 +38,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			Username = nav.Username;
 			Repository = nav.Repository;
 			_issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
-			//_issues.GroupingFunction = Group;
+			_issues.GroupingFunction = Group;
 			_issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
 
 			_addToken = Messenger.SubscribeOnMainThread<IssueAddMessage>(x =>
@@ -76,43 +72,46 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			get 
 			{ 
-				return new MvxCommand<IssueModel>(x =>
-				{
-//					var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-//					var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
-//
-//					if (isPullRequest)
-//						ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-//					else
-//						ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-				});
+				return new MvxCommand<IssueModel>(x => ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = Username, Repository = Repository, Id = x.LocalId }));
 			}
 		}
-//
-//		protected List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
-//		{
-//			var order = Issues.Filter.SortType;
-//			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Comments)
-//			{
-//				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
-//				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Comments)).ToList();
-//				return FilterGroup.CreateNumberedGroup(g, "Comments");
-//			}
-//			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Updated)
-//			{
-//				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
-//				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
-//				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
-//			}
-//			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Created)
-//			{
-//				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
-//				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
-//				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
-//			}
-//
-//			return null;
-//		}
+
+		protected List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
+		{
+			var order = Issues.Filter.OrderBy;
+			if (order == IssuesFilterModel.Order.Status)
+			{
+				return model.GroupBy(x => x.Status).ToList();
+			}
+			if (order == IssuesFilterModel.Order.Component)
+			{
+				return model.GroupBy(x => x.Metadata != null ? x.Metadata.Component : "N/A").ToList();
+			}
+			if (order == IssuesFilterModel.Order.Milestone)
+			{
+				return model.GroupBy(x => x.Metadata != null ? x.Metadata.Milestone : "N/A").ToList();
+			}
+			if (order == IssuesFilterModel.Order.Version)
+			{
+				return model.GroupBy(x => x.Metadata != null ? x.Metadata.Version : "N/A").ToList();
+			}
+			if (order == IssuesFilterModel.Order.Utc_Last_Updated)
+			{
+				var g = model.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
+			}
+			if (order == IssuesFilterModel.Order.Created_On)
+			{
+				var g = model.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
+			}
+			if (order == IssuesFilterModel.Order.Priority)
+			{
+				return model.GroupBy(x => x.Priority).ToList();
+			}
+
+			return null;
+		}
 
         protected override Task Load(bool forceCacheInvalidation)
         {
@@ -141,19 +140,6 @@ namespace CodeBucket.Core.ViewModels.Issues
             }
 
 			return Issues.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetIssues(0, 50, filter).Issues);
-//            string direction = _issues.Filter.Ascending ? "asc" : "desc";
-//            string state = _issues.Filter.Open ? "open" : "closed";
-//            string sort = _issues.Filter.SortType == IssuesFilterModel.Sort.None ? null : _issues.Filter.SortType.ToString().ToLower();
-//            string labels = string.IsNullOrEmpty(_issues.Filter.Labels) ? null : _issues.Filter.Labels;
-//            string assignee = string.IsNullOrEmpty(_issues.Filter.Assignee) ? null : _issues.Filter.Assignee;
-//            string creator = string.IsNullOrEmpty(_issues.Filter.Creator) ? null : _issues.Filter.Creator;
-//            string mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
-//            string milestone = _issues.Filter.Milestone == null ? null : _issues.Filter.Milestone.Value;
-//
-//			var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
-//                                                                                          assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
-//            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
-//			throw new NotImplementedException();
 
         }
 

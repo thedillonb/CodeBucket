@@ -126,5 +126,20 @@ namespace CodeBucket.iOS
 				return UIColor.Black;
 			}
 		}
+
+		public UIColor PrimaryNavigationBarTintColor
+		{
+			get { return UIColor.White; }
+		}
+
+		public UIColor PrimaryNavigationBarBarTintColor
+		{
+			get { return UIColor.FromRGB(45, 80, 148); }
+		}
+
+		public UITextAttributes PrimaryNavigationBarTextAttributes
+		{
+			get { return new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) }; }
+		}
 	}
 }
