@@ -122,7 +122,7 @@ namespace CodeBucket.iOS.Views.App
 			}
 
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new CodeBucket.Core.Utils.RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
+				: base(pinnedRepo.Name, () => command.Execute(new CodeBucket.Core.Utils.RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.Repo)
 			{
 				PinnedRepo = pinnedRepo;
 				ImageUri = new System.Uri(PinnedRepo.ImageUri);

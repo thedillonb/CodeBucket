@@ -150,6 +150,7 @@
     <Compile Include="Views\Groups\GroupView.cs" />
     <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Services\MarkdownService.cs" />
+    <Compile Include="Views\Issues\IssueModifyView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

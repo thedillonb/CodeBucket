@@ -59,7 +59,7 @@ namespace CodeBucket.Core.ViewModels
 
         public ICommand GoToRepositoryCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, Repository = Repository })); }
+            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, RepositorySlug = Repository })); }
         }
 
 		public ICommand GoToFileCommand

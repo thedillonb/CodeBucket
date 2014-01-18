@@ -55,7 +55,7 @@ namespace CodeBucket.iOS.Views.Issues
 
 		public void RenderComments()
 		{
-			var comments = ViewModel.Comments.Select(x => new { 
+			var comments = ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content)).Select(x => new { 
 				avatarUrl = x.AuthorInfo.Avatar, 
 				login = x.AuthorInfo.Username, 
 				updated_at = x.UtcCreatedOn.ToDaysAgo(), 
@@ -92,16 +92,16 @@ namespace CodeBucket.iOS.Views.Issues
 				secDetails.Add(_descriptionElement);
 			}
 
-//			var milestone = ViewModel.Issue.Milestone;
-//			var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
-//			var milestoneElement = new StyledStringElement("Milestone", milestoneStr, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-//			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
-//
-//			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t(), UITableViewCellStyle.Value1) {
-//				Image = Images.Person,
-//				Accessory = UITableViewCellAccessory.DisclosureIndicator
-//			};
-//			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
+			string milestone = ViewModel.Issue.Metadata != null ? ViewModel.Issue.Metadata.Milestone : null;
+			var milestoneStr = milestone ?? "No Milestone";
+			var milestoneElement = new StyledStringElement("Milestone", milestoneStr, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
+
+			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned".t(), UITableViewCellStyle.Value1) {
+				Image = Images.Person,
+				Accessory = UITableViewCellAccessory.DisclosureIndicator
+			};
+			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
 //
 //
 //			var labels = ViewModel.Issue.Labels.Count == 0 ? "None" : string.Join(", ", ViewModel.Issue.Labels.Select(i => i.Name));
@@ -111,8 +111,8 @@ namespace CodeBucket.iOS.Views.Issues
 //			};
 //			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
 //
-//			secDetails.Add(assigneeElement);
-//			secDetails.Add(milestoneElement);
+			secDetails.Add(assigneeElement);
+			secDetails.Add(milestoneElement);
 //			secDetails.Add(labelsElement);
 			root.Add(secDetails);
 

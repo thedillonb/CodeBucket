@@ -28,7 +28,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public ICommand GoToRepositoryCommand
         {
-			get { return new MvxCommand<RepositoryDetailedModel>(x => this.ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name })); }
+			get { return new MvxCommand<RepositoryDetailedModel>(x => this.ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }
         }
 
         protected RepositoriesViewModel(string filterKey = "RepositoryController")

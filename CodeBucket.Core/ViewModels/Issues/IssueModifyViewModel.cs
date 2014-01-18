@@ -86,17 +86,17 @@ namespace CodeBucket.Core.ViewModels.Issues
 //			}
 //		}
 //
-//		public ICommand GoToMilestonesCommand
-//		{
-//			get 
-//			{ 
-//				return new MvxCommand(() => {
-//					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Milestone);
-//					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
-//				});
-//			}
-//		}
-//
+		public ICommand GoToMilestonesCommand
+		{
+			get 
+			{ 
+				return new MvxCommand(() => {
+					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Milestone);
+					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
+				});
+			}
+		}
+
 		public ICommand GoToAssigneeCommand
 		{
 			get 

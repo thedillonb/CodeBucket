@@ -33,13 +33,7 @@ namespace CodeBucket.iOS.Views.Repositories
                 Render(x);
             });
         }
-
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-			Title = _header.Title = ViewModel.RepositoryName;
-		}
-
+		
         private void ShowExtraMenu()
         {
             var repoModel = ViewModel.Repository;
@@ -97,8 +91,9 @@ namespace CodeBucket.iOS.Views.Repositories
 
 		public void Render(RepositoryDetailedModel model)
         {
-            Title = model.Name;
+			Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
+			_header.Title = Title;
 			_header.Subtitle = "Updated ".t() + (model.UtcLastUpdated).ToDaysAgo();
 			_header.ImageUri = ViewModel.ImageUrl;
 

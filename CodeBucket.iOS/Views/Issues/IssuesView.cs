@@ -33,6 +33,9 @@ namespace CodeBucket.iOS.Views.Issues
 		{
 			var assigned = x.Responsible != null ? x.Responsible.Username : "unassigned";
 			var kind = x.Metadata.Kind;
+			if (kind == "enhancement")
+				kind = "enhance";
+
 			var commentString = x.CommentCount == 1 ? "1 comment".t() : x.CommentCount + " comments".t();
 			var el = new IssueElement(x.LocalId.ToString(), x.Title, assigned, x.Status, commentString, kind, x.UtcLastUpdated);
 			el.Tag = x;

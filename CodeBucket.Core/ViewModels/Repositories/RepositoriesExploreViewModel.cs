@@ -42,7 +42,7 @@ namespace CodeBucket.Core.ViewModels
 
 		public ICommand GoToRepositoryCommand
 		{
-			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name })); }
+			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }
 		}
 
         public ICommand SearchCommand

@@ -7,6 +7,7 @@ using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
+using CodeFramework.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -56,6 +57,19 @@ namespace CodeBucket.Core.ViewModels.Issues
 		public ICommand GoToAssigneeCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null); }
+		}
+
+
+		public ICommand GoToMilestoneCommand
+		{
+			get 
+			{ 
+				return new MvxCommand(() => {
+					if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
+						GetService<IViewModelTxService>().Add(new MilestoneModel { Name = Issue.Metadata.Milestone });
+					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+				}); 
+			}
 		}
 
 		public ICommand GoToEditCommand

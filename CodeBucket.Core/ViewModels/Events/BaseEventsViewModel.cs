@@ -112,7 +112,7 @@ namespace CodeBucket.Core.ViewModels.Events
             ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
             {
 				Username = eventModel.Owner,
-				Repository = eventModel.Name
+				RepositorySlug = eventModel.Slug
             });
         }
 

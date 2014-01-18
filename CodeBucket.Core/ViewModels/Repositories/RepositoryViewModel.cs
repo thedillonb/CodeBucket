@@ -16,22 +16,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
 		private RepositoryDetailedModel _repository;
         private List<BranchModel> _branches;
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+		public string Username { get; private set; }
 
 		public string HtmlUrl
 		{
-			get { return ("https://bitbucket.org/" + Username + "/" + RepositoryName).ToLower(); }
+			get { return ("https://bitbucket.org/" + Username + "/" + RepositorySlug).ToLower(); }
 		}
 
-        public string RepositoryName 
-        { 
-            get; 
-            private set; 
-        }
+		public string RepositorySlug { get; private set; }
 
 		public string ImageUrl
 		{
@@ -62,7 +54,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
-            RepositoryName = navObject.Repository;
+			RepositorySlug = navObject.RepositorySlug;
         }
 
 		public ICommand GoToOwnerCommand
@@ -72,27 +64,27 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand GoToForkParentCommand
 		{
-			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name })); }
+			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }
 		}
 
 		public ICommand GoToStargazersCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<WatchersViewModel>(new WatchersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<WatchersViewModel>(new WatchersViewModel.NavObject { User = Username, Repository = RepositorySlug })); }
 		}
 
 		public ICommand GoToEventsCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
 		public ICommand GoToIssuesCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
 		public ICommand GoToPullRequestsCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
         public ICommand GoToCommitsCommand
@@ -102,15 +94,15 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand GoToSourceCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
         private void ShowCommits()
         {
             if (Branches != null && Branches.Count == 1)
-                ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositoryName});
+                ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositorySlug});
             else
-				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
+				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
         }
 		
         public ICommand PinCommand
@@ -121,10 +113,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
         private void PinRepository()
         {
             var repoOwner = Repository.Owner;
-            var repoName = Repository.Name;
+			var repoName = Repository.Name;
 
             //Is it pinned already or not?
-			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
+			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, Repository.Slug);
             if (pinnedRepo == null)
 				this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, ImageUrl);
             else
@@ -134,9 +126,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetInfo(forceCacheInvalidation), response => Repository = response);
+			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetInfo(forceCacheInvalidation), response => Repository = response);
 
-			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Branches.GetBranches(forceCacheInvalidation), 
+			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
 				response => Branches = response.Values.ToList()).FireAndForget();
 //
 //			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
@@ -150,7 +142,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public bool IsPinned
         {
-			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
+			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositorySlug) != null; }
         }
 
 		public ICommand ForkCommand
@@ -163,7 +155,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			try
 			{
 				var fork = await Task.Run(() => this.GetApplication().Client.Users[Repository.Owner].Repositories[Repository.Name].ForkRepository(name));
-				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, Repository = fork.Name });
+				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
 			}
 			catch (Exception e)
 			{
@@ -174,7 +166,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public class NavObject
         {
             public string Username { get; set; }
-            public string Repository { get; set; }
+            public string RepositorySlug { get; set; }
         }
     }
 }
