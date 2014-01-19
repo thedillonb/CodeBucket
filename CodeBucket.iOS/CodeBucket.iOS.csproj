@@ -151,6 +151,10 @@
     <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Views\Issues\IssueModifyView.cs" />
+    <Compile Include="Views\Wiki\WikiView.cs" />
+    <Compile Include="Views\Issues\IssueAttributesView.cs" />
+    <Compile Include="Views\Issues\IssueVersionsView.cs" />
+    <Compile Include="Views\Issues\IssueComponentsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -208,10 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\Icon%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ITunesArtwork Include="Resources\iTunesArtwork.png" />
-    <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\iTunesArtwork%402x.png" />
@@ -319,17 +319,26 @@
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
     <BundleResource Include="Resources\Default-Portrait.png" />
-    <BundleResource Include="Resources\Default-Portrait%402x.png" />
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
     <BundleResource Include="Resources\Default.png" />
-    <BundleResource Include="Resources\Default%402x.png" />
-    <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
     <BundleResource Include="Images\cancel.png" />
     <BundleResource Include="Images\accept.png" />
     <BundleResource Include="Images\cancel%402x.png" />
     <BundleResource Include="Images\accept%402x.png" />
+    <BundleResource Include="Images\sitemap_color%402x.png" />
+    <BundleResource Include="Images\sitemap_color.png" />
+    <BundleResource Include="Images\server_components%402x.png" />
+    <BundleResource Include="Images\server_components.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Icon-60%402x.png" />
+    <BundleResource Include="Resources\Icon-76.png" />
+    <BundleResource Include="Resources\Icon-76%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-40.png" />
+    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -338,6 +347,7 @@
     <Folder Include="Images\Logos\" />
     <Folder Include="Services\" />
     <Folder Include="WebCell\" />
+    <Folder Include="Views\Wiki\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
@@ -372,5 +382,9 @@
   <ItemGroup>
     <Content Include="WebCell\body.html" />
     <Content Include="WebCell\comments.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
 </Project>

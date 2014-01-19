@@ -8,12 +8,13 @@ using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
 using CodeFramework.Core.Services;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueViewModel : LoadableViewModel
     {
-		private MvxSubscriptionToken _editToken;
+        private MvxSubscriptionToken _editToken, _deleteToken;
 
 		public int Id 
         { 
@@ -39,7 +40,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			{
 				if (Issue == null)
 					return string.Empty;
-				return (GetService<IMarkdownService>().Convert(Issue.Content));
+				return (GetService<IMarkdownService>().ConvertMarkdown(Issue.Content));
 			}
 		}
 
@@ -66,7 +67,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			{ 
 				return new MvxCommand(() => {
 					if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
-						GetService<IViewModelTxService>().Add(new MilestoneModel { Name = Issue.Metadata.Milestone });
+						GetService<IViewModelTxService>().Add(new VersionModel { Name = Issue.Metadata.Milestone });
 					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
 				}); 
 			}
@@ -77,7 +78,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Issue);
+					GetService<IViewModelTxService>().Add(Issue);
 					ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
 				}, () => Issue != null); 
 			}
@@ -107,7 +108,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string ConvertToMarkdown(string str)
         {
-			return (GetService<IMarkdownService>().Convert(str));
+			return (GetService<IMarkdownService>().ConvertMarkdown(str));
         }
 
         public void Init(NavObject navObject)
@@ -115,13 +116,16 @@ namespace CodeBucket.Core.ViewModels.Issues
             Username = navObject.Username;
             Repository = navObject.Repository;
             Id = navObject.Id;
+			Comments.SortingFunction = x => x.OrderBy(y => y.UtcCreatedOn);
 
 			_editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
 			{
-					if (x.Issue == null || x.Issue.LocalId != Issue.LocalId)
+                if (x.Issue == null || x.Issue.LocalId != Issue.LocalId)
 					return;
 				Issue = x.Issue;
 			});
+
+            _deleteToken = Messenger.SubscribeOnMainThread<IssueDeleteMessage>(x => ChangePresentation(new MvxClosePresentationHint(this)));
         }
 
         public async Task AddComment(string text)

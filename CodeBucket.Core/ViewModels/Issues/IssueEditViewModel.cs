@@ -1,100 +1,117 @@
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
+using System;
+using Cirrious.MvvmCross.ViewModels;
+using CodeBucket.Core.Messages;
+using System.Windows.Input;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssueEditViewModel : IssueModifyViewModel
     {
-		private IssueModel _issue;
-		private bool _open;
+        private string _status;
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                RaisePropertyChanged(() => Status);
+            }
+        }
 
-		public bool IsOpen
-		{
-			get { return _open; }
-			set
-			{
-				_open = value;
-				RaisePropertyChanged(() => IsOpen);
-			}
-		}
-
+        private IssueModel _issue;
 		public IssueModel Issue
 		{
 			get { return _issue; }
 			set {
 				_issue = value;
 				RaisePropertyChanged(() => Issue);
+
+				AssignedTo = _issue.Responsible;
+				Title = _issue.Title;
+				Content = _issue.Content;
+				Status = _issue.Status;
+				Priority = _issue.Priority;
+				Kind = _issue.Metadata.Kind;
+				Milestone = _issue.Metadata.Milestone;
+				Component = _issue.Metadata.Component;
+				Version = _issue.Metadata.Version;
 			}
 		}
 
 		public int Id { get; private set; }
 
+        public ICommand DeleteCommand
+        {
+            get { return new MvxCommand(() => Delete()); }
+        }
+
 		protected override async Task Save()
 		{
-//			try
-//			{
-//				if (string.IsNullOrEmpty(Title))
-//					throw new Exception("Issue must have a title!");
-//
-//				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-//				uint? milestone = null;
-//				if (Milestone != null) 
-//					milestone = Milestone.Number;
-//				string[] labels = Labels.Items.Select(x => x.Name).ToArray();
-//				var content = Content ?? string.Empty;
-//				var state = IsOpen ? "open" : "closed";
-//
-//				IsSaving = true;
-//				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels)); 
-//				Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
-//				ChangePresentation(new MvxClosePresentationHint(this));
-//			}
-//			catch (Exception e)
-//			{
-//				ReportError(e);
-//			}
-//			finally
-//			{
-//				IsSaving = false;
-//			}
+            try
+            {
+                if (string.IsNullOrEmpty(Title))
+                    throw new Exception("Issue must have a title!");
 
-//			//There is a wierd bug in GitHub when editing an existing issue and the assignedTo is null
-//			catch (GitHubSharp.InternalServerException)
-//			{
-//				if (ExistingIssue != null && assignedTo == null)
-//					tryEditAgain = true;
-//				else
-//					throw;
-//			}
-//
-//			if (tryEditAgain)
-//			{
-//				var response = await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.Number].Update(title, content, state, assignedTo, milestone, labels)); 
-//				model = response.Data;
-//			}
+                var createIssueModel = new CreateIssueModel 
+                { 
+                    Title = Title, 
+                    Content = Content ?? string.Empty, 
+                    Responsible = AssignedTo != null ? AssignedTo.Username : null,
+                    Milestone = Milestone ?? string.Empty,
+                    Component = Component ?? string.Empty,
+                    Version = Version ?? string.Empty,
+                    Kind = Kind.ToLower(),
+                    Status = Status.ToLower(),
+                    Priority = Priority.ToLower(),
+                };
+
+                IsSaving = true;
+                var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Update(createIssueModel));
+                Messenger.Publish(new IssueEditMessage(this) { Issue = data });
+                ChangePresentation(new MvxClosePresentationHint(this));
+            }
+            catch (Exception e)
+            {
+                ReportError(e);
+            }
+            finally
+            {
+                IsSaving = false;
+            }
 		}
 
-//		protected override Task Load(bool forceCacheInvalidation)
-//		{
-//			if (forceCacheInvalidation || Issue == null)
-//				return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data));
-//			return Task.Delay(0);
-//		}
+        private async Task Delete()
+        {
+            try
+            {
+                IsSaving = true;
+                await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Delete());
+                Messenger.Publish(new IssueDeleteMessage(this) { Issue = Issue });
+            }
+            catch (Exception e)
+            {
+                ReportError(e);
+            }
+            finally
+            {
+                IsSaving = false;
+            }
+        }
+
+		protected override Task Load(bool forceCacheInvalidation)
+		{
+			if (forceCacheInvalidation || Issue == null)
+				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
+			return Task.FromResult(false);
+		}
 
 		public void Init(NavObject navObject)
 		{
 			base.Init(navObject.Username, navObject.Repository);
 			Id = navObject.Id;
 			Issue = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IssueModel;
-//			if (Issue != null)
-//			{
-//				Title = Issue.Title;
-//				AssignedTo = Issue.Assignee;
-//				Milestone = Issue.Milestone;
-//				Labels.Items.Reset(Issue.Labels);
-//				Content = Issue.Body;
-//				IsOpen = string.Equals(Issue.State, "open");
-//			}
 		}
 
 		public class NavObject

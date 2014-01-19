@@ -71,7 +71,6 @@
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssignedToViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
@@ -102,6 +101,12 @@
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
     <Compile Include="ViewModels\App\AboutVIewModel.cs" />
     <Compile Include="ViewModels\Wiki\WikiViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAttributesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueVersionsViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueComponentsViewModel.cs" />
+    <Compile Include="Messages\SelectedComponentMessage.cs" />
+    <Compile Include="Messages\SelectedVersionMessage.cs" />
+    <Compile Include="Messages\IssueDeleteMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -153,5 +158,7 @@
   <ItemGroup>
     <Content Include="Markdown\markdown.html" />
     <Content Include="Markdown\marked.js" />
+    <Content Include="Markdown\textile.js" />
+    <Content Include="Markdown\creole.js" />
   </ItemGroup>
 </Project>

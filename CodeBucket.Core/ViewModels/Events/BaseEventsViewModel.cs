@@ -82,7 +82,7 @@ namespace CodeBucket.Core.ViewModels.Events
 
         private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
         {
-			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x)));
+			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x))).Where(x => x.Item2 != null);
         }
 
 
@@ -316,7 +316,7 @@ namespace CodeBucket.Core.ViewModels.Events
 				}
 			}
 			else if (eventModel.Event == EventModel.Type.PullRequestCreated || eventModel.Event == EventModel.Type.PullRequestRejected || eventModel.Event == EventModel.Type.PullRequestSuperseded ||
-				eventModel.Event == EventModel.Type.PullRequestUpdated || eventModel.Event == EventModel.Type.PullRequestFulfilled || eventModel.Event == EventModel.Type.PullRequestLike || eventModel.Event == EventModel.Type.PullRequestUnlike)
+			         eventModel.Event == EventModel.Type.PullRequestUpdated || eventModel.Event == EventModel.Type.PullRequestFulfilled || eventModel.Event == EventModel.Type.PullRequestLike || eventModel.Event == EventModel.Type.PullRequestUnlike)
 			{
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
 
@@ -341,8 +341,6 @@ namespace CodeBucket.Core.ViewModels.Events
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
 				}
 			}
-
-
 			else if (eventModel.Event == EventModel.Type.PullRequestCommentCreated || eventModel.Event == EventModel.Type.PullRequestCommentUpdated || eventModel.Event == EventModel.Type.PullRequestCommentDeleted)
 			{
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
@@ -493,6 +491,11 @@ namespace CodeBucket.Core.ViewModels.Events
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
 				else
 					eventBlock.Header.Add(new TextBlock("this repository"));
+			}
+			else
+			{
+				System.Diagnostics.Debug.WriteLine("No such event handler for " + eventModel.Event);
+				return null;
 			}
 
 			return eventBlock;

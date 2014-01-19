@@ -116,7 +116,7 @@ namespace CodeBucket.iOS.Views.Repositories
             sec1.Add(new SplitElement(new SplitElement.Row {
 				Text1 = model.IsPrivate ? "Private".t() : "Public".t(),
 				Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
-                Text2 = model.Language,
+				Text2 = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language,
                 Image2 = Images.Language
             }));
 
@@ -131,12 +131,12 @@ namespace CodeBucket.iOS.Views.Repositories
                 size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
 //
 //            sec1.Add(new SplitElement(new SplitElement.Row {
-//                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue".t() : " Issues".t()),
+//				Text1 = model + (model.HasIssues == 1 ? " Issue".t() : " Issues".t()),
 //                Image1 = Images.Flag,
 //				Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork".t() : " Forks".t()),
 //                Image2 = Images.Fork
 //            }));
-
+//
             sec1.Add(new SplitElement(new SplitElement.Row {
 				Text1 = (model.UtcCreatedOn).ToString("MM/dd/yy"),
                 Image1 = Images.Create,
@@ -147,13 +147,13 @@ namespace CodeBucket.iOS.Views.Repositories
             var owner = new StyledStringElement("Owner".t(), model.Owner) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
             sec1.Add(owner);
-//
-//            if (model.Parent != null)
-//            {
-//				var parent = new StyledStringElement("Forked From".t(), model.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-//				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
-//                sec1.Add(parent);
-//            }
+
+			if (model.ForkOf != null)
+            {
+				var parent = new StyledStringElement("Forked From".t(), model.ForkOf.Name) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.ForkOf);
+                sec1.Add(parent);
+            }
 
 			var followers = new StyledStringElement("Watchers".t(), "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
@@ -161,6 +161,9 @@ namespace CodeBucket.iOS.Views.Repositories
 
 			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
             var sec2 = new Section { events };
+
+			if (model.HasWiki)
+				sec2.Add(new StyledStringElement("Wiki".t(), () => ViewModel.GoToWikiCommand.Execute(null), Images.Pencil));
 
             if (model.HasIssues)
 				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));

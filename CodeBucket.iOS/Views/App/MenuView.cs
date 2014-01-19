@@ -31,8 +31,8 @@ namespace CodeBucket.iOS.Views.App
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
-			if (ViewModel.Account.Teams != null && ViewModel.Account.ShowTeamEvents)
-				ViewModel.Account.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), Images.Event)));
+			if (ViewModel.Teams != null && ViewModel.Account.ShowTeamEvents)
+				ViewModel.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), Images.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };

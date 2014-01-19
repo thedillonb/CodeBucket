@@ -15,7 +15,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssuesViewModel : LoadableViewModel
     {
-		private MvxSubscriptionToken _addToken, _editToken;
+        private MvxSubscriptionToken _addToken, _editToken, _deleteToken;
 
         public string Username { get; private set; }
 
@@ -65,6 +65,13 @@ namespace CodeBucket.Core.ViewModels.Issues
 					Issues.Items.Insert(index, x.Issue);
 				}
 			});
+
+            _deleteToken = Messenger.SubscribeOnMainThread<IssueDeleteMessage>(x =>
+            {
+                var find = Issues.Items.FirstOrDefault(i => i.LocalId == x.Issue.LocalId);
+                if (find != null)
+                    Issues.Items.Remove(find);
+            });
 		}
 
 

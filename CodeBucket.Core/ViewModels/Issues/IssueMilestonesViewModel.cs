@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Messages;
-using System.Linq;
 using System;
 using BitbucketSharp.Models;
 
@@ -9,8 +8,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssueMilestonesViewModel : LoadableViewModel
 	{
-		private MilestoneModel _selectedMilestone;
-		public MilestoneModel SelectedMilestone
+		private string _selectedMilestone;
+		public string SelectedMilestone
 		{
 			get
 			{
@@ -53,20 +52,20 @@ namespace CodeBucket.Core.ViewModels.Issues
 			Repository = navObject.Repository;
 			Id = navObject.Id;
 			SaveOnSelect = navObject.SaveOnSelect;
-			var issue = TxSevice.Get() as MilestoneModel;
+			var issue = TxSevice.Get() as string;
 			SelectedMilestone = issue;
 
 			this.Bind(x => x.SelectedMilestone, x => SelectMilestone(x));
 		}
 
-		private async Task SelectMilestone(MilestoneModel x)
+		private async Task SelectMilestone(string x)
 		{
 			if (SaveOnSelect)
 			{
 				try
 				{
 					IsSaving = true;
-					var newIssue = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(x != null ? x.Name : null));
+					var newIssue = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(x));
 					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
 				}
 				catch (Exception e)
@@ -80,7 +79,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			}
 			else
 			{
-				Messenger.Publish(new SelectedMilestoneMessage(this) { Milestone = x });
+                Messenger.Publish(new SelectedMilestoneMessage(this) { Value = x });
 			}
 
 			ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));

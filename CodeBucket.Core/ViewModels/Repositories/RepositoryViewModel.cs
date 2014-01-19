@@ -87,6 +87,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
+		public ICommand GoToWikiCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<Wiki.WikiViewModel>(new Wiki.WikiViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
+		}
+
         public ICommand GoToCommitsCommand
         {
             get { return new MvxCommand(ShowCommits);}

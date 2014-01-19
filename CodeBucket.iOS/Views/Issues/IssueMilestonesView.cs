@@ -25,12 +25,12 @@ namespace CodeBucket.iOS.Views.Issues
 			BindCollection(vm.Milestones, x => {
 				var e = new MilestoneElement(x);
 				e.Tapped += () => {
-					if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone.Name, x.Name))
+					if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone, x.Name))
 						vm.SelectedMilestone = null;
 					else
-						vm.SelectedMilestone = x;
+						vm.SelectedMilestone = x.Name;
 				};
-				if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone.Name, x.Name))
+				if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone, x.Name))
 					e.Accessory = UITableViewCellAccessory.Checkmark;
 				return e;
 			});
@@ -40,16 +40,16 @@ namespace CodeBucket.iOS.Views.Issues
 					if (Root.Count == 0)
 						return;
 					foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
-						m.Accessory = (x != null && string.Equals(m.Milestone.Name, x.Name)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+						m.Accessory = (x != null && string.Equals(m.Milestone.Name, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 					Root.Reload(Root[0], UITableViewRowAnimation.None);
 				});
 
 			var _hud = new Hud(View);
 			vm.Bind(x => x.IsSaving, x =>
-				{
-					if (x) _hud.Show("Saving...");
-					else _hud.Hide();
-				});
+			{
+				if (x) _hud.Show("Saving...");
+				else _hud.Hide();
+			});
 		}
 
 		private class MilestoneElement : StyledStringElement

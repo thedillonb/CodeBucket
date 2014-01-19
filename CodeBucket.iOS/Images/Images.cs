@@ -46,6 +46,8 @@ namespace CodeBucket.iOS
 
 		public static UIImage Accept { get { return UIImageHelper.FromFileAuto("Images/accept"); } }
 		public static UIImage Cancel { get { return UIImageHelper.FromFileAuto("Images/cancel"); } }
+		public static UIImage ServerComponents { get { return UIImageHelper.FromFileAuto("Images/server_components"); } }
+		public static UIImage SitemapColor { get { return UIImageHelper.FromFileAuto("Images/sitemap_color"); } }
 
         public static class Logos
         {

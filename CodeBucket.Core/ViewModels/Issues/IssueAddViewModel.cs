@@ -15,12 +15,19 @@ namespace CodeBucket.Core.ViewModels.Issues
 				if (string.IsNullOrEmpty(Title))
 					throw new Exception("Issue must have a title!");
 
-				string assignedTo = AssignedTo != null ? AssignedTo.Username : null;
-				string milestone = Milestone != null ? Milestone.Name : null;
-				string content = Content ?? string.Empty;
+				var createIssueModel = new CreateIssueModel 
+				{ 
+					Title = Title, 
+					Content = Content ?? string.Empty, 
+					Milestone = Milestone, 
+					Responsible = AssignedTo != null ? AssignedTo.Username : null,
+					Component = Component,
+					Version = Version,
+                    Kind = Kind != null ? Kind.ToLower() : null,
+                    Priority = Priority != null ? Priority.ToLower() : null,
+				};
 
 				IsSaving = true;
-				var createIssueModel = new CreateIssueModel() { Title = Title, Content = content, Milestone = milestone, Responsible = assignedTo };
 				var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(createIssueModel));
 				Messenger.Publish(new IssueAddMessage(this) { Issue = data });
 				ChangePresentation(new MvxClosePresentationHint(this));
@@ -33,6 +40,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 			{
 				IsSaving = false;
 			}
+		}
+
+		protected override Task Load(bool forceCacheInvalidation)
+		{
+			return Task.FromResult(false);
 		}
 
 		public void Init(NavObject navObject)

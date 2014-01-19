@@ -92,28 +92,30 @@ namespace CodeBucket.iOS.Views.Issues
 				secDetails.Add(_descriptionElement);
 			}
 
-			string milestone = ViewModel.Issue.Metadata != null ? ViewModel.Issue.Metadata.Milestone : null;
-			var milestoneStr = milestone ?? "No Milestone";
-			var milestoneElement = new StyledStringElement("Milestone", milestoneStr, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
+			var split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Priority });
+			split1.Value.Text1 = ViewModel.Issue.Status;
+			split1.Value.Text2 = ViewModel.Issue.Priority;
+			secDetails.Add(split1);
+
+
+			var split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Flag, Image2 = Images.ServerComponents });
+			split2.Value.Text1 = ViewModel.Issue.Metadata.Kind;
+			split2.Value.Text2 = ViewModel.Issue.Metadata.Component ?? "No Component";
+			secDetails.Add(split2);
+
+
+			var split3 = new SplitElement(new SplitElement.Row { Image1 = Images.SitemapColor, Image2 = Images.Milestone });
+			split3.Value.Text1 = ViewModel.Issue.Metadata.Version ?? "No Version";
+			split3.Value.Text2 = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
+			secDetails.Add(split3);
 
 			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned".t(), UITableViewCellStyle.Value1) {
 				Image = Images.Person,
 				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
 			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
-//
-//
-//			var labels = ViewModel.Issue.Labels.Count == 0 ? "None" : string.Join(", ", ViewModel.Issue.Labels.Select(i => i.Name));
-//			var labelsElement = new StyledStringElement("Lables", labels, UITableViewCellStyle.Value1) {
-//				Image = Images.Tag,
-//				Accessory = UITableViewCellAccessory.DisclosureIndicator
-//			};
-//			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
-//
 			secDetails.Add(assigneeElement);
-			secDetails.Add(milestoneElement);
-//			secDetails.Add(labelsElement);
+
 			root.Add(secDetails);
 
 			if (ViewModel.Comments.Any())

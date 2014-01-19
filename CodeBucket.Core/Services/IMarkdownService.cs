@@ -3,7 +3,9 @@ namespace CodeBucket.Core.Services
 {
     public interface IMarkdownService
     {
-		string Convert(string c);
+		string ConvertMarkdown(string c);
+		string ConvertTextile(string c);
+		string ConvertCreole(string c);
     }
 }
 

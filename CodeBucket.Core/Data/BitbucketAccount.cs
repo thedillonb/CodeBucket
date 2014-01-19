@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using BitbucketSharp.Models;
 using CodeFramework.Core.Data;
 using SQLite;
 
@@ -50,24 +48,6 @@ namespace CodeBucket.Core.Data
 			get { return !HideRepositoryDescriptionInList; }
 			set { HideRepositoryDescriptionInList = !value; }
 		}
-
-        /// <summary>
-        /// A transient list of the teams this account is a part of
-        /// </summary>
-        [Ignore]
-        public List<string> Teams { get; set; }
-
-        /// <summary>
-        /// A transient list of the groups this account is part of
-        /// </summary>
-        [Ignore]
-        public List<GroupModel> Groups { get; set; }
-
-        /// <summary>
-        /// A transient record of the user's name
-        /// </summary>
-        [Ignore]
-        public string FullName { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.
