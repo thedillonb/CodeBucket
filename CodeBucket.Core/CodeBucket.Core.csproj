@@ -55,7 +55,6 @@
     <Compile Include="ViewModels\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\CommitsViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\TeamsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
     <Compile Include="ViewModels\App\AboutVIewModel.cs" />
+    <Compile Include="ViewModels\Wiki\WikiViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -129,6 +129,7 @@
     <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Markdown\" />
+    <Folder Include="ViewModels\Wiki\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

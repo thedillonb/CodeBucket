@@ -96,13 +96,13 @@ namespace CodeBucket.Core.ViewModels
             ShowRepository = navObject.ShowRepository;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load(bool forceCacheInvalidation)
         {
 			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
 			var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetInfo(forceCacheInvalidation), response => Changeset = response);
+			await Task.WhenAll(t1, t2);
 			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
-			Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(forceCacheInvalidation)).FireAndForget();
-			return Task.WhenAll(t1, t2);
+			Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(forceCacheInvalidation)).FireAndForget();
         }
 
         public async Task AddComment(string text)

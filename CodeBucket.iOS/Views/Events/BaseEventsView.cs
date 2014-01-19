@@ -69,32 +69,48 @@ namespace CodeBucket.iOS.Views.Events
         {
 			switch (eventModel.Event)
 			{
+				case EventModel.Type.ForkRepo:
+					return Images.Fork;
 				case EventModel.Type.CreateRepo:
 					return Images.Repo;
 				case EventModel.Type.Commit:
 				case EventModel.Type.Pushed:
+				case EventModel.Type.PullRequestFulfilled:
 					return Images.Commit;
 				case EventModel.Type.WikiUpdated:
 				case EventModel.Type.WikiCreated:
+				case EventModel.Type.PullRequestUpdated:
 					return Images.Pencil;
 				case EventModel.Type.WikiDeleted:
+				case EventModel.Type.DeleteRepo:
 					return Images.BinClosed;
 				case EventModel.Type.StartFollowUser:
 				case EventModel.Type.StartFollowRepo:
 				case EventModel.Type.StopFollowRepo:
+				case EventModel.Type.StartFollowIssue:
+				case EventModel.Type.StopFollowIssue:
 					return Images.Following;
 				case EventModel.Type.IssueComment:
 				case EventModel.Type.ChangeSetCommentCreated:
 				case EventModel.Type.ChangeSetCommentDeleted:
 				case EventModel.Type.ChangeSetCommentUpdated:
+				case EventModel.Type.PullRequestCommentCreated:
+				case EventModel.Type.PullRequestCommentUpdated:
+				case EventModel.Type.PullRequestCommentDeleted:
 					return Images.Comments;
 				case EventModel.Type.IssueUpdated:
 				case EventModel.Type.IssueReported:
 					return Images.Flag;
 				case EventModel.Type.ChangeSetLike:
+				case EventModel.Type.PullRequestLike:
 					return Images.Accept;
+				case EventModel.Type.PullRequestUnlike:
+				case EventModel.Type.PullRequestRejected:
 				case EventModel.Type.ChangeSetUnlike:
 					return Images.Cancel;
+				case EventModel.Type.PullRequestCreated:
+				case EventModel.Type.PullRequestSuperseded:
+					return Images.Hand;
 			}
             return Images.Priority;
         }
