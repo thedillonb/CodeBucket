@@ -44,7 +44,17 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public ICommand DeleteCommand
         {
-            get { return new MvxCommand(() => Delete()); }
+            get 
+            { 
+                return new MvxCommand(() =>
+                {
+                    var alert = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                    alert.PromptYesNo("Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + ".", x =>
+                    {
+                        if (x) Delete();
+                    });
+                }); 
+            }
         }
 
 		protected override async Task Save()
