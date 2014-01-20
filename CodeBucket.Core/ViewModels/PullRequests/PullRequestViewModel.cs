@@ -43,7 +43,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             set
             {
                 _model = value;
-				_merged = string.Equals(value.State, "fulfilled");
+                _merged = string.Equals(value.State, "MERGED");
                 RaisePropertyChanged(() => PullRequest);
             }
         }
@@ -55,12 +55,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
 		public ICommand GoToCommitsCommand
 		{
-			get { return null; }//return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
-		}
-
-		public ICommand GoToFilesCommand
-		{
-			get { return null; }//return new MvxCommand(() => ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
+			get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
 		}
 
         public void Init(NavObject navObject)
@@ -79,8 +74,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public async Task AddComment(string text)
         {
-			var comment = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].AddComment(text));
-			//Comments.Items.Add(comment);
+			await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].AddComment(text));
+            await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetComments());
         }
 
         public async Task Merge()

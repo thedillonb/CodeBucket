@@ -113,7 +113,6 @@
     <Compile Include="Views\Issues\IssueView.cs" />
     <Compile Include="Views\Issues\IssuesView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />

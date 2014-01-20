@@ -127,7 +127,7 @@ namespace CodeBucket.Core.ViewModels.App
 
 		public ICommand GoToRepositoryCommand
 		{
-			get { return new MvxCommand<Utils.RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name }));}
+			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name }));}
 		}
 
         public ICommand LoadCommand

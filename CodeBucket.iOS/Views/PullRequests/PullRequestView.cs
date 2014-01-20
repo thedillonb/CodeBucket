@@ -25,7 +25,7 @@ namespace CodeBucket.iOS.Views.PullRequests
         {
             Root.UnevenRows = true;
             _header = new HeaderView() { ShadowImage = false };
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
+            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Create, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
         }
 
         public override void ViewDidLoad()
@@ -68,32 +68,31 @@ namespace CodeBucket.iOS.Views.PullRequests
 
 			var merged = ViewModel.Merged;
 
-            _split1.Value.Text1 = ViewModel.PullRequest.State;
+            _split1.Value.Text1 = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
             _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
             secDetails.Add(_split1);
             root.Add(secDetails);
 
             root.Add(new Section {
 				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-				new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
             });
 
-            if (!merged)
-            {
-                MonoTouch.Foundation.NSAction mergeAction = async () =>
-                {
-                    try
-                    {
-						await this.DoWorkAsync("Merging...", ViewModel.Merge);
-                    }
-                    catch (Exception e)
-                    {
-                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
-                    }
-                };
- 
-                root.Add(new Section { new StyledStringElement("Merge".t(), mergeAction, Images.Fork) });
-            }
+//            if (!merged)
+//            {
+//                MonoTouch.Foundation.NSAction mergeAction = async () =>
+//                {
+//                    try
+//                    {
+//						await this.DoWorkAsync("Merging...", ViewModel.Merge);
+//                    }
+//                    catch (Exception e)
+//                    {
+//                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
+//                    }
+//                };
+// 
+//                root.Add(new Section { new StyledStringElement("Merge".t(), mergeAction, Images.Fork) });
+//            }
 
 
             if (ViewModel.Comments.Items.Count > 0)
@@ -129,12 +128,6 @@ namespace CodeBucket.iOS.Views.PullRequests
             addComment.Tapped += AddCommentTapped;
             root.Add(new Section { addComment });
             Root = root;
-
-            //            if (_scrollToLastComment && _comments.Elements.Count > 0)
-            //            {
-            //                TableView.ScrollToRow(NSIndexPath.FromRowSection(_comments.Elements.Count - 1, 2), UITableViewScrollPosition.Top, true);
-            //                _scrollToLastComment = false;
-            //            }
         }
 
         void AddCommentTapped()

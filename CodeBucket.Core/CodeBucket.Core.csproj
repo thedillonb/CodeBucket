@@ -76,7 +76,6 @@
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
-    <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesExploreViewModel.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\User\GroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsViewModel.cs" />
-    <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
     <Compile Include="ViewModels\App\AboutVIewModel.cs" />
