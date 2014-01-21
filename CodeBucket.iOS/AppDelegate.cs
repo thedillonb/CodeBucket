@@ -47,7 +47,7 @@ namespace CodeBucket.iOS
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			var iRate = MTiRate.iRate.SharedInstance;
-			iRate.AppStoreID = 551531422;
+            iRate.AppStoreID = 551531422;
 
 			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 

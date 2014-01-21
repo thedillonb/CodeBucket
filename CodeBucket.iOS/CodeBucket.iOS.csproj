@@ -23,6 +23,9 @@
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -88,6 +91,11 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
@@ -210,9 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\Icon%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\iTunesArtwork%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
