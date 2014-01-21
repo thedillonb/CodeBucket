@@ -6,6 +6,7 @@ using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
 using System.Text;
+using System.Collections.Generic;
 
 namespace CodeBucket.Core.ViewModels.Wiki
 {
@@ -13,13 +14,23 @@ namespace CodeBucket.Core.ViewModels.Wiki
     {
 		public string Username { get; set; }
 		public string Repository { get; set; }
-		public string Page { get; set; }
+
+        private string _page;
+        public string Page 
+        {
+            get { return _page; }
+            private set
+            {
+                _page = value;
+                RaisePropertyChanged(() => Page);
+            }
+        }
 
 		private WikiModel _wiki;
-		public WikiModel Wiki
+        private WikiModel Wiki
 		{
 			get { return _wiki; }
-			private set
+			set
 			{
 				_wiki = value;
 				RaisePropertyChanged(() => Wiki);
@@ -27,22 +38,28 @@ namespace CodeBucket.Core.ViewModels.Wiki
 		}
 
 		private string _contentUrl;
-		public string ContentUrl
+        private string ContentUrl
 		{
 			get { return _contentUrl; }
-			private set
+			set
 			{
 				_contentUrl = value;
 				RaisePropertyChanged(() => ContentUrl);
 			}
 		}
 
-		public ICommand GoToEditCommand
-		{
-			get { return new MvxCommand(null); }
-		}
+        private bool _canEdit;
+        private bool CanEdit
+        {
+            get { return _canEdit; }
+            set
+            {
+                _canEdit = value;
+                RaisePropertyChanged(() => CanEdit);
+            }
+        }
 
-		public ICommand GoToPageCommand
+        private ICommand GoToPageCommand
 		{
 			get 
 			{ 
@@ -62,6 +79,8 @@ namespace CodeBucket.Core.ViewModels.Wiki
 
 			if (Page.StartsWith("/", StringComparison.Ordinal))
 				Page = Page.Substring(1);
+
+            CanEdit = true;
         }
 
 		protected override Task Load(bool forceCacheInvalidation)
@@ -81,30 +100,72 @@ namespace CodeBucket.Core.ViewModels.Wiki
 					content = x.Data;
 				}
 
-				var path = CreateHtmlFile(content);
+                var path = CreateHtmlFile(Page, content);
 				path = path.Replace(" ", "%20");
 				ContentUrl = "file://" + path + "#" + Environment.TickCount;
 			});
 		}
 
+        public async Task<string> GetData(string page)
+        {
+            var x = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Wikis[page].GetInfo(true));
 
-		private string CreateHtmlFile(string data)
+            string content = string.Empty;
+            if (string.Equals(x.Markup, "markdown"))
+                content = GetService<IMarkdownService>().ConvertMarkdown(x.Data);
+            else if (string.Equals(x.Markup, "creole"))
+                content = GetService<IMarkdownService>().ConvertCreole(x.Data);
+            else if (string.Equals(x.Markup, "textile"))
+                content = GetService<IMarkdownService>().ConvertTextile(x.Data);
+            else if (string.Equals(x.Markup, "rest"))
+            {
+                content = x.Data;
+            }
+
+            var path = CreateHtmlFile(page, content);
+            path = path.Replace(" ", "%20");
+            return "file://" + path;
+        }
+
+
+        private string CreateHtmlFile(string title, string data)
 		{
 			//Generate the markup
 			var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
 
-			var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
+            var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), title + ".html");
 			using (var tmpStream = new System.IO.FileStream(tmp, System.IO.FileMode.Create))
 			{
 				var fs = new System.IO.StreamWriter(tmpStream, Encoding.UTF8);
-				var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
-				fs.Write(markup.Substring(0, dataIndex));
+                var titleIndex = markup.IndexOf("{{TITLE}}", StringComparison.Ordinal);
+                var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
+                fs.Write(markup.Substring(0, titleIndex));
+                fs.Write(title);
+                fs.Write(markup.Substring(titleIndex + 9, dataIndex - (titleIndex + 9)));
 				fs.Write(data);
 				fs.Write(markup.Substring(dataIndex + 8));
 				fs.Flush();
 			}
 			return tmp;
 		}
+
+        public string CurrentWikiPage(string request)
+        {
+            var url = request;
+            if (!url.StartsWith("file://", StringComparison.Ordinal))
+                return null;
+            var s = url.LastIndexOf('/');
+            if (s < 0)
+                return null;
+            if (url.Length < s + 1)
+                return null;
+
+            url = url.Substring(s + 1);
+            var hashIndex = url.IndexOf("#", StringComparison.Ordinal);
+            if (hashIndex > 0)
+                url = url.Substring(0, hashIndex);
+            return url.Substring(0, url.LastIndexOf(".html", StringComparison.Ordinal)); //Get rid of ".html"
+        }
 
 		public class NavObject
 		{

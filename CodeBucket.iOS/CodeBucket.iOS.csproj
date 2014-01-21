@@ -184,6 +184,9 @@
     <Reference Include="MTiRate">
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
     </Reference>
+    <Reference Include="CreoleParser">
+      <HintPath>lib\CreoleParser.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\Icon-72.png" />

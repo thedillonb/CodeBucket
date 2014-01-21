@@ -3,13 +3,15 @@ using CodeFramework.iOS.Views;
 using CodeBucket.Core.ViewModels.Wiki;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using CodeFramework.iOS.ViewControllers;
+using CodeFramework.iOS.Utils;
+using System.Threading.Tasks;
 
 namespace CodeBucket.iOS
 {
 	public class WikiView : WebView
     {
-		private readonly UIBarButtonItem _editButton;
-		private bool _loaded = false;
+		private bool _loaded;
 
 		public new WikiViewModel ViewModel
 		{
@@ -18,123 +20,128 @@ namespace CodeBucket.iOS
 		}
 
         public WikiView()
-			: base(true, true)
+            : base(true, true)
         {
-			_editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => HandleEditButton()) { Enabled = false };
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
 
-        private void HandleEditButton()
+        private async Task HandleEditButton()
         {
-//            try
-//            {
-//                var page = CurrentWikiPage(Web.Request);
-//                var wiki = Application.Client.Users[_user].Repositories[_slug].Wikis[page].GetInfo();
-//
-//
-//                var composer = new Composer { Title = "Edit ".t() + Title, Text = wiki.Data, ActionButtonText = "Save".t() };
-//                composer.NewComment(this, () => {
-//                    var text = composer.Text;
-//
-//                    composer.DoWork(() => {
-//                        Application.Client.Users[_user].Repositories[_slug].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page));
-//                        
-//                        InvokeOnMainThread(() => {
-//                            composer.CloseComposer();
-//                            Refresh();
-//                        });
-//                    }, ex =>
-//                    {
-//                        Utilities.ShowAlert("Unable to update page!", ex.Message);
-//                        composer.EnableSendButton = true;
-//                    });
-//                });
-//            }
-//            catch (Exception e)
-//            {
-//                Utilities.ShowAlert("Error", e.Message);
-//            }
+            try
+            {
+                var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
+                var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
+                var composer = new Composer { Title = "Edit".t() + Title, Text = wiki.Data, ActionButtonText = "Save".t() };
+                composer.NewComment(this, async (text) => {
+                    try
+                    {
+                        await composer.DoWorkAsync("Saving...", () => Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page))));
+                        composer.CloseComposer();
+                        Refresh();
+                    }
+                    catch (Exception ex)
+                    {
+                        MonoTouch.Utilities.ShowAlert("Unable to update page!", ex.Message);
+                        composer.EnableSendButton = true;
+                    };
+                });
+            }
+            catch (Exception e)
+            {
+                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+            }
         }
 
-		public override void ViewWillAppear(bool animated)
+        public async override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
 
 			//Stupid but I can't put this in the ViewDidLoad...
 			if (!_loaded)
 			{
-				ViewModel.LoadCommand.Execute(null);
 				_loaded = true;
+                var data = await ViewModel.GetData(ViewModel.Page);
+                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
 			}
 		}
 
-		public override void ViewDidLoad()
+        protected async override void Refresh()
 		{
-			base.ViewDidLoad();
-			ViewModel.Bind(x => x.ContentUrl, x => InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(x)))));
-		}
-
-		protected override void OnLoadStarted(object sender, EventArgs e)
-		{
-			base.OnLoadStarted(sender, e);
-			_editButton.Enabled = false;
-		}
-
-		protected override void OnLoadFinished(object sender, EventArgs e)
-		{
-			base.OnLoadFinished(sender, e);
-
-            if (CurrentWikiPage(Web.Request) != null)
+            var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
+            if (page != null)
             {
-                _editButton.Enabled = true;
-                if (NavigationItem.RightBarButtonItem == null)
-                    NavigationItem.SetRightBarButtonItem(_editButton, true);
+                try
+                {
+                    await ViewModel.GetData(page);
+                }
+                catch (Exception e)
+                {
+                    MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                }
             }
-            else
-                NavigationItem.SetRightBarButtonItem(null, true);
+     
+			base.Refresh();
 		}
 
-		protected override void Refresh()
-		{
-			if (ViewModel.Page != null)
-				ViewModel.LoadCommand.Execute(true);
-			else
-				base.Refresh();
-		}
-
-        private string CurrentWikiPage(NSUrlRequest request)
+        private void ShowExtraMenu()
         {
-            var url = request.Url.AbsoluteString;
-            if (!url.StartsWith("file://", StringComparison.Ordinal))
-                return null;
-            var s = url.LastIndexOf('/');
-            if (s < 0)
-                return null;
-            if (url.Length < s + 1)
-                return null;
+            var repoModel = ViewModel.Repository;
+            if (repoModel == null)
+                return;
 
-            url = url.Substring(s + 1);
-            return url.Substring(0, url.LastIndexOf(".html", StringComparison.Ordinal)); //Get rid of ".html"
+            var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
+            var sheet = MonoTouch.Utilities.GetSheet("Wiki");
+            var editButton = page != null ? sheet.AddButton("Edit".t()) : -1;
+            var gotoButton = sheet.AddButton("Goto Wiki Page".t());
+            var cancelButton = sheet.AddButton("Cancel".t());
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+            sheet.Clicked += (s, e) => 
+            {
+                if (e.ButtonIndex == editButton)
+                    HandleEditButton();
+                else if (e.ButtonIndex == gotoButton)
+                    PromptForWikiPage();
+            };
+
+            sheet.ShowInView(this.View);
         }
 
-		protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
-		{
-			try 
-			{
-				if (navigationType == UIWebViewNavigationType.LinkClicked) 
-				{
-					if (request.Url.ToString().StartsWith("wiki://", StringComparison.Ordinal))
-					{
-						//Load(request.Url.ToString().Substring(7));
-						return false;
-					}
-				}
-			}
-			catch
-			{
-			}
+        private async Task GoToPage(string page)
+        {
+            try
+            {
+                var data = await ViewModel.GetData(page);
+                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
+            }
+            catch (Exception e)
+            {
+                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+            }
+        }
 
-			return true;
-		}
+        private void PromptForWikiPage()
+        {
+            var alert = new UIAlertView
+            {
+                Title = "Goto Wiki Page",
+                Message = "What is the title of the Wiki page you'd like to goto?",
+                AlertViewStyle = UIAlertViewStyle.PlainTextInput
+            };
+
+            alert.CancelButtonIndex = alert.AddButton("Cancel");
+            alert.DismissWithClickedButtonIndex(alert.CancelButtonIndex, true);
+            var gotoButton = alert.AddButton("Go");
+            alert.Dismissed += (sender, e) =>
+            {
+                if (e.ButtonIndex == gotoButton)
+                {
+                    GoToPage(alert.GetTextField(0).Text);
+                    //ViewModel.GoToPageCommand.Execute(alert.GetTextField(0).Text);
+                }
+            };
+            alert.Show();
+        }
     }
 }
 

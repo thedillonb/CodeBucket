@@ -157,6 +157,5 @@
     <Content Include="Markdown\markdown.html" />
     <Content Include="Markdown\marked.js" />
     <Content Include="Markdown\textile.js" />
-    <Content Include="Markdown\creole.js" />
   </ItemGroup>
 </Project>
