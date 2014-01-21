@@ -152,13 +152,21 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand ForkCommand
 		{
-			get { return new MvxCommand<string>(x => Fork(x), x => !string.IsNullOrEmpty(x)); }
+			get 
+            { 
+                return new MvxCommand(() =>
+                {
+                    var alertSerivce = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                    alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!", name => Fork(name));
+                }); 
+            }
 		}
 		
 		public async Task Fork(string name)
 		{
 			try
 			{
+                IsLoading = true;
 				var fork = await Task.Run(() => this.GetApplication().Client.Users[Repository.Owner].Repositories[Repository.Name].ForkRepository(name));
 				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
 			}
@@ -166,6 +174,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			{
 				ReportError(e);
 			}
+            finally
+            {
+                IsLoading = false;
+            }
 		}
 
         public class NavObject

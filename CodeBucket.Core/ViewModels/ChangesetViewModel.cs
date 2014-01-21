@@ -122,8 +122,8 @@ namespace CodeBucket.Core.ViewModels
 		{
 			try
 			{
-				this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve();
-				await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(true));
+                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve());
+                await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(true));
 			}
 			catch (Exception e)
 			{
@@ -135,8 +135,8 @@ namespace CodeBucket.Core.ViewModels
 		{
 			try
 			{
-				this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove();
-				await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetParticipants(true));
+                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove());
+                await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(true));
 			}
 			catch (Exception e)
 			{

@@ -55,7 +55,7 @@ namespace CodeBucket.iOS.Views.Repositories
                 }
                 else if (e.ButtonIndex == forkButton)
                 {
-                    ForkRepository();
+                    ViewModel.ForkCommand.Execute(null);
                 }
                 // Show in Bitbucket
                 else if (e.ButtonIndex == showButton)
@@ -65,28 +65,6 @@ namespace CodeBucket.iOS.Views.Repositories
             };
 
             sheet.ShowInView(this.View);
-        }
-
-        private void ForkRepository()
-        {
-            var alert = new UIAlertView();
-            alert.Title = "Fork".t();
-            alert.Message = "What would you like to name your fork?".t();
-            alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-            var forkButton = alert.AddButton("Fork!".t());
-            var cancelButton = alert.AddButton("Cancel".t());
-            alert.CancelButtonIndex = cancelButton;
-            alert.DismissWithClickedButtonIndex(cancelButton, true);
-			alert.GetTextField(0).Text = ViewModel.Repository.Name;
-			alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
-                if (e2.ButtonIndex == forkButton)
-                {
-					var text = alert.GetTextField(0).Text;
-					this.DoWorkAsync("Forking...", () => ViewModel.Fork(text));
-                }
-            };
-
-            alert.Show();
         }
 
 		public void Render(RepositoryDetailedModel model)

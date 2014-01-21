@@ -65,6 +65,27 @@ namespace CodeBucket.iOS
 			}
 		}
 
+
+        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+        {
+            try 
+            {
+                if (navigationType == UIWebViewNavigationType.LinkClicked) 
+                {
+                    if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
+                    {
+                        GoToPage(request.Url.ToString().Substring(7));
+                        return false;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return base.ShouldStartLoad(request, navigationType);
+        }
+
         protected async override void Refresh()
 		{
             var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);

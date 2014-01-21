@@ -98,17 +98,18 @@ namespace CodeBucket.iOS.Views.PullRequests
             if (ViewModel.Comments.Items.Count > 0)
             {
                 var commentsSec = new Section();
-				ViewModel.Comments.OrderBy(x => (x.CreatedOn)).ToList().ForEach(x => {
-					if (!string.IsNullOrEmpty(x.Content.Raw))
-                        commentsSec.Add(new CommentElement {
-							Name = x.User.Username,
-							Time = x.CreatedOn.ToDaysAgo(),
-							String = x.Content.Raw,
-                            Image = Theme.CurrentTheme.AnonymousUserImage,
-							ImageUri = new Uri(x.User.Links.Avatar.Href),
-                            BackgroundColor = UIColor.White,
-                        });
-                });
+                foreach (var x in ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null).OrderBy(x => (x.CreatedOn)))
+                {
+                    commentsSec.Add(new CommentElement
+                    {
+                        Name = x.User.Username,
+                        Time = x.CreatedOn.ToDaysAgo(),
+                        String = x.Content.Raw,
+                        Image = Theme.CurrentTheme.AnonymousUserImage,
+                        ImageUri = new Uri(x.User.Links.Avatar.Href),
+                        BackgroundColor = UIColor.White,
+                    });
+                }
 
                 //Load more if there's more comments
 //                if (model.MoreComments != null)

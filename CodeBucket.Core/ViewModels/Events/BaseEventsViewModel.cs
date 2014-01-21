@@ -484,6 +484,9 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.ForkRepo)
 			{
+                if (eventModel.Repository == null)
+                    return null;
+
 				eventBlock.Header.Add(new TextBlock(" forked "));
 				eventBlock.Tapped = () => GoToRepository(eventModel.Repository);
 
