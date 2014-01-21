@@ -155,6 +155,14 @@ namespace CodeBucket.iOS.Views.Repositories
 
             root.Add(new[] { sec1, sec2, sec3 });
 
+            if (!String.IsNullOrEmpty(ViewModel.Repository.Website))
+            {
+                root.Add(new Section
+                {
+                    new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(ViewModel.Repository.Website), Images.Webpage)
+                });
+            }
+
             Root = root;
         }
     }
