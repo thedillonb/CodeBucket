@@ -229,6 +229,9 @@ namespace CodeBucket.Core.ViewModels.Events
 
 			if (eventModel.Event == EventModel.Type.Pushed)
 			{
+                if (eventModel.Repository == null)
+                    return null;
+
 				var data = GetService<CodeFramework.Core.Services.IJsonSerializationService>().Deserialize<PushedEventDescriptionModel>(eventModel.Description);
 
 				if (eventModel.Repository != null)
@@ -266,6 +269,9 @@ namespace CodeBucket.Core.ViewModels.Events
 
 			if (eventModel.Event == EventModel.Type.Commit)
 			{
+                if (eventModel.Repository == null)
+                    return null;
+
 				var node = eventModel.Node.Substring(0, eventModel.Node.Length > 6 ? 6 : eventModel.Node.Length);
 				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, eventModel.Node);
 				eventBlock.Header.Add(new TextBlock(" commited "));
@@ -282,8 +288,9 @@ namespace CodeBucket.Core.ViewModels.Events
 			else if (eventModel.Event == EventModel.Type.ChangeSetCommentCreated || eventModel.Event == EventModel.Type.ChangeSetCommentDeleted ||
 			         eventModel.Event == EventModel.Type.ChangeSetCommentUpdated || eventModel.Event == EventModel.Type.ChangeSetLike || eventModel.Event == EventModel.Type.ChangeSetUnlike)
 			{
-				if (eventModel.Repository != null)
-					eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, eventModel.Node);
+                if (eventModel.Repository == null)
+                    return null;
+				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, eventModel.Node);
 				var nodeBlock = CommitBlock(eventModel);
 
 				if (eventModel.Event == EventModel.Type.ChangeSetCommentCreated)
@@ -318,6 +325,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			else if (eventModel.Event == EventModel.Type.PullRequestCreated || eventModel.Event == EventModel.Type.PullRequestRejected || eventModel.Event == EventModel.Type.PullRequestSuperseded ||
 			         eventModel.Event == EventModel.Type.PullRequestUpdated || eventModel.Event == EventModel.Type.PullRequestFulfilled || eventModel.Event == EventModel.Type.PullRequestLike || eventModel.Event == EventModel.Type.PullRequestUnlike)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
 
 				if (eventModel.Event == EventModel.Type.PullRequestCreated)
@@ -343,6 +352,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.PullRequestCommentCreated || eventModel.Event == EventModel.Type.PullRequestCommentUpdated || eventModel.Event == EventModel.Type.PullRequestCommentDeleted)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
 
 				if (eventModel.Event == EventModel.Type.PullRequestCommentCreated)
@@ -366,6 +377,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.IssueComment)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" commented on issue"));
 				if (ReportRepository)
 				{
@@ -376,6 +389,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.IssueUpdated)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" updated issue"));
 				if (ReportRepository)
 				{
@@ -386,6 +401,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.IssueReported)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" reported issue"));
 
 				if (ReportRepository)
@@ -406,6 +423,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.StartFollowIssue)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" started following an issue"));
 				if (ReportRepository)
 				{
@@ -415,6 +434,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.StopFollowIssue)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" stopped following an issue"));
 				if (ReportRepository)
 				{
@@ -424,6 +445,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.StartFollowRepo)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" started following "));
 				if (ReportRepository)
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
@@ -431,6 +454,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.StopFollowRepo)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" stopped following "));
 				if (ReportRepository)
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
@@ -438,6 +463,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.CreateRepo)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" created repository "));
 				if (ReportRepository)
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
@@ -449,6 +476,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.WikiUpdated)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
 				eventBlock.Header.Add(new TextBlock(" updated wiki page "));
 				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
@@ -461,6 +490,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.WikiCreated)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
 				eventBlock.Header.Add(new TextBlock(" created wiki page "));
 				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
@@ -473,6 +504,8 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else if (eventModel.Event == EventModel.Type.WikiDeleted)
 			{
+                if (eventModel.Repository == null)
+                    return null;
 				eventBlock.Header.Add(new TextBlock(" deleted wiki page "));
 				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
 
