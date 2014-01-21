@@ -5,15 +5,23 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Services;
 using System.Collections.Generic;
+using CodeFramework.Core.Services;
 
 namespace CodeBucket.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-		public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, Func<TRequest> request, Action<TRequest> update) where TRequest : new()
+        public static Task RequestModel<TRequest>(this MvxViewModel viewModel, Func<TRequest> request, Action<TRequest> update) where TRequest : new()
         {
-			var data = await Task.Run(() => request());
-			update(data);
+            var uiThread = Mvx.Resolve<IUIThreadService>();
+
+            return Task.Run(() =>
+            {
+                var data = request();
+                uiThread.MarshalOnUIThread(() => update(data));
+            });
+
+
 //
 //            if (forceDataRefresh)
 //            {
