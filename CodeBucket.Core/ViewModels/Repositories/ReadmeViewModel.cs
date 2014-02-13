@@ -11,6 +11,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class ReadmeViewModel : LoadableViewModel
     {
+        private readonly IMarkdownService _markdownService;
         private string _data;
         private string _path;
         private string _htmlUrl;
@@ -53,29 +54,31 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
         }
 
+        public ReadmeViewModel(IMarkdownService markdownService)
+        {
+            _markdownService = markdownService;
+        }
+
         protected override async Task Load(bool forceCacheInvalidation)
         {
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
             var source = this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source;
 
-            var mime = await Task.Run<string>(() =>
-            {
-                using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                {
-                    return source.GetFileRaw(Filename, stream);
-                }
-            });
-
+            var memoryStream = new System.IO.MemoryStream();
+            await Task.Run<string>(() => source.GetFileRaw(Filename, memoryStream));
             _htmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + Filename;
 
-            var markdownService = GetService<IMarkdownService>();
-
-            var readme = System.IO.File.ReadAllText(filepath, Encoding.UTF8);
+            string readme;
             string data;
+
+            memoryStream.Position = 0;
+            using (var reader = new System.IO.StreamReader(memoryStream, Encoding.UTF8))
+                readme = reader.ReadToEnd();
+
             if (filepath.EndsWith("textile", StringComparison.Ordinal))
-                data = markdownService.ConvertTextile(readme);
+                data = _markdownService.ConvertTextile(readme);
             else
-                data = markdownService.ConvertMarkdown(System.IO.File.ReadAllText(filepath, Encoding.UTF8));
+                data = _markdownService.ConvertMarkdown(readme);
             Path = CreateHtmlFile(data);
         }
 
