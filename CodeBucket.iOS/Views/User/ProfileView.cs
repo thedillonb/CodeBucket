@@ -36,16 +36,10 @@ namespace CodeBucket.iOS.Views.User
 			{
 				var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
 				var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-				var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
+                var organizations = new StyledStringElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
 				var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
-
-				var midSec = new Section() { events, organizations, followers };
-
-				if (!x.IsTeam)
-				{
-					midSec.Add(new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following));
-				}
-
+                var following = new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
+                var midSec = new Section() { events, organizations, followers, following };
 				Root = new RootElement(Title) { new Section(header), midSec, new Section { repos } };
 			});
 //			if (!ViewModel.IsLoggedInUser)

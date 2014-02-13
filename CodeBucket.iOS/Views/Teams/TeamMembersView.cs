@@ -1,4 +1,6 @@
-namespace CodeBucket.iOS.Views.User
+using CodeBucket.iOS.Views.User;
+
+namespace CodeBucket.iOS.Views.Teams
 {
     public class TeamMembersView : BaseUserCollectionView
     {

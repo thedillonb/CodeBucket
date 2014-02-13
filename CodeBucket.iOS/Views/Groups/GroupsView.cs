@@ -8,8 +8,8 @@ namespace CodeBucket.iOS.Views.Groups
 	{
         public override void ViewDidLoad()
         {
-            Title = "Organizations".t();
-            NoItemsText = "No Organizations".t();
+            Title = "Groups".t();
+            NoItemsText = "No Groups".t();
 
             base.ViewDidLoad();
 

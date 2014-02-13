@@ -55,7 +55,6 @@
     <Compile Include="ViewModels\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\CommitsViewModel.cs" />
-    <Compile Include="ViewModels\TeamsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
@@ -105,6 +104,9 @@
     <Compile Include="Messages\SelectedComponentMessage.cs" />
     <Compile Include="Messages\SelectedVersionMessage.cs" />
     <Compile Include="Messages\IssueDeleteMessage.cs" />
+    <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamMembersViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -133,6 +135,7 @@
     <Folder Include="ViewModels\" />
     <Folder Include="Markdown\" />
     <Folder Include="ViewModels\Wiki\" />
+    <Folder Include="ViewModels\Teams\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

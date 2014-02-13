@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Cirrious.MvvmCross.ViewModels;
 using BitbucketSharp.Models;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -24,6 +25,12 @@ namespace CodeBucket.Core.ViewModels
 			private set;
 		}
 
+        public string Branch
+        {
+            get;
+            private set;
+        }
+
 		public ICommand GoToChangesetCommand
 		{
 			get { return new MvxCommand<ChangesetModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.RawNode })); }
@@ -38,16 +45,31 @@ namespace CodeBucket.Core.ViewModels
 		{
 			Username = navObject.Username;
 			Repository = navObject.Repository;
+            Branch = navObject.Branch;
 		}
 
 		protected override Task Load(bool forceCacheInvalidation)
 		{
-			return Commits.SimpleCollectionLoad(() => GetRequest(null));
+            return Commits.RequestModel(() => GetRequest(Branch), response => {
+                Commits.MoreItems = () => {
+                    var items = GetRequest(Commits.Items.Last().Node);
+                    if (items.Count > 1)
+                    {
+                        items.RemoveAt(0);
+                        Commits.Items.AddRange(items);
+                    }
+                    else
+                    {
+                        Commits.MoreItems = null;
+                    }
+                };
+
+                Commits.Items.Reset(response);
+            });
 		}
 
 		protected abstract List<ChangesetModel> GetRequest(string startNode);
 
-//		public override void Update(bool force)
 //		{
 //			Model = new ListModel<ChangesetModel> { Data = GetData() };
 //			Model.More = () => {
@@ -97,6 +119,7 @@ namespace CodeBucket.Core.ViewModels
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
+            public string Branch { get; set; }
 		}
 	}
 }

@@ -6,18 +6,6 @@ namespace CodeBucket.Core.ViewModels
 {
 	public class ChangesetsViewModel : CommitsViewModel
     {
-        public string Branch
-        {
-            get;
-            private set;
-        }
-
-        public void Init(NavObject navObject)
-        {
-			base.Init(navObject);
-            Branch = navObject.Branch ?? "master";
-        }
-
 		protected override List<ChangesetModel> GetRequest(string startNode)
         {
 			var data = this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets.GetChangesets(30, startNode);
@@ -26,7 +14,6 @@ namespace CodeBucket.Core.ViewModels
 
 		public new class NavObject : CommitsViewModel.NavObject
         {
-            public string Branch { get; set; }
         }
     }
 }

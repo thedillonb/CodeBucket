@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.User;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
@@ -17,7 +18,14 @@ namespace CodeBucket.Core.ViewModels.Groups
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Groups[GroupName].GetInfo(forceCacheInvalidation).Members);
+            return Users.SimpleCollectionLoad(() => 
+                {
+                    var groups = this.GetApplication().Client.Users[Username].Groups.GetGroups(forceCacheInvalidation);
+                    var group = groups.FirstOrDefault(x => x.Name == GroupName);
+                    if (group == null)
+                        return new System.Collections.Generic.List<BitbucketSharp.Models.UserModel>();
+                    return group.Members;
+                });
         }
 
         public class NavObject

@@ -102,11 +102,11 @@ namespace CodeBucket.iOS.Views.Repositories
             //Calculate the best representation of the size
             string size;
             if (model.Size / 1024f < 1)
-                size = string.Format("{0:0.##}KB", model.Size);
+                size = string.Format("{0:0.##}B", model.Size);
             else if ((model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}MB", model.Size / 1024f);
+                size = string.Format("{0:0.##}KB", model.Size / 1024f);
             else
-                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
+                size = string.Format("{0:0.##}MB", model.Size / 1024f / 1024f);
 //
 //            sec1.Add(new SplitElement(new SplitElement.Row {
 //				Text1 = model + (model.HasIssues == 1 ? " Issue".t() : " Issues".t()),

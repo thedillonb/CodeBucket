@@ -1,11 +1,10 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace CodeBucket.Core.ViewModels
+namespace CodeBucket.Core.ViewModels.Teams
 {
     public class TeamsViewModel : LoadableViewModel
     {
@@ -18,7 +17,7 @@ namespace CodeBucket.Core.ViewModels
 
         public ICommand GoToTeamCommand
         {
-			get { return new MvxCommand<string>(x => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x })); }
+            get { return new MvxCommand<string>(x => ShowViewModel<TeamViewModel>(new TeamViewModel.NavObject { Name = x })); }
         }
 
         protected override Task Load(bool forceCacheInvalidation)

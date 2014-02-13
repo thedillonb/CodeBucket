@@ -1,8 +1,8 @@
 using CodeFramework.ViewControllers;
-using CodeBucket.Core.ViewModels;
 using MonoTouch.Dialog;
+using CodeBucket.Core.ViewModels.Teams;
 
-namespace CodeBucket.iOS.Views.User
+namespace CodeBucket.iOS.Views.Teams
 {
     public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {

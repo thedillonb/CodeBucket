@@ -12,6 +12,7 @@ using CodeFramework.Core.ViewModels.App;
 using System.Threading.Tasks;
 using System.Linq;
 using BitbucketSharp.Models;
+using CodeBucket.Core.ViewModels.Teams;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -111,7 +112,7 @@ namespace CodeBucket.Core.ViewModels.App
 
 		public ICommand GoToTeamCommand
 		{
-			get { return new MvxCommand<string>(x => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x })); }
+            get { return new MvxCommand<string>(x => ShowMenuViewModel<TeamViewModel>(new TeamViewModel.NavObject { Name = x })); }
 		}
 
 	

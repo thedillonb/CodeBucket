@@ -15,17 +15,17 @@ namespace CodeBucket.Core.ViewModels.Source
 		protected override async Task Load(bool forceCacheInvalidation)
         {
 			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_name));
-
+            var source = this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source;
 			var mime = await Task.Run<string>(() =>
 			{
 				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
 				{
-					return this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source.GetFileRaw(_path, stream);
+                    return source.GetFileRaw(_path, stream);
 				}
 			});
 
 			FilePath = filepath;
-
+            HtmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + _path;
 			var isText = mime.Contains("text");
 			if (isText)
 			{
