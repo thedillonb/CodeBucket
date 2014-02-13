@@ -107,6 +107,7 @@
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamMembersViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">

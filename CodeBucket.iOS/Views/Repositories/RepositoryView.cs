@@ -32,6 +32,13 @@ namespace CodeBucket.iOS.Views.Repositories
                 NavigationItem.RightBarButtonItem.Enabled = true;
                 Render(x);
             });
+
+            ViewModel.Bind(x => x.HasReadme, () =>
+            {
+                // Not very efficient but it'll work for now.
+                if (ViewModel.Repository != null)
+                    Render(ViewModel.Repository);
+            });
         }
 		
         private void ShowExtraMenu()
@@ -145,6 +152,9 @@ namespace CodeBucket.iOS.Views.Repositories
 
             if (model.HasIssues)
 				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+
+            if (ViewModel.HasReadme)
+                sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
 
             var sec3 = new Section
             {

@@ -46,14 +46,21 @@ namespace CodeBucket.Core.ViewModels.Issues
         {
             get 
             { 
-                return new MvxCommand(() =>
-                {
-                    var alert = GetService<CodeFramework.Core.Services.IAlertDialogService>();
-                    alert.PromptYesNo("Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + ".", x =>
-                    {
-                        if (x) Delete();
-                    });
-                }); 
+                return new MvxCommand(() => PromptDelete()); 
+            }
+        }
+
+        private async Task PromptDelete()
+        {
+            try
+            {
+                var alert = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                if (await alert.PromptYesNo("Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + "."))
+                    await Delete();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting issue: " + e.Message);
             }
         }
 

@@ -15,6 +15,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
     {
 		private RepositoryDetailedModel _repository;
         private List<BranchModel> _branches;
+        private bool _hasReadme;
+        private string _primaryBranch;
+        private string _readmeFilename;
 
 		public string Username { get; private set; }
 
@@ -30,6 +33,16 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			get;
 			set;
 		}
+
+        public bool HasReadme
+        {
+            get { return _hasReadme; }
+            private set
+            {
+                _hasReadme = value;
+                RaisePropertyChanged(() => HasReadme);
+            }
+        }
 
 		public RepositoryDetailedModel Repository
         {
@@ -102,6 +115,22 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
+
+        public ICommand GoToReadmeCommand
+        {
+            get 
+            { 
+                return new MvxCommand(() => ShowViewModel<ReadmeViewModel>(
+                    new ReadmeViewModel.NavObject { 
+                        Username = Username, 
+                        Repository = RepositorySlug, 
+                        Branch = _primaryBranch, 
+                        Filename = _readmeFilename 
+                    }), () => !string.IsNullOrEmpty(_primaryBranch) && !string.IsNullOrEmpty(_readmeFilename)); 
+            }
+        }
+
+
         private void ShowCommits()
         {
             if (Branches != null && Branches.Count == 1)
@@ -135,6 +164,20 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
 				response => Branches = response.Values.ToList()).FireAndForget();
+
+            var uiThread = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IUIThreadService>();
+            Task.Run(() =>
+            {
+                var primaryBranch = this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true);
+                _primaryBranch = primaryBranch.Name;
+                var data = this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches[primaryBranch.Name].Source[""].GetInfo(forceCacheInvalidation);
+                var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme"));
+                if (any != null)
+                {
+                    _readmeFilename = any.Path;
+                    uiThread.MarshalOnUIThread(() => HasReadme = true);
+                }
+            }).FireAndForget();
 //
 //			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
 //				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
@@ -152,15 +195,22 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand ForkCommand
 		{
-			get 
-            { 
-                return new MvxCommand(() =>
-                {
-                    var alertSerivce = GetService<CodeFramework.Core.Services.IAlertDialogService>();
-                    alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!", name => Fork(name));
-                }); 
-            }
+			get { return new MvxCommand(() => PromptFork()); }
 		}
+
+        private async Task PromptFork()
+        {
+            try
+            {
+                var alertSerivce = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                var name = await alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!");
+                await Fork(name);
+            }
+            catch (TaskCanceledException e)
+            {
+                // Nothing to see here...
+            }
+        }
 		
 		public async Task Fork(string name)
 		{

@@ -8,6 +8,11 @@ namespace CodeBucket.iOS
 	{
 		public static Theme CurrentTheme { get; private set; }
 
+        public UIImage MenuBackground
+        {
+            get { return null; }
+        }
+
 		public static void Setup()
 		{
 			var theme = new Theme();
