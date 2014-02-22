@@ -76,10 +76,10 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
         }
 
-		[PotentialStartupViewAttribute("Owned Repositories")]
+        [PotentialStartupViewAttribute("My Repositories")]
 		public ICommand GoToOwnedRepositoriesCommand
 		{
-			get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
+            get { return new MvxCommand(() => ShowMenuViewModel<MyRepositoriesViewModel>(null)); }
 		}
 
 		[PotentialStartupViewAttribute("Explore Repositories")]

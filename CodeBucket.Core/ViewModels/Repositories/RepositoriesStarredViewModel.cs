@@ -11,7 +11,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return Repositories.SimpleCollectionLoad(() => this.GetApplication().Client.Account.GetRepositories(forceCacheInvalidation));
+            return Repositories.SimpleCollectionLoad(() => this.GetApplication().Client.Account.GetRepositoriesFollowing(forceCacheInvalidation));
         }
     }
 }

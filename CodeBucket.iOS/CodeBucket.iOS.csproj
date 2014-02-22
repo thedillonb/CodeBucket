@@ -160,6 +160,7 @@
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
+    <Compile Include="Views\Repositories\MyRepositoriesView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
