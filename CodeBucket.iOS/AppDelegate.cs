@@ -46,42 +46,18 @@ namespace CodeBucket.iOS
 		/// <returns>True or false.</returns>
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
+            this.window = new UIWindow(UIScreen.MainScreen.Bounds);
+            var presenter = new TouchViewPresenter(this.window);
+            var setup = new Setup(this, presenter);
+            setup.Initialize();
+
+            Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-42879084-1", "CodeBucket");
+
 			var iRate = MTiRate.iRate.SharedInstance;
             iRate.AppStoreID = 551531422;
 
-			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
-
-			UINavigationBar.Appearance.TintColor = UIColor.White;
-			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(45,80,148);
-			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-			CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-
-            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
-			UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
-
-			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(45,80,148);
-			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
-			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
-
-			UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
-
-			UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes()
-				{
-					TextColor = UIColor.White,
-				}, UIControlState.Normal);
-
-			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
-
 			// Setup theme
 			Theme.Setup();
-
-			var presenter = new TouchViewPresenter(this.window);
-
-			var setup = new Setup(this, presenter);
-			setup.Initialize();
-
-			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-42879084-1", "CodeBucket");
 
 			var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();

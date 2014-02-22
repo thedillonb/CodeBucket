@@ -22,7 +22,11 @@ namespace CodeBucket.iOS
         public WikiView()
             : base(true, true)
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => {
+                var menu = CreateExtraMenu();
+                if (menu != null)
+                    menu.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            });
         }
 
         private async Task HandleEditButton()
@@ -104,16 +108,17 @@ namespace CodeBucket.iOS
 			base.Refresh();
 		}
 
-        private void ShowExtraMenu()
+        private UIActionSheet CreateExtraMenu()
         {
             var repoModel = ViewModel.Repository;
             if (repoModel == null)
-                return;
+                return null;
 
             var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
             var sheet = MonoTouch.Utilities.GetSheet("Wiki");
             var editButton = page != null ? sheet.AddButton("Edit".t()) : -1;
             var gotoButton = sheet.AddButton("Goto Wiki Page".t());
+            var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
@@ -123,9 +128,11 @@ namespace CodeBucket.iOS
                     HandleEditButton();
                 else if (e.ButtonIndex == gotoButton)
                     PromptForWikiPage();
+                else if (e.ButtonIndex == showButton)
+                    ViewModel.GoToWebCommand.Execute(page);
             };
 
-            sheet.ShowInView(this.View);
+            return sheet;
         }
 
         private async Task GoToPage(string page)

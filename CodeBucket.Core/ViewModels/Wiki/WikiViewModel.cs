@@ -6,7 +6,6 @@ using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
 using System.Text;
-using System.Collections.Generic;
 
 namespace CodeBucket.Core.ViewModels.Wiki
 {
@@ -70,6 +69,18 @@ namespace CodeBucket.Core.ViewModels.Wiki
 				}); 
 			}
 		}
+
+        public ICommand GoToWebCommand
+        {
+            get
+            {
+                return new MvxCommand<string>(x =>
+                {
+                    var url = string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", Username, Repository, x);
+                    GoToUrlCommand.Execute(url);
+                });
+            }
+        }
 
 		public void Init(NavObject navObject)
         {
