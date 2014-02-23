@@ -5,6 +5,7 @@ using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeFramework.Core.Utils;
 using BitbucketSharp.Models;
+using CodeFramework.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
@@ -30,8 +31,13 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             { 
                 return new MvxCommand<CommitModel>(x =>
                 {
-                    var repo = new RepositoryIdentifier(_pullRequest.Source.Repository.FullName);
-                    ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash }); 
+                    if (_pullRequest.Source.Repository == null)
+                        GetService<IAlertDialogService>().Alert("Deleted Repository", "Unable to view commit. The source repository has been deleted.");
+                    else
+                    {
+                        var repo = new RepositoryIdentifier(_pullRequest.Source.Repository.FullName);
+                        ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash }); 
+                    }
                 });
             }
         }

@@ -15,7 +15,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssuesViewModel : LoadableViewModel
     {
-        private MvxSubscriptionToken _addToken, _editToken, _deleteToken;
+        private MvxSubscriptionToken _addToken, _editToken, _deleteToken, _filterToken;
 
         public string Username { get; private set; }
 
@@ -32,6 +32,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			get { return new MvxCommand(() => ShowViewModel<IssueAddViewModel>(new IssueAddViewModel.NavObject { Username = Username, Repository = Repository })); }
 		}
+
+        public ICommand GoToFiltersCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<IssuesFiltersViewModel>(new IssuesFiltersViewModel.NavObject { Username = Username, Repository = Repository })); }
+        }
 
 		public void Init(NavObject nav)
 		{
@@ -71,6 +76,10 @@ namespace CodeBucket.Core.ViewModels.Issues
                 var find = Issues.Items.FirstOrDefault(i => i.LocalId == x.Issue.LocalId);
                 if (find != null)
                     Issues.Items.Remove(find);
+            });
+
+            _filterToken = Messenger.SubscribeOnMainThread<IssuesFilterMessage>(x => {
+                _issues.Filter = x.Filter;
             });
 		}
 
@@ -128,11 +137,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 			if (issuesFilter != null)
             {
 				if (issuesFilter.Status != null && !issuesFilter.Status.IsDefault())
-					foreach (var a in FieldToUrl("status", issuesFilter.Status)) filter.AddLast(a);
+                    foreach (var a in PropertyToUrl("status", issuesFilter.Status)) filter.AddLast(a);
 				if (issuesFilter.Kind != null && !issuesFilter.Kind.IsDefault())
-					foreach (var a in FieldToUrl("kind", issuesFilter.Kind)) filter.AddLast(a);
+                    foreach (var a in PropertyToUrl("kind", issuesFilter.Kind)) filter.AddLast(a);
 				if (issuesFilter.Priority != null && !issuesFilter.Priority.IsDefault())
-					foreach (var a in FieldToUrl("priority", issuesFilter.Priority)) filter.AddLast(a);
+                    foreach (var a in PropertyToUrl("priority", issuesFilter.Priority)) filter.AddLast(a);
 				if (!string.IsNullOrEmpty(issuesFilter.AssignedTo))
                 {
 					if (issuesFilter.AssignedTo.Equals("unassigned"))
@@ -158,13 +167,13 @@ namespace CodeBucket.Core.ViewModels.Issues
                 return true;
 
 			if (filter.Status != null && !filter.Status.IsDefault())
-				if (!FieldToUrl(null, filter.Status).Any(x => x.Item2.Equals(model.Status)))
+                if (!PropertyToUrl(null, filter.Status).Any(x => x.Item2.Equals(model.Status)))
                     return false;
 			if (filter.Kind != null && !filter.Kind.IsDefault())
-				if (!FieldToUrl(null, filter.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
+                if (!PropertyToUrl(null, filter.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
                     return false;
 			if (filter.Priority != null && !filter.Priority.IsDefault())
-				if (!FieldToUrl(null, filter.Priority).Any(x => x.Item2.Equals(model.Priority)))
+                if (!PropertyToUrl(null, filter.Priority).Any(x => x.Item2.Equals(model.Priority)))
                     return false;
 			if (!string.IsNullOrEmpty(filter.AssignedTo))
 			if (!object.Equals(filter.AssignedTo, (model.Responsible == null ? "unassigned" : model.Responsible.Username)))
@@ -176,10 +185,10 @@ namespace CodeBucket.Core.ViewModels.Issues
             return true;
         }
 
-        private static IEnumerable<Tuple<string, string>> FieldToUrl(string name, object o)
+        private static IEnumerable<Tuple<string, string>> PropertyToUrl(string name, object o)
         {
             var ret = new LinkedList<Tuple<string, string>>();
-            foreach (var f in o.GetType().GetFields())
+            foreach (var f in o.GetType().GetProperties())
             {
                 if ((bool)f.GetValue(o))
                 {

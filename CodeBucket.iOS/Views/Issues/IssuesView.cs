@@ -80,7 +80,7 @@ namespace CodeBucket.iOS.Views.Issues
 			}
 			else if (_viewSegment.SelectedSegment == 3)
 			{
-				ShowFilterController(new IssuesFilterViewController(ViewModel.Issues));
+                ViewModel.GoToFiltersCommand.Execute(null);
 			}
 		}
 

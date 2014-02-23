@@ -2,11 +2,11 @@
 
 namespace CodeBucket.iOS.Views.Repositories
 {
-    public class MyRepositoriesView : BaseRepositoriesView
+    public class RepositoriesSharedView : BaseRepositoriesView
     {
         public override void ViewDidLoad()
         {
-            Title = "Repositories";
+            Title = "Shared Repositories";
             base.ViewDidLoad();
         }
     }

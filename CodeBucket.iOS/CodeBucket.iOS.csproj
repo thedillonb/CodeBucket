@@ -160,7 +160,8 @@
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
-    <Compile Include="Views\Repositories\MyRepositoriesView.cs" />
+    <Compile Include="Views\Issues\IssuesFiltersView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -242,8 +243,6 @@
     <BundleResource Include="Images\events%402x.png" />
     <BundleResource Include="Images\explore.png" />
     <BundleResource Include="Images\explore%402x.png" />
-    <BundleResource Include="Images\eye.png" />
-    <BundleResource Include="Images\eye%402x.png" />
     <BundleResource Include="Images\file.png" />
     <BundleResource Include="Images\file%402x.png" />
     <BundleResource Include="Images\flag.png" />
@@ -270,8 +269,6 @@
     <BundleResource Include="Images\merge%402x.png" />
     <BundleResource Include="Images\milestone.png" />
     <BundleResource Include="Images\milestone%402x.png" />
-    <BundleResource Include="Images\news.png" />
-    <BundleResource Include="Images\news%402x.png" />
     <BundleResource Include="Images\notifications.png" />
     <BundleResource Include="Images\notifications%402x.png" />
     <BundleResource Include="Images\pencil.png" />
@@ -280,8 +277,6 @@
     <BundleResource Include="Images\person%402x.png" />
     <BundleResource Include="Images\priority.png" />
     <BundleResource Include="Images\priority%402x.png" />
-    <BundleResource Include="Images\public.png" />
-    <BundleResource Include="Images\public%402x.png" />
     <BundleResource Include="Images\repo.png" />
     <BundleResource Include="Images\repo%402x.png" />
     <BundleResource Include="Images\script.png" />
@@ -289,8 +284,6 @@
     <BundleResource Include="Images\size.png" />
     <BundleResource Include="Images\size%402x.png" />
     <BundleResource Include="Images\star.png" />
-    <BundleResource Include="Images\star2.png" />
-    <BundleResource Include="Images\star2%402x.png" />
     <BundleResource Include="Images\star%402x.png" />
     <BundleResource Include="Images\tag.png" />
     <BundleResource Include="Images\tag%402x.png" />
@@ -345,6 +338,8 @@
     <BundleResource Include="Resources\Default-Portrait%402x.png" />
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="Images\book_link%402x.png" />
+    <BundleResource Include="Images\book_link.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

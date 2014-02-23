@@ -37,6 +37,7 @@ namespace CodeBucket.iOS.Views.App
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
 			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Images.Repo));
+            repoSection.Add(new MenuElement("Shared", () => ViewModel.GoToSharedRepositoriesCommand.Execute(null), Images.BookLink));
 			repoSection.Add(new MenuElement("Watched", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
 			repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
             root.Add(repoSection);

@@ -5,6 +5,7 @@ namespace CodeBucket.Core.Filters
 {
     public class IssuesFilterModel : FilterModel<IssuesFilterModel>
     {
+        public string FilterName { get; set; }
         public string AssignedTo { get; set; }
         public string ReportedBy { get; set; }
         public StatusModel Status { get; set; }
@@ -106,7 +107,18 @@ namespace CodeBucket.Core.Filters
 
         public class StatusModel
         {
-            public bool New = true, Open = true, Resolved = true, OnHold = true, Invalid = true, Duplicate = true, Wontfix = true;
+            public bool New { get; set; }
+            public bool Open { get; set; }
+            public bool Resolved { get; set; }
+            public bool OnHold { get; set; }
+            public bool Invalid { get; set; }
+            public bool Duplicate { get; set; }
+            public bool Wontfix { get; set; }
+
+            public StatusModel()
+            {
+                New = Open = Resolved = OnHold = Invalid = Duplicate = Wontfix = true;
+            }
 
             public bool IsDefault()
             {
@@ -141,7 +153,15 @@ namespace CodeBucket.Core.Filters
 
         public class KindModel
         {
-            public bool Bug = true, Enhancement = true, Proposal = true, Task = true;
+            public bool Bug { get; set; }
+            public bool Enhancement { get; set; }
+            public bool Proposal { get; set; }
+            public bool Task { get; set; }
+
+            public KindModel()
+            {
+                Bug = Enhancement = Proposal = Task = true;
+            }
 
             public bool IsDefault()
             {
@@ -176,7 +196,16 @@ namespace CodeBucket.Core.Filters
 
         public class PriorityModel
         {
-            public bool Trivial = true, Minor = true, Major = true, Critical = true, Blocker = true;
+            public bool Trivial { get; set; }
+            public bool Minor { get; set; }
+            public bool Major { get; set; }
+            public bool Critical { get; set; }
+            public bool Blocker { get; set; }
+
+            public PriorityModel()
+            {
+                Trivial = Minor = Major = Critical = Blocker = true;
+            }
 
             public bool IsDefault()
             {
