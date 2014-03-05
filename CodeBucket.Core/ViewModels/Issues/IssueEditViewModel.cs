@@ -75,7 +75,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 { 
                     Title = Title, 
                     Content = Content ?? string.Empty, 
-                    Responsible = AssignedTo != null ? AssignedTo.Username : null,
+                    Responsible = AssignedTo != null ? AssignedTo.Username : string.Empty,
                     Milestone = Milestone ?? string.Empty,
                     Component = Component ?? string.Empty,
                     Version = Version ?? string.Empty,
