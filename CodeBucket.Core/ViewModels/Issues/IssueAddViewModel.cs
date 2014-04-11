@@ -34,7 +34,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to save the issue: " + e.Message);
 			}
 			finally
 			{

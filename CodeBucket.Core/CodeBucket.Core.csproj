@@ -155,9 +155,9 @@
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core.iOS</Name>
+      <Name>CodeFramework.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

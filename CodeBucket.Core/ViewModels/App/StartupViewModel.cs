@@ -49,7 +49,7 @@ namespace CodeBucket.Core.ViewModels.App
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to login successfully: " + e.Message);
 				ShowViewModel<Accounts.AccountsViewModel>();
 				ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject() { AttemptedAccountId = account.Id });
 			}

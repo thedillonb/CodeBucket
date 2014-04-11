@@ -114,7 +114,7 @@ namespace CodeBucket.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to add comment: " + e.Message);
 			}
         }
 
@@ -127,7 +127,7 @@ namespace CodeBucket.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to approve commit: " + e.Message);
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace CodeBucket.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to unapprove commit: " + e.Message);
 			}
 		}
 

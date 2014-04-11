@@ -51,7 +51,7 @@ namespace CodeBucket.iOS
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
-            Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-42879084-1", "CodeBucket");
+            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/7/store/", "646913784b3d4d85ad04a03d2887f48e  ", "872ee1da3b27408b841e7587bf549a22");
 
 			var iRate = MTiRate.iRate.SharedInstance;
             iRate.AppStoreID = 551531422;

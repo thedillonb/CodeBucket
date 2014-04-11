@@ -70,7 +70,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 				}
 				catch (Exception e)
 				{
-					DisplayException(e);
+                    DisplayAlert("Unable to update issue component: " + e.Message);
 				}
 				finally
 				{

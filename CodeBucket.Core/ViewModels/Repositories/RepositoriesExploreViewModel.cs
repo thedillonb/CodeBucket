@@ -64,7 +64,7 @@ namespace CodeBucket.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Failed to retrieve list of repositories. " + e.Message);
 			}
 			finally
 			{

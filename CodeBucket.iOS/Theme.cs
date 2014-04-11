@@ -4,7 +4,7 @@ using CodeFramework.iOS.Cells;
 
 namespace CodeBucket.iOS
 {
-	public class Theme : ICodeFrameworkTheme
+    public class Theme : ICodeFrameworkTheme
 	{
 		public static Theme CurrentTheme { get; private set; }
 
@@ -55,6 +55,11 @@ namespace CodeBucket.iOS
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
 //            CodeFramework.Elements.NewsFeedElement.NameColor = theme.MainTitleColor;
 		}
+
+        public float FontSizeRatio
+        {
+            get { return 1.0f; }
+        }
 
 		public UITextAttributes SegmentedControlText
 		{

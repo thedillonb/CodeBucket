@@ -189,9 +189,6 @@
     <Reference Include="Cirrious.MvvmCross">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
     </Reference>
-    <Reference Include="GoogleAnalytics.iOS">
-      <HintPath>..\lib\CodeFramework\lib\iOS\GoogleAnalytics.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="MTiRate">
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
     </Reference>
@@ -356,14 +353,6 @@
       <Project>{F23D3AC1-1422-468B-AAE6-D74FB1DBAE74}</Project>
       <Name>CodeBucket.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
-      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
-      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
-      <Name>CodeFramework.iOS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
@@ -379,6 +368,14 @@
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\monotouch-uservoice\UserVoice\UserVoice.csproj">
       <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
       <Name>UserVoice</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
+      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
+      <Name>CodeFramework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
+      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
+      <Name>CodeFramework.iOS</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

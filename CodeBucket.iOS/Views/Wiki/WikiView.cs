@@ -35,7 +35,7 @@ namespace CodeBucket.iOS
             {
                 var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
                 var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
-                var composer = new Composer { Title = "Edit".t() + Title, Text = wiki.Data, ActionButtonText = "Save".t() };
+                var composer = new Composer { Title = "Edit".t() + Title, Text = wiki.Data };
                 composer.NewComment(this, async (text) => {
                     try
                     {

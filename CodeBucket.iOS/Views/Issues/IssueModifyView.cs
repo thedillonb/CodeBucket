@@ -68,7 +68,7 @@ namespace CodeBucket.iOS.Views.Issues
 			var content = new MultilinedElement("Description");
 			content.Tapped += () =>
 			{
-				var composer = new Composer { Title = "Issue Description", Text = content.Value, ActionButtonText = "Save" };
+                var composer = new Composer { Title = "Issue Description", Text = content.Value };
 				composer.NewComment(this, (text) => {
 					ViewModel.Content = text;
 					composer.CloseComposer();

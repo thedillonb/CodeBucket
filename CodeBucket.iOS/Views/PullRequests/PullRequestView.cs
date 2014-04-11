@@ -24,7 +24,7 @@ namespace CodeBucket.iOS.Views.PullRequests
         public PullRequestView()
         {
             Root.UnevenRows = true;
-            _header = new HeaderView() { ShadowImage = false };
+            _header = new HeaderView();
             _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Create, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
         }
 

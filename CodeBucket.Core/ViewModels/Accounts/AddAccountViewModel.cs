@@ -78,7 +78,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
             }
             catch (Exception e)
             {
-				DisplayException(e);
+                DisplayAlert("Unable to login: " + e.Message);
             }
             finally
             {

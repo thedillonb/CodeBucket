@@ -42,7 +42,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to login: " + e.Message);
 				ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject() { AttemptedAccountId = githubAccount.Id });
 			}
 			finally

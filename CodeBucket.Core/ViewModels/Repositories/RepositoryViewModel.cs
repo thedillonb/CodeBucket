@@ -222,7 +222,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to successfully fork the repository: " + e.Message);
 			}
             finally
             {

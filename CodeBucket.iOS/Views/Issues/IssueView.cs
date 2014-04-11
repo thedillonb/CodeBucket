@@ -12,9 +12,9 @@ namespace CodeBucket.iOS.Views.Issues
 {
 	public class IssueView : ViewModelDrivenDialogViewController
     {
-		private readonly HeaderView _header;
+		private HeaderView _header;
 		private WebElement _descriptionElement;
-		private WebElement2 _commentsElement;
+		private WebElement _commentsElement;
 
 
 		public new IssueViewModel ViewModel
@@ -26,19 +26,20 @@ namespace CodeBucket.iOS.Views.Issues
 		public IssueView()
 		{
 			Root.UnevenRows = true;
-			_header = new HeaderView() { ShadowImage = false };
 		}
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
+            _header = new HeaderView();
+
 			var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-			_descriptionElement = new WebElement(content);
+            _descriptionElement = new WebElement(content, "description_webview", false);
 			_descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
 			var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-			_commentsElement = new WebElement2(content2);
+            _commentsElement = new WebElement(content2, "body_webview", true);
 			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
@@ -118,7 +119,7 @@ namespace CodeBucket.iOS.Views.Issues
 
 			root.Add(secDetails);
 
-			if (ViewModel.Comments.Any())
+            if (ViewModel.Comments.Any(x => !string.IsNullOrEmpty(x.Content)))
 			{
 				root.Add(new Section { _commentsElement });
 			}
