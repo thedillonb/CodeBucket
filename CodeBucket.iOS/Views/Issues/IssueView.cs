@@ -59,7 +59,7 @@ namespace CodeBucket.iOS.Views.Issues
 			var comments = ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content)).Select(x => new { 
 				avatarUrl = x.AuthorInfo.Avatar, 
 				login = x.AuthorInfo.Username, 
-				updated_at = x.UtcCreatedOn.ToDaysAgo(), 
+                created_at = x.UtcCreatedOn.ToDaysAgo(), 
 				body = ViewModel.ConvertToMarkdown(x.Content)
 			});
 
