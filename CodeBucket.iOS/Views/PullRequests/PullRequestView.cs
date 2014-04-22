@@ -77,22 +77,22 @@ namespace CodeBucket.iOS.Views.PullRequests
 				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
             });
 
-//            if (!merged)
-//            {
-//                MonoTouch.Foundation.NSAction mergeAction = async () =>
-//                {
-//                    try
-//                    {
-//						await this.DoWorkAsync("Merging...", ViewModel.Merge);
-//                    }
-//                    catch (Exception e)
-//                    {
-//                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
-//                    }
-//                };
-// 
-//                root.Add(new Section { new StyledStringElement("Merge".t(), mergeAction, Images.Fork) });
-//            }
+            if (!merged)
+            {
+                MonoTouch.Foundation.NSAction mergeAction = async () =>
+                {
+                    try
+                    {
+						await this.DoWorkAsync("Merging...", ViewModel.Merge);
+                    }
+                    catch (Exception e)
+                    {
+                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
+                    }
+                };
+ 
+                root.Add(new Section { new StyledStringElement("Merge".t(), mergeAction, Images.Fork) });
+            }
 
 
             if (ViewModel.Comments.Items.Count > 0)
