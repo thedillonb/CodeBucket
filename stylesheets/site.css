@@ -1,0 +1,315 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+/*--------------------------------------------
+Global Styles
+---------------------------------------------*/
+body
+{
+    background: #1e1e1e url('../images/texture.jpg') repeat top left;
+    color: #fff;
+    font-family: "Helvetica Neue" , Helvetica, sans-serif;
+    font-size: 14px;
+}
+div.container
+{
+    width: 960px;
+    margin: 0 auto;
+}
+/*--------------------------------------------
+App Info
+---------------------------------------------*/
+div#app_info
+{
+    padding-top: 50px;
+    background: url('../images/spotlight.jpg') no-repeat top center;
+    overflow: auto;
+}
+div#app_info div.phones
+{
+    float: left;
+    height: 625px;
+    width: 421px;
+    background: url('../images/codebucketdevices.png') no-repeat top;
+}
+div#app_info div.info
+{
+    float: right;
+    width: 500px;
+    margin-top: 100px;
+}
+div#app_info h1
+{
+    height: 90px;
+    text-indent: -999999px;
+    background: url('../images/logo.png') no-repeat;
+}
+div#app_info .info p
+{
+    font-size: 15px;
+    line-height: 26px;
+    text-shadow: 2px 1px 8px #000;
+    margin: 38px 0px 23px 0px;
+}
+div.app_store
+{
+    margin: 60px 0px 18px 80px;
+    width: 326px;
+    height: 105px;
+    background: url('../images/app_store.png') no-repeat top;
+}
+div.app_store a
+{
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    text-indent: -999999px;
+    background: url('../images/app_store.png') no-repeat bottom;
+}
+div.app_store a:hover
+{
+    filter: none;
+}
+/*--------------------------------------------
+App Details
+---------------------------------------------*/
+div#app_details
+{
+    background: url('../images/h_separator.png') repeat-x top;
+    padding: 40px 0px 30px 0px;
+    overflow: auto;
+}
+/*
+div#app_details div.screenshots
+{
+    width: 460px;
+    float: left;
+    border-right: 1px solid #292929;
+    padding-left: 12px;
+}
+div#app_details div.screenshots ul
+{
+    list-style: none;
+}
+div#app_details div.screenshots ul li
+{
+    float: left;
+    margin: 0px 30px 30px 0px;
+    position: relative;
+}
+div#app_details div.screenshots ul li.right
+{
+    margin-right: 0;
+}
+div#app_details div.screenshots ul li.bottom
+{
+    margin-bottom: 0;
+}
+div#app_details div.screenshots ul li span
+{
+    width: 176px;
+    height: 120px;
+    background: #000 url('../images/magnify.png') no-repeat center center;
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    display: none;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+}
+*/
+/*
+div#app_details div.features
+{
+    width: 430px;
+    float: right;
+    padding-left: 55px;
+}
+div#app_details div.features h2
+{
+    font-size: 24px;
+    color: #fff;
+    font-weight: normal;
+    margin-bottom: 18px;
+}
+div#app_details div.features ul
+{
+    list-style: none;
+    margin-bottom: 30px;
+}
+div#app_details div.features ul li
+{
+    color: #8f8f8f;
+    font-size: 15px;
+    margin: 0px 0px 8px -3px;
+    padding-left: 25px;
+    background: url('../images/bullet.png') no-repeat left;
+}
+*/
+/*--------------------------------------------
+Footer
+---------------------------------------------*/
+div#footer
+{
+    padding: 20px 0px 57px 0px;
+    background: url('../images/h_separator.png') repeat-x top;
+}
+div#footer ul
+{
+    list-style: none;
+}
+div#footer ul li
+{
+    float: left;
+    width: 215px;
+    margin-right: 33px;
+}
+div#footer ul li.copyright
+{
+    margin-right: 0;
+}
+div#footer ul li a
+{
+    height: 37px;
+    display: block;
+    padding-left: 54px;
+    color: #ccc;
+    font-size: 12px;
+    text-decoration: none;
+    line-height: 20px;
+    background: url('../images/icons.png') no-repeat top left;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+}
+div#footer ul li a span
+{
+    color: #688fc6;
+}
+div#footer ul li a:hover
+{
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+div#footer ul li.twitter a
+{
+    background-position: 0px 0px;
+}
+div#footer ul li.help a
+{
+    background-position: 0px -37px;
+}
+div#footer ul li.press a
+{
+    background-position: 0px -74px;
+}
+div#footer ul li.copyright a
+{
+    background-position: 0px -111px;
+}
+/*--------------------------------------------
+Utilities
+---------------------------------------------*/
+img
+{
+    border: none;
+}
+a
+{
+    outline: none;
+    -moz-outline: none;
+}
+
+.featurelist
+{
+    float: left;
+    margin: 10px 10px 30px 30px;
+}
+.featurelistcolumn:first-child
+{
+    padding: 0 30px 0 0;
+}
+.featurelistcolumn
+{
+    width: 420px;
+    float: left;
+    padding: 0;
+}
+.featurelist ul
+{
+    list-style: none inside;
+    margin: 0;
+    font-size: 18px;
+    line-height: 30px;
+    color: #858A8C;
+}
+.featurelistcolumn ul li span
+{
+    font-weight: bold;
+    font-size: 18px;
+    color: #5c83bf;
+    margin: 0 5px 0 0;
+}
+.features
+{
+    margin: 40px 80px 0 80px;
+}
+.features.text-left div.screenshot:first-child
+{
+    margin-right: -10px;
+}
+.features.text-left div.screenshot
+{
+    float: right;
+    margin-top: 10px;
+    height: 370px;
+    width: 240px;
+}
+.features.text-right div.screenshot:first-child
+{
+    margin-left: -10px;
+}
+.features.text-right div.screenshot
+{
+    float: left;
+    margin-top: 10px;
+    height: 370px;
+    width: 240px;
+}
+.screenshot img
+{
+    width: 220px;
+    height: 316px;
+    box-shadow: 0px 0px 7px 1px #999999;
+}
+.features.text-right h3, .features.text-right p
+{
+    padding-left: 560px;
+}
+.features h3
+{
+    color: #5c83bf;
+    font-size: 14px;
+    margin: 0 0 2px 0;
+}
+.features h3, .features p
+{
+    width: 220px;
+}
+.features p
+{
+    margin: 0 0 18px 0;
+}
+h1, h2, h3, h4, h5, h6
+{
+    font-weight: bold;
+}
+
+.feature-section 
+{
+    background: url('../images/h_separator.png') repeat-x bottom;
+}
