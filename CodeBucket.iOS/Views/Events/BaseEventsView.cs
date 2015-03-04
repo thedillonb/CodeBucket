@@ -34,6 +34,10 @@ namespace CodeBucket.iOS.Views.Events
                 var img = ChooseImage(e.Item1);
 				var username = e.Item1.User != null ? e.Item1.User.Username : null;
 				var avatar = e.Item1.User != null ? e.Item1.User.Avatar : null;
+
+                if (avatar != null)
+                    avatar = avatar.Replace("&s=32", "&s=64");
+
 				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
 				foreach (var h in e.Item2.Header)
 				{
@@ -56,7 +60,7 @@ namespace CodeBucket.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
-				return new NewsFeedElement(username, avatar, (e.Item1.UtcCreatedOn), headerBlocks, bodyBlocks, img, e.Item2.Tapped);
+				return new NewsFeedElement(avatar, (e.Item1.UtcCreatedOn), headerBlocks, bodyBlocks, img, e.Item2.Tapped);
             }
             catch (Exception ex)
             {

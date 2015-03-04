@@ -8,11 +8,6 @@ namespace CodeBucket.iOS
 	{
 		public static Theme CurrentTheme { get; private set; }
 
-        public UIImage MenuBackground
-        {
-            get { return null; }
-        }
-
 		public static void Setup()
 		{
 			var theme = new Theme();
@@ -50,6 +45,10 @@ namespace CodeBucket.iOS
             {
                 TextColor = UIColor.White,
             }, UIControlState.Normal);
+
+            CodeFramework.iOS.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
+            CodeFramework.iOS.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
+            CodeFramework.iOS.Views.StartupView.StatusBarStyle = UIStatusBarStyle.LightContent;
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
@@ -180,5 +179,7 @@ namespace CodeBucket.iOS
 		{
 			get { return new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) }; }
 		}
+
+        public UIImage LoginUserUnknown { get { return Images.LoginUserUnknown; } }
 	}
 }

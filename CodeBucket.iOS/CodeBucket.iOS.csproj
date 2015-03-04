@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0CF7A46F-ABF5-4580-878A-98AE94A72B76}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
@@ -25,7 +23,8 @@
     <MtouchDebug>true</MtouchDebug>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>i386</MtouchArch>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -72,6 +71,8 @@
     <IpaPackageName>
     </IpaPackageName>
     <MtouchUseThumb>true</MtouchUseThumb>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -82,6 +83,11 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <BuildIpa>True</BuildIpa>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -96,6 +102,8 @@
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
@@ -162,6 +170,11 @@
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
+    <Compile Include="Launch.cs" />
+    <Compile Include="Launch.designer.cs">
+      <DependentUpon>Launch.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Launch.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -194,6 +207,9 @@
     </Reference>
     <Reference Include="CreoleParser">
       <HintPath>lib\CreoleParser.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.TTTAttributedLabel">
+      <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -280,8 +296,6 @@
     <BundleResource Include="Images\script%402x.png" />
     <BundleResource Include="Images\size.png" />
     <BundleResource Include="Images\size%402x.png" />
-    <BundleResource Include="Images\star.png" />
-    <BundleResource Include="Images\star%402x.png" />
     <BundleResource Include="Images\tag.png" />
     <BundleResource Include="Images\tag%402x.png" />
     <BundleResource Include="Images\team.png" />
@@ -337,6 +351,10 @@
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
     <BundleResource Include="Images\book_link%402x.png" />
     <BundleResource Include="Images\book_link.png" />
+    <BundleResource Include="Images\login_user_unknown.png" />
+    <BundleResource Include="Images\login_user_unknown%402x.png" />
+    <BundleResource Include="Images\star.png" />
+    <BundleResource Include="Images\star%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

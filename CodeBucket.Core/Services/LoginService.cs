@@ -61,7 +61,7 @@ namespace CodeBucket.Core.Services
 			var data = await Task.Run(() => client.Account.GetInfo(true));
 			var userInfo = data.User;
 			account.Username = userInfo.Username;
-			account.AvatarUrl = userInfo.Avatar;
+            account.AvatarUrl = userInfo.Avatar.Replace("&s=32", "&s=64");
 			client.Username = userInfo.Username;
             _accounts.Update(account);
             return client;

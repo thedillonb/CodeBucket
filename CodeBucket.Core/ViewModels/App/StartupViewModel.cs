@@ -3,6 +3,7 @@ using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -44,6 +45,20 @@ namespace CodeBucket.Core.ViewModels.App
 			try
 			{
 				IsLoggingIn = true;
+
+                Uri accountAvatarUri = null;
+                var avatarUrl = account.AvatarUrl;
+                if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    var match = Regex.Match(avatarUrl, @"&s=(\d+)", RegexOptions.IgnoreCase);
+                    if (match.Success && match.Groups.Count > 1)
+                        avatarUrl = avatarUrl.Replace(match.Groups[0].Value, "&s=128");
+                }
+
+                Uri.TryCreate(avatarUrl, UriKind.Absolute, out accountAvatarUri);
+                ImageUrl = accountAvatarUri;
+                Status = "Logging in as " + account.Username;
+
 				var client = await _loginService.LoginAccount(account);
 				_applicationService.ActivateUser(account, client);
 			}
