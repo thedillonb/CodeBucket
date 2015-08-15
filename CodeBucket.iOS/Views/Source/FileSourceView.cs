@@ -3,6 +3,8 @@ using CodeFramework.iOS.Views;
 using MonoTouch.UIKit;
 using CodeFramework.Core.ViewModels;
 using MonoTouch.Foundation;
+using Cirrious.CrossCore;
+using CodeFramework.Core.Services;
 
 namespace CodeBucket.iOS.Views.Source
 {
@@ -46,7 +48,9 @@ namespace CodeBucket.iOS.Views.Source
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+            sheet.Dismissed += (s, e) => {
+                BeginInvokeOnMainThread(() =>
+                {
 				if (e.ButtonIndex == openButton)
 				{
 					var ctrl = new UIDocumentInteractionController();
@@ -55,16 +59,13 @@ namespace CodeBucket.iOS.Views.Source
 				}
 				else if (e.ButtonIndex == shareButton)
 				{
-					var item = UIActivity.FromObject (ViewModel.HtmlUrl);
-					var activityItems = new NSObject[] { item };
-					UIActivity[] applicationActivities = null;
-					var activityController = new UIActivityViewController (activityItems, applicationActivities);
-					PresentViewController (activityController, true, null);
+                    Mvx.Resolve<IShareService>().ShareUrl(ViewModel.HtmlUrl);
 				}
 				else if (e.ButtonIndex == showButton)
 				{
 					ViewModel.GoToHtmlUrlCommand.Execute(null);
 				}
+                });
 			};
 
 			sheet.ShowInView(this.View);

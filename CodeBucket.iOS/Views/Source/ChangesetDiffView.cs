@@ -124,9 +124,12 @@ namespace CodeBucket.ViewControllers
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (sender, e) => {
+            sheet.Dismissed += (sender, e) => {
+                BeginInvokeOnMainThread(() =>
+                {
                 if (e.ButtonIndex == addButton)
 					ShowCommentComposer(model.LineFrom, model.LineTo);
+                });
             };
 
             sheet.ShowInView(this.View);

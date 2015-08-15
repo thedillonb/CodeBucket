@@ -122,14 +122,17 @@ namespace CodeBucket.iOS
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => 
+            sheet.Dismissed += (s, e) => 
             {
+                BeginInvokeOnMainThread(() =>
+                {
                 if (e.ButtonIndex == editButton)
                     HandleEditButton();
                 else if (e.ButtonIndex == gotoButton)
                     PromptForWikiPage();
                 else if (e.ButtonIndex == showButton)
                     ViewModel.GoToWebCommand.Execute(page);
+                });
             };
 
             return sheet;

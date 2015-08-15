@@ -194,7 +194,10 @@ namespace CodeBucket.iOS.Views.Source
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+            sheet.Dismissed += (s, e) => {
+
+                BeginInvokeOnMainThread(() =>
+                {
 				// Pin to menu
 				if (e.ButtonIndex == addComment)
 				{
@@ -216,6 +219,7 @@ namespace CodeBucket.iOS.Views.Source
 //				{
 //					ViewModel.GoToHtmlUrlCommand.Execute(null);
 //				}
+                });
 			};
 
 			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);

@@ -27,12 +27,15 @@ namespace CodeBucket.iOS.Views.Accounts
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+            sheet.Dismissed += (s, e) => {
 				// Pin to menu
+                BeginInvokeOnMainThread(() =>
+                {
 				if (e.ButtonIndex == basicButton)
 				{
 					ViewModel.GoToOldLoginWaysCommand.Execute(null);
 				}
+                });
 			};
 
 			sheet.ShowInView(this.View);

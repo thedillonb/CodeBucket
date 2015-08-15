@@ -170,11 +170,7 @@
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
-    <Compile Include="Launch.cs" />
-    <Compile Include="Launch.designer.cs">
-      <DependentUpon>Launch.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Launch.xib" />
+    <InterfaceDefinition Include="LaunchThis.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -328,7 +324,6 @@
     <BundleResource Include="Images\Web\back%402x.png" />
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
-    <BundleResource Include="Resources\Default.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
     <BundleResource Include="Images\cancel.png" />
     <BundleResource Include="Images\accept.png" />
@@ -338,23 +333,18 @@
     <BundleResource Include="Images\sitemap_color.png" />
     <BundleResource Include="Images\server_components%402x.png" />
     <BundleResource Include="Images\server_components.png" />
-    <BundleResource Include="Resources\Default%402x.png" />
     <BundleResource Include="Resources\Icon-60%402x.png" />
     <BundleResource Include="Resources\Icon-76.png" />
     <BundleResource Include="Resources\Icon-76%402x.png" />
     <BundleResource Include="Resources\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
-    <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\Default-Portrait.png" />
-    <BundleResource Include="Resources\Default-Portrait%402x.png" />
-    <BundleResource Include="Resources\Default-Landscape.png" />
-    <BundleResource Include="Resources\Default-Landscape%402x.png" />
     <BundleResource Include="Images\book_link%402x.png" />
     <BundleResource Include="Images\book_link.png" />
     <BundleResource Include="Images\login_user_unknown.png" />
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\star.png" />
     <BundleResource Include="Images\star%402x.png" />
+    <BundleResource Include="CodeBucketIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

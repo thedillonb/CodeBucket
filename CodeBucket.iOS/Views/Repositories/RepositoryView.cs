@@ -54,7 +54,9 @@ namespace CodeBucket.iOS.Views.Repositories
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
+            sheet.Dismissed += (s, e) => {
+                BeginInvokeOnMainThread(() =>
+                {
                 // Pin to menu
                 if (e.ButtonIndex == pinButton)
                 {
@@ -69,6 +71,7 @@ namespace CodeBucket.iOS.Views.Repositories
                 {
 					ViewModel.GoToUrlCommand.Execute(ViewModel.HtmlUrl);
                 }
+                });
             };
 
             sheet.ShowInView(this.View);

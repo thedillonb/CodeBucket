@@ -27,8 +27,6 @@
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
-	<key>UILaunchImageFile</key>
-	<string>Default.png</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
@@ -69,12 +67,12 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CFBundleVersion</key>
-	<string>2.2.0</string>
+	<string>2.2.0.2</string>
 	<key>CFBundleShortVersionString</key>
 	<string>2.2.0</string>
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
 	<key>UILaunchStoryboardName</key>
-	<string>Launch</string>
+	<string>LaunchThis</string>
 </dict>
 </plist>

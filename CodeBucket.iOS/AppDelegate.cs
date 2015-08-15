@@ -22,10 +22,11 @@ namespace CodeBucket.iOS
 	[Register("AppDelegate")]
 	public class AppDelegate : MvxApplicationDelegate
 	{
-		/// <summary>
-		/// The window.
-		/// </summary>
-		private UIWindow window;
+        public override UIWindow Window
+        {
+            get;
+            set;
+        }
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -46,8 +47,8 @@ namespace CodeBucket.iOS
 		/// <returns>True or false.</returns>
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-            this.window = new UIWindow(UIScreen.MainScreen.Bounds);
-            var presenter = new TouchViewPresenter(this.window);
+            this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            var presenter = new TouchViewPresenter(this.Window);
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
@@ -62,7 +63,7 @@ namespace CodeBucket.iOS
 			var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();
 
-			this.window.MakeKeyAndVisible();
+            this.Window.MakeKeyAndVisible();
 
 			return true;
 		}

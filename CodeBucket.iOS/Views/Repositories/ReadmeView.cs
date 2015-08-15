@@ -44,11 +44,14 @@ namespace CodeBucket.iOS.Views.Repositories
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
+            sheet.Dismissed += (s, e) => {
+                BeginInvokeOnMainThread(() =>
+                {
                 if (e.ButtonIndex == showButton)
                     ViewModel.GoToGitHubCommand.Execute(null);
                 else if (e.ButtonIndex == shareButton)
                     ViewModel.ShareCommand.Execute(null);
+                });
             };
 
             sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
