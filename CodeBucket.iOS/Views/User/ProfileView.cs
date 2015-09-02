@@ -1,10 +1,11 @@
 using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeBucket.ViewControllers;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.User;
 using MonoTouch.Dialog;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.User
+namespace CodeBucket.Views.User
 {
 	public class ProfileView : ViewModelDrivenDialogViewController
     {
@@ -34,11 +35,11 @@ namespace CodeBucket.iOS.Views.User
 
 			ViewModel.Bind(x => x.User, x =>
 			{
-				var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-				var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-                var organizations = new StyledStringElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
-				var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
-                var following = new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
+				var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
+				var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+                var organizations = new StyledStringElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
+				var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
+                var following = new StyledStringElement("Following", () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
                 var midSec = new Section() { events, organizations, followers, following };
 				Root = new RootElement(Title) { new Section(header), midSec, new Section { repos } };
 			});
@@ -49,8 +50,8 @@ namespace CodeBucket.iOS.Views.User
 //		private void ShowExtraMenu()
 //		{
 //			var sheet = MonoTouch.Utilities.GetSheet(ViewModel.Username);
-//			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
-//			var cancelButton = sheet.AddButton("Cancel".t());
+//			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow" : "Follow");
+//			var cancelButton = sheet.AddButton("Cancel");
 //			sheet.CancelButtonIndex = cancelButton;
 //			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 //			sheet.Clicked += (s, e) => {

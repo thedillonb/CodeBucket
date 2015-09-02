@@ -1,5 +1,4 @@
-﻿using Cirrious.MvvmCross.ViewModels;
-using CodeBucket.Core.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.ViewModels.App;
 
 namespace CodeBucket.Core

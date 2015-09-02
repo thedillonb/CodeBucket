@@ -1,7 +1,7 @@
 using CodeBucket.Core.ViewModels.Groups;
-using CodeBucket.iOS.Views.User;
+using CodeBucket.Views.User;
 
-namespace CodeBucket.iOS.Views.Groups
+namespace CodeBucket.Views.Groups
 {
 	public class GroupView : BaseUserCollectionView
     {
@@ -13,7 +13,7 @@ namespace CodeBucket.iOS.Views.Groups
 
         public override void ViewDidLoad()
         {
-			NoItemsText = "No Members".t();
+			NoItemsText = "No Members";
 			base.ViewDidLoad();
         }
     }

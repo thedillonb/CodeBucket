@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeBucket.Core.Filters;
 

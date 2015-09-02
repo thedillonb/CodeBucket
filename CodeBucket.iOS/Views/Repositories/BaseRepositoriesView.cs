@@ -1,12 +1,11 @@
-using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Repositories;
-using MonoTouch.Dialog;
-using CodeBucket.iOS.Views.Filters;
+using CodeBucket.Views.Filters;
 using BitbucketSharp.Models;
 using System;
+using CodeBucket.ViewControllers;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
     public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
     {
@@ -18,9 +17,9 @@ namespace CodeBucket.iOS.Views.Repositories
 
         protected BaseRepositoriesView()
         {
-            Title = "Repositories".t();
-            NoItemsText = "No Repositories".t(); 
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+            Title = "Repositories";
+            NoItemsText = "No Repositories"; 
+			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
 				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
         }
 
@@ -28,7 +27,7 @@ namespace CodeBucket.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             BindCollection(ViewModel.Repositories, CreateElement);
-			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 56f, 0, 0);
+			TableView.SeparatorInset = new UIKit.UIEdgeInsets(0, 56f, 0, 0);
         }
 
 		protected Element CreateElement(RepositoryDetailedModel repo)

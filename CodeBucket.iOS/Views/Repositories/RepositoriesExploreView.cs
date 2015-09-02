@@ -1,13 +1,13 @@
 using System;
-using System.Drawing;
-using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
-using CodeBucket.Core.ViewModels;
-using MonoTouch.UIKit;
+using CodeBucket.Elements;
+using UIKit;
+using CodeBucket.Utils;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels.Repositories;
+using Cirrious.MvvmCross.ViewModels;
 using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.iOS.Utils;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
     public sealed class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
@@ -16,8 +16,8 @@ namespace CodeBucket.iOS.Views.Repositories
         {
             AutoHideSearch = false;
             //EnableFilter = true;
-            NoItemsText = "No Repositories".t();
-            Title = "Explore".t();
+            NoItemsText = "No Repositories";
+            Title = "Explore";
         }
 
         public override void ViewDidLoad()

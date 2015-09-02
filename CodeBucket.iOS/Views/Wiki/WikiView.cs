@@ -1,13 +1,13 @@
 using System;
-using CodeFramework.iOS.Views;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Wiki;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Utils;
+using UIKit;
+using Foundation;
+using CodeBucket.ViewControllers;
+using CodeBucket.Utils;
 using System.Threading.Tasks;
 
-namespace CodeBucket.iOS
+namespace CodeBucket.Views.Wiki
 {
 	public class WikiView : WebView
     {
@@ -35,7 +35,7 @@ namespace CodeBucket.iOS
             {
                 var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
                 var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
-                var composer = new Composer { Title = "Edit".t() + Title, Text = wiki.Data };
+                var composer = new Composer { Title = "Edit" + Title, Text = wiki.Data };
                 composer.NewComment(this, async (text) => {
                     try
                     {
@@ -116,10 +116,10 @@ namespace CodeBucket.iOS
 
             var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
             var sheet = MonoTouch.Utilities.GetSheet("Wiki");
-            var editButton = page != null ? sheet.AddButton("Edit".t()) : -1;
-            var gotoButton = sheet.AddButton("Goto Wiki Page".t());
+            var editButton = page != null ? sheet.AddButton("Edit") : -1;
+            var gotoButton = sheet.AddButton("Goto Wiki Page");
             var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => 

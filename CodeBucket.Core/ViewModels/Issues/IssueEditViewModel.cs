@@ -4,6 +4,7 @@ using System;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Messages;
 using System.Windows.Input;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -54,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
         {
             try
             {
-                var alert = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                var alert = GetService<IAlertDialogService>();
                 if (await alert.PromptYesNo("Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + "."))
                     await Delete();
             }
@@ -128,7 +129,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			base.Init(navObject.Username, navObject.Repository);
 			Id = navObject.Id;
-			Issue = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IssueModel;
+			Issue = GetService<IViewModelTxService>().Get() as IssueModel;
 		}
 
 		public class NavObject

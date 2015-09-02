@@ -1,7 +1,8 @@
 using System;
-using MonoTouch.Foundation;
+using Foundation;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
 	public class SourceView : FileSourceView
     {

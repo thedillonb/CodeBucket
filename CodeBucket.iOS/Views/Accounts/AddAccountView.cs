@@ -1,12 +1,13 @@
-using System.Drawing;
-using Cirrious.MvvmCross.Binding.BindingContext;
+using CoreGraphics;
 using Cirrious.MvvmCross.Touch.Views;
 using CodeBucket.Core.ViewModels.Accounts;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using Foundation;
+using UIKit;
+using CodeBucket.Utils;
+using Cirrious.MvvmCross.ViewModels;
+using Cirrious.MvvmCross.Binding.BindingContext;
 
-namespace CodeBucket.iOS.Views.Accounts
+namespace CodeBucket.Views.Accounts
 {
     public partial class AddAccountView : MvxViewController
     {
@@ -21,8 +22,8 @@ namespace CodeBucket.iOS.Views.Accounts
         public AddAccountView()
             : base("AddAccountView", null)
         {
-            Title = "Login".t();
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+            Title = "Login";
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
 			_hud = this.CreateHud();
         }
 
@@ -65,7 +66,7 @@ namespace CodeBucket.iOS.Views.Accounts
 
             //Set some generic shadowing
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            LoginButton.Layer.ShadowOffset = new SizeF(0, 1);
+            LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
             LoginButton.Layer.ShadowOpacity = 0.3f;
 
             Domain.ShouldReturn = delegate {
@@ -84,7 +85,7 @@ namespace CodeBucket.iOS.Views.Accounts
             };
 
 
-            ScrollView.ContentSize = new SizeF(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
+            ScrollView.ContentSize = new CGSize(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
         NSObject _hideNotification, _showNotification;

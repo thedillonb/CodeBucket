@@ -5,30 +5,30 @@
 // Manual changes to this file may not be handled correctly.
 //
 
-using MonoTouch.Foundation;
+using Foundation;
 
-namespace CodeBucket.iOS.Views.Accounts
+namespace CodeBucket.Views.Accounts
 {
 	[Register ("AddAccountView")]
 	partial class AddAccountView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UITextField Domain { get; set; }
+		UIKit.UITextField Domain { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIButton LoginButton { get; set; }
+		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Logo { get; set; }
+		UIKit.UIImageView Logo { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextField Password { get; set; }
+		UIKit.UITextField Password { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIScrollView ScrollView { get; set; }
+		UIKit.UIScrollView ScrollView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextField User { get; set; }
+		UIKit.UITextField User { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

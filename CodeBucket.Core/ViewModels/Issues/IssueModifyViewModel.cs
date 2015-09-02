@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -162,7 +162,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Milestone);
+					GetService<IViewModelTxService>().Add(Milestone);
 					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
 				});
 			}
@@ -173,7 +173,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             get 
             { 
                 return new MvxCommand(() => {
-                    GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Version);
+                    GetService<IViewModelTxService>().Add(Version);
                     ShowViewModel<IssueVersionsViewModel>(new IssueVersionsViewModel.NavObject { Username = Username, Repository = Repository });
                 });
             }
@@ -185,7 +185,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             get 
             { 
                 return new MvxCommand(() => {
-                    GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Component);
+                    GetService<IViewModelTxService>().Add(Component);
                     ShowViewModel<IssueComponentsViewModel>(new IssueVersionsViewModel.NavObject { Username = Username, Repository = Repository });
                 });
             }
@@ -197,7 +197,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(AssignedTo);
+					GetService<IViewModelTxService>().Add(AssignedTo);
 					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
 				}); 
 			}

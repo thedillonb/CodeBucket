@@ -1,15 +1,15 @@
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.Source;
-using MonoTouch.Dialog;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
     public class ChangesetBranchesView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {
-            Title = "Changeset Branch".t();
-            NoItemsText = "No Branches".t();
+            Title = "Changeset Branch";
+            NoItemsText = "No Branches";
 
             base.ViewDidLoad();
 

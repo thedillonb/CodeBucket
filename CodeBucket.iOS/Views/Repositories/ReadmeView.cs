@@ -1,7 +1,8 @@
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeFramework.iOS.Views;
+using CodeBucket.Views;
+using CodeBucket.Core.ViewModels;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
     public class ReadmeView : WebView
     {
@@ -21,11 +22,11 @@ namespace CodeBucket.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             ViewModel.Bind(x => x.Path, x => LoadFile(x));
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
+            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
             ViewModel.LoadCommand.Execute(false);
         }
 
-        protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, MonoTouch.UIKit.UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
             if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
             {
@@ -39,9 +40,9 @@ namespace CodeBucket.iOS.Views.Repositories
         private void ShareButtonPress()
         {
             var sheet = MonoTouch.Utilities.GetSheet("Readme");
-            var shareButton = sheet.AddButton("Share".t());
-            var showButton = sheet.AddButton("Show in Bitbucket".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var shareButton = sheet.AddButton("Share");
+            var showButton = sheet.AddButton("Show in Bitbucket");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {

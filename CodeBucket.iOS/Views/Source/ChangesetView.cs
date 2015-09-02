@@ -1,15 +1,14 @@
 using System;
-using CodeFramework.Elements;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeBucket.Core.ViewModels;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using CodeBucket.ViewControllers;
+using CodeBucket.Views;
+using UIKit;
+using CodeBucket.Utils;
 using System.Linq;
-using CodeFramework.iOS.Elements;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels.Commits;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
 	public class ChangesetView : ViewModelDrivenDialogViewController
     {
@@ -25,10 +24,10 @@ namespace CodeBucket.iOS.Views.Source
         
         public ChangesetView()
         {
-            Title = "Commit".t();
+            Title = "Commit";
             Root.UnevenRows = true;
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-			_viewSegment = new UISegmentedControl(new string[] { "Changes".t(), "Comments".t(), "Approvals".t() });
+			_viewSegment = new UISegmentedControl(new string[] { "Changes", "Comments", "Approvals" });
 			_viewSegment.SelectedSegment = 0;
 			_viewSegment.ValueChanged += (sender, e) => Render();
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
@@ -38,7 +37,7 @@ namespace CodeBucket.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            _header.Title = "Commit: ".t() + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
+            _header.Title = "Commit: " + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
             ViewModel.Bind(x => x.Commits, Render);
 			ViewModel.BindCollection(x => x.Comments, a => Render());
 			ViewModel.BindCollection(x => x.Participants, a => Render());
@@ -54,7 +53,7 @@ namespace CodeBucket.iOS.Views.Source
             var commitModel = ViewModel.Commits;
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-			_header.Subtitle = "Commited ".t() + (ViewModel.Changeset.Utctimestamp).ToDaysAgo();
+			_header.Subtitle = "Commited " + (ViewModel.Changeset.Utctimestamp).ToDaysAgo();
             var headerSection = new Section(_header);
             root.Add(headerSection);
 
@@ -75,7 +74,7 @@ namespace CodeBucket.iOS.Views.Source
             if (ViewModel.ShowRepository)
             {
                 var repo = new StyledStringElement(ViewModel.Repository) { 
-                    Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
+                    Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
                     Font = StyledStringElement.DefaultDetailFont, 
                     TextColor = StyledStringElement.DefaultDetailColor,
@@ -127,7 +126,7 @@ namespace CodeBucket.iOS.Views.Source
 				if (commentSection.Elements.Count > 0)
 					root.Add(commentSection);
 
-				var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
+				var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
 				addComment.Tapped += AddCommentTapped;
 				root.Add(new Section { addComment });
 			}
@@ -146,12 +145,12 @@ namespace CodeBucket.iOS.Views.Source
 				StyledStringElement approveButton;
 				if (ViewModel.Participants.Any(x => x.Username.Equals(ViewModel.GetApplication().Account.Username) && x.Approved))
 				{
-					approveButton = new StyledStringElement("Unapprove".t()) { Image = Images.Cancel };
+					approveButton = new StyledStringElement("Unapprove") { Image = Images.Cancel };
 					approveButton.Tapped += () => this.DoWorkAsync("Unapproving...", ViewModel.Unapprove);
 				}
 				else
 				{
-					approveButton = new StyledStringElement("Approve".t()) { Image = Images.Accept };
+					approveButton = new StyledStringElement("Approve") { Image = Images.Accept };
 					approveButton.Tapped += () => this.DoWorkAsync("Approving...", ViewModel.Approve);
 				}
 				root.Add(new Section { approveButton });
@@ -166,7 +165,7 @@ namespace CodeBucket.iOS.Views.Source
 			composer.NewComment(this, async (text) => {
                 try
                 {
-					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
 					composer.CloseComposer();
                 }
                 catch (Exception e)
@@ -187,11 +186,11 @@ namespace CodeBucket.iOS.Views.Source
 				return;
 
 			var sheet = MonoTouch.Utilities.GetSheet(Title);
-			var addComment = sheet.AddButton("Add Comment".t());
-			var copySha = sheet.AddButton("Copy Sha".t());
-//			var shareButton = sheet.AddButton("Share".t());
-			//var showButton = sheet.AddButton("Show in GitHub".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var addComment = sheet.AddButton("Add Comment");
+			var copySha = sheet.AddButton("Copy Sha");
+//			var shareButton = sheet.AddButton("Share");
+			//var showButton = sheet.AddButton("Show in GitHub");
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {

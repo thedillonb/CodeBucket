@@ -1,6 +1,6 @@
 using CodeBucket.Core.ViewModels.Repositories;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
 	public class UserRepositoriesView : BaseRepositoriesView
 	{

@@ -1,13 +1,15 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeBucket.ViewControllers;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Repositories;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using BitbucketSharp.Models;
-using CodeFramework.iOS.Utils;
+using CodeBucket.Utils;
+using CodeBucket.Elements;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
 	public class RepositoryView : ViewModelDrivenDialogViewController
     {
@@ -48,10 +50,10 @@ namespace CodeBucket.iOS.Views.Repositories
                 return;
 
             var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
-			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu".t() : "Pin to Slideout Menu".t());
-            var forkButton = sheet.AddButton("Fork Repository".t());
-			var showButton = sheet.AddButton("Show in Bitbucket".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
+            var forkButton = sheet.AddButton("Fork Repository");
+			var showButton = sheet.AddButton("Show in Bitbucket");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {
@@ -82,7 +84,7 @@ namespace CodeBucket.iOS.Views.Repositories
 			Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
 			_header.Title = Title;
-			_header.Subtitle = "Updated ".t() + (model.UtcLastUpdated).ToDaysAgo();
+			_header.Subtitle = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
 			_header.ImageUri = ViewModel.ImageUrl;
 
             root.Add(new Section(_header));
@@ -102,7 +104,7 @@ namespace CodeBucket.iOS.Views.Repositories
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row {
-				Text1 = model.IsPrivate ? "Private".t() : "Public".t(),
+				Text1 = model.IsPrivate ? "Private" : "Public",
 				Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
 				Text2 = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language,
                 Image2 = Images.Language
@@ -119,9 +121,9 @@ namespace CodeBucket.iOS.Views.Repositories
                 size = string.Format("{0:0.##}MB", model.Size / 1024f / 1024f);
 //
 //            sec1.Add(new SplitElement(new SplitElement.Row {
-//				Text1 = model + (model.HasIssues == 1 ? " Issue".t() : " Issues".t()),
+//				Text1 = model + (model.HasIssues == 1 ? " Issue" : " Issues"),
 //                Image1 = Images.Flag,
-//				Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork".t() : " Forks".t()),
+//				Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork" : " Forks"),
 //                Image2 = Images.Fork
 //            }));
 //
@@ -132,38 +134,38 @@ namespace CodeBucket.iOS.Views.Repositories
                 Image2 = Images.Size
             }));
 
-            var owner = new StyledStringElement("Owner".t(), model.Owner) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner", model.Owner) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
             sec1.Add(owner);
 
 			if (model.ForkOf != null)
             {
-				var parent = new StyledStringElement("Forked From".t(), model.ForkOf.Name) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+				var parent = new StyledStringElement("Forked From", model.ForkOf.Name) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.ForkOf);
                 sec1.Add(parent);
             }
 
-			var followers = new StyledStringElement("Watchers".t(), "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+			var followers = new StyledStringElement("Watchers", "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
             sec1.Add(followers);
 
-			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+			var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
             var sec2 = new Section { events };
 
 			if (model.HasWiki)
-				sec2.Add(new StyledStringElement("Wiki".t(), () => ViewModel.GoToWikiCommand.Execute(null), Images.Pencil));
+				sec2.Add(new StyledStringElement("Wiki", () => ViewModel.GoToWikiCommand.Execute(null), Images.Pencil));
 
             if (model.HasIssues)
-				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+				sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
 
             if (ViewModel.HasReadme)
-                sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
+                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
 
             var sec3 = new Section
             {
-				new StyledStringElement("Commits".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
-				new StyledStringElement("Source".t(), () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
+				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
+				new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
+				new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
             };
 
             root.Add(new[] { sec1, sec2, sec3 });

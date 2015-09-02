@@ -1,13 +1,13 @@
-using CodeBucket.iOS.Views.User;
+using CodeBucket.Views.User;
 
-namespace CodeBucket.iOS.Views.Teams
+namespace CodeBucket.Views.Teams
 {
     public class TeamMembersView : BaseUserCollectionView
     {
         public override void ViewDidLoad()
         {
             Title = "Members";
-            NoItemsText = "No Members".t();
+            NoItemsText = "No Members";
 
             base.ViewDidLoad();
         }

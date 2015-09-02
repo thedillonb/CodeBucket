@@ -1,6 +1,5 @@
-﻿using Cirrious.MvvmCross.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 using Cirrious.MvvmCross.Views;
-using CodeFramework.Core.Services;
 using CodeBucket.Core.Data;
 using System.Linq;
 using BitbucketSharp;

@@ -1,6 +1,6 @@
-using CodeFramework.Core.ViewModels;
 using Cirrious.CrossCore;
 using CodeBucket.Core.Services;
+using CodeBucket.Core.ViewModels;
 
 public static class ViewModelExtensions
 {

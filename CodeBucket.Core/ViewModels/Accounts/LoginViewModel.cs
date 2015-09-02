@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Windows.Input;

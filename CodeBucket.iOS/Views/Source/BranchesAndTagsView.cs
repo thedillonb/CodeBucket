@@ -1,11 +1,10 @@
-using System;
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.Source;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
 	public class BranchesAndTagsView : ViewModelCollectionDrivenDialogViewController
 	{
@@ -14,12 +13,12 @@ namespace CodeBucket.iOS.Views.Source
 
 		public override void ViewDidLoad()
 		{
-			Title = "Source".t();
-			NoItemsText = "No Items".t();
+			Title = "Source";
+			NoItemsText = "No Items";
 
 			base.ViewDidLoad();
 
-			_viewSegment = new UISegmentedControl(new object[] {"Branches".t(), "Tags".t()});
+			_viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 			_segmentBarButton = new UIBarButtonItem(_viewSegment) { Width = View.Frame.Width - 10f };
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 

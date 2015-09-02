@@ -1,4 +1,4 @@
-namespace CodeBucket.iOS.Views.Events
+namespace CodeBucket.Views.Events
 {
     public class RepositoryEventsView : BaseEventsView
     {

@@ -1,12 +1,11 @@
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.ViewControllers;
+using UIKit;
+using CodeBucket.ViewControllers;
 using CodeBucket.Core.Filters;
 using System;
-using CodeFramework.ViewControllers;
 using System.Linq;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Filters
+namespace CodeBucket.Views.Filters
 {
     public class IssuesFilterViewController : BaseDialogViewController
     {
@@ -26,7 +25,7 @@ namespace CodeBucket.iOS.Views.Filters
         {
             _currentFilter = currentFilter.Clone();
             Style = UITableViewStyle.Grouped;
-            Title = "Filter & Sort".t();
+            Title = "Filter & Sort";
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 
                 if (string.IsNullOrEmpty(_filterName.Value))
@@ -36,7 +35,7 @@ namespace CodeBucket.iOS.Views.Filters
                 }
 
                 CreatedFilterModel(CreateFilterModel());
-                NavigationController.PopViewControllerAnimated(true);
+                NavigationController.PopViewController(true);
             });
         }
 
@@ -83,7 +82,7 @@ namespace CodeBucket.iOS.Views.Filters
             TableView.ReloadData();
         }
 
-        public class EnumChoiceElement<T> : MonoTouch.Dialog.StyledStringElement where T : struct, IConvertible
+        public class EnumChoiceElement<T> : StyledStringElement where T : struct, IConvertible
         {
             private T _value;
 
@@ -113,27 +112,27 @@ namespace CodeBucket.iOS.Views.Filters
             {
                 var ctrl = new BaseDialogViewController(true);
                 ctrl.Title = title;
-                ctrl.Style = MonoTouch.UIKit.UITableViewStyle.Grouped;
+                ctrl.Style = UIKit.UITableViewStyle.Grouped;
 
-                var sec = new MonoTouch.Dialog.Section();
+                var sec = new Section();
                 foreach (var x in System.Enum.GetValues(typeof(T)).Cast<System.Enum>())
                 {
-                    sec.Add(new MonoTouch.Dialog.StyledStringElement(x.Description(), () => { 
+                    sec.Add(new StyledStringElement(x.Description(), () => { 
                         element.Value = (T)Enum.ToObject(typeof(T), x); 
-                        NavigationController.PopViewControllerAnimated(true);
+                        NavigationController.PopViewController(true);
                     }) { 
                         Accessory = object.Equals(x, element.Value) ? 
-                            MonoTouch.UIKit.UITableViewCellAccessory.Checkmark : MonoTouch.UIKit.UITableViewCellAccessory.None 
+                            UIKit.UITableViewCellAccessory.Checkmark : UIKit.UITableViewCellAccessory.None 
                     });
                 }
-                ctrl.Root = new MonoTouch.Dialog.RootElement(title) { sec };
+                ctrl.Root = new RootElement(title) { sec };
                 NavigationController.PushViewController(ctrl, true);
             };
 
             return element;
         }
 
-        public class MultipleChoiceElement<T> : MonoTouch.Dialog.StyledStringElement
+        public class MultipleChoiceElement<T> : StyledStringElement
         {
             public T Obj;
             public MultipleChoiceElement(string title, T obj)
@@ -175,8 +174,8 @@ namespace CodeBucket.iOS.Views.Filters
             }
             var str = sb.ToString();
             if (str.EndsWith(", "))
-                return trueCounter == fields.Length ? "Any".t() : str.Substring(0, str.Length - 2);
-            return "None".t();
+                return trueCounter == fields.Length ? "Any" : str.Substring(0, str.Length - 2);
+            return "None";
         }
     }
 }

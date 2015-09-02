@@ -1,12 +1,12 @@
 using System;
-using CodeFramework.iOS.Views;
-using MonoTouch.UIKit;
-using CodeFramework.Core.ViewModels;
-using MonoTouch.Foundation;
+using CodeBucket.Views;
+using UIKit;
+using Foundation;
 using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Core.Services;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
 	public abstract class FileSourceView : WebView
     {
@@ -42,10 +42,10 @@ namespace CodeBucket.iOS.Views.Source
 		{
 			var sheet = MonoTouch.Utilities.GetSheet(Title);
 
-			var openButton = sheet.AddButton("Open In".t());
-			var shareButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Share".t()) : -1;
-			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket".t()) : -1;
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var openButton = sheet.AddButton("Open In");
+			var shareButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Share") : -1;
+			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket") : -1;
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {

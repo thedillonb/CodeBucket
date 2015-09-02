@@ -1,11 +1,12 @@
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using BitbucketSharp.Models.V2;
 using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
-using CodeFramework.Core.Utils;
 using BitbucketSharp.Models;
-using CodeFramework.Core.Services;
+using CodeBucket.Core.Services;
+using CodeBucket.Core.ViewModels.Commits;
+using CodeBucket.Core.Utils;
+
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {

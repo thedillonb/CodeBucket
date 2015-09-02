@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.ViewModels.Events;
 using BitbucketSharp.Models;
 using System.Linq;
+using CodeBucket.Core.ViewModels.Commits;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -165,7 +166,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
 				response => Branches = response.Values.ToList()).FireAndForget();
 
-            var uiThread = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IUIThreadService>();
+            var uiThread = Cirrious.CrossCore.Mvx.Resolve<IUIThreadService>();
             Task.Run(() =>
             {
                 var primaryBranch = this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true);
@@ -202,7 +203,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         {
             try
             {
-                var alertSerivce = GetService<CodeFramework.Core.Services.IAlertDialogService>();
+                var alertSerivce = GetService<IAlertDialogService>();
                 var name = await alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!");
                 await Fork(name);
             }

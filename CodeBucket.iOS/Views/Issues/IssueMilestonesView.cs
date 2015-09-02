@@ -1,19 +1,22 @@
-using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;
 using System.Linq;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using UIKit;
+using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 using BitbucketSharp.Models;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Elements;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssueMilestonesView : ViewModelCollectionDrivenDialogViewController
 	{
 		public IssueMilestonesView()
 		{
-			Title = "Milestones".t();
-			NoItemsText = "No Milestones".t();
+			Title = "Milestones";
+			NoItemsText = "No Milestones";
 			EnableSearch = false;
 		}
 

@@ -1,9 +1,51 @@
-using CodeFramework.iOS;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Cells;
+using UIKit;
+using CodeBucket.Cells;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
+    /// <summary>
+    /// I'd really rather define these at the top most level available to the app. A.k.a the actually application
+    /// code itself instead of the library. All theme tuning will be done on that level.
+    /// </summary>
+    public interface ICodeFrameworkTheme
+    {
+        UIImage BackButton { get; }
+        UIImage ThreeLinesButton { get; }
+        UIImage CancelButton { get; }
+        UIImage SaveButton { get; }
+        UIImage ViewButton { get; }
+        UIImage WebBackButton { get; }
+        UIImage WebFowardButton { get; }
+        UIImage ForkButton { get; }
+
+        UIImage AnonymousUserImage { get; }
+
+        UIImage LoginUserUnknown { get; }
+
+        UIImage IssueCellImage1 { get; }
+        UIImage IssueCellImage2 { get; }
+        UIImage IssueCellImage3 { get; }
+        UIImage IssueCellImage4 { get; }
+
+        UIImage RepositoryCellFollowers { get; }
+        UIImage RepositoryCellForks { get; }
+        UIImage RepositoryCellUser { get; }
+
+        UIColor MainTitleColor { get; }
+        UIColor MainSubtitleColor { get; }
+        UIColor MainTextColor { get; }
+        UIColor ViewBackgroundColor { get; }
+
+        UIColor WebButtonTint { get; }
+
+        UIColor AccountsNavigationBarTint { get; }
+        UIColor SlideoutNavigationBarTint { get; }
+        UIColor ApplicationNavigationBarTint { get; }
+
+        float FontSizeRatio { get; }
+    }
+
     public class Theme : ICodeFrameworkTheme
 	{
 		public static Theme CurrentTheme { get; private set; }
@@ -12,10 +54,10 @@ namespace CodeBucket.iOS
 		{
 			var theme = new Theme();
 			CurrentTheme = theme;
-			CodeFramework.iOS.Theme.CurrentTheme = theme;
+			Theme.CurrentTheme = theme;
 			RepositoryCellView.RoundImages = true;
-			MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
-			MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
+			StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
+			NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
@@ -29,10 +71,7 @@ namespace CodeBucket.iOS
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
 
 
-            CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-
-            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
-            UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
+            CodeBucket.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(45,80,148);
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
@@ -46,9 +85,9 @@ namespace CodeBucket.iOS
                 TextColor = UIColor.White,
             }, UIControlState.Normal);
 
-            CodeFramework.iOS.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
-            CodeFramework.iOS.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
-            CodeFramework.iOS.Views.StartupView.StatusBarStyle = UIStatusBarStyle.LightContent;
+            CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
+            CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
+            CodeBucket.Views.StartupView.StatusBarStyle = UIStatusBarStyle.LightContent;
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;

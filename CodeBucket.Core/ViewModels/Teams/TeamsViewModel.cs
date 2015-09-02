@@ -1,6 +1,5 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
 

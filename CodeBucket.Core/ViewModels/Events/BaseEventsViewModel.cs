@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Source;
 using CodeBucket.Core.ViewModels.User;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.PullRequests;
+using CodeBucket.Core.ViewModels.Commits;
+using Newtonsoft.Json;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -232,7 +231,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 if (eventModel.Repository == null)
                     return null;
 
-				var data = GetService<CodeFramework.Core.Services.IJsonSerializationService>().Deserialize<PushedEventDescriptionModel>(eventModel.Description);
+                var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(eventModel.Description);
 
 				if (eventModel.Repository != null)
 					eventBlock.Tapped = () => GoToCommits(eventModel.Repository, null);

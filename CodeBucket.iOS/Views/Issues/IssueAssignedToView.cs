@@ -1,18 +1,20 @@
 using System;
 using System.Linq;
-using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
     public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {
-            Title = "Assignees".t();
-            NoItemsText = "No Assignees".t();
+            Title = "Assignees";
+            NoItemsText = "No Assignees";
 
             base.ViewDidLoad();
 

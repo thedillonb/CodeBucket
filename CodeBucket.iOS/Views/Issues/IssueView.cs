@@ -1,14 +1,17 @@
 using System;
-using CodeFramework.iOS.Views;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.ViewControllers;
+using UIKit;
+using CodeBucket.ViewControllers;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.Elements;
+using CodeBucket.Utils;
+using CodeBucket.Elements;
 using System.Linq;
+using CodeBucket.Core.ViewModels;
+using Newtonsoft.Json;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssueView : ViewModelDrivenDialogViewController
     {
@@ -63,8 +66,7 @@ namespace CodeBucket.iOS.Views.Issues
 				body = ViewModel.ConvertToMarkdown(x.Content)
 			});
 
-			var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
-			var data = s.Serialize(comments);
+			var data = JsonConvert.SerializeObject(comments);
 			InvokeOnMainThread(() => {
 				_commentsElement.Value = data;
 				if (_commentsElement.GetImmediateRootElement() == null)
@@ -110,7 +112,7 @@ namespace CodeBucket.iOS.Views.Issues
 			split3.Value.Text2 = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
 			secDetails.Add(split3);
 
-			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned".t(), UITableViewCellStyle.Value1) {
+			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
 				Image = Images.Person,
 				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
@@ -136,7 +138,7 @@ namespace CodeBucket.iOS.Views.Issues
 			composer.NewComment(this, async (text) => {
 				try
 				{
-					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
 					composer.CloseComposer();
 				}
 				catch (Exception e)
@@ -154,7 +156,7 @@ namespace CodeBucket.iOS.Views.Issues
 		{
 			get
 			{
-				var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
+				var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
 				return u;
 			}
 		}

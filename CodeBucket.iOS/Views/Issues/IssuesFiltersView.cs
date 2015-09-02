@@ -1,13 +1,13 @@
-﻿using Cirrious.MvvmCross.Touch.Views;
+using Cirrious.MvvmCross.Touch.Views;
 using CodeBucket.Core.ViewModels.Issues;
-using MonoTouch.Dialog;
-using CodeFramework.ViewControllers;
-using CodeBucket.iOS.Views.Filters;
-using MonoTouch.UIKit;
+using CodeBucket.Views.Filters;
+using UIKit;
 using System;
-using MonoTouch.Foundation;
+using Foundation;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
     public class IssuesFiltersView : ViewModelCollectionDrivenDialogViewController, IMvxModalTouchView
     {
@@ -26,7 +26,7 @@ namespace CodeBucket.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Add, (s, e) => CreateNewFilter());
+            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Add, (s, e) => CreateNewFilter());
             BindCollection(ViewModel.Filters, x => new FilterElement(x, () => ViewModel.SelectFilterCommand.Execute(x), () => EditFilter(x)), true);
         }
 
@@ -51,7 +51,7 @@ namespace CodeBucket.iOS.Views.Issues
         private class FilterElement : StyledStringElement
         {
             public IssuesFiltersViewModel.FilterModel FilterModel { get; private set; }
-            public FilterElement(IssuesFiltersViewModel.FilterModel filterModel, NSAction action, Action accessory)
+            public FilterElement(IssuesFiltersViewModel.FilterModel filterModel, Action action, Action accessory)
                 : base(filterModel.IssueModel.FilterName, action)
             {
                 Accessory = UITableViewCellAccessory.DetailButton;
@@ -74,17 +74,17 @@ namespace CodeBucket.iOS.Views.Issues
                 _parent = dvc;
             }
 
-            public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
                 return _parent.ViewModel.Filters.Items.Count > 0;
             }
 
-            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
             {
                 return UITableViewCellEditingStyle.Delete;
             }
 
-            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
             {
                 switch (editingStyle)
                 {

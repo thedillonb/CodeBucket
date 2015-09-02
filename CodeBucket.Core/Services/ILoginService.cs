@@ -1,4 +1,4 @@
-﻿using CodeBucket.Core.Data;
+using CodeBucket.Core.Data;
 using System.Threading.Tasks;
 
 namespace CodeBucket.Core.Services

@@ -1,10 +1,11 @@
 using System;
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.Source;
 using MonoTouch.Dialog;
-using CodeBucket.iOS.Views.Filters;
+using CodeBucket.Views.Filters;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
     public class SourceTreeView : ViewModelCollectionDrivenDialogViewController
     {
@@ -18,7 +19,7 @@ namespace CodeBucket.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
 				(s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
             BindCollection(ViewModel.Content, CreateElement);
         }

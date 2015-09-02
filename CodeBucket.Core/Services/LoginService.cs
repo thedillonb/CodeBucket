@@ -1,5 +1,4 @@
-﻿using System;
-using CodeFramework.Core.Services;
+using System;
 using CodeBucket.Core.Data;
 using System.Threading.Tasks;
 using BitbucketSharp;

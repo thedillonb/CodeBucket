@@ -1,14 +1,15 @@
 using System;
 using System.Linq;
-using CodeFramework.Elements;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeBucket.ViewControllers;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using UIKit;
+using CodeBucket.Utils;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.PullRequests
+namespace CodeBucket.Views.PullRequests
 {
 	public class PullRequestView : ViewModelDrivenDialogViewController
     {
@@ -38,7 +39,7 @@ namespace CodeBucket.iOS.Views.PullRequests
 		public override void ViewWillAppear(bool animated)
         {
 			base.ViewWillAppear(animated);
-            Title = "Pull Request #".t() + ViewModel.PullRequestId;
+            Title = "Pull Request #" + ViewModel.PullRequestId;
         }
 
         public void Render()
@@ -79,7 +80,7 @@ namespace CodeBucket.iOS.Views.PullRequests
 
             if (!merged)
             {
-                MonoTouch.Foundation.NSAction mergeAction = async () =>
+                Action mergeAction = async () =>
                 {
                     try
                     {
@@ -91,7 +92,7 @@ namespace CodeBucket.iOS.Views.PullRequests
                     }
                 };
  
-                root.Add(new Section { new StyledStringElement("Merge".t(), mergeAction, Images.Fork) });
+                root.Add(new Section { new StyledStringElement("Merge", mergeAction, Images.Fork) });
             }
 
 
@@ -114,9 +115,9 @@ namespace CodeBucket.iOS.Views.PullRequests
                 //Load more if there's more comments
 //                if (model.MoreComments != null)
 //                {
-//                    var loadMore = new PaginateElement("Load More".t(), "Loading...".t(), 
+//                    var loadMore = new PaginateElement("Load More", "Loading...", 
 //                                                       e => this.DoWorkNoHud(() => model.MoreComments(),
-//                                          x => Utilities.ShowAlert("Unable to load more!".t(), x.Message))) { AutoLoadOnVisible = false, Background = false };
+//                                          x => Utilities.ShowAlert("Unable to load more!", x.Message))) { AutoLoadOnVisible = false, Background = false };
 //                    commentsSec.Add(loadMore);
 //                }
 
@@ -137,7 +138,7 @@ namespace CodeBucket.iOS.Views.PullRequests
 			composer.NewComment(this, async (text) => {
                 try
                 {
-					await composer.DoWorkAsync("Commenting...".t(), () =>  ViewModel.AddComment(text));
+					await composer.DoWorkAsync("Commenting...", () =>  ViewModel.AddComment(text));
 					composer.CloseComposer();
                 }
                 catch (Exception ex)
@@ -155,7 +156,7 @@ namespace CodeBucket.iOS.Views.PullRequests
         {
             get
             {
-                var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
+                var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
         }

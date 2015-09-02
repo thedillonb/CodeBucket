@@ -6,18 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using Cirrious.CrossCore.IoC;
-using Cirrious.CrossCore.Platform;
 using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.Core.ViewModels;
-using CodeFramework.iOS;
-using MonoTouch.Dialog;
-using CodeFramework.iOS.Views;
-using MonoTouch.UIKit;
+using CodeBucket;
+using CodeBucket.Views;
+using UIKit;
+using CodeBucket.Core.ViewModels.App;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels;
 
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
 	using Cirrious.MvvmCross.Touch.Platform;
 	using Cirrious.MvvmCross.Touch.Views.Presenters;
@@ -38,19 +37,11 @@ namespace CodeBucket.iOS
 		{
 		}
 
-		protected override Assembly[] GetViewAssemblies()
-		{
-			var list = new List<Assembly>();
-			list.AddRange(base.GetViewAssemblies());
-			list.Add(typeof(StartupView).Assembly);
-			return list.ToArray();
-		}
-
 		protected override Assembly[] GetViewModelAssemblies()
 		{
 			var list = new List<Assembly>();
 			list.AddRange(base.GetViewModelAssemblies());
-			list.Add(typeof(BaseStartupViewModel).Assembly);
+			list.Add(typeof(StartupViewModel).Assembly);
 			return list.ToArray();
 		}
 //
@@ -79,16 +70,6 @@ namespace CodeBucket.iOS
 		protected override IMvxApplication CreateApp()
 		{
 			this.CreatableTypes(typeof(BaseViewModel).Assembly)
-				.EndingWith("Service")
-				.AsInterfaces()
-				.RegisterAsLazySingleton();
-
-			this.CreatableTypes(typeof(TouchViewPresenter).Assembly)
-				.EndingWith("Service")
-				.AsInterfaces()
-				.RegisterAsLazySingleton();
-
-			this.CreatableTypes(typeof(Core.App).Assembly)
 				.EndingWith("Service")
 				.AsInterfaces()
 				.RegisterAsLazySingleton();

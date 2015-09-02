@@ -1,10 +1,10 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -51,7 +51,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			SelectedUser = TxSevice.Get() as UserModel;
 			this.Bind(x => x.SelectedUser, x => {
 				Messenger.Publish(new SelectedAssignedToMessage(this) { User = x });
-				ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+				ChangePresentation(new MvxClosePresentationHint(this));
 			});
 		}
 

@@ -1,8 +1,11 @@
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssueEditView : IssueModifyView
     {

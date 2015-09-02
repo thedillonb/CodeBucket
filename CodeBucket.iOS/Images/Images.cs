@@ -1,6 +1,6 @@
-using MonoTouch.UIKit;
+using UIKit;
 
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
     public static class Images
     {

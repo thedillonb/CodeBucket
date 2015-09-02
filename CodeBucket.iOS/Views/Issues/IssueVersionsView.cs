@@ -1,19 +1,21 @@
-using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;
 using System.Linq;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using UIKit;
+using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 using BitbucketSharp.Models;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
     public class IssueVersionsView : ViewModelCollectionDrivenDialogViewController
 	{
         public IssueVersionsView()
 		{
-			Title = "Versions".t();
-			NoItemsText = "No Versions".t();
+			Title = "Versions";
+			NoItemsText = "No Versions";
 			EnableSearch = false;
 		}
 

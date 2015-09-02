@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.PullRequests
+namespace CodeBucket.Views.PullRequests
 {
     public class PullRequestsView : ViewModelCollectionDrivenDialogViewController
     {
@@ -15,10 +15,10 @@ namespace CodeBucket.iOS.Views.PullRequests
 		public PullRequestsView()
 		{
 			Root.UnevenRows = true;
-			Title = "Pull Requests".t();
-			NoItemsText = "No Pull Requests".t();
+			Title = "Pull Requests";
+			NoItemsText = "No Pull Requests";
 
-			_viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Merged".t(), "Declined".t() });
+			_viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 		}

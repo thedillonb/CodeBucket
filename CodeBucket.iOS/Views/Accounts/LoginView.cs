@@ -1,9 +1,9 @@
 using System;
-using CodeFramework.iOS.Views;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Accounts;
-using MonoTouch.UIKit;
+using UIKit;
 
-namespace CodeBucket.iOS.Views.Accounts
+namespace CodeBucket.Views.Accounts
 {
     public class LoginView : WebView
     {
@@ -17,14 +17,14 @@ namespace CodeBucket.iOS.Views.Accounts
             : base(false)
         {
             Title = "Login";
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
 
 		private void ShowExtraMenu()
 		{
 			var sheet = MonoTouch.Utilities.GetSheet("Login");
 			var basicButton = sheet.AddButton("Login via BASIC");
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {
@@ -49,7 +49,7 @@ namespace CodeBucket.iOS.Views.Accounts
 				LoadRequest();
 		}
 
-		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, MonoTouch.UIKit.UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
             //We're being redirected to our redirect URL so we must have been successful
             if (request.Url.Host == "dillonbuchanan.com")
@@ -87,10 +87,10 @@ namespace CodeBucket.iOS.Views.Accounts
         private void LoadRequest()
         {
             //Remove all cookies & cache
-            foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-            MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(ViewModel.LoginUrl)));
+            foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
+                Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
+            Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
+			Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(ViewModel.LoginUrl)));
         }
     }
 }

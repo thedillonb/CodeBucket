@@ -1,15 +1,14 @@
 using System;
 using CodeBucket.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using BitbucketSharp.Models;
-using CodeFramework.ViewControllers;
-using CodeFramework.Elements;
 using CodeBucket.Core.Services;
 using Cirrious.CrossCore;
 using CodeBucket.Core.Filters;
-using CodeBucket.iOS.Views.Filters;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssuesView : ViewModelCollectionDrivenDialogViewController
     {
@@ -25,17 +24,17 @@ namespace CodeBucket.iOS.Views.Issues
 		public IssuesView()
 		{
 			Root.UnevenRows = true;
-			Title = "Issues".t();
+			Title = "Issues";
 		}
 
-		protected MonoTouch.Dialog.Element CreateElement(IssueModel x)
+		protected Element CreateElement(IssueModel x)
 		{
 			var assigned = x.Responsible != null ? x.Responsible.Username : "unassigned";
 			var kind = x.Metadata.Kind;
 			if (kind == "enhancement")
 				kind = "enhance";
 
-			var commentString = x.CommentCount == 1 ? "1 comment".t() : x.CommentCount + " comments".t();
+			var commentString = x.CommentCount == 1 ? "1 comment" : x.CommentCount + " comments";
 			var el = new IssueElement(x.LocalId.ToString(), x.Title, assigned, x.Status, commentString, kind, x.UtcLastUpdated);
 			el.Tag = x;
 
@@ -54,7 +53,7 @@ namespace CodeBucket.iOS.Views.Issues
 
             base.ViewDidLoad();
 
-            _viewSegment = new CustomUISegmentedControl(new [] { "All".t(), "Open".t(), "Mine".t(), "Custom".t() }, 3);
+            _viewSegment = new CustomUISegmentedControl(new [] { "All", "Open", "Mine", "Custom" }, 3);
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
 			_segmentBarButton.Width = View.Frame.Width - 10f;
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
@@ -125,7 +124,7 @@ namespace CodeBucket.iOS.Views.Issues
                 this._multipleTouchIndex = multipleTouchIndex;
             }
 
-            public override void TouchesEnded(MonoTouch.Foundation.NSSet touches, UIEvent evt)
+            public override void TouchesEnded(Foundation.NSSet touches, UIEvent evt)
             {
                 var previousSelected = SelectedSegment;
                 base.TouchesEnded(touches, evt);

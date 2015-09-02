@@ -1,11 +1,11 @@
-namespace CodeBucket.iOS.Views.User
+namespace CodeBucket.Views.User
 {
     public class UserFollowingsView : BaseUserCollectionView
     {
         public override void ViewDidLoad()
         {
-            Title = "Following".t();
-            NoItemsText = "Not Following Anyone".t();  
+            Title = "Following";
+            NoItemsText = "Not Following Anyone";  
 
             base.ViewDidLoad();
         }

@@ -1,11 +1,14 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
+using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Utils;
+using CodeBucket.Utils;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public abstract class IssueModifyView : ViewModelDrivenDialogViewController
     {
@@ -53,15 +56,15 @@ namespace CodeBucket.iOS.Views.Issues
 				NavigationController.PushViewController(ctrl, true);
 			};
 
-			var milestone = new StyledStringElement("Milestone".t(), "None", UITableViewCellStyle.Value1);
+			var milestone = new StyledStringElement("Milestone", "None", UITableViewCellStyle.Value1);
 			milestone.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			milestone.Tapped += () => ViewModel.GoToMilestonesCommand.Execute(null);
 
-			var component = new StyledStringElement("Component".t(), "None", UITableViewCellStyle.Value1);
+			var component = new StyledStringElement("Component", "None", UITableViewCellStyle.Value1);
 			component.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             component.Tapped += () => ViewModel.GoToComponentsCommand.Execute(null);
 
-			var version = new StyledStringElement("Version".t(), "None", UITableViewCellStyle.Value1);
+			var version = new StyledStringElement("Version", "None", UITableViewCellStyle.Value1);
 			version.Accessory = UITableViewCellAccessory.DisclosureIndicator;
             version.Tapped += () => ViewModel.GoToVersionsCommand.Execute(null);
 

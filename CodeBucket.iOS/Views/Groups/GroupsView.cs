@@ -1,15 +1,15 @@
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.Groups;
-using MonoTouch.Dialog;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Groups
+namespace CodeBucket.Views.Groups
 {
     public class GroupsView : ViewModelCollectionDrivenDialogViewController
 	{
         public override void ViewDidLoad()
         {
-            Title = "Groups".t();
-            NoItemsText = "No Groups".t();
+            Title = "Groups";
+            NoItemsText = "No Groups";
 
             base.ViewDidLoad();
 

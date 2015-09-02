@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using System;
-using CodeFramework.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Source
 {

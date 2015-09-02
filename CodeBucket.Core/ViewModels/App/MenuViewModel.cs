@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Data;
@@ -7,17 +7,80 @@ using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.User;
-using CodeFramework.Core.Utils;
-using CodeFramework.Core.ViewModels.App;
 using System.Threading.Tasks;
 using System.Linq;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
+using Cirrious.CrossCore;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.App
 {
-	public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseViewModel
     {
+        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.SlideoutRootPresentation, string.Empty}};  
+
+        private static IAccountsService Accounts
+        {
+            get { return Mvx.Resolve<IAccountsService>(); }
+        }
+
+        public void Init()
+        {
+            GoToDefaultTopView.Execute(null);
+        }
+
+        public ICommand GoToDefaultTopView
+        {
+            get
+            {
+                var startupViewName = Accounts.ActiveAccount.DefaultStartupView;
+                if (!string.IsNullOrEmpty(startupViewName))
+                {
+                    var props = from p in GetType().GetProperties()
+                        let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
+                            where attr.Length == 1
+                        select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute};
+
+                    foreach (var p in props)
+                    {
+                        if (string.Equals(startupViewName, p.Attribute.Name))
+                            return p.Property.GetValue(this) as ICommand;
+                    }
+                }
+
+                //Oh no... Look for the last resort DefaultStartupViewAttribute
+                var deprop = (from p in GetType().GetProperties()
+                    let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true)
+                    where attr.Length == 1
+                    select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
+
+                //That shouldn't happen...
+                if (deprop == null)
+                    return null;
+                var val = deprop.Property.GetValue(this);
+                return val as ICommand;
+            }
+        }
+
+        public ICommand DeletePinnedRepositoryCommand
+        {
+            get 
+            {
+                return new MvxCommand<CodeFramework.Core.Data.PinnedRepository>(x => Accounts.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id), x => x != null);
+            }
+        }
+
+        protected bool ShowMenuViewModel<T>(object data) where T : IMvxViewModel
+        {
+            return this.ShowViewModel<T>(data, new MvxBundle(Presentation));
+        }
+
+        public IEnumerable<CodeFramework.Core.Data.PinnedRepository> PinnedRepositories
+        {
+            get { return Accounts.ActiveAccount.PinnnedRepositories; }
+        }
+
         private readonly IApplicationService _application;
 
 		private List<GroupModel> _groups;

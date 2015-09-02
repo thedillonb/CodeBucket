@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
     public class RepositoriesSharedView : BaseRepositoriesView
     {

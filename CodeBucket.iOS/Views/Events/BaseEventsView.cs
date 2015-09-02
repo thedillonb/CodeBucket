@@ -1,18 +1,18 @@
 using System;
-using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Events;
 using MonoTouch;
-using MonoTouch.UIKit;
+using UIKit;
 using BitbucketSharp.Models;
+using CodeBucket.ViewControllers;
 
-namespace CodeBucket.iOS.Views.Events
+namespace CodeBucket.Views.Events
 {
     public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
     {
         protected BaseEventsView()
         {
-            Title = "Events".t();
+            Title = "Events";
             Root.UnevenRows = true;
             EnableSearch = false;
         }
@@ -20,11 +20,11 @@ namespace CodeBucket.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
+			TableView.SeparatorInset = CodeBucket.Cells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
-        private static MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
+        private static Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
         {
             try
             {

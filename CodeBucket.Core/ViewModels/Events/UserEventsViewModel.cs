@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.Events

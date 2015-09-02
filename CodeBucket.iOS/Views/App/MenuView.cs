@@ -1,12 +1,13 @@
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeBucket.Core.ViewModels;
+using CodeBucket.ViewControllers;
+using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.App;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
+using CodeBucket.Elements;
+using Cirrious.MvvmCross.ViewModels;
+using CodeBucket.Core.Utils;
 
-namespace CodeBucket.iOS.Views.App
+namespace CodeBucket.Views.App
 {
 	public class MenuView : MenuBaseViewController
     {
@@ -44,7 +45,7 @@ namespace CodeBucket.iOS.Views.App
             
 			if (ViewModel.PinnedRepositories.Any())
 			{
-				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
+				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
 					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
 				root.Add(_favoriteRepoSection);
@@ -54,7 +55,7 @@ namespace CodeBucket.iOS.Views.App
 				_favoriteRepoSection = null;
 			}
 
-            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations".t()) };
+            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
 			if (ViewModel.Account.ExpandTeamsAndGroups)
 			{
 				if (ViewModel.Groups != null)
@@ -64,36 +65,26 @@ namespace CodeBucket.iOS.Views.App
 			}
 			else
 			{
-				groupsTeamsSection.Add(new MenuElement("Groups".t(), () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
-				groupsTeamsSection.Add(new MenuElement("Teams".t(), () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
+				groupsTeamsSection.Add(new MenuElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
+				groupsTeamsSection.Add(new MenuElement("Teams", () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
 			}
 
             //There should be atleast 1 thing...
 			if (groupsTeamsSection.Elements.Count > 0)
 				root.Add(groupsTeamsSection);
 
-            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
+            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
-            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
-            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
+			infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
+			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
+            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
+            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
 		}
 
         private void PresentUserVoice()
         {
-			var config = new UserVoice.UVConfig() {
-				Key = "pnuDmPENErDiDpXrms1DTg",
-				Secret = "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk",
-				Site = "codebucket.uservoice.com",
-				ShowContactUs = true,
-				ShowForum = true,
-				ShowPostIdea = true,
-				ShowKnowledgeBase = true,
-			};
-			UserVoice.UserVoice.Initialize(config);
-			UserVoice.UserVoice.PresentUserVoiceInterfaceForParentViewController(this);
+
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
@@ -123,7 +114,7 @@ namespace CodeBucket.iOS.Views.App
 			}
 
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new CodeFramework.Core.Utils.RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.Repo)
+				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.Repo)
 			{
 				PinnedRepo = pinnedRepo;
 				ImageUri = new System.Uri(PinnedRepo.ImageUri);
@@ -159,7 +150,7 @@ namespace CodeBucket.iOS.Views.App
 				_parent = dvc;
 			}
 
-			public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection == null)
 					return false;
@@ -168,14 +159,14 @@ namespace CodeBucket.iOS.Views.App
 				return false;
 			}
 
-			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection != null && _parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
 					return UITableViewCellEditingStyle.Delete;
 				return UITableViewCellEditingStyle.None;
 			}
 
-			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
 			{
 				switch (editingStyle)
 				{

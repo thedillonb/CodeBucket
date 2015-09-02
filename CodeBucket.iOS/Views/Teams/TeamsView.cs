@@ -1,15 +1,15 @@
-using CodeFramework.ViewControllers;
-using MonoTouch.Dialog;
 using CodeBucket.Core.ViewModels.Teams;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Teams
+namespace CodeBucket.Views.Teams
 {
     public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {
-            Title = "Teams".t();
-            NoItemsText = "No Teams".t();
+            Title = "Teams";
+            NoItemsText = "No Teams";
 
             base.ViewDidLoad();
 

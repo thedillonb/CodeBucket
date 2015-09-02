@@ -3,8 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
-using CodeFramework.Core.ViewModels;
-using CodeFramework.Core.Services;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Repositories

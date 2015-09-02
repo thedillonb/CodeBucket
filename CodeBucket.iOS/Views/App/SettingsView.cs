@@ -1,10 +1,11 @@
 using Cirrious.CrossCore;
 using CodeBucket.Core.Services;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.ViewControllers;
+using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.App
+namespace CodeBucket.Views.App
 {
 	public class SettingsView : ViewModelDrivenDialogViewController
     {
@@ -25,40 +26,40 @@ namespace CodeBucket.iOS.Views.App
 			var vm = (SettingsViewModel)ViewModel;
 			var currentAccount = application.Account;
 
-			var saveCredentials = new TrueFalseElement("Save Credentials".t(), !currentAccount.DontRemember, e =>
+			var saveCredentials = new TrueFalseElement("Save Credentials", !currentAccount.DontRemember, e =>
 				{ 
 					currentAccount.DontRemember = !e.Value;
 					application.Accounts.Update(currentAccount);
 				});
 
-			var showOrganizationsInEvents = new TrueFalseElement("Show Teams under Events".t(), currentAccount.ShowTeamEvents, e =>
+			var showOrganizationsInEvents = new TrueFalseElement("Show Teams under Events", currentAccount.ShowTeamEvents, e =>
 			{ 
 				currentAccount.ShowTeamEvents = e.Value;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var showOrganizations = new TrueFalseElement("List Teams & Groups in Menu".t(), currentAccount.ExpandTeamsAndGroups, e =>
+			var showOrganizations = new TrueFalseElement("List Teams & Groups in Menu", currentAccount.ExpandTeamsAndGroups, e =>
 			{ 
 				currentAccount.ExpandTeamsAndGroups = e.Value;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions".t(), currentAccount.RepositoryDescriptionInList, e =>
+			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions", currentAccount.RepositoryDescriptionInList, e =>
 			{ 
 				currentAccount.RepositoryDescriptionInList = e.Value;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, MonoTouch.UIKit.UITableViewCellStyle.Value1)
+			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, UIKit.UITableViewCellStyle.Value1)
 			{ 
-				Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,
+				Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator,
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
-			//var pushNotifications = new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value);
+			//var pushNotifications = new TrueFalseElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value);
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
+			var deleteCache = new StyledStringElement("Delete Cache", string.Format("{0} MB", totalCacheSizeMB), UIKit.UITableViewCellStyle.Value1);
 			deleteCache.Tapped += () =>
 			{ 
 				vm.DeleteAllCacheCommand.Execute(null);
@@ -66,13 +67,11 @@ namespace CodeBucket.iOS.Views.App
 				ReloadData();
 			};
 
-			var usage = new TrueFalseElement("Send Anonymous Usage".t(), vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value);
-
 			//Assign the root
 			var root = new RootElement(Title);
 			root.Add(new Section("Account") { saveCredentials /*			, pushNotifications */ });
 			root.Add(new Section("Apperance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
-			root.Add(new Section ("Internal") { deleteCache, usage });
+			root.Add(new Section ("Internal") { deleteCache });
 			Root = root;
 
 		}

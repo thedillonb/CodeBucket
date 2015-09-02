@@ -1,10 +1,10 @@
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.ViewControllers;
+using UIKit;
+using CodeBucket.ViewControllers;
 using CodeBucket.Core.Filters;
-using CodeFramework.Core.ViewModels;
+using CodeBucket.Elements;
+using CodeBucket.Core.ViewModels;
 
-namespace CodeBucket.iOS.Views.Filters
+namespace CodeBucket.Views.Filters
 {
     public class RepositoriesFilterViewController : FilterViewController
     {

@@ -1,13 +1,12 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Repositories;
 using BitbucketSharp.Models;
 using System;
 using System.Linq;
 
-namespace CodeBucket.Core.ViewModels
+namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoriesExploreViewModel : BaseViewModel
     {

@@ -3,13 +3,13 @@
 //    Defines the LinkerPleaseInclude type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
 	using System;
 	using System.Collections.Specialized;
 	using System.Windows.Input;
 
-	using MonoTouch.UIKit;
+	using UIKit;
 
 	/// <summary>
 	/// Defines the LinkerPleaseInclude type.
@@ -81,7 +81,6 @@ namespace CodeBucket.iOS
 		public void Include(UIDatePicker uiDatePicker)
 		{
 			uiDatePicker.Date = uiDatePicker.Date.AddSeconds(1);
-			uiDatePicker.ValueChanged += (sender, args) => { uiDatePicker.Date = DateTime.MaxValue; };
 		}
 
 		/// <summary>

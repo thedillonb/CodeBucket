@@ -1,15 +1,15 @@
-using CodeFramework.ViewControllers;
 using CodeBucket.Core.ViewModels.PullRequests;
 using System;
-using MonoTouch.Dialog;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.PullRequests
+namespace CodeBucket.Views.PullRequests
 {
     public class PullRequestCommitsView : ViewModelCollectionDrivenDialogViewController
 	{
         public override void ViewDidLoad()
         {
-            Title = "Commits".t();
+            Title = "Commits";
             Root.UnevenRows = true;
 
             base.ViewDidLoad();

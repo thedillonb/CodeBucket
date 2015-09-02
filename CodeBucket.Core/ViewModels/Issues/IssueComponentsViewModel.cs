@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Messages;
 using System;
 using BitbucketSharp.Models;
+using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {

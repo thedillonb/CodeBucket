@@ -1,15 +1,3 @@
-[submodule "bitbucketsharp"]
-	path = bitbucketsharp
-	url = https://github.com/thedillonb/BitbucketSharp.git
-[submodule "RestSharp"]
-	path = RestSharp
-	url = https://github.com/restsharp/RestSharp.git
-[submodule "CodeFramework"]
-	path = CodeFramework
-	url = https://github.com/thedillonb/CodeFramework.git
 [submodule "lib/BitbucketSharp"]
 	path = lib/BitbucketSharp
 	url = git@github.com:thedillonb/BitbucketSharp.git
-[submodule "lib/CodeFramework"]
-	path = lib/CodeFramework
-	url = git@github.com:thedillonb/CodeFramework.git

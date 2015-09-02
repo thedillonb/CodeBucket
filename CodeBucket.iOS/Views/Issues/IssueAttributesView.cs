@@ -1,8 +1,8 @@
 using System;
-using CodeFramework.ViewControllers;
-using MonoTouch.Dialog;
+using CodeBucket.ViewControllers;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssueAttributesView : BaseDialogViewController
     {
@@ -14,7 +14,7 @@ namespace CodeBucket.iOS.Views.Issues
 		public IssueAttributesView(string[] values, string selected)
 			: base(true)
 		{
-			Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+			Style = UIKit.UITableViewStyle.Plain;
 			_values = values;
 			_selected = selected;
 		}
@@ -29,11 +29,11 @@ namespace CodeBucket.iOS.Views.Issues
 				var capture = val;
 				var el = new StyledStringElement(val);
 				if (string.Equals(val, _selected, StringComparison.OrdinalIgnoreCase))
-					el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.Checkmark;
+					el.Accessory = UIKit.UITableViewCellAccessory.Checkmark;
 				el.Tapped += () => {
 					if (SelectedValue != null)
                         SelectedValue(capture);
-					NavigationController.PopViewControllerAnimated(true);
+					NavigationController.PopViewController(true);
 				};
 				sec.Add(el);
 			}

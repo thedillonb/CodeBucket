@@ -1,15 +1,15 @@
 using System;
-using CodeFramework.ViewControllers;
-using CodeBucket.Core.ViewModels;
-using MonoTouch.Dialog;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels.Commits;
+using CodeBucket.Elements;
 
-namespace CodeBucket.iOS.Views.Source
+namespace CodeBucket.Views.Source
 {
 	public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
 	{
 		public override void ViewDidLoad()
 		{
-			Title = "Commits".t();
+			Title = "Commits";
 			Root.UnevenRows = true;
 
 			base.ViewDidLoad();

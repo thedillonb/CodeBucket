@@ -1,11 +1,10 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeFramework.Core.Services;
 using Cirrious.CrossCore;
 using System.Collections.Generic;
 using System.Linq;
 using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Source
 {

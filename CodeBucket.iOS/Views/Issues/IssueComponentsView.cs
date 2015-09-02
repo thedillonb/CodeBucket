@@ -1,19 +1,21 @@
-using CodeFramework.ViewControllers;
-using MonoTouch.Dialog;
 using System.Linq;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using UIKit;
+using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 using BitbucketSharp.Models;
+using CodeBucket.ViewControllers;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Elements;
+using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
     public class IssueComponentsView : ViewModelCollectionDrivenDialogViewController
 	{
         public IssueComponentsView()
 		{
-            Title = "Components".t();
-            NoItemsText = "No Components".t();
+            Title = "Components";
+            NoItemsText = "No Components";
 			EnableSearch = false;
 		}
 

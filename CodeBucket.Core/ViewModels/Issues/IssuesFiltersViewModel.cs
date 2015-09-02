@@ -1,5 +1,4 @@
-﻿using System;
-using CodeFramework.Core.ViewModels;
+using System;
 using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Filters;

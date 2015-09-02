@@ -5,7 +5,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
     public partial class Launch : UIViewController
     {

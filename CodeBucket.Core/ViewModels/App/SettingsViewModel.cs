@@ -1,8 +1,6 @@
-﻿using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Linq;
-using CodeFramework.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -21,18 +19,6 @@ namespace CodeBucket.Core.ViewModels.App
 		public ICommand DeleteAllCacheCommand
 		{
 			get { return new MvxCommand(DeleteCache); }
-		}
-
-		public bool AnalyticsEnabled
-		{
-			get
-			{
-				return GetService<IAnalyticsService>().Enabled;
-			}
-			set
-			{
-				GetService<IAnalyticsService>().Enabled = value;
-			}
 		}
 
 		private void DeleteCache()

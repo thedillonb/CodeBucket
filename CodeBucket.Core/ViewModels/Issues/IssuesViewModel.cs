@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
 using CodeBucket.Core.Filters;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
@@ -9,7 +8,7 @@ using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System;
-using CodeFramework.Core.Utils;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {

@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.Core.ViewModels;
 
 namespace CodeBucket.Core.Filters
 {

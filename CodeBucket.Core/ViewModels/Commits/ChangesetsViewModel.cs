@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using BitbucketSharp.Models;
 using System.Linq;
 
-namespace CodeBucket.Core.ViewModels
+namespace CodeBucket.Core.ViewModels.Commits
 {
 	public class ChangesetsViewModel : CommitsViewModel
     {

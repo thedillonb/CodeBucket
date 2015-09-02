@@ -1,6 +1,6 @@
-using CodeFramework.iOS.Utils;
+using CodeBucket.Utils;
 
-namespace CodeBucket.iOS.Views.Issues
+namespace CodeBucket.Views.Issues
 {
 	public class IssueAddView : IssueModifyView
     {

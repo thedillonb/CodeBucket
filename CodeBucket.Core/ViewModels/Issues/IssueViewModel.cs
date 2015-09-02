@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.ViewModels.User;
@@ -7,7 +6,6 @@ using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
-using CodeFramework.Core.Services;
 using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Issues

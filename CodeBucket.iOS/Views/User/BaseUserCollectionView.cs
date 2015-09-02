@@ -1,8 +1,8 @@
-using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.User;
+using CodeBucket.ViewControllers;
 
-namespace CodeBucket.iOS.Views.User
+namespace CodeBucket.Views.User
 {
     public abstract class BaseUserCollectionView : ViewModelCollectionDrivenDialogViewController
     {

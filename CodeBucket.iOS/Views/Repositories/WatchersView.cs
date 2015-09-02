@@ -1,13 +1,13 @@
-using CodeBucket.iOS.Views.User;
+using CodeBucket.Views.User;
 
-namespace CodeBucket.iOS.Views.Repositories
+namespace CodeBucket.Views.Repositories
 {
     public class WatchersView : BaseUserCollectionView
     {
 		public override void ViewDidLoad()
 		{
-			Title = "Watchers".t();
-			NoItemsText = "No Watchers".t();
+			Title = "Watchers";
+			NoItemsText = "No Watchers";
 			base.ViewDidLoad();
 		}
     }

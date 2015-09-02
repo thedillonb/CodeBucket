@@ -7,7 +7,7 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace CodeBucket.iOS
+namespace CodeBucket
 {
 	[Register ("Launch")]
 	partial class Launch

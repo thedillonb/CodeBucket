@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
 using Cirrious.MvvmCross.ViewModels;

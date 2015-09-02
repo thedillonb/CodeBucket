@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.ViewModels.Events;
-using CodeFramework.Core.ViewModels;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;

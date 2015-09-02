@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using BitbucketSharp.Models;
 using System.Linq;
 

@@ -1,20 +1,20 @@
 using System;
-using CodeBucket.iOS.Views.Source;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using CodeBucket.Views.Source;
+using UIKit;
+using Foundation;
 using System.Collections.Generic;
 using CodeBucket.Core.ViewModels.Source;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Utils;
-using CodeFramework.Core.Services;
+using CodeBucket.ViewControllers;
+using CodeBucket.Utils;
 using System.Text;
 using System.Linq;
+using Cirrious.MvvmCross.ViewModels;
+using Newtonsoft.Json;
 
-namespace CodeBucket.ViewControllers
+namespace CodeBucket.Views.Source
 {
 	public class ChangesetDiffView : FileSourceView
     {
-		private readonly IJsonSerializationService _serializationService = Cirrious.CrossCore.Mvx.Resolve<IJsonSerializationService>();
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
 
@@ -58,7 +58,7 @@ namespace CodeBucket.ViewControllers
 					Content = x.ContentRendered, Date = x.UtcLastUpdated
 				}).ToList();
 
-				var c = _serializationService.Serialize(slimComments);
+                var c = JsonConvert.SerializeObject(slimComments);
 				ExecuteJavascript("var a = " + c + "; setComments(a);");
 			});
 		}
@@ -72,7 +72,7 @@ namespace CodeBucket.ViewControllers
 			{
 				var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
 				var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-				Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
+				Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
 				_isLoaded = true;
 			}
 		}
@@ -97,7 +97,7 @@ namespace CodeBucket.ViewControllers
 				}
 				else if(func.Equals("comment")) 
 				{
-					var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
+                    var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
 					PromptForComment(commentModel);
                 }
 
@@ -117,11 +117,11 @@ namespace CodeBucket.ViewControllers
 
         private void PromptForComment(JavascriptCommentModel model)
         {
-			string title = "Line ".t() + (model.LineFrom ?? model.LineTo);
+			string title = "Line " + (model.LineFrom ?? model.LineTo);
 
             var sheet = MonoTouch.Utilities.GetSheet(title);
-            var addButton = sheet.AddButton("Add Comment".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var addButton = sheet.AddButton("Add Comment");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (sender, e) => {
@@ -146,7 +146,7 @@ namespace CodeBucket.ViewControllers
 				}
 				catch (Exception e)
 				{
-					MonoTouch.Utilities.ShowAlert("Unable to Comment".t(), e.Message);
+					MonoTouch.Utilities.ShowAlert("Unable to Comment", e.Message);
 					composer.EnableSendButton = true;
 				}
             });

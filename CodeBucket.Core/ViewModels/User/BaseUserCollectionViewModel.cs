@@ -1,6 +1,5 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.User

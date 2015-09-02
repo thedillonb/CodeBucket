@@ -1,5 +1,3 @@
-using System;
-using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -7,7 +5,7 @@ using Cirrious.MvvmCross.ViewModels;
 using BitbucketSharp.Models;
 using System.Linq;
 
-namespace CodeBucket.Core.ViewModels
+namespace CodeBucket.Core.ViewModels.Commits
 {
 	public abstract class CommitsViewModel : LoadableViewModel
 	{

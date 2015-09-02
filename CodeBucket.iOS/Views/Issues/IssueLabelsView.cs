@@ -5,15 +5,15 @@
 //using System.Linq;
 //using MonoTouch.UIKit;
 //
-//namespace CodeBucket.iOS.Views.Issues
+//namespace CodeBucket.Views.Issues
 //{
 //    public class IssueLabelsView : ViewModelCollectionDrivenDialogViewController
 //    {
 //		public IssueLabelsView()
 //		{
 //			EnableSearch = false;
-//			Title = "Labels".t();
-//			NoItemsText = "No Labels".t();
+//			Title = "Labels";
+//			NoItemsText = "No Labels";
 //		}
 //
 //        public override void ViewDidLoad()
