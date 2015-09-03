@@ -7,6 +7,7 @@ using System.Linq;
 using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Commits;
 using Cirrious.MvvmCross.ViewModels;
+using Humanizer;
 
 namespace CodeBucket.Views.Source
 {
@@ -53,7 +54,7 @@ namespace CodeBucket.Views.Source
             var commitModel = ViewModel.Commits;
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-			_header.Subtitle = "Commited " + (ViewModel.Changeset.Utctimestamp).ToDaysAgo();
+            _header.Subtitle = "Commited " + (ViewModel.Changeset.Utctimestamp).Humanize();
             var headerSection = new Section(_header);
             root.Add(headerSection);
 
@@ -115,7 +116,7 @@ namespace CodeBucket.Views.Source
 					commentSection.Add(new CommentElement
 					{
 						Name = comment.DisplayName,
-						Time = comment.UtcCreatedOn.ToDaysAgo(),
+                        Time = comment.UtcCreatedOn.Humanize(),
 						String = comment.Content,
 						Image = Images.Anonymous,
 						ImageUri = new Uri(comment.UserAvatarUrl),

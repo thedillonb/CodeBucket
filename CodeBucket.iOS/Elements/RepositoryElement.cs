@@ -1,14 +1,12 @@
 using System;
 using CodeBucket.Cells;
-using MonoTouch.Dialog.Utilities;
 using Foundation;
 using UIKit;
 using CodeBucket.ViewControllers;
 
 namespace CodeBucket.Elements
 {
-    
-    public class RepositoryElement : Element, IElementSizing, IColorizeBackground, IImageUpdated
+    public class RepositoryElement : Element, IElementSizing, IColorizeBackground
     {       
         private readonly string _name;
         private readonly int _followers;
@@ -76,33 +74,8 @@ namespace CodeBucket.Elements
             var c = cell as RepositoryCellView;
             if (c == null)
                 return;
-
-            if (_image == null && _imageUri != null)
-                _image = ImageLoader.DefaultRequestImage(_imageUri, this);
-            c.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
+            c.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image, _imageUri);
         }
-
-        #region IImageUpdated implementation
-
-        public void UpdatedImage(Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-            {
-                Console.WriteLine("DefaultRequestImage returned a null image");
-                return;
-            }
-            _image = img;
-
-            if (uri == null)
-                return;
-            var root = GetImmediateRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new [] { IndexPath }, UITableViewRowAnimation.None);
-        }
-
-        #endregion
     }
 }
 

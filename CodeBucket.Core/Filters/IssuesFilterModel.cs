@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace CodeBucket.Core.Filters
 {
@@ -70,12 +71,12 @@ namespace CodeBucket.Core.Filters
 
         public enum Order
         { 
-            [EnumDescription("Number")]
+            [Description("Number")]
             Local_Id, 
             Title,
-            [EnumDescription("Last Updated")]
+            [Description("Last Updated")]
             Utc_Last_Updated, 
-            [EnumDescription("Created Date")]
+            [Description("Created Date")]
             Created_On, 
             Version, 
             Milestone, 

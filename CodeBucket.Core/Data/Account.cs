@@ -4,8 +4,9 @@ using System.IO;
 using Cirrious.CrossCore;
 using SQLite;
 using CodeBucket.Core.Services;
+using CodeFramework.Core.Data;
 
-namespace CodeFramework.Core.Data
+namespace CodeBucket.Core.Data
 {
     public abstract class Account : IAccount, IDisposable
     {

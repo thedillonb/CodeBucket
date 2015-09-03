@@ -1,6 +1,5 @@
 using Cirrious.CrossCore;
 using CodeBucket.Core.Services;
-using MonoTouch.Dialog;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using CodeBucket.Elements;

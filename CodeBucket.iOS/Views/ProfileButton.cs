@@ -1,11 +1,12 @@
 using System;
-using MonoTouch.Dialog.Utilities;
 using UIKit;
 using CoreGraphics;
+using Foundation;
+using SDWebImage;
 
 namespace CodeBucket.Views
 {
-    public class ProfileButton : UIButton, IImageUpdated
+    public class ProfileButton : UIButton
     {
         private readonly UIImageView _imageView;
         private Uri _uri;
@@ -17,7 +18,10 @@ namespace CodeBucket.Views
             }
             set {
                 _uri = value;
-                _imageView.Image = ImageLoader.DefaultRequestImage(value, this);
+                if (value != null)
+                    _imageView.SetImage(new NSUrl(value.AbsoluteUri));
+                else
+                    _imageView.Image = null;
             }
         }
 
@@ -37,16 +41,6 @@ namespace CodeBucket.Views
 //            this.Layer.ShadowRadius = 4.0f;
 
             this.AddSubview(_imageView);
-        }
-
-        public void UpdatedImage(Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-                return;
-
-            _imageView.Image = img;
-            _imageView.SetNeedsDisplay();
         }
     }
 }

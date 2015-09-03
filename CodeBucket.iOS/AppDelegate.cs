@@ -53,7 +53,7 @@ namespace CodeBucket
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
-            Mvx.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/7/store/", "646913784b3d4d85ad04a03d2887f48e  ", "872ee1da3b27408b841e7587bf549a22");
+             Mvx.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/7/store/", "646913784b3d4d85ad04a03d2887f48e  ", "872ee1da3b27408b841e7587bf549a22");
 
 			// Setup theme
 			Theme.Setup();

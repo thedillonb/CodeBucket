@@ -46,11 +46,6 @@ namespace CodeFramework.Core.Cache
             try
             {
                 return System.IO.File.ReadAllBytes(Path);
-//				using (var io = System.IO.File.OpenRead(Path))
-//				{
-//					var s = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-//					return (T)s.Deserialize(io);
-//				}
             }
             catch (System.Exception e)
             {
@@ -61,11 +56,6 @@ namespace CodeFramework.Core.Cache
         public void SaveResult(byte[] data)
         {
             System.IO.File.WriteAllBytes(Path, data);
-//			using (var io = System.IO.File.OpenWrite(Path))
-//            {
-//                var s = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-//                s.Serialize(io, data);
-//            }
         }
     }
 }

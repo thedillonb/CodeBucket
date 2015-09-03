@@ -23,11 +23,11 @@ namespace CodeBucket.Core.Services
             get { return System.IO.File.Exists(CrashReportFile); }
         }
 
-        public ErrorService(IHttpClientService httpClient, IEnvironmentService environmentService, IAccountsService accountsService)
+        public ErrorService(IEnvironmentService environmentService, IAccountsService accountsService)
         {
             _environmentService = environmentService;
             _accountsService = accountsService;
-            _httpClient = httpClient.Create();
+            _httpClient = new HttpClient();
             _httpClient.Timeout = new TimeSpan(0, 0, 10);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }

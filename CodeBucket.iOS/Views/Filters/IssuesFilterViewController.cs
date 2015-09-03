@@ -4,6 +4,7 @@ using CodeBucket.Core.Filters;
 using System;
 using System.Linq;
 using CodeBucket.Elements;
+using Humanizer;
 
 namespace CodeBucket.Views.Filters
 {
@@ -92,7 +93,7 @@ namespace CodeBucket.Views.Filters
                 set
                 {
                     _value = value;
-                    base.Value = ((Enum)Enum.ToObject(typeof(T), value)).Description();
+                    base.Value = ((Enum)Enum.ToObject(typeof(T), value)).Humanize();
                 }
             }
 
@@ -117,7 +118,7 @@ namespace CodeBucket.Views.Filters
                 var sec = new Section();
                 foreach (var x in System.Enum.GetValues(typeof(T)).Cast<System.Enum>())
                 {
-                    sec.Add(new StyledStringElement(x.Description(), () => { 
+                    sec.Add(new StyledStringElement(x.Humanize(), () => { 
                         element.Value = (T)Enum.ToObject(typeof(T), x); 
                         NavigationController.PopViewController(true);
                     }) { 

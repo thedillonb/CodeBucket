@@ -4,13 +4,13 @@ using System.Linq;
 using CoreGraphics;
 using Foundation;
 using UIKit;
-using MonoTouch.Dialog.Utilities;
 using CodeBucket.ViewControllers;
 using CodeBucket.Cells;
+using Humanizer;
 
 namespace CodeBucket.Elements
 {
-    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground, IImageUpdated
+    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground
     {
         private readonly string _time;
         private readonly Uri _imageUri;
@@ -64,7 +64,7 @@ namespace CodeBucket.Elements
             : base(null)
         {
             Uri.TryCreate(imageUrl, UriKind.Absolute, out _imageUri);
-            _time = time.ToDaysAgo();
+            _time = time.Humanize();
             _actionImage = littleImage;
             _tapped = tapped;
 
@@ -174,30 +174,7 @@ namespace CodeBucket.Elements
             var c = cell as NewsCellView;
             if (c == null)
                 return;
-
-            UIImage image = null;
-            if (_imageUri != null)
-                image = ImageLoader.DefaultRequestImage(_imageUri, this);
-
-            c.Set(image, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
+            c.Set(_imageUri, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
         }
-
-        #region IImageUpdated implementation
-
-        public void UpdatedImage(Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-                return;
-
-            if (uri == null)
-                return;
-            var root = GetImmediateRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new [] { IndexPath }, UITableViewRowAnimation.None);
-        }
-
-        #endregion
     }
 }

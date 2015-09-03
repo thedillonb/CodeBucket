@@ -3,6 +3,7 @@ using Cirrious.MvvmCross.Binding.Touch.Views;
 using Foundation;
 using ObjCRuntime;
 using UIKit;
+using SDWebImage;
 
 namespace CodeBucket.Cells
 {
@@ -60,14 +61,18 @@ namespace CodeBucket.Cells
         {
         }
 
-        public void Bind(string name, string name2, string name3, string description, string repoOwner, UIImage logoImage)
+        public void Bind(string name, string name2, string name3, string description, string repoOwner, UIImage logoImage, Uri logoUri)
         {
             Caption.Text = name;
             Label1.Text = name2;
             Label3.Text = name3;
-            BigImage.Image = logoImage;
             Description.Hidden = description == null;
             Description.Text = description ?? string.Empty;
+
+            if (logoUri == null)
+                BigImage.Image = logoImage;
+            else
+                BigImage.SetImage(new NSUrl(logoUri.AbsoluteUri), logoImage);
 
             var frame = Description.Frame;
             frame.Y = 29f;

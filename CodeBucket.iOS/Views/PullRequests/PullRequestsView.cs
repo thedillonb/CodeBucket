@@ -4,6 +4,7 @@ using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
+using Humanizer;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -40,7 +41,7 @@ namespace CodeBucket.Views.PullRequests
                     Name = s.Title,
 					String = s.Description.Replace('\n', ' ').Replace("\r", ""),
                     Lines = 3,
-					Time = s.UpdatedOn.ToDaysAgo(),
+                    Time = s.UpdatedOn.Humanize(),
                     Image = Theme.CurrentTheme.AnonymousUserImage,
 					ImageUri = new Uri(s.Author.Links.Avatar.Href)
                 };

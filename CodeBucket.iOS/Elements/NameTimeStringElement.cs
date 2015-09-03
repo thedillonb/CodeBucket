@@ -2,12 +2,11 @@ using System;
 using UIKit;
 using System.Drawing;
 using CoreGraphics;
-using MonoTouch.Dialog.Utilities;
 using Foundation;
 
 namespace CodeBucket.Elements
 {
-    public class NameTimeStringElement : CustomElement, IImageUpdated
+    public class NameTimeStringElement : CustomElement
     {
         public static UIFont DateFont = UIFont.SystemFontOfSize(12);
         public static UIFont UserFont = UIFont.BoldSystemFontOfSize(15);
@@ -127,13 +126,14 @@ namespace CodeBucket.Elements
 
         public override UITableViewCell GetCell(UITableView tv)
         {
-            if (ImageUri != null)
-            {
-                var img = ImageLoader.DefaultRequestImage(ImageUri, this);
-                if (img != null)
-                    Image = img;
-            }
-
+//            if (ImageUri != null)
+//            {
+//                var img = ImageLoader.DefaultRequestImage(ImageUri, this);
+//                if (img != null)
+//                    Image = img;
+//            }
+//
+//
 			var cell = base.GetCell(tv);
 			//TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 47f, 0, 0);
 			cell.SeparatorInset = UIEdgeInsets.Zero;
@@ -144,24 +144,6 @@ namespace CodeBucket.Elements
         {
             var ltext = text.ToLower();
             return base.Matches(text) || Name.ToLower().Contains(ltext) || String.ToLower().Contains(ltext);
-        }
-
-        void IImageUpdated.UpdatedImage (Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-            {
-                Console.WriteLine("DefaultRequestImage returned a null image");
-                return;
-            }
-            Image = img;
-
-            if (uri == null)
-                return;
-            var root = GetImmediateRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new NSIndexPath [] { IndexPath }, UITableViewRowAnimation.None);
         }
     }
 }

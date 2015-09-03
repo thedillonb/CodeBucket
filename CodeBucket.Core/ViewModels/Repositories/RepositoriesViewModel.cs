@@ -49,13 +49,13 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
             if (order == RepositoriesFilterModel.Order.LastUpdated)
             {
-				var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
                 a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Updated");
             }
             if (order == RepositoriesFilterModel.Order.CreatedOn)
             {
-				var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
+                var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
                 a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
             }

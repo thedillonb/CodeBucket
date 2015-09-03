@@ -76,7 +76,6 @@ namespace CodeBucket.Views.App
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
 			infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;

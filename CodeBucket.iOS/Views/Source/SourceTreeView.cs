@@ -1,6 +1,5 @@
 using System;
 using CodeBucket.Core.ViewModels.Source;
-using MonoTouch.Dialog;
 using CodeBucket.Views.Filters;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;

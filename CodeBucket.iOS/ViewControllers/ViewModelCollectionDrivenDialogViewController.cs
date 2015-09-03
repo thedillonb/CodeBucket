@@ -3,7 +3,6 @@ using System.Linq;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
-using MonoTouch.Dialog;
 using UIKit;
 using MonoTouch;
 using System.Collections.Generic;

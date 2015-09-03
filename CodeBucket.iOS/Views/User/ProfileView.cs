@@ -2,7 +2,6 @@ using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.User;
-using MonoTouch.Dialog;
 using CodeBucket.Elements;
 
 namespace CodeBucket.Views.User

@@ -1,4 +1,3 @@
-using MonoTouch.Dialog;
 using System.Linq;
 using UIKit;
 using CodeBucket.Utils;

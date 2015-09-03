@@ -1,4 +1,3 @@
-using MonoTouch.Dialog;
 using UIKit;
 
 namespace CodeBucket.Elements

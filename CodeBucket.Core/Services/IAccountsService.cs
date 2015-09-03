@@ -1,54 +1,54 @@
 using System.Collections.Generic;
-using CodeFramework.Core.Data;
+using CodeBucket.Core.Data;
 
 namespace CodeBucket.Core.Services
 {
-    public interface IAccountsService : IEnumerable<IAccount>
+    public interface IAccountsService : IEnumerable<BitbucketAccount>
     {
         /// <summary>
         /// Gets the active account
         /// </summary>
-        IAccount ActiveAccount { get; }
+        BitbucketAccount ActiveAccount { get; }
 
         /// <summary>
         /// Sets the active account
         /// </summary>
         /// <param name="account"></param>
-        void SetActiveAccount(IAccount account);
+        void SetActiveAccount(BitbucketAccount account);
 
         /// <summary>
         /// Gets the default account
         /// </summary>
-        IAccount GetDefault();
+        BitbucketAccount GetDefault();
 
         /// <summary>
         /// Sets the default account
         /// </summary>
-        void SetDefault(IAccount account);
+        void SetDefault(BitbucketAccount account);
 
         /// <summary>
         /// Insert the specified account.
         /// </summary>
-        void Insert(IAccount account);
+        void Insert(BitbucketAccount account);
 
         /// <summary>
         /// Remove the specified account.
         /// </summary>
-        void Remove(IAccount account);
+        void Remove(BitbucketAccount account);
 
         /// <summary>
         /// Update this instance in the database
         /// </summary>
-        void Update(IAccount account);
+        void Update(BitbucketAccount account);
 
         /// <summary>
         /// Checks to see whether a specific account exists (Username comparison)
         /// </summary>
-        bool Exists(IAccount account);
+        bool Exists(BitbucketAccount account);
 
         /// <summary>
         /// Find the specified account via it's username
         /// </summary>
-        IAccount Find(int id);
+        BitbucketAccount Find(int id);
     }
 }

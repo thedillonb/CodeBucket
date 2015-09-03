@@ -39,7 +39,6 @@
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Login.cs" />
     <Compile Include="Utils\RepositoryDetailModelExtensions.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Messages\IssueAddMessage.cs" />
@@ -51,7 +50,6 @@
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\LoginService.cs" />
-    <Compile Include="Services\BitbucketAccountsService.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
@@ -93,7 +91,6 @@
     <Compile Include="ViewModels\Groups\GroupsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
-    <Compile Include="ViewModels\App\AboutVIewModel.cs" />
     <Compile Include="ViewModels\Wiki\WikiViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAttributesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueVersionsViewModel.cs" />
@@ -127,20 +124,16 @@
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IEnvrionmentService.cs" />
     <Compile Include="Services\IErrorService.cs" />
-    <Compile Include="Services\IHttpClientService.cs" />
     <Compile Include="Services\IShareService.cs" />
     <Compile Include="Services\IUIThreadService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
-    <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
-    <Compile Include="Utils\EnumExtensions.cs" />
     <Compile Include="Utils\ExceptionExtensions.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
     <Compile Include="ViewModels\FileSourceViewModel.cs" />
@@ -155,6 +148,7 @@
     <Compile Include="ViewModels\Commits\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Commits\ChangesetViewModel.cs" />
     <Compile Include="Filters\FilterModel.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -192,6 +186,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

@@ -2,12 +2,10 @@ using System;
 using CodeBucket.ViewControllers;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Repositories;
-using MonoTouch.Dialog;
 using UIKit;
 using BitbucketSharp.Models;
-using CodeBucket.Utils;
 using CodeBucket.Elements;
-using Cirrious.MvvmCross.ViewModels;
+using Humanizer;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -84,7 +82,7 @@ namespace CodeBucket.Views.Repositories
 			Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
 			_header.Title = Title;
-			_header.Subtitle = "Updated " + (model.UtcLastUpdated).ToDaysAgo();
+            _header.Subtitle = "Updated " + model.UtcLastUpdated.Humanize();
 			_header.ImageUri = ViewModel.ImageUrl;
 
             root.Add(new Section(_header));

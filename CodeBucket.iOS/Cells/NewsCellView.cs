@@ -2,6 +2,7 @@ using System;
 using Foundation;
 using UIKit;
 using System.Collections.Generic;
+using SDWebImage;
 
 namespace CodeBucket.Cells
 {
@@ -70,31 +71,39 @@ namespace CodeBucket.Cells
             }
         }
 
-        public void Set(UIImage img, string time, UIImage actionImage, 
+        public void Set(Uri imageUri, string time, UIImage actionImage, 
             NSMutableAttributedString header, NSMutableAttributedString body, 
             List<Link> headerLinks, List<Link> bodyLinks, Action<NSUrl> webLinkClicked)
         {
-            this.Image.Image = img;
-            this.Time.Text = time;
-            this.ActionImage.Image = actionImage;
+            Time.Text = time;
+            ActionImage.Image = actionImage;
+
+            if (imageUri != null)
+            {
+                Image.SetImage(new NSUrl(imageUri.AbsoluteUri));
+            }
+            else
+            {
+                Image.Image = null;
+            }
 
             if (header == null)
                 header = new NSMutableAttributedString();
             if (body == null)
                 body = new NSMutableAttributedString();
 
-            this.Header.AttributedText = header;
-            this.Header.Delegate = new LabelDelegate(headerLinks, webLinkClicked);
+            Header.AttributedText = header;
+            Header.Delegate = new LabelDelegate(headerLinks, webLinkClicked);
 
-            this.Body.AttributedText = body;
-            this.Body.Hidden = body.Length == 0;
-            this.Body.Delegate = new LabelDelegate(bodyLinks, webLinkClicked);
+            Body.AttributedText = body;
+            Body.Hidden = body.Length == 0;
+            Body.Delegate = new LabelDelegate(bodyLinks, webLinkClicked);
 
             foreach (var b in headerLinks)
-                this.Header.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
+                Header.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
 
             foreach (var b in bodyLinks)
-                this.Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
+                Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
         }
 
         public static NewsCellView Create()

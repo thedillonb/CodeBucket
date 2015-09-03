@@ -1,4 +1,6 @@
-namespace CodeFramework.Core.Data
+using CodeFramework.Core.Data;
+
+namespace CodeBucket.Core.Data
 {
     public interface IAccount
     {

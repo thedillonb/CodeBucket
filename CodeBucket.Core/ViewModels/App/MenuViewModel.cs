@@ -190,11 +190,6 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
 		}
 
-		public ICommand GoToAboutCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<AboutViewModel>(null));}
-		}
-
 		public ICommand GoToRepositoryCommand
 		{
 			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name }));}

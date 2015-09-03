@@ -8,6 +8,7 @@ using CodeBucket.Utils;
 using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels;
 using Cirrious.MvvmCross.ViewModels;
+using Humanizer;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -49,7 +50,7 @@ namespace CodeBucket.Views.PullRequests
 
             var root = new RootElement(Title);
             _header.Title = ViewModel.PullRequest.Title;
-			_header.Subtitle = "Updated " + (ViewModel.PullRequest.UpdatedOn).ToDaysAgo();
+            _header.Subtitle = "Updated " + ViewModel.PullRequest.UpdatedOn.Humanize();
             _header.SetNeedsDisplay();
             root.Add(new Section(_header));
 
@@ -104,7 +105,7 @@ namespace CodeBucket.Views.PullRequests
                     commentsSec.Add(new CommentElement
                     {
                         Name = x.User.Username,
-                        Time = x.CreatedOn.ToDaysAgo(),
+                        Time = x.CreatedOn.Humanize(),
                         String = x.Content.Raw,
                         Image = Theme.CurrentTheme.AnonymousUserImage,
                         ImageUri = new Uri(x.User.Links.Avatar.Href),

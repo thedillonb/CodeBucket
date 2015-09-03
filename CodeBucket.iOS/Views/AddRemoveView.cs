@@ -1,6 +1,5 @@
 using System;
 using UIKit;
-using MonoTouch.Dialog;
 using CodeBucket.Utils;
 using Foundation;
 

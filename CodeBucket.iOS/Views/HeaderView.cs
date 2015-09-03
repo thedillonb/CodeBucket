@@ -1,12 +1,12 @@
 using System;
 using CoreGraphics;
-using MonoTouch.Dialog.Utilities;
 using UIKit;
 using Foundation;
+using SDWebImage;
 
 namespace CodeBucket.Views
 {
-    public class HeaderView : UIView, IImageUpdated
+    public class HeaderView : UIView
     {
         private const float XPad = 14f;
         private const float YPad = 10f;
@@ -60,8 +60,17 @@ namespace CodeBucket.Views
             get { return string.Empty; }
             set 
             {
-				_image = string.IsNullOrEmpty(value) ? null : ImageLoader.DefaultRequestImage(new Uri(value), this); 
-                SetNeedsDisplay(); 
+                if (value == null)
+                    Image = null;
+                else
+                {
+                    SDWebImageManager.SharedManager.ImageDownloader.DownloadImage(new NSUrl(value),
+                        SDWebImageDownloaderOptions.ContinueInBackground, (x, y) => {}, (img, data, err, finished) =>
+                    {
+                        if (img != null)
+                            BeginInvokeOnMainThread(() => Image = img);
+                    });
+                }
             }
         }
 
@@ -87,16 +96,6 @@ namespace CodeBucket.Views
             {
                 _yPad -= ((Theme.CurrentTheme.FontSizeRatio * 1.2f * YPad) - YPad);
             }
-
-//            Layer.MasksToBounds = false;
-//            Layer.ShadowColor = UIColor.Gray.CGColor;
-//            Layer.ShadowOpacity = 0.4f;
-//            Layer.ShadowOffset = new SizeF(0, 1f);
-        }
-
-        public void UpdatedImage(Uri uri)
-        {
-            Image = ImageLoader.DefaultRequestImage(uri, this);
         }
 
         public override void Draw(CGRect rect)

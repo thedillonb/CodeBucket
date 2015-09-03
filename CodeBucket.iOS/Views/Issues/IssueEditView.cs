@@ -1,9 +1,6 @@
-using MonoTouch.Dialog;
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Elements;
-using CodeBucket.Core.ViewModels;
-using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Views.Issues
 {

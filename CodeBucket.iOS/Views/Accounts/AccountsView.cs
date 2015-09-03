@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using Cirrious.CrossCore;
-using CodeFramework.Core.Data;
 using CodeBucket.Elements;
 using CodeBucket.ViewControllers;
 using UIKit;
 using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Accounts;
-using CodeBucket.Core.ViewModels;
 using CodeBucket.Core.Services;
+using CodeBucket.Core.Data;
 
 namespace CodeBucket.Views.Accounts
 {
@@ -75,7 +74,7 @@ namespace CodeBucket.Views.Accounts
         /// Called when an account is deleted
         /// </summary>
         /// <param name="account">Account.</param>
-        protected void AccountDeleted(IAccount account)
+        protected void AccountDeleted(BitbucketAccount account)
         {
             //Remove the designated username
             var thisAccount = account;
@@ -159,9 +158,9 @@ namespace CodeBucket.Views.Accounts
         /// </summary>
         protected class AccountElement : UserElement
         {
-            public IAccount Account { get; private set; }
+            public BitbucketAccount Account { get; private set; }
 
-            public AccountElement(IAccount account)
+            public AccountElement(BitbucketAccount account)
                 : base(account.Username, string.Empty, string.Empty, account.AvatarUrl)
             {
                 Account = account;

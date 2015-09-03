@@ -3,13 +3,13 @@ using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
-using MonoTouch.Dialog;
 using CodeBucket.Utils;
 using CodeBucket.Elements;
 using System.Linq;
 using CodeBucket.Core.ViewModels;
 using Newtonsoft.Json;
 using Cirrious.MvvmCross.ViewModels;
+using Humanizer;
 
 namespace CodeBucket.Views.Issues
 {
@@ -62,7 +62,7 @@ namespace CodeBucket.Views.Issues
 			var comments = ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content)).Select(x => new { 
 				avatarUrl = x.AuthorInfo.Avatar, 
 				login = x.AuthorInfo.Username, 
-                created_at = x.UtcCreatedOn.ToDaysAgo(), 
+                created_at = x.UtcCreatedOn.Humanize(), 
 				body = ViewModel.ConvertToMarkdown(x.Content)
 			});
 
@@ -83,7 +83,7 @@ namespace CodeBucket.Views.Issues
 
 			var root = new RootElement(Title);
 			_header.Title = ViewModel.Issue.Title;
-			_header.Subtitle = "Updated " + ViewModel.Issue.UtcLastUpdated.ToDaysAgo();
+			_header.Subtitle = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
 			root.Add(new Section(_header));
 
 

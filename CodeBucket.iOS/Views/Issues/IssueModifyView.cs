@@ -2,7 +2,6 @@ using System;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
-using MonoTouch.Dialog;
 using CodeBucket.Utils;
 using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels;

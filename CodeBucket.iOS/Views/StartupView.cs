@@ -1,14 +1,13 @@
 using System;
 using UIKit;
 using CodeBucket.ViewControllers;
-using MonoTouch.Dialog.Utilities;
 using CodeBucket.Core.ViewModels.App;
-using CodeBucket.Core.ViewModels;
-using Cirrious.MvvmCross.ViewModels;
+using Foundation;
+using SDWebImage;
 
 namespace CodeBucket.Views
 {
-    public class StartupView : ViewModelDrivenDialogViewController, IImageUpdated
+    public class StartupView : ViewModelDrivenDialogViewController
     {
         const float imageSize = 128f;
 
@@ -72,21 +71,14 @@ namespace CodeBucket.Views
 
         public void UpdatedImage(Uri uri)
         {
-            if (uri == null)
+            AssignUnknownUserImage();
+
+            if (uri != null)
             {
-                AssignUnknownUserImage();
-            }
-            else
-            {
-                var img = ImageLoader.DefaultRequestImage(uri, this);
-                if (img == null)
-                {
-                    AssignUnknownUserImage();
-                }
-                else
-                {
+                var placeholder = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
                     UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
-                }
+                });
             }
         }
 

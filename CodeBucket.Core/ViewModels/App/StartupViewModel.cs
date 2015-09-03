@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Data;
 
 namespace CodeBucket.Core.ViewModels.App
 {

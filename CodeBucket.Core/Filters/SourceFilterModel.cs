@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel;
 
 namespace CodeBucket.Core.Filters
 {
@@ -21,7 +21,7 @@ namespace CodeBucket.Core.Filters
         public enum Order : int
         { 
             Alphabetical, 
-            [EnumDescription("Folders Then Files")]
+            [Description("Folders Then Files")]
             FoldersThenFiles,
         };
     }

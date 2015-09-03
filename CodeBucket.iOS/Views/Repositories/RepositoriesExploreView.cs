@@ -4,8 +4,6 @@ using UIKit;
 using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
-using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -27,10 +25,8 @@ namespace CodeBucket.Views.Repositories
 			var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
 
-			var set = this.CreateBindingSet<RepositoriesExploreView, RepositoriesExploreViewModel>();
-			set.Bind(search).For(x => x.Text).To(x => x.SearchText);
-			set.Apply();
-
+            search.TextChanged += (sender, e) => vm.SearchText = search.Text;
+            vm.Bind(x => x.SearchText, x => search.Text = x);
 			search.SearchButtonClicked += (sender, e) =>
 			{
 				search.ResignFirstResponder();

@@ -201,11 +201,9 @@
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\EnvironmentService.cs" />
-    <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\ShareService.cs" />
     <Compile Include="Services\UIThreadService.cs" />
     <Compile Include="Utils\Hud.cs" />
-    <Compile Include="Utils\PickerAlert.cs" />
     <Compile Include="Utils\UIImageExtensions.cs" />
     <Compile Include="Utils\Util.cs" />
     <Compile Include="Utils\ViewControllerExtensions.cs" />
@@ -244,8 +242,6 @@
     <Compile Include="Elements\TrueFalseElement.cs" />
     <Compile Include="Elements\LoadMoreElement.cs" />
     <Compile Include="Utils\Graphics.cs" />
-    <Compile Include="Utils\ImageLoader.cs" />
-    <Compile Include="Utils\LRUCache.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <Compile Include="Elements\Elements.cs" />
@@ -298,6 +294,12 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -498,5 +500,11 @@
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-40.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-40%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="sdwebimage">
+      <Version>3.7.1.4</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>

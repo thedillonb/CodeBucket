@@ -228,50 +228,10 @@ namespace CodeBucket.ViewControllers
 			searchBar.ResignFirstResponder();
 		}
 
-		class SearchDelegate : UISearchBarDelegate {
-			DialogViewController container;
-
-			public SearchDelegate (DialogViewController container)
-			{
-				this.container = container;
-			}
-
-			public override void OnEditingStarted (UISearchBar searchBar)
-			{
-				searchBar.ShowsCancelButton = true;
-				container.StartSearch ();
-			}
-
-			public override void OnEditingStopped (UISearchBar searchBar)
-			{
-				searchBar.ShowsCancelButton = false;
-				//container.FinishSearch ();
-			}
-
-			public override void TextChanged (UISearchBar searchBar, string searchText)
-			{
-				container.PerformFilter (searchText ?? "");
-			}
-
-			public override void CancelButtonClicked (UISearchBar searchBar)
-			{
-				searchBar.ShowsCancelButton = false;
-				container.searchBar.Text = "";
-				container.FinishSearch ();
-				searchBar.ResignFirstResponder ();
-			}
-
-			public override void SearchButtonClicked (UISearchBar searchBar)
-			{
-				container.SearchButtonClicked (searchBar.Text);
-			}
-		}
-
 		public class Source : UITableViewSource {
 			const float yboundary = 65;
 			protected DialogViewController Container;
 			protected RootElement Root;
-			bool checkForRefresh;
 
 			public Source (DialogViewController container)
 			{
@@ -429,9 +389,35 @@ namespace CodeBucket.ViewControllers
 		void SetupSearch ()
 		{
 			if (enableSearch){
-                searchBar = new UISearchBar (new CGRect (0, 0, tableView.Bounds.Width, 44)) {
-					Delegate = new SearchDelegate (this)
-				};
+                searchBar = new UISearchBar(new CGRect(0, 0, tableView.Bounds.Width, 44));
+
+                searchBar.OnEditingStarted += (sender, e) =>
+                {
+                    searchBar.ShowsCancelButton = true;
+                    this.StartSearch();
+                };
+
+                searchBar.OnEditingStopped += (sender, e) => 
+                {
+                    searchBar.ShowsCancelButton = false;
+                };
+
+                searchBar.TextChanged += (sender, e) => PerformFilter(e.SearchText ?? string.Empty);
+
+                searchBar.CancelButtonClicked += (sender, e) => 
+                {
+                    searchBar.ShowsCancelButton = false;
+                    searchBar.Text = string.Empty;
+                    FinishSearch();
+                    searchBar.ResignFirstResponder();
+                };
+
+                searchBar.SearchButtonClicked += (sender, e) => {
+                    SearchButtonClicked(searchBar.Text);
+                };
+
+
+
 				if (SearchPlaceholder != null)
 					searchBar.Placeholder = this.SearchPlaceholder;
 				tableView.TableHeaderView = searchBar;					

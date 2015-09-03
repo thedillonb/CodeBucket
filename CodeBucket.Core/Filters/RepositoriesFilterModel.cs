@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel;
 
 namespace CodeBucket.Core.Filters
 {
@@ -22,11 +22,11 @@ namespace CodeBucket.Core.Filters
         { 
             Name, 
             Owner,
-            [EnumDescription("Last Updated")]
+            [Description("Last Updated")]
             LastUpdated,
             Followers,
             Forks,
-            [EnumDescription("Created Date")]
+            [Description("Created Date")]
             CreatedOn, 
         };
     }

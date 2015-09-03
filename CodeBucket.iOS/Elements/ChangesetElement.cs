@@ -1,5 +1,4 @@
 using CodeBucket.Views;
-using MonoTouch.Dialog;
 
 namespace CodeBucket.Elements
 {

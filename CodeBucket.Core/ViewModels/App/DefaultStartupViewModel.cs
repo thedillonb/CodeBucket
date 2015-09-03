@@ -2,7 +2,6 @@ using CodeBucket.Core.Services;
 using System;
 using CodeBucket.Core.Utils;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.App
 {
