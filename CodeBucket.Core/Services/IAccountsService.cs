@@ -50,5 +50,10 @@ namespace CodeBucket.Core.Services
         /// Find the specified account via it's username
         /// </summary>
         BitbucketAccount Find(int id);
+
+        /// <summary>
+        /// Find the specified account via it's username
+        /// </summary>
+        BitbucketAccount Find(string username);
     }
 }

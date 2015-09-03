@@ -56,7 +56,7 @@ namespace CodeBucket.Core.ViewModels.App
         /// If there isn't one, it'll just return null.
         /// </summary>
         /// <returns>The default account.</returns>
-        protected IAccount GetDefaultAccount()
+        protected BitbucketAccount GetDefaultAccount()
         {
             var accounts = GetService<IAccountsService>();
             return accounts.GetDefault();
@@ -73,7 +73,7 @@ namespace CodeBucket.Core.ViewModels.App
 			if (!_applicationService.Accounts.Any())
 			{
 				ShowViewModel<Accounts.AccountsViewModel>();
-				ShowViewModel<Accounts.AddAccountViewModel>();
+                ShowViewModel<Accounts.LoginViewModel>();
 				return;
 			}
 
@@ -81,13 +81,6 @@ namespace CodeBucket.Core.ViewModels.App
 			if (account == null)
 			{
 				ShowViewModel<Accounts.AccountsViewModel>();
-				return;
-			}
-
-			if (account.DontRemember)
-			{
-				ShowViewModel<Accounts.AccountsViewModel>();
-				ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject() { AttemptedAccountId = account.Id });
 				return;
 			}
 
@@ -116,7 +109,6 @@ namespace CodeBucket.Core.ViewModels.App
 			{
                 DisplayAlert("Unable to login successfully: " + e.Message);
 				ShowViewModel<Accounts.AccountsViewModel>();
-				ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject() { AttemptedAccountId = account.Id });
 			}
 			finally
 			{

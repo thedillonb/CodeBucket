@@ -25,12 +25,6 @@ namespace CodeBucket.Views.App
 			var vm = (SettingsViewModel)ViewModel;
 			var currentAccount = application.Account;
 
-			var saveCredentials = new TrueFalseElement("Save Credentials", !currentAccount.DontRemember, e =>
-				{ 
-					currentAccount.DontRemember = !e.Value;
-					application.Accounts.Update(currentAccount);
-				});
-
 			var showOrganizationsInEvents = new TrueFalseElement("Show Teams under Events", currentAccount.ShowTeamEvents, e =>
 			{ 
 				currentAccount.ShowTeamEvents = e.Value;
@@ -68,7 +62,6 @@ namespace CodeBucket.Views.App
 
 			//Assign the root
 			var root = new RootElement(Title);
-			root.Add(new Section("Account") { saveCredentials /*			, pushNotifications */ });
 			root.Add(new Section("Apperance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
 			root.Add(new Section ("Internal") { deleteCache });
 			Root = root;

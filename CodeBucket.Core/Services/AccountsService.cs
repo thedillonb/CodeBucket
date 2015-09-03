@@ -51,6 +51,7 @@ namespace CodeBucket.Core.Services
 					Directory.CreateDirectory(accountDir);
 			}
 
+            SetDefault(account);
             ActiveAccount = account;
         }
 
@@ -100,6 +101,15 @@ namespace CodeBucket.Core.Services
                 var query = _userDatabase.Find<BitbucketAccount>(x => x.Id == id);
 				return query;
 			}
+        }
+
+        public BitbucketAccount Find(string username)
+        {
+            lock (_userDatabase)
+            {
+                var query = _userDatabase.Find<BitbucketAccount>(x => x.Username == username);
+                return query;
+            }
         }
 
         public IEnumerator<BitbucketAccount> GetEnumerator()

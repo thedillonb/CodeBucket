@@ -9,7 +9,7 @@ namespace CodeBucket.Services
         public T Get<T>(string key)
         {
             if (typeof(T) == typeof(int))
-                return (T)(object)Utilities.Defaults.IntForKey(key);
+                return (T)(object)(int)Utilities.Defaults.IntForKey(key);
             if (typeof(T) == typeof(bool))
                 return (T)(object)Utilities.Defaults.BoolForKey(key);
             throw new Exception("Key does not exist in Default database.");
@@ -22,8 +22,9 @@ namespace CodeBucket.Services
                 value = Get<T>(key);
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.Message);
                 value = default(T);
                 return false;
             }

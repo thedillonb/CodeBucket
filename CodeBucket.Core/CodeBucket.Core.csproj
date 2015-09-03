@@ -52,7 +52,6 @@
     <Compile Include="Services\LoginService.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
-    <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
@@ -106,7 +105,6 @@
     <Compile Include="Messages\IssuesFilterMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesSharedViewModel.cs" />
     <Compile Include="Cache\CacheEntry.cs" />
-    <Compile Include="Data\Account.cs" />
     <Compile Include="Data\AccountCache.cs" />
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />

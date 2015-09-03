@@ -2,6 +2,7 @@ using System;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Accounts;
 using UIKit;
+using CodeBucket.Utils;
 
 namespace CodeBucket.Views.Accounts
 {
@@ -17,42 +18,36 @@ namespace CodeBucket.Views.Accounts
             : base(false)
         {
             Title = "Login";
-			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
-
-		private void ShowExtraMenu()
-		{
-			var sheet = MonoTouch.Utilities.GetSheet("Login");
-			var basicButton = sheet.AddButton("Login via BASIC");
-			var cancelButton = sheet.AddButton("Cancel");
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) => {
-				// Pin to menu
-                BeginInvokeOnMainThread(() =>
-                {
-				if (e.ButtonIndex == basicButton)
-				{
-					ViewModel.GoToOldLoginWaysCommand.Execute(null);
-				}
-                });
-			};
-
-			sheet.ShowInView(this.View);
-		}
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+			LoadRequest();
 
-			if (ViewModel.AttemptedAccount != null)
-				LoadRequest();
+            var hud = this.CreateHud();
+
+            ViewModel.Bind(x => x.IsLoggingIn, x =>
+            {
+                if (x)
+                {
+                    hud.Show("Logging in...");
+                }
+                else
+                {
+                    hud.Hide();
+                }
+            });
 		}
 
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
+            // Fucking BitBucket and their horrible user interface.
+            if (request.Url.AbsoluteString == "https://bitbucket.org/features")
+                return false;
+
             //We're being redirected to our redirect URL so we must have been successful
-            if (request.Url.Host == "dillonbuchanan.com")
+            if (request.Url.Host == "codebucket")
             {
                 var code = request.Url.Query.Split('=')[1];
 				ViewModel.Login(code);
@@ -71,18 +66,6 @@ namespace CodeBucket.Views.Accounts
 
 			MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with Bitbucket. " + e.Error.LocalizedDescription);
 		}
-
-        protected override void OnLoadFinished(object sender, EventArgs e)
-        {
-            base.OnLoadFinished(sender, e);
-
-            //Inject some Javascript so we can set the username if there is an attempted account
-			if (ViewModel.AttemptedAccount != null)
-            {
-				var script = "(function() { setTimeout(function() { $('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly'); }, 100); })();";
-                Web.EvaluateJavascript(script);
-            }
-        }
 
         private void LoadRequest()
         {

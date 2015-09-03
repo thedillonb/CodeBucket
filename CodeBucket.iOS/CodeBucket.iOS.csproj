@@ -111,7 +111,6 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Accounts\AddAccountView.cs" />
     <Compile Include="Views\Accounts\AddAccountView.designer.cs" />
     <Compile Include="Views\Accounts\LoginView.cs" />
     <Compile Include="Views\App\MenuView.cs" />
@@ -172,7 +171,6 @@
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
-    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="LaunchThis.storyboard" />
     <Compile Include="Bindings\UISegmentControlBinding.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
@@ -445,6 +443,7 @@
     <None Include="SourceBrowser\css\xcode.css" />
     <None Include="SourceBrowser\css\zenburn.css" />
     <None Include="packages.config" />
+    <BundleResource Include="Images\repository_placeholder%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

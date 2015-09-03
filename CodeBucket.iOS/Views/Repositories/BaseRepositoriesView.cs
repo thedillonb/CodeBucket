@@ -33,7 +33,7 @@ namespace CodeBucket.Views.Repositories
 		protected Element CreateElement(RepositoryDetailedModel repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-			var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, new Uri(repo.LargeLogo(64))) { ShowOwner = ViewModel.ShowRepositoryOwner };
+            var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, new Uri(repo.LargeLogo(64)), Images.RepoPlaceholder) { ShowOwner = ViewModel.ShowRepositoryOwner };
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

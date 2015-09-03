@@ -45,7 +45,7 @@ namespace CodeBucket.Views.Repositories
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
 				var imageUrl = new Uri(repo.Logo);
-					var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, imageUrl) { ShowOwner = true };
+                var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, imageUrl, Images.RepoPlaceholder) { ShowOwner = true };
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });

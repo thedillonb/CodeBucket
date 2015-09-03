@@ -38,7 +38,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public ICommand SelectAccountCommand
         {
-            get { return new MvxCommand<IAccount>(SelectAccount); }
+            get { return new MvxCommand<BitbucketAccount>(SelectAccount); }
         }
 
         public void Init()
@@ -55,29 +55,20 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         protected void AddAccount()
         {
-			this.ShowViewModel<AddAccountViewModel>();
+            this.ShowViewModel<LoginViewModel>();
         }
 
-		protected async void SelectAccount(IAccount account)
+        protected async void SelectAccount(BitbucketAccount account)
         {
-			var githubAccount = (BitbucketAccount) account;
-
-			if (githubAccount.DontRemember)
-			{
-				ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
-				return;
-			}
-
 			try
 			{
 				IsLoggingIn = true;
-				var client = await _loginService.LoginAccount(githubAccount);
-				_applicationService.ActivateUser(githubAccount, client);
+                var client = await _loginService.LoginAccount(account);
+                _applicationService.ActivateUser(account, client);
 			}
 			catch (Exception e)
 			{
                 DisplayAlert("Unable to login: " + e.Message);
-				ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject() { AttemptedAccountId = githubAccount.Id });
 			}
 			finally
 			{

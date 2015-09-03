@@ -1,8 +1,11 @@
 using System;
-using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
+using RestSharp;
+using System.Threading.Tasks;
+using BitbucketSharp.Models;
+using CodeBucket.Core.Data;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
@@ -10,9 +13,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
     {
 		public const string ClientId = "gtAAHvjnAp9W45Gk6P";
 		public const string ClientSecret = "bRYpfaTt7ZwsCkpu2DPehfDNPLKGNJ5z";
-		public static readonly string RedirectUri = "http://dillonbuchanan.com/";
-		private static readonly string RequestTokenUrl = "https://bitbucket.org/api/1.0/oauth/request_token";
-		private readonly ILoginService _loginService;
+        private readonly IAccountsService _accountsService;
 
 		private bool _isLoggingIn;
 		public bool IsLoggingIn
@@ -29,16 +30,8 @@ namespace CodeBucket.Core.ViewModels.Accounts
 		{
 			get
 			{
-				return string.Format("/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}", 
-					LoginViewModel.ClientId, Uri.EscapeUriString(LoginViewModel.RedirectUri), Uri.EscapeUriString("user,public_repo,repo,notifications,gist"));
+                return string.Format("https://bitbucket.org/site/oauth2/authorize?client_id={0}&response_type=code", LoginViewModel.ClientId);
 			}
-		}
-
-		public BitbucketAccount AttemptedAccount { get; private set; }
-
-		public ICommand GoToOldLoginWaysCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject())); }
 		}
 
 		public ICommand GoBackCommand
@@ -46,17 +39,9 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
 		}
 
-		public LoginViewModel(ILoginService loginService)
+        public LoginViewModel(IAccountsService accountsService)
 		{
-			_loginService = loginService;
-		}
-
-		public void Init(NavObject navObject)
-		{
-			if (navObject.AttemptedAccountId >= 0)
-			{
-				AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as BitbucketAccount;
-			}
+            _accountsService = accountsService;
 		}
 
 		public async void Login(string code)
@@ -64,9 +49,44 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-				var account = AttemptedAccount;
-				var data = await _loginService.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, string.Empty, string.Empty, account);
-				this.GetApplication().ActivateUser(data.Account, data.Client);
+
+
+                var client = new RestClient() { Authenticator = new HttpBasicAuthenticator(ClientId, ClientSecret) };
+                var request = new RestRequest("https://bitbucket.org/site/oauth2/access_token", Method.POST);
+                request.AddParameter("grant_type", "authorization_code");
+                request.AddParameter("code", code);
+                var ret = await Task.Run(() => client.Execute<AuthResp>(request));
+
+                var data = await Task.Run(() => {
+                    UsersModel u = null;
+                    var c = BitbucketSharp.Client.BearerLogin(ret.Data.AccessToken, out u);
+                    return Tuple.Create(c, u);
+                });
+
+                var bitbucketClient = data.Item1;
+                var usersModel = data.Item2;
+
+                var account = _accountsService.Find(usersModel.User.Username);
+                if (account == null)
+                {
+                    account = new BitbucketAccount()
+                    {
+                        Username = usersModel.User.Username,
+                        AvatarUrl = usersModel.User.Avatar,
+                        RefreshToken = ret.Data.RefreshToken,
+                        Token = ret.Data.AccessToken
+                    };
+                    _accountsService.Insert(account);
+                }
+                else
+                {
+                    account.RefreshToken = ret.Data.RefreshToken;
+                    account.Token = ret.Data.AccessToken;
+                    account.AvatarUrl = usersModel.User.Avatar;
+                    _accountsService.Update(account);
+                }
+
+                this.GetApplication().ActivateUser(account, bitbucketClient);
 			}
 			catch (Exception e)
 			{
@@ -78,25 +98,12 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			}
 		}
 
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public int AttemptedAccountId { get; set; }
-
-			public NavObject()
-			{
-				AttemptedAccountId = int.MinValue;
-			}
-
-			public static NavObject CreateDontRemember(BitbucketAccount account)
-			{
-				return new NavObject
-				{ 
-					Username = account.Username,
-					AttemptedAccountId = account.Id
-				};
-			}
-		}
+        public class AuthResp
+        {
+            public string AccessToken { get; set; }
+            public string Scopes { get; set; }
+            public string RefreshToken { get; set; }
+        }
     }
 }
 

@@ -23,6 +23,8 @@ namespace CodeBucket.Views.Repositories
         {
             base.ViewDidLoad();
 
+//            _header.Image = Images.RepoPlaceholder;
+
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.Enabled = false;
 
