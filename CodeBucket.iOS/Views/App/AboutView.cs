@@ -14,7 +14,6 @@ namespace CodeBucket.Views.App
 		                             "\n\nCreated By Dillon Buchanan";
 
         public AboutView()
-            : base (true)
         {
             Title = "About";
         }

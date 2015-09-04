@@ -20,8 +20,7 @@ namespace CodeBucket.ViewControllers
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
-        protected ViewModelCollectionDrivenDialogViewController(bool push = true)
-            : base(push)
+        protected ViewModelCollectionDrivenDialogViewController()
         {
             NoItemsText = "No Items";
             Style = UITableViewStyle.Plain;

@@ -1,23 +1,48 @@
-using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Views;
 using CodeBucket.Core.Data;
 using System.Linq;
 using BitbucketSharp;
-using CodeBucket.Core.ViewModels.App;
+using System.Timers;
+using CodeBucket.Core.ViewModels.Accounts;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.Services
 {
     public class ApplicationService : IApplicationService
     {
-        private readonly IMvxViewDispatcher _viewDispatcher;
+        private readonly Timer _timer;
+
         public Client Client { get; private set; }
 		public BitbucketAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
-        public ApplicationService(IAccountsService accounts, IMvxViewDispatcher viewDispatcher)
+        public ApplicationService(IAccountsService accounts)
         {
-            _viewDispatcher = viewDispatcher;
             Accounts = accounts;
+
+            _timer = new Timer(1000 * 60 * 45); // 45 minutes
+            _timer.AutoReset = true;
+            _timer.Elapsed += (sender, e) => {
+                if (Account == null)
+                    return;
+
+                try
+                {
+                    var ret = Client.RefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken);
+                    if (ret == null)
+                        return;
+
+                    Account.RefreshToken = ret.RefreshToken;
+                    Account.Token = ret.AccessToken;
+                    accounts.Update(Account);
+
+                    UsersModel userInfo;
+                    Client = Client.BearerLogin(Account.Token, out userInfo);
+                }
+                catch
+                {
+                    // Do nothing....
+                }
+            };
         }
 
 		public void ActivateUser(BitbucketAccount account, Client client)
@@ -25,17 +50,10 @@ namespace CodeBucket.Core.Services
             Accounts.SetActiveAccount(account);
             Account = account;
             Client = client;
-
-			//Set the default account
-			Accounts.SetDefault(account);
-
-			//Check the cache size
 			CheckCacheSize(account.Cache);
 
-			//Client.Cache = new GitHubCache(account);
-
-            // Show the menu & show a page on the slideout
-            _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
+            _timer.Stop();
+            _timer.Start();
         }
 
 		private static void CheckCacheSize(CodeFramework.Core.Data.AccountCache cache)

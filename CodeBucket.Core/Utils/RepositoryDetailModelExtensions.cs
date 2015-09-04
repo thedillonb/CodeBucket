@@ -19,7 +19,6 @@ namespace BitbucketSharp.Models
             if (logo == null)
                 return null;
 
-            Console.WriteLine(logo);
             var match = Regex.Match(logo, @"(.*/img/language-avatars/.*)_\d+.png$", RegexOptions.IgnoreCase);
             if (match.Success)
                 if (match.Groups.Count >= 2)

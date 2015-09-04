@@ -12,7 +12,6 @@ namespace CodeBucket.Views.Issues
 		public Action<string> SelectedValue;
 
 		public IssueAttributesView(string[] values, string selected)
-			: base(true)
 		{
 			Style = UIKit.UITableViewStyle.Plain;
 			_values = values;

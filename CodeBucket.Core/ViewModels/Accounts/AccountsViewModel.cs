@@ -1,6 +1,5 @@
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
-using System;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Utils;
@@ -11,20 +10,6 @@ namespace CodeBucket.Core.ViewModels.Accounts
     {
         private readonly IAccountsService _accountsService;
         private readonly CustomObservableCollection<IAccount> _accounts = new CustomObservableCollection<IAccount>();
-        private bool _isLoggingIn;
-        private readonly ILoginService _loginService;
-        private readonly IApplicationService _applicationService;
-
-
-        public bool IsLoggingIn
-        {
-            get { return _isLoggingIn; }
-            protected set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(() => IsLoggingIn);
-            }
-        }
 
         public CustomObservableCollection<IAccount> Accounts
         {
@@ -41,39 +26,30 @@ namespace CodeBucket.Core.ViewModels.Accounts
             get { return new MvxCommand<BitbucketAccount>(SelectAccount); }
         }
 
+        public ICommand CloseCommand
+        {
+            get { return new MvxCommand(() => Close(this)); }
+        }
+
         public void Init()
         {
             _accounts.Reset(_accountsService);
         }
 
-        public AccountsViewModel(IAccountsService accountsService, ILoginService loginService, IApplicationService applicationService) 
+        public AccountsViewModel(IAccountsService accountsService) 
         {
             _accountsService = accountsService;
-            _loginService = loginService;
-            _applicationService = applicationService;
         }
 
-        protected void AddAccount()
+        private void AddAccount()
         {
             this.ShowViewModel<LoginViewModel>();
         }
 
-        protected async void SelectAccount(BitbucketAccount account)
+        private void SelectAccount(BitbucketAccount account)
         {
-			try
-			{
-				IsLoggingIn = true;
-                var client = await _loginService.LoginAccount(account);
-                _applicationService.ActivateUser(account, client);
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to login: " + e.Message);
-			}
-			finally
-			{
-				IsLoggingIn = false;
-			}
+            _accountsService.SetActiveAccount(account);
+            ShowViewModel<CodeBucket.Core.ViewModels.App.StartupViewModel>();
         }
     }
 }

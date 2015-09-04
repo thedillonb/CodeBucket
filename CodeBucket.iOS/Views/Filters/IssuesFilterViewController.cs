@@ -22,7 +22,6 @@ namespace CodeBucket.Views.Filters
         public Action<IssuesFilterModel> CreatedFilterModel;
 
         public IssuesFilterViewController(IssuesFilterModel currentFilter)
-            : base(true)
         {
             _currentFilter = currentFilter.Clone();
             Style = UITableViewStyle.Grouped;
@@ -111,7 +110,7 @@ namespace CodeBucket.Views.Filters
 
             element.Tapped += () =>
             {
-                var ctrl = new BaseDialogViewController(true);
+                var ctrl = new BaseDialogViewController();
                 ctrl.Title = title;
                 ctrl.Style = UIKit.UITableViewStyle.Grouped;
 

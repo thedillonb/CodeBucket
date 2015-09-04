@@ -1990,26 +1990,10 @@ namespace CodeBucket.Elements
 		protected virtual void PrepareDialogViewController (UIViewController dvc)
 		{
 		}
-		
-		/// <summary>
-		/// Creates the UIViewController that will be pushed by this RootElement
-		/// </summary>
-		protected virtual UIViewController MakeViewController ()
-		{
-			if (createOnSelected != null)
-				return createOnSelected (this);
-			
-			return new DialogViewController (this, true) {
-				Autorotate = true
-			};
-		}
-		
+
 		public override void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			tableView.DeselectRow (path, false);
-			var newDvc = MakeViewController ();
-			PrepareDialogViewController (newDvc);
-			dvc.ActivateController (newDvc);
 		}
 		
 		public void Reload (Section section, UITableViewRowAnimation animation)

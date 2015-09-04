@@ -117,7 +117,7 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ICommand GoToAccountsCommand
         {
-            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>()); }
+            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>(requestedBy: new MvxRequestedBy(MvxRequestedByType.Other, "menu"))); }
         }
 
 		[PotentialStartupViewAttribute("Profile")]

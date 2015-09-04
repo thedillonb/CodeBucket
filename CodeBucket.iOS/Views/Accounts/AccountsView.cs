@@ -3,48 +3,32 @@ using Cirrious.CrossCore;
 using CodeBucket.Elements;
 using CodeBucket.ViewControllers;
 using UIKit;
-using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Data;
+using System.Linq;
+using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Views.Accounts
 {
-	public class AccountsView : ViewModelDrivenDialogViewController
+    public class AccountsView : ViewModelDrivenDialogViewController
     {
-		private IHud _hud;
-
         public new AccountsViewModel ViewModel
         {
             get { return (AccountsViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
         }
 
-        public AccountsView() : base(true)
+        public AccountsView()
         {
+            Request = new MvxViewModelRequest { ViewModelType = typeof(AccountsViewModel) };
+            Style = UITableViewStyle.Plain;
+            Title = "Accounts";
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => 
+                NavigationController.PushViewController(new LoginView(), true));
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, 
+                (s, e) => ViewModel.CloseCommand.Execute(null));
         }
-
-		public override void ViewDidLoad()
-		{
-		    Title = "Accounts";
-			base.ViewDidLoad();
-
-            NavigationItem.LeftBarButtonItem = null;
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.AddAccountCommand.Execute(null));
-
-			_hud = new Hud(View);
-			ViewModel.Bind(x => x.IsLoggingIn, x =>
-			{
-				if (x)
-				{
-					_hud.Show("Logging in...");
-				}
-				else
-				{
-					_hud.Hide();
-				}
-			});
-		}
 
         /// <summary>
         /// Called when the accounts need to be populated
@@ -59,7 +43,13 @@ namespace CodeBucket.Views.Accounts
             {
                 var thisAccount = account;
                 var t = new AccountElement(thisAccount);
-                t.Tapped += () => ViewModel.SelectAccountCommand.Execute(thisAccount);
+                t.Tapped += () =>
+                {
+                    if (accountsService.ActiveAccount != null && accountsService.ActiveAccount.Id == thisAccount.Id)
+                        DismissViewController(true, null);
+                    else
+                        ViewModel.SelectAccountCommand.Execute(thisAccount);
+                };
 
                 //Check to see if this account is the active account. Application.Account could be null 
                 //so make it the target of the equals, not the source.
@@ -94,11 +84,19 @@ namespace CodeBucket.Views.Accounts
 
             var root = new RootElement(Title);
             var accountSection = new Section();
-            accountSection.AddAll(PopulateAccounts());
+            var accounts = PopulateAccounts();
+            accountSection.AddAll(accounts);
             root.Add(accountSection);
             Root = root;
+
+            CheckEntries();
         }
 
+        private void CheckEntries()
+        {
+            if (NavigationItem.LeftBarButtonItem != null)
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sections.Sum(x => x.Count) > 0;
+        }
 
 		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
         {
@@ -113,6 +111,8 @@ namespace CodeBucket.Views.Accounts
 
             //Remove the designated username
             AccountDeleted(accountElement.Account);
+
+            CheckEntries();
         }
 
 		private class EditSource : BaseDialogViewController.Source
@@ -146,8 +146,8 @@ namespace CodeBucket.Views.Accounts
                     case UITableViewCellEditingStyle.Delete:
                         var section = _parent.Root[indexPath.Section];
                         var element = section[indexPath.Row];
-                        _parent.Delete(element);
                         section.Remove(element);
+                        _parent.Delete(element);
                         break;
                 }
             }

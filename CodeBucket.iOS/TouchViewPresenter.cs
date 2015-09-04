@@ -53,15 +53,16 @@ namespace CodeBucket
 
         public override void Show(MvxViewModelRequest request)
         {
-            var viewCreator = Mvx.Resolve<IMvxTouchViewCreator>();
-            var view = viewCreator.CreateView(request);
-            var uiView = view as UIViewController;
+            var uiView = this.CreateViewControllerFor(request) as UIViewController;
 
             if (uiView == null)
                 throw new InvalidOperationException("Asking to show a view which is not a UIViewController!");
 
             if (uiView is IMvxModalTouchView)
             {
+                if (_currentModal != null)
+                    throw new InvalidOperationException("Cannot have multiple modals");
+
                 _currentModal = (IMvxModalTouchView)uiView;
                 var modalNavigationController = new UINavigationController(uiView);
                 modalNavigationController.NavigationBar.Translucent = false;
@@ -77,15 +78,12 @@ namespace CodeBucket
             }
             else if (uiView is StartupView)
             {
-                _window.RootViewController = uiView;
+                Transition(uiView);
             }
-            else if (uiView is AccountsView)
+            else if (uiView is LoginView && _slideoutController == null)
             {
-                _slideoutController = null;
-                _generalNavigationController = new UINavigationController(uiView);
-                _generalNavigationController.NavigationBar.Translucent = false;
-                _generalNavigationController.Toolbar.Translucent = false;
-                Transition(_generalNavigationController);
+                var nav = new UINavigationController(uiView);
+                _window.RootViewController.PresentViewController(nav, true, null);
             }
             else if (uiView is MenuBaseViewController)
             {
@@ -119,8 +117,9 @@ namespace CodeBucket
         public override bool PresentModalViewController(UIViewController viewController, bool animated)
         {
             if (_window.RootViewController == null)
-                return false;
-            _window.RootViewController.PresentViewController(viewController, true, null);
+                Transition(viewController);
+            else
+                _window.RootViewController.PresentViewController(viewController, true, null);
             return true;
         }
 
@@ -131,9 +130,9 @@ namespace CodeBucket
             _window.RootViewController = controller;
             _window.RootViewController = current;
 
-            UIView.Transition(_window.RootViewController.View, controller.View, 0.3f, 
+            UIView.Transition(_window, 0.3f, 
                 UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.AllowAnimatedContent, 
-                () => _window.RootViewController = controller);
+                () => _window.RootViewController = controller, null);
         }
     }
 }

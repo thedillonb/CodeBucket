@@ -10,8 +10,8 @@ namespace CodeBucket.ViewControllers
         /// Initializes a new instance of the <see cref="BaseDialogViewController"/> class.
         /// </summary>
         /// <param name="push">If set to <c>true</c> push.</param>
-        public BaseDialogViewController(bool push)
-            : base(new RootElement(""), push)
+        public BaseDialogViewController()
+            : base(new RootElement(""))
         {
 			EdgesForExtendedLayout = UIRectEdge.None;
             Autorotate = true;

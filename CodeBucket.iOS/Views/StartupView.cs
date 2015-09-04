@@ -37,6 +37,8 @@ namespace CodeBucket.Views
             _imgView = new UIImageView();
             _imgView.Layer.CornerRadius = imageSize / 2;
             _imgView.Layer.MasksToBounds = true;
+            _imgView.Image = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            _imgView.TintColor = TextColor;
             Add(_imgView);
 
             _statusLabel = new UILabel();
@@ -71,24 +73,12 @@ namespace CodeBucket.Views
 
         public void UpdatedImage(Uri uri)
         {
-            AssignUnknownUserImage();
-
-            if (uri != null)
-            {
-                var placeholder = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
-                    UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
-                });
-            }
+            if (uri == null) return;
+            var placeholder = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
+                UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
+            });
         }
-
-        private void AssignUnknownUserImage()
-        {
-            var img = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            _imgView.Image = img;
-            _imgView.TintColor = TextColor;
-        }
-
 
         public override void ViewWillAppear(bool animated)
         {

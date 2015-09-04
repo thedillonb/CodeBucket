@@ -9,7 +9,6 @@ namespace CodeBucket.ViewControllers
     public abstract class FilterViewController : BaseDialogViewController
     {
         protected FilterViewController()
-            : base(true)
         {
             Style = UITableViewStyle.Grouped;
             Title = "Filter & Sort";
@@ -61,7 +60,7 @@ namespace CodeBucket.ViewControllers
 
             element.Tapped += () =>
             {
-                var ctrl = new BaseDialogViewController(true);
+                var ctrl = new BaseDialogViewController();
                 ctrl.Title = title;
                 ctrl.Style = UIKit.UITableViewStyle.Grouped;
 

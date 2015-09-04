@@ -2,10 +2,11 @@ using System;
 using CodeBucket.Core.Services;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using RestSharp;
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Data;
+using BitbucketSharp;
+using CodeBucket.Core.ViewModels.App;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
@@ -49,17 +50,10 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-
-
-                var client = new RestClient() { Authenticator = new HttpBasicAuthenticator(ClientId, ClientSecret) };
-                var request = new RestRequest("https://bitbucket.org/site/oauth2/access_token", Method.POST);
-                request.AddParameter("grant_type", "authorization_code");
-                request.AddParameter("code", code);
-                var ret = await Task.Run(() => client.Execute<AuthResp>(request));
-
+                var ret = await Task.Run(() => Client.GetAuthorizationCode(ClientId, ClientSecret, code));
                 var data = await Task.Run(() => {
-                    UsersModel u = null;
-                    var c = BitbucketSharp.Client.BearerLogin(ret.Data.AccessToken, out u);
+                    UsersModel u;
+                    var c = Client.BearerLogin(ret.AccessToken, out u);
                     return Tuple.Create(c, u);
                 });
 
@@ -73,20 +67,21 @@ namespace CodeBucket.Core.ViewModels.Accounts
                     {
                         Username = usersModel.User.Username,
                         AvatarUrl = usersModel.User.Avatar,
-                        RefreshToken = ret.Data.RefreshToken,
-                        Token = ret.Data.AccessToken
+                        RefreshToken = ret.RefreshToken,
+                        Token = ret.AccessToken
                     };
                     _accountsService.Insert(account);
                 }
                 else
                 {
-                    account.RefreshToken = ret.Data.RefreshToken;
-                    account.Token = ret.Data.AccessToken;
+                    account.RefreshToken = ret.RefreshToken;
+                    account.Token = ret.AccessToken;
                     account.AvatarUrl = usersModel.User.Avatar;
                     _accountsService.Update(account);
                 }
 
                 this.GetApplication().ActivateUser(account, bitbucketClient);
+                ShowViewModel<StartupViewModel>();
 			}
 			catch (Exception e)
 			{
@@ -97,13 +92,6 @@ namespace CodeBucket.Core.ViewModels.Accounts
 				IsLoggingIn = false;
 			}
 		}
-
-        public class AuthResp
-        {
-            public string AccessToken { get; set; }
-            public string Scopes { get; set; }
-            public string RefreshToken { get; set; }
-        }
     }
 }
 

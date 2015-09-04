@@ -20,7 +20,6 @@ namespace CodeBucket.ViewControllers
         }
         
         public MultipleChoiceViewController(string title, object obj)
-            : base (true)
         {
             _obj = obj;
             Title = title;

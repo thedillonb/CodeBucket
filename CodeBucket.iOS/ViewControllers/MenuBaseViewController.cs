@@ -12,7 +12,6 @@ namespace CodeBucket.ViewControllers
         readonly UILabel _title;
 
         protected MenuBaseViewController()
-            : base(false)
         {
             Style = UITableViewStyle.Plain;
             Autorotate = true;

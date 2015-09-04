@@ -72,8 +72,7 @@ namespace CodeBucket.ViewControllers
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
         /// <param name='refresh'>True if the data can be refreshed, false if otherwise</param>
-        protected ViewModelDrivenDialogViewController(bool push = true)
-            : base(push)
+        protected ViewModelDrivenDialogViewController()
         {
             this.AdaptForBinding();
         }

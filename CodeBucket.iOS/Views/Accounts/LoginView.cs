@@ -17,6 +17,7 @@ namespace CodeBucket.Views.Accounts
         public LoginView()
             : base(false)
         {
+            Request = new Cirrious.MvvmCross.ViewModels.MvxViewModelRequest { ViewModelType = typeof(LoginViewModel) };
             Title = "Login";
         }
 

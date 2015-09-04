@@ -5,6 +5,7 @@ using Cirrious.MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using CodeFramework.Core.Messages;
 using CodeBucket.Core.Services;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -72,9 +73,9 @@ namespace CodeBucket.Core.ViewModels
         /// Display an error message to the user
         /// </summary>
         /// <param name="message">Message.</param>
-        protected void DisplayAlert(string message)
+        protected Task DisplayAlert(string message)
         {
-            AlertService.Alert("Error!", message);
+            return AlertService.Alert("Error!", message);
         }
 
         /// <summary>

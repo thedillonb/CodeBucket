@@ -6,6 +6,9 @@ using System.Linq;
 using CodeBucket.Elements;
 using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Utils;
+using CodeBucket.Views.Accounts;
+using Cirrious.CrossCore;
+using CodeBucket.Core.ViewModels.Accounts;
 
 namespace CodeBucket.Views.App
 {
@@ -88,7 +91,7 @@ namespace CodeBucket.Views.App
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
         {
-            ViewModel.GoToAccountsCommand.Execute(null);
+            PresentViewController(new UINavigationController(new AccountsView()), true, null);
         }
 
         public override void ViewDidLoad()

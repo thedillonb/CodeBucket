@@ -30,7 +30,6 @@ namespace CodeBucket.ViewControllers
 		public UISearchBar searchBar;
 		UITableView tableView;
 		RootElement root;
-		bool pushing;
 		bool dirty;
 		bool reloading;
 
@@ -486,23 +485,11 @@ namespace CodeBucket.ViewControllers
 
 			root.Prepare ();
 
-			NavigationItem.HidesBackButton = !pushing;
 			if (root.Caption != null)
 				NavigationItem.Title = root.Caption;
 			if (dirty){
 				tableView.ReloadData ();
 				dirty = false;
-			}
-		}
-
-		public bool Pushing {
-			get {
-				return pushing;
-			}
-			set {
-				pushing = value;
-				if (NavigationItem != null)
-					NavigationItem.HidesBackButton = !pushing;
 			}
 		}
 
@@ -568,29 +555,6 @@ namespace CodeBucket.ViewControllers
 			this.root = root;
 		}
 
-		/// <summary>
-		///     Creates a new DialogViewController from a RootElement and sets the push status
-		/// </summary>
-		/// <param name="root">
-		/// The <see cref="RootElement"/> containing the information to render.
-		/// </param>
-		/// <param name="pushing">
-		/// A <see cref="System.Boolean"/> describing whether this is being pushed 
-		/// (NavigationControllers) or not.   If pushing is true, then the back button 
-		/// will be shown, allowing the user to go back to the previous controller
-		/// </param>
-		public DialogViewController (RootElement root, bool pushing) : base (UITableViewStyle.Grouped)
-		{
-			this.pushing = pushing;
-			this.root = root;
-		}
-
-		public DialogViewController (UITableViewStyle style, RootElement root, bool pushing) : base (style)
-		{
-			Style = style;
-			this.pushing = pushing;
-			this.root = root;
-		}
 		public DialogViewController (IntPtr handle) : base(handle)
 		{
 			this.root = new RootElement ("");

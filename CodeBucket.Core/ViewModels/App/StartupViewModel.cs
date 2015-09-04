@@ -5,13 +5,17 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
+using System.Threading.Tasks;
+using CodeBucket.Core.ViewModels.Accounts;
+using BitbucketSharp;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel
     {
-        private readonly ILoginService _loginService;
         private readonly IApplicationService _applicationService;
+        private readonly IAccountsService _accountsService;
         private bool _isLoggingIn;
         private string _status;
         private Uri _imageUrl;
@@ -19,7 +23,7 @@ namespace CodeBucket.Core.ViewModels.App
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
-            protected set
+            private set
             {
                 _isLoggingIn = value;
                 RaisePropertyChanged(() => IsLoggingIn);
@@ -29,7 +33,7 @@ namespace CodeBucket.Core.ViewModels.App
         public string Status
         {
             get { return _status; }
-            protected set
+            private set
             {
                 _status = value;
                 RaisePropertyChanged(() => Status);
@@ -39,7 +43,7 @@ namespace CodeBucket.Core.ViewModels.App
         public Uri ImageUrl
         {
             get { return _imageUrl; }
-            protected set
+            private set
             {
                 _imageUrl = value;
                 RaisePropertyChanged(() => ImageUrl);
@@ -48,7 +52,7 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ICommand StartupCommand
         {
-            get { return new MvxCommand(Startup);}
+            get { return new MvxCommand(() => Startup());}
         }
 
         /// <summary>
@@ -58,64 +62,100 @@ namespace CodeBucket.Core.ViewModels.App
         /// <returns>The default account.</returns>
         protected BitbucketAccount GetDefaultAccount()
         {
-            var accounts = GetService<IAccountsService>();
-            return accounts.GetDefault();
+            return _accountsService.GetDefault();
         }
 
-		public StartupViewModel(ILoginService loginService, IApplicationService applicationService)
+		public StartupViewModel(IAccountsService accountsService, IApplicationService applicationService)
 		{
-			_loginService = loginService;
+            _accountsService = accountsService;
 			_applicationService = applicationService;
 		}
 
-		protected async void Startup()
+        protected async Task Startup()
 		{
 			if (!_applicationService.Accounts.Any())
 			{
-				ShowViewModel<Accounts.AccountsViewModel>();
-                ShowViewModel<Accounts.LoginViewModel>();
+                ShowViewModel<LoginViewModel>();
 				return;
 			}
 
-			var account = GetDefaultAccount() as BitbucketAccount;
+			var account = GetDefaultAccount();
 			if (account == null)
 			{
-				ShowViewModel<Accounts.AccountsViewModel>();
+				ShowViewModel<AccountsViewModel>();
 				return;
 			}
 
-			//Lets login!
-			try
-			{
-				IsLoggingIn = true;
+            if (string.IsNullOrEmpty(account.Token) || string.IsNullOrEmpty(account.RefreshToken))
+            {
+                await AlertService.Alert("Welcome!", "CodeBucket is now OAuth compliant!\n\nFor your security, " +
+                "you will now be prompted to login to Bitbucket via their OAuth portal. This will swap out your credentials" +
+                " for an OAuth token you may revoke at any time!");
+                ShowViewModel<LoginViewModel>();
+                return;
+            }
 
-                Uri accountAvatarUri = null;
-                var avatarUrl = account.AvatarUrl;
-                if (!string.IsNullOrEmpty(avatarUrl))
-                {
-                    var match = Regex.Match(avatarUrl, @"&s=(\d+)", RegexOptions.IgnoreCase);
-                    if (match.Success && match.Groups.Count > 1)
-                        avatarUrl = avatarUrl.Replace(match.Groups[0].Value, "&s=128");
-                }
-
-                Uri.TryCreate(avatarUrl, UriKind.Absolute, out accountAvatarUri);
-                ImageUrl = accountAvatarUri;
+            try
+            {
+                IsLoggingIn = true;
                 Status = "Logging in as " + account.Username;
 
-				var client = await _loginService.LoginAccount(account);
-				_applicationService.ActivateUser(account, client);
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to login successfully: " + e.Message);
-				ShowViewModel<Accounts.AccountsViewModel>();
-			}
-			finally
-			{
-				IsLoggingIn = false;
-			}
+                var ret = await Task.Run(() => Client.RefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, account.RefreshToken));
+                if (ret == null)
+                {
+                    await DisplayAlert("Unable to refresh OAuth token. Please login again.");
+                    ShowViewModel<AccountsViewModel>();
+                    ShowViewModel<LoginViewModel>();
+                    return;
+                }
 
+                account.RefreshToken = ret.RefreshToken;
+                account.Token = ret.AccessToken;
+                _accountsService.Update(account);
+
+                await AttemptLogin(account);
+
+                ShowViewModel<MenuViewModel>();
+            }
+            catch (Exception e)
+            {
+                DisplayAlert("Unable to login successfully: " + e.Message);
+                ShowViewModel<AccountsViewModel>();
+            }
+            finally
+            {
+                IsLoggingIn = false;
+            }
 		}
+
+        private async Task AttemptLogin(BitbucketAccount account)
+        {
+            Uri accountAvatarUri = null;
+            var avatarUrl = account.AvatarUrl;
+            if (!string.IsNullOrEmpty(avatarUrl))
+            {
+                var match = Regex.Match(avatarUrl, @"&s=(\d+)", RegexOptions.IgnoreCase);
+                if (match.Success && match.Groups.Count > 1)
+                    avatarUrl = avatarUrl.Replace(match.Groups[0].Value, "&s=128");
+            }
+
+            Uri.TryCreate(avatarUrl, UriKind.Absolute, out accountAvatarUri);
+            ImageUrl = accountAvatarUri;
+
+            var client = await LoginAccount(account);
+            _applicationService.ActivateUser(account, client);
+        }
+
+        public async Task<Client> LoginAccount(BitbucketAccount account)
+        {
+            //Create the client
+            UsersModel userInfo = null;
+            var client = await Task.Run(() => Client.BearerLogin(account.Token, out userInfo));
+            account.Username = userInfo.User.Username;
+            account.AvatarUrl = userInfo.User.Avatar.Replace("/avatar/32", "/avatar/64");
+            _accountsService.Update(account);
+            return client;
+        }
     }
 }
 
