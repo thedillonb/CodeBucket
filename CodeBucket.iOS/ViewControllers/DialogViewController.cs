@@ -328,7 +328,16 @@ namespace CodeBucket.ViewControllers
 					return -1;
 				return section.FooterView.Frame.Height;
 			}
+
+            public override void Scrolled(UIScrollView scrollView)
+            {
+                Container.DidScroll(Root.TableView.ContentOffset);
+            }
 		}
+
+        protected virtual void DidScroll(CGPoint p)
+        {
+        }
 
 		//
 		// Performance trick, if we expose GetHeightForRow, the UITableView will
@@ -350,72 +359,39 @@ namespace CodeBucket.ViewControllers
 			}
 		}
 
-		/// <summary>
-		/// Activates a nested view controller from the DialogViewController.   
-		/// If the view controller is hosted in a UINavigationController it
-		/// will push the result.   Otherwise it will show it as a modal
-		/// dialog
-		/// </summary>
-		public void ActivateController (UIViewController controller)
-		{
-			dirty = true;
+        protected virtual void SetUpSearchDelegates(UISearchBar searchBar)
+        {
+            searchBar.OnEditingStarted += (sender, e) =>
+            {
+                searchBar.ShowsCancelButton = true;
+                this.StartSearch();
+            };
 
-			var parent = ParentViewController;
-			var nav = parent as UINavigationController;
+            searchBar.OnEditingStopped += (sender, e) => 
+            {
+                searchBar.ShowsCancelButton = false;
+            };
 
-			// We can not push a nav controller into a nav controller
-			if (nav != null && !(controller is UINavigationController))
-				nav.PushViewController (controller, true);
-			else
-				PresentModalViewController (controller, true);
-		}
+            searchBar.TextChanged += (sender, e) => PerformFilter(e.SearchText ?? string.Empty);
 
-		/// <summary>
-		/// Dismisses the view controller.   It either pops or dismisses
-		/// based on the kind of container we are hosted in.
-		/// </summary>
-		public void DeactivateController (bool animated)
-		{
-			var parent = ParentViewController;
-			var nav = parent as UINavigationController;
+            searchBar.CancelButtonClicked += (sender, e) => 
+            {
+                searchBar.ShowsCancelButton = false;
+                searchBar.Text = string.Empty;
+                FinishSearch();
+                searchBar.ResignFirstResponder();
+            };
 
-			if (nav != null)
-                nav.PopViewController (animated);
-			else
-                DismissViewController (animated, null);
-		}
+            searchBar.SearchButtonClicked += (sender, e) => {
+                SearchButtonClicked(searchBar.Text);
+            };
+        }
 
 		void SetupSearch ()
 		{
 			if (enableSearch){
                 searchBar = new UISearchBar(new CGRect(0, 0, tableView.Bounds.Width, 44));
-
-                searchBar.OnEditingStarted += (sender, e) =>
-                {
-                    searchBar.ShowsCancelButton = true;
-                    this.StartSearch();
-                };
-
-                searchBar.OnEditingStopped += (sender, e) => 
-                {
-                    searchBar.ShowsCancelButton = false;
-                };
-
-                searchBar.TextChanged += (sender, e) => PerformFilter(e.SearchText ?? string.Empty);
-
-                searchBar.CancelButtonClicked += (sender, e) => 
-                {
-                    searchBar.ShowsCancelButton = false;
-                    searchBar.Text = string.Empty;
-                    FinishSearch();
-                    searchBar.ResignFirstResponder();
-                };
-
-                searchBar.SearchButtonClicked += (sender, e) => {
-                    SearchButtonClicked(searchBar.Text);
-                };
-
-
+                SetUpSearchDelegates(searchBar);
 
 				if (SearchPlaceholder != null)
 					searchBar.Placeholder = this.SearchPlaceholder;
@@ -544,21 +520,32 @@ namespace CodeBucket.ViewControllers
 				ViewDisappearing (this, EventArgs.Empty);
 		}
 
-		public DialogViewController (RootElement root) : base (UITableViewStyle.Grouped)
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            if (Title != null && Root != null)
+                Root.Caption = Title;
+        }
+
+		public DialogViewController (RootElement root) 
+            : this (UITableViewStyle.Grouped, root)
 		{
-			this.root = root;
 		}
 
 		public DialogViewController (UITableViewStyle style, RootElement root) : base (style)
 		{
 			Style = style;
 			this.root = root;
+            EdgesForExtendedLayout = UIRectEdge.None;
+            Autorotate = true;
+            SearchPlaceholder = "Search";
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
 		}
 
-		public DialogViewController (IntPtr handle) : base(handle)
-		{
-			this.root = new RootElement ("");
-		}
+        public DialogViewController()
+            : this (UITableViewStyle.Grouped, new RootElement(string.Empty))
+        {
+        }
 	}
 
     public class SearchChangedEventArgs : EventArgs

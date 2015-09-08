@@ -6,7 +6,7 @@ using Humanizer;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class FilterViewController : BaseDialogViewController
+    public abstract class FilterViewController : DialogViewController
     {
         protected FilterViewController()
         {
@@ -60,7 +60,7 @@ namespace CodeBucket.ViewControllers
 
             element.Tapped += () =>
             {
-                var ctrl = new BaseDialogViewController();
+                var ctrl = new DialogViewController();
                 ctrl.Title = title;
                 ctrl.Style = UIKit.UITableViewStyle.Grouped;
 

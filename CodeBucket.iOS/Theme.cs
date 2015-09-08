@@ -21,8 +21,6 @@ namespace CodeBucket
 
         UIImage AnonymousUserImage { get; }
 
-        UIImage LoginUserUnknown { get; }
-
         UIImage IssueCellImage1 { get; }
         UIImage IssueCellImage2 { get; }
         UIImage IssueCellImage3 { get; }
@@ -50,19 +48,33 @@ namespace CodeBucket
 	{
 		public static Theme CurrentTheme { get; private set; }
 
+        private static UIImage CreateBackgroundImage(UIColor color)
+        {
+            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 64f));
+            color.SetFill();
+            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 64));
+            var img = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return img;
+        }
+
 		public static void Setup()
 		{
 			var theme = new Theme();
 			CurrentTheme = theme;
 			Theme.CurrentTheme = theme;
-			RepositoryCellView.RoundImages = true;
 			StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
 			NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
+            var primaryColor = UIColor.FromRGB(45, 80, 148);
+            var backgroundImg = CreateBackgroundImage(primaryColor);
+
             UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(45,80,148);
+            UINavigationBar.Appearance.BarTintColor = primaryColor;
+            UINavigationBar.Appearance.BackgroundColor = primaryColor;
+            UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
@@ -218,7 +230,5 @@ namespace CodeBucket
 		{
 			get { return new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) }; }
 		}
-
-        public UIImage LoginUserUnknown { get { return Images.LoginUserUnknown; } }
 	}
 }

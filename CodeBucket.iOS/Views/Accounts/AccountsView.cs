@@ -27,7 +27,7 @@ namespace CodeBucket.Views.Accounts
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => 
                 NavigationController.PushViewController(new LoginView(), true));
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, 
-                (s, e) => ViewModel.CloseCommand.Execute(null));
+                (s, e) => DismissViewController(true, null));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace CodeBucket.Views.Accounts
             CheckEntries();
         }
 
-		private class EditSource : BaseDialogViewController.Source
+		private class EditSource : DialogViewController.Source
         {
             private readonly AccountsView _parent;
             public EditSource(AccountsView dvc) 

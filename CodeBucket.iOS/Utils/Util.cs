@@ -80,9 +80,9 @@ namespace MonoTouch
         }
 
         static UIActionSheet _sheet;
-        public static UIActionSheet GetSheet (string title)
+        public static UIActionSheet GetSheet ()
         {
-            _sheet = new UIActionSheet (title);
+            _sheet = new UIActionSheet ();
             return _sheet;
         }
 

@@ -115,7 +115,7 @@ namespace CodeBucket.Views.Wiki
                 return null;
 
             var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
-            var sheet = MonoTouch.Utilities.GetSheet("Wiki");
+            var sheet = MonoTouch.Utilities.GetSheet();
             var editButton = page != null ? sheet.AddButton("Edit") : -1;
             var gotoButton = sheet.AddButton("Goto Wiki Page");
             var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;

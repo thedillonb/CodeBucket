@@ -89,6 +89,7 @@ namespace CodeBucket
             {
                 _slideoutController = new SlideoutNavigationController();
                 _slideoutController.MenuViewController = new MenuNavigationController(uiView, _slideoutController);
+                uiView.NavigationController.NavigationBar.SetBackgroundImage(null, UIBarMetrics.Default);
                 uiView.NavigationController.NavigationBar.Translucent = false;
                 uiView.NavigationController.Toolbar.Translucent = false;
                 uiView.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(50, 50, 50);

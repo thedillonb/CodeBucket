@@ -4,6 +4,7 @@ using UIKit;
 using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
+using CodeBucket.Cells;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -13,13 +14,21 @@ namespace CodeBucket.Views.Repositories
 		public RepositoriesExploreView()
         {
             AutoHideSearch = false;
-            //EnableFilter = true;
             NoItemsText = "No Repositories";
             Title = "Explore";
         }
 
+        protected override void SetUpSearchDelegates(UISearchBar searchBar)
+        {
+            // Do nothing...
+        }
+
         public override void ViewDidLoad()
         {
+            TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
             base.ViewDidLoad();
 			_hud = new Hud(View);
 			var vm = (RepositoriesExploreViewModel)ViewModel;
@@ -45,7 +54,7 @@ namespace CodeBucket.Views.Repositories
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
 				var imageUrl = new Uri(repo.Logo);
-                var sse = new RepositoryElement(repo.Name, repo.FollowersCount, repo.ForkCount, description, repo.Owner, imageUrl, Images.RepoPlaceholder) { ShowOwner = true };
+                var sse = new RepositoryElement(repo.Name, description, repo.Owner, imageUrl, Images.RepoPlaceholder);
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });

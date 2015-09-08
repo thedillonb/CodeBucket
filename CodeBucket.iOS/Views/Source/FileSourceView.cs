@@ -40,8 +40,7 @@ namespace CodeBucket.Views.Source
 
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet(Title);
-
+			var sheet = MonoTouch.Utilities.GetSheet();
 			var openButton = sheet.AddButton("Open In");
 			var shareButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Share") : -1;
 			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket") : -1;

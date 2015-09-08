@@ -8,7 +8,7 @@ using Humanizer;
 
 namespace CodeBucket.Views.Filters
 {
-    public class IssuesFilterViewController : BaseDialogViewController
+    public class IssuesFilterViewController : DialogViewController
     {
         private readonly IssuesFilterModel _currentFilter;
         private EntryElement _filterName;
@@ -110,7 +110,7 @@ namespace CodeBucket.Views.Filters
 
             element.Tapped += () =>
             {
-                var ctrl = new BaseDialogViewController();
+                var ctrl = new DialogViewController();
                 ctrl.Title = title;
                 ctrl.Style = UIKit.UITableViewStyle.Grouped;
 

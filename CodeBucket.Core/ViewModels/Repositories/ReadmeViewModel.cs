@@ -44,7 +44,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             get { return GoToUrlCommand; }
         }
 
-        public ICommand ShareCommand
+        public new ICommand ShareCommand
         {
             get
             {
@@ -61,18 +61,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
         {
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
             var source = this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source;
-
-            var memoryStream = new System.IO.MemoryStream();
-            await Task.Run<string>(() => source.GetFileRaw(Filename, memoryStream));
             _htmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + Filename;
-
-            string readme;
+            var file = await Task.Run(() => source.GetFile(Filename));
+            string readme = file.Data;
             string data;
-
-            memoryStream.Position = 0;
-            using (var reader = new System.IO.StreamReader(memoryStream, Encoding.UTF8))
-                readme = reader.ReadToEnd();
-
             if (filepath.EndsWith("textile", StringComparison.Ordinal))
                 data = _markdownService.ConvertTextile(readme);
             else

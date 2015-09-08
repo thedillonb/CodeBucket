@@ -6,17 +6,15 @@ using CodeBucket.Elements;
 
 namespace CodeBucket.Views.App
 {
-	public class SettingsView : ViewModelDrivenDialogViewController
+    public class SettingsView : PrettyDialogViewController
     {
-        public SettingsView()
-        {
-            Title = "Settings";
-        }
-
         public override void ViewWillAppear(bool animated)
         {
-			CreateTable();
+            var application = Mvx.Resolve<IApplicationService>();
             base.ViewWillAppear(animated);
+            Title = application.Account.Username;
+            HeaderView.SetImage(null, Images.Avatar);
+            CreateTable();
         }
 
 		private void CreateTable()
@@ -49,21 +47,9 @@ namespace CodeBucket.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
-			//var pushNotifications = new TrueFalseElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value);
-
-			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache", string.Format("{0} MB", totalCacheSizeMB), UIKit.UITableViewCellStyle.Value1);
-			deleteCache.Tapped += () =>
-			{ 
-				vm.DeleteAllCacheCommand.Execute(null);
-				deleteCache.Value = string.Format("{0} MB", 0);
-				ReloadData();
-			};
-
 			//Assign the root
 			var root = new RootElement(Title);
 			root.Add(new Section("Apperance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
-			root.Add(new Section ("Internal") { deleteCache });
 			Root = root;
 
 		}

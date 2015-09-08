@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System;
+using System.IO;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -13,23 +14,27 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		protected override async Task Load(bool forceCacheInvalidation)
         {
-			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_name));
+            var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
             var source = this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source;
-			var mime = await Task.Run<string>(() =>
-			{
-				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-				{
-                    return source.GetFileRaw(_path, stream);
-				}
-			});
-
-			FilePath = filepath;
+            var file = await Task.Run(() => source.GetFile(_path));
             HtmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + _path;
-			var isText = mime.Contains("text");
-			if (isText)
-			{
-				ContentPath = CreateContentFile();
-			}
+            IsText = file.Encoding == null;
+
+            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            using (var writer = new StreamWriter(stream))
+            {
+                if (IsText)
+                {
+                    await writer.WriteAsync(file.Data);
+                }
+                else if (string.Equals(file.Encoding, "base64", StringComparison.OrdinalIgnoreCase))
+                {
+                    var data = Convert.FromBase64String(file.Data);
+                    await stream.WriteAsync(data, 0, data.Length);
+                }
+            }
+
+            FilePath = filePath;
         }
 
 		public void Init(NavObject navObject)

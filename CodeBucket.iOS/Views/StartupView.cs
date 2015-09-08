@@ -37,8 +37,10 @@ namespace CodeBucket.Views
             _imgView = new UIImageView();
             _imgView.Layer.CornerRadius = imageSize / 2;
             _imgView.Layer.MasksToBounds = true;
-            _imgView.Image = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            _imgView.Image = Images.Avatar;
             _imgView.TintColor = TextColor;
+            _imgView.Layer.BorderWidth = 2f;
+            _imgView.Layer.BorderColor = UIColor.White.CGColor;
             Add(_imgView);
 
             _statusLabel = new UILabel();
@@ -74,7 +76,7 @@ namespace CodeBucket.Views
         public void UpdatedImage(Uri uri)
         {
             if (uri == null) return;
-            var placeholder = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var placeholder = Images.Avatar;
             _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
                 UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
             });

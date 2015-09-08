@@ -150,8 +150,8 @@ namespace CodeBucket.Views
 			if (path == null)
 				return string.Empty;
 
-            var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-            InvokeOnMainThread(() => Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri))));
+            var uri = Uri.EscapeUriString("file://" + path);
+            InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
             return uri;
         }
 

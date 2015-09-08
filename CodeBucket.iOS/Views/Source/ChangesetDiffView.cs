@@ -119,7 +119,7 @@ namespace CodeBucket.Views.Source
         {
 			string title = "Line " + (model.LineFrom ?? model.LineTo);
 
-            var sheet = MonoTouch.Utilities.GetSheet(title);
+            var sheet = MonoTouch.Utilities.GetSheet();
             var addButton = sheet.AddButton("Add Comment");
             var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;

@@ -205,7 +205,6 @@
     <Compile Include="Utils\UIImageExtensions.cs" />
     <Compile Include="Utils\Util.cs" />
     <Compile Include="Utils\ViewControllerExtensions.cs" />
-    <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
@@ -235,7 +234,6 @@
     <Compile Include="Elements\NoItemsElement.cs" />
     <Compile Include="Elements\OwnerDrawnElement.cs" />
     <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SplitButtonElement.cs" />
     <Compile Include="Elements\SplitElement.cs" />
     <Compile Include="Elements\TrueFalseElement.cs" />
     <Compile Include="Elements\LoadMoreElement.cs" />
@@ -246,6 +244,9 @@
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Cells\MultiLineTableCell.cs" />
     <Compile Include="Views\Accounts\AccountsView.cs" />
+    <Compile Include="Views\SlideUpTitleView.cs" />
+    <Compile Include="Views\ImageAndTitleHeaderView.cs" />
+    <Compile Include="Elements\SplitButtonElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -403,8 +404,6 @@
     <BundleResource Include="Images\server_components.png" />
     <BundleResource Include="Images\book_link%402x.png" />
     <BundleResource Include="Images\book_link.png" />
-    <BundleResource Include="Images\login_user_unknown.png" />
-    <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\star.png" />
     <BundleResource Include="Images\star%402x.png" />
     <BundleResource Include="CodeBucketIcon.png" />
@@ -444,6 +443,7 @@
     <None Include="SourceBrowser\css\zenburn.css" />
     <None Include="packages.config" />
     <BundleResource Include="Images\repository_placeholder%402x.png" />
+    <BundleResource Include="Images\avatar%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -463,6 +463,10 @@
       <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
       <Name>BitbucketSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeBucket\CodeBucket.csproj">
+      <Project>{A7FA501E-E9E1-477B-B8F7-E919F9AA1C20}</Project>
+      <Name>CodeBucket</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="WebCell\body.html" />
@@ -475,9 +479,8 @@
     <Content Include="Diff\jquery.min.js" />
     <Content Include="SourceBrowser\css\line-numbers.css" />
     <Content Include="SourceBrowser\css\vs.css" />
-    <Content Include="SourceBrowser\file-loader.js" />
     <Content Include="SourceBrowser\highlight.pack.js" />
-    <Content Include="SourceBrowser\index.html" />
+    <Content Include="SourceBrowser\file-loader.js" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

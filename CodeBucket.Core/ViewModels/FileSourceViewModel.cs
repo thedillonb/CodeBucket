@@ -13,7 +13,7 @@ namespace CodeBucket.Core.ViewModels
 		};
 
 		private string _filePath;
-		private string _contentPath;
+		private bool _isText;
 
 		public string FilePath
 		{
@@ -25,13 +25,13 @@ namespace CodeBucket.Core.ViewModels
 			}
 		}
 
-		public string ContentPath
+		public bool IsText
 		{
-			get { return _contentPath; }
+            get { return _isText; }
 			protected set 
 			{
-				_contentPath = value;
-				RaisePropertyChanged(() => ContentPath);
+                _isText = value;
+                RaisePropertyChanged(() => IsText);
 			}
 		}
 
@@ -58,22 +58,6 @@ namespace CodeBucket.Core.ViewModels
 			{
 				return new MvxCommand(() => GetService<IShareService>().ShareUrl(HtmlUrl), () => !string.IsNullOrEmpty(HtmlUrl));
 			}
-		}
-
-		protected string CreateContentFile()
-		{
-			var html = System.IO.File.ReadAllText("SourceBrowser/index.html");
-			var filled = html.Replace("{CODE_PATH}", "file://" + FilePath + "#" + System.Environment.TickCount);
-			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "source.html");
-			System.IO.File.WriteAllText(filepath, filled, System.Text.Encoding.UTF8);
-			return filepath;
-		}
-
-		protected static string CreatePlainContentFile(string data, string filename)
-		{
-			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
-			System.IO.File.WriteAllText(filepath, data, System.Text.Encoding.UTF8);
-			return filepath;
 		}
 
 		protected static bool IsBinary(string mime)

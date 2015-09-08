@@ -46,7 +46,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public ICommand SearchCommand
         {
-			get { return new MvxCommand(Search, () => !string.IsNullOrEmpty(SearchText)); }
+            get { return new MvxCommand(() => Search(), () => !string.IsNullOrEmpty(SearchText)); }
         }
 
 		public RepositoriesExploreViewModel()
@@ -54,12 +54,13 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			_repositories.SortingFunction = x => x.OrderByDescending(y => y.FollowersCount);
 		}
 
-        private async void Search()
+        private async Task Search()
         {
 			try
 			{
 				IsSearching = true;
-				await Task.Run(() => Repositories.Items.Reset(this.GetApplication().Client.Repositories.Search(SearchText).Repositories));
+				var data = await Task.Run(() => this.GetApplication().Client.Repositories.Search(SearchText).Repositories);
+                Repositories.Items.Reset(data);
 			}
 			catch (Exception e)
 			{

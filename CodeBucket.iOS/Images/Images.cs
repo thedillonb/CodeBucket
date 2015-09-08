@@ -46,8 +46,7 @@ namespace CodeBucket
         public static UIImage SitemapColor { get { return UIImageHelper.FromFileAuto("Images/sitemap_color"); } }
 
         public static UIImage RepoPlaceholder { get { return UIImage.FromBundle("Images/repository_placeholder"); } }
-
-        public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown"); } }
+        public static UIImage Avatar { get { return UIImage.FromBundle("Images/avatar"); } }
 
         public static class Logos
         {

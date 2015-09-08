@@ -5,11 +5,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoriesSharedViewModel : RepositoriesViewModel
     {
-        public RepositoriesSharedViewModel()
-        {
-            ShowRepositoryOwner = true;
-        }
-
         protected override Task Load(bool forceCacheInvalidation)
         {
             return Repositories.SimpleCollectionLoad(() => {

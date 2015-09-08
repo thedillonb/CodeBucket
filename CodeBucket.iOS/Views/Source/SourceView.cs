@@ -1,6 +1,5 @@
 using System;
 using Foundation;
-using Cirrious.MvvmCross.ViewModels;
 
 namespace CodeBucket.Views.Source
 {
@@ -10,19 +9,18 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-			ViewModel.Bind(x => x.IsLoading, x =>
-			{
-				if (x) return;
-				if (!string.IsNullOrEmpty(ViewModel.ContentPath))
-				{
-					var data = System.IO.File.ReadAllText(ViewModel.ContentPath, System.Text.Encoding.UTF8);
-					LoadContent(data, System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
-				}
-				else if (!string.IsNullOrEmpty(ViewModel.FilePath))
-				{
-					LoadFile(ViewModel.FilePath);
-				}
-			});
+            ViewModel.Bind(x => x.FilePath, x =>
+            {
+                if (ViewModel.IsText)
+                {
+                    var v = new SourceFileRazorView() { Model = x };
+                    LoadContent(v.GenerateString(), System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
+                }
+                else
+                {
+                    LoadFile(x);
+                }
+            });
 		}
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
+using System.IO;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -59,15 +60,23 @@ namespace CodeBucket.Core.ViewModels.Source
 			if (_commitFileModel.Type == "added" || _commitFileModel.Type == "modified")
 			{
 				var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename));
-				var mime = await Task.Run<string>(() =>
-				{
-					using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-					{
-						return this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source.GetFileRaw(Filename, stream);
-					}
-				});
+                var content = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source.GetFile(Filename));
+                var isText = content.Encoding == null;
 
-				var isText = mime.Contains("text");
+				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+				{
+                    if (isText)
+                    {
+                        using (var s = new StreamWriter(stream))
+                            await s.WriteAsync(content.Data);
+                    }
+                    else
+                    {
+                        var data = Convert.FromBase64String(content.Data);
+                        await stream.WriteAsync(data, 0, data.Length);
+                    }
+				}
+
 				if (!isText)
 				{
 					FilePath = filepath;
@@ -85,15 +94,23 @@ namespace CodeBucket.Core.ViewModels.Source
 
 				var parent = changeset.Parents[0];
 				var filepath2 = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename) + ".parent");
-				var mime = await Task.Run<string>(() =>
-				{
-					using (var stream = new System.IO.FileStream(filepath2, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-					{
-						return this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[parent].Source.GetFileRaw(Filename, stream);
-					}
-				});
+                var content = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[parent].Source.GetFile(Filename));
+                var isText = content.Encoding == null;
 
-				var isText = mime.Contains("text");
+				using (var stream = new System.IO.FileStream(filepath2, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+				{
+                    if (isText)
+                    {
+                        using (var s = new StreamWriter(stream))
+                            await s.WriteAsync(content.Data);
+                    }
+                    else
+                    {
+                        var data = Convert.FromBase64String(content.Data);
+                        await stream.WriteAsync(data, 0, data.Length);
+                    }
+				}
+
 				if (!isText)
 				{
 					FilePath = filepath2;

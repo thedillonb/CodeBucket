@@ -1,6 +1,5 @@
 using System;
 using CodeBucket.ViewControllers;
-using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Repositories;
 using UIKit;
 using BitbucketSharp.Models;
@@ -9,9 +8,8 @@ using Humanizer;
 
 namespace CodeBucket.Views.Repositories
 {
-	public class RepositoryView : ViewModelDrivenDialogViewController
+    public class RepositoryView : PrettyDialogViewController
     {
-		private readonly HeaderView _header = new HeaderView();
 
         public new RepositoryViewModel ViewModel
         {
@@ -23,7 +21,7 @@ namespace CodeBucket.Views.Repositories
         {
             base.ViewDidLoad();
 
-//            _header.Image = Images.RepoPlaceholder;
+            HeaderView.SetImage(null, Images.RepoPlaceholder);
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.Enabled = false;
@@ -49,7 +47,7 @@ namespace CodeBucket.Views.Repositories
             if (repoModel == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
+            var sheet = MonoTouch.Utilities.GetSheet();
 			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
             var forkButton = sheet.AddButton("Fork Repository");
 			var showButton = sheet.AddButton("Show in Bitbucket");
@@ -83,11 +81,14 @@ namespace CodeBucket.Views.Repositories
         {
 			Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
-			_header.Title = Title;
-            _header.Subtitle = "Updated " + model.UtcLastUpdated.Humanize();
-			_header.ImageUri = ViewModel.ImageUrl;
+            HeaderView.SubText = "Updated " + model.UtcLastUpdated.Humanize();
+            HeaderView.SetImage(ViewModel.ImageUrl, Images.RepoPlaceholder);
+            RefreshHeaderView();
 
-            root.Add(new Section(_header));
+            var split = new SplitButtonElement();
+            split.AddButton("Followers", model.FollowersCount.ToString());
+            split.AddButton("Forks", model.ForkCount.ToString());
+
             var sec1 = new Section();
 
             if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
@@ -168,7 +169,7 @@ namespace CodeBucket.Views.Repositories
 				new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
             };
 
-            root.Add(new[] { sec1, sec2, sec3 });
+            root.Add(new[] { new Section() { split }, sec1, sec2, sec3 });
 
             if (!String.IsNullOrEmpty(ViewModel.Repository.Website))
             {

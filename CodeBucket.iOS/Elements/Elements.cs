@@ -52,7 +52,7 @@ namespace CodeBucket.Elements
 		/// <param name="caption">
 		/// The caption.
 		/// </param>
-		public Element (string caption)
+		public Element (string caption = null)
 		{
 			this.Caption = caption;
 		}	

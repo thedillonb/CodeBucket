@@ -6,14 +6,12 @@ using CodeBucket.Utils;
 using System.Linq;
 using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Commits;
-using Cirrious.MvvmCross.ViewModels;
 using Humanizer;
 
 namespace CodeBucket.Views.Source
 {
-	public class ChangesetView : ViewModelDrivenDialogViewController
+    public class ChangesetView : PrettyDialogViewController
     {
-        private readonly HeaderView _header = new HeaderView();
 		private readonly UISegmentedControl _viewSegment;
 		private readonly UIBarButtonItem _segmentBarButton;
 
@@ -25,10 +23,7 @@ namespace CodeBucket.Views.Source
         
         public ChangesetView()
         {
-            Title = "Commit";
-            Root.UnevenRows = true;
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-			_viewSegment = new UISegmentedControl(new string[] { "Changes", "Comments", "Approvals" });
+			_viewSegment = new UISegmentedControl(new [] { "Changes", "Comments", "Approvals" });
 			_viewSegment.SelectedSegment = 0;
 			_viewSegment.ValueChanged += (sender, e) => Render();
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
@@ -38,7 +33,12 @@ namespace CodeBucket.Views.Source
         {
             base.ViewDidLoad();
 
-            _header.Title = "Commit: " + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
+            Title = "Commit";
+            Root.UnevenRows = true;
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+
+            HeaderView.SetImage(null, Images.RepoPlaceholder);
+
             ViewModel.Bind(x => x.Commits, Render);
 			ViewModel.BindCollection(x => x.Comments, a => Render());
 			ViewModel.BindCollection(x => x.Participants, a => Render());
@@ -51,11 +51,17 @@ namespace CodeBucket.Views.Source
 			if (ViewModel.Commits == null || ViewModel.Changeset == null)
 				return;
 
+//            var titleMsg = (ViewModel.Changeset.Message ?? string.Empty).Split(new [] { '\n' }, 2).FirstOrDefault();
+            var node = ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
+            HeaderView.Text = node;
+            HeaderView.SubText = "Commited " + (ViewModel.Changeset.Utctimestamp).Humanize();
+            RefreshHeaderView();
+
+
             var commitModel = ViewModel.Commits;
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-            _header.Subtitle = "Commited " + (ViewModel.Changeset.Utctimestamp).Humanize();
-            var headerSection = new Section(_header);
+            var headerSection = new Section();
             root.Add(headerSection);
 
             var detailSection = new Section();
@@ -186,7 +192,7 @@ namespace CodeBucket.Views.Source
 			if (changeset == null)
 				return;
 
-			var sheet = MonoTouch.Utilities.GetSheet(Title);
+			var sheet = MonoTouch.Utilities.GetSheet();
 			var addComment = sheet.AddButton("Add Comment");
 			var copySha = sheet.AddButton("Copy Sha");
 //			var shareButton = sheet.AddButton("Share");

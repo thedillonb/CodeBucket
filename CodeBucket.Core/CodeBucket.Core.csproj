@@ -102,8 +102,6 @@
     <Compile Include="ViewModels\Issues\IssuesFiltersViewModel.cs" />
     <Compile Include="Messages\IssuesFilterMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesSharedViewModel.cs" />
-    <Compile Include="Cache\CacheEntry.cs" />
-    <Compile Include="Data\AccountCache.cs" />
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Filter.cs" />

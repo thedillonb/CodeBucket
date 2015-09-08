@@ -39,7 +39,7 @@ namespace CodeBucket.Views.Repositories
 
         private void ShareButtonPress()
         {
-            var sheet = MonoTouch.Utilities.GetSheet("Readme");
+            var sheet = MonoTouch.Utilities.GetSheet();
             var shareButton = sheet.AddButton("Share");
             var showButton = sheet.AddButton("Show in Bitbucket");
             var cancelButton = sheet.AddButton("Cancel");

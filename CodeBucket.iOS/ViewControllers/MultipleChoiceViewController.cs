@@ -3,7 +3,7 @@ using CodeBucket.Elements;
 
 namespace CodeBucket.ViewControllers
 {
-    public class MultipleChoiceViewController : BaseDialogViewController
+    public class MultipleChoiceViewController : DialogViewController
     {
         private readonly object _obj;
         

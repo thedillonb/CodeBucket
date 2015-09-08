@@ -4,11 +4,8 @@ using CodeBucket.Core.ViewModels.App;
 using UIKit;
 using System.Linq;
 using CodeBucket.Elements;
-using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.Utils;
 using CodeBucket.Views.Accounts;
-using Cirrious.CrossCore;
-using CodeBucket.Core.ViewModels.Accounts;
 
 namespace CodeBucket.Views.App
 {

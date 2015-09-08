@@ -23,8 +23,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
             get { return _repositories; }
         }
 
-        public bool ShowRepositoryOwner { get; protected set; }
-
         public ICommand GoToRepositoryCommand
         {
 			get { return new MvxCommand<RepositoryDetailedModel>(x => this.ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }

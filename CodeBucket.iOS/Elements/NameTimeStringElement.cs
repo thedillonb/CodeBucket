@@ -126,14 +126,6 @@ namespace CodeBucket.Elements
 
         public override UITableViewCell GetCell(UITableView tv)
         {
-//            if (ImageUri != null)
-//            {
-//                var img = ImageLoader.DefaultRequestImage(ImageUri, this);
-//                if (img != null)
-//                    Image = img;
-//            }
-//
-//
 			var cell = base.GetCell(tv);
 			//TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 47f, 0, 0);
 			cell.SeparatorInset = UIEdgeInsets.Zero;

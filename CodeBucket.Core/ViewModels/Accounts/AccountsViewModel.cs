@@ -26,11 +26,6 @@ namespace CodeBucket.Core.ViewModels.Accounts
             get { return new MvxCommand<BitbucketAccount>(SelectAccount); }
         }
 
-        public ICommand CloseCommand
-        {
-            get { return new MvxCommand(() => Close(this)); }
-        }
-
         public void Init()
         {
             _accounts.Reset(_accountsService);

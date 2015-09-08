@@ -13,7 +13,6 @@ namespace CodeBucket.Core.Data
         private SQLiteConnection _database;
         private AccountFilters _filters;
         private AccountPinnedRepositories _pinnedRepositories;
-        private AccountCache _cache;
 
         [PrimaryKey]
         [AutoIncrement]
@@ -93,15 +92,6 @@ namespace CodeBucket.Core.Data
             }
         }
 
-        [Ignore]
-        public AccountCache Cache
-        {
-            get
-            {
-                return _cache ?? (_cache = new AccountCache(Database, Mvx.Resolve<IAccountPreferencesService>().CacheDir));
-            }
-        }
-
         private void CreateAccountDirectory()
         {
             if (!Directory.Exists(AccountDirectory))
@@ -123,7 +113,6 @@ namespace CodeBucket.Core.Data
         {
             if (!Directory.Exists(AccountDirectory))
                 return;
-            Cache.DeleteAll();
             Directory.Delete(AccountDirectory, true);
         }
 

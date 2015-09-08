@@ -4,7 +4,7 @@ using CodeBucket.Elements;
 
 namespace CodeBucket.Views.Issues
 {
-	public class IssueAttributesView : BaseDialogViewController
+	public class IssueAttributesView : DialogViewController
     {
 		private readonly string[] _values;
 		private readonly string _selected;
