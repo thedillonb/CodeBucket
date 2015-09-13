@@ -42,7 +42,7 @@ namespace CodeBucket.Views.PullRequests
 					String = s.Description.Replace('\n', ' ').Replace("\r", ""),
                     Lines = 3,
                     Time = s.UpdatedOn.Humanize(),
-                    Image = Theme.CurrentTheme.AnonymousUserImage,
+                    Image = Images.Avatar,
 					ImageUri = new Uri(s.Author.Links.Avatar.Href)
                 };
 				sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);

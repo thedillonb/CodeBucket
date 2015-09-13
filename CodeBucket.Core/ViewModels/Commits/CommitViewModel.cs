@@ -11,10 +11,8 @@ using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public class ChangesetViewModel : LoadableViewModel
+    public class CommitViewModel : LoadableViewModel
     {
-		private string _patch;
-
 		public string Node { get; private set; }
 
 		public string User { get; private set; }

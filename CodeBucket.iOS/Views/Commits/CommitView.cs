@@ -1,6 +1,5 @@
 using System;
 using CodeBucket.ViewControllers;
-using CodeBucket.Views;
 using UIKit;
 using CodeBucket.Utils;
 using System.Linq;
@@ -8,20 +7,20 @@ using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Commits;
 using Humanizer;
 
-namespace CodeBucket.Views.Source
+namespace CodeBucket.Views.Commits
 {
-    public class ChangesetView : PrettyDialogViewController
+    public class CommitView : PrettyDialogViewController
     {
 		private readonly UISegmentedControl _viewSegment;
 		private readonly UIBarButtonItem _segmentBarButton;
 
-        public new ChangesetViewModel ViewModel 
+        public new CommitViewModel ViewModel 
         {
-            get { return (ChangesetViewModel)base.ViewModel; }
+            get { return (CommitViewModel)base.ViewModel; }
 			set { base.ViewModel = value; }
         }
         
-        public ChangesetView()
+        public CommitView()
         {
 			_viewSegment = new UISegmentedControl(new [] { "Changes", "Comments", "Approvals" });
 			_viewSegment.SelectedSegment = 0;
@@ -37,7 +36,7 @@ namespace CodeBucket.Views.Source
             Root.UnevenRows = true;
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 
-            HeaderView.SetImage(null, Images.RepoPlaceholder);
+            HeaderView.SetImage(null, Images.Avatar);
 
             ViewModel.Bind(x => x.Commits, Render);
 			ViewModel.BindCollection(x => x.Comments, a => Render());
@@ -124,7 +123,7 @@ namespace CodeBucket.Views.Source
 						Name = comment.DisplayName,
                         Time = comment.UtcCreatedOn.Humanize(),
 						String = comment.Content,
-						Image = Images.Anonymous,
+                        Image = Images.Avatar,
 						ImageUri = new Uri(comment.UserAvatarUrl),
 						BackgroundColor = UIColor.White
 					});

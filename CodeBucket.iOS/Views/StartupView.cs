@@ -13,7 +13,6 @@ namespace CodeBucket.Views
 
         public static UIColor TextColor = UIColor.FromWhiteAlpha(0.34f, 1f);
         public static UIColor SpinnerColor = UIColor.FromWhiteAlpha(0.33f, 1f);
-        public static UIStatusBarStyle StatusBarStyle = UIStatusBarStyle.Default;
 
         private UIImageView _imgView;
         private UILabel _statusLabel;
@@ -80,19 +79,6 @@ namespace CodeBucket.Views
             _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
                 UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
             });
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            _previousStatusbarStyle = UIApplication.SharedApplication.StatusBarStyle;
-            UIApplication.SharedApplication.SetStatusBarStyle(StatusBarStyle, false);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            UIApplication.SharedApplication.SetStatusBarStyle(_previousStatusbarStyle, true);
         }
 
 		public override void ViewDidAppear(bool animated)

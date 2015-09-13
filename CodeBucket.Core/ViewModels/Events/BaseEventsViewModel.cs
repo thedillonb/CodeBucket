@@ -89,7 +89,7 @@ namespace CodeBucket.Core.ViewModels.Events
         {
 			if (branch != null)
 			{
-				ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
+				ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject
 				{
 					Username = repoModel.Owner,
 					Repository = repoModel.Name,
@@ -209,7 +209,7 @@ namespace CodeBucket.Core.ViewModels.Events
 
 		private void GoToChangeset(string owner, string name, string sha)
         {
-			ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
+			ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject
             {
 				Username = owner,
 				Repository = name,

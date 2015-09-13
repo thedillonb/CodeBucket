@@ -63,6 +63,9 @@ namespace CodeBucket
 
             this.Window.MakeKeyAndVisible();
 
+            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, false);
+            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
+
 			return true;
 		}
 

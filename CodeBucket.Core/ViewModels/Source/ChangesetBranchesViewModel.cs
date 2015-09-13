@@ -30,7 +30,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public ICommand GoToBranchCommand
         {
-			get { return new MvxCommand<ViewModel>(x => ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node })); }
+			get { return new MvxCommand<ViewModel>(x => ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node })); }
         }
 
         public void Init(NavObject navObject)

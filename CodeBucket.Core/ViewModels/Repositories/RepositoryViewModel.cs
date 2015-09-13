@@ -135,7 +135,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         private void ShowCommits()
         {
             if (Branches != null && Branches.Count == 1)
-                ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositorySlug});
+                ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject {Username = Username, Repository = RepositorySlug});
             else
 				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
         }

@@ -60,5 +60,7 @@
 	<string>LaunchThis</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
 </dict>
 </plist>

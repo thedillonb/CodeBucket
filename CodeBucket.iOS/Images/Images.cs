@@ -38,7 +38,6 @@ namespace CodeBucket
         public static UIImage Star { get { return UIImage.FromBundle("Images/star"); } }
         public static UIImage Notifications { get { return UIImageHelper.FromFileAuto("Images/notifications"); } }
         public static UIImage Priority { get { return UIImage.FromBundle("Images/priority"); } }
-        public static UIImage Anonymous { get { return UIImage.FromBundle("Images/anonymous"); } }
 		public static UIImage Accept { get { return UIImageHelper.FromFileAuto("Images/accept"); } }
 		public static UIImage Cancel { get { return UIImageHelper.FromFileAuto("Images/cancel"); } }
         public static UIImage BookLink { get { return UIImageHelper.FromFileAuto("Images/book_link"); } }

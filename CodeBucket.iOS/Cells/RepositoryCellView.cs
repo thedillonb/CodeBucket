@@ -9,7 +9,7 @@ namespace CodeBucket.Cells
     public partial class RepositoryCellView : MvxTableViewCell
     {
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
-        public static NSString Key = new NSString("RepositoryCellView");
+        public static readonly NSString Key = new NSString("RepositoryCellView");
         private static nfloat DefaultContentConstraint = 0f;
 
         public RepositoryCellView(IntPtr handle)

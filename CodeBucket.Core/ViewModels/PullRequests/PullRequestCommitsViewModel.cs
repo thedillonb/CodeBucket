@@ -1,66 +1,51 @@
-using System.Threading.Tasks;
 using BitbucketSharp.Models.V2;
-using Cirrious.MvvmCross.ViewModels;
-using System.Windows.Input;
-using BitbucketSharp.Models;
-using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Commits;
+using BitbucketSharp.Models;
 using CodeBucket.Core.Utils;
-
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestCommitsViewModel : LoadableViewModel
+    public class PullRequestCommitsViewModel : BaseCommitsViewModel
     {
         private PullRequestModel _pullRequest;
 
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
         public ulong PullRequestId { get; private set; }
-
-        private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
-        public CollectionViewModel<CommitModel> Commits
-        {
-            get { return _commits; }
-        }
-
-        public ICommand GoToChangesetCommand
-        {
-            get 
-            { 
-                return new MvxCommand<CommitModel>(x =>
-                {
-                    if (_pullRequest.Source.Repository == null)
-                        GetService<IAlertDialogService>().Alert("Deleted Repository", "Unable to view commit. The source repository has been deleted.");
-                    else
-                    {
-                        var repo = new RepositoryIdentifier(_pullRequest.Source.Repository.FullName);
-                        ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash }); 
-                    }
-                });
-            }
-        }
 
 		public void Init(NavObject navObject)
 		{
-            Username = navObject.Username;
-            Repository = navObject.Repository;
 			PullRequestId = navObject.PullRequestId;
+            base.Init(navObject);
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override void GoToCommit(CommitModel x)
         {
-            var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].Get(forceCacheInvalidation), x => _pullRequest = x);
-            var t2 = Commits.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits(forceCacheInvalidation));
-            return Task.WhenAll(t1, t2);
+            if (_pullRequest?.Source?.Repository?.FullName == null)
+            {
+                DisplayAlert("Unable to locate the source repository for this pull request. It may have been deleted!");
+            }
+            else
+            {
+                var repo = new RepositoryIdentifier(_pullRequest.Source.Repository.FullName);
+                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash });
+            }
         }
 
-		public new class NavObject
+        protected override Collection<CommitModel> GetRequest(string next)
+        {
+            return next == null ? 
+                this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits() : 
+                this.GetApplication().Client.Request2<Collection<CommitModel>>(next);
+        }
+
+        protected override async Task Load(bool forceCacheInvalidation)
+        {
+            _pullRequest = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].Get());
+            await base.Load(forceCacheInvalidation);
+        }
+
+        public new class NavObject : CommitsViewModel.NavObject
 		{
-            public string Username { get; set; }
-            public string Repository { get; set; }
 			public ulong PullRequestId { get; set; }
 		}
     }

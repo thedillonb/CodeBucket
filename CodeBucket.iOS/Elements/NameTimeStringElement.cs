@@ -127,8 +127,6 @@ namespace CodeBucket.Elements
         public override UITableViewCell GetCell(UITableView tv)
         {
 			var cell = base.GetCell(tv);
-			//TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 47f, 0, 0);
-			cell.SeparatorInset = UIEdgeInsets.Zero;
 			return cell;
         }
 

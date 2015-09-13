@@ -20,37 +20,6 @@ namespace CodeBucket.Core.ViewModels
                 var data = request();
                 uiThread.MarshalOnUIThread(() => update(data));
             });
-
-
-//
-//            if (forceDataRefresh)
-//            {
-//                request.CheckIfModified = false;
-//                request.RequestFromCache = false;
-//            }
-//
-//			var response = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(request);
-//            update(response);
-//
-//            if (response.WasCached)
-//            {
-//				Task.Run(async () => {
-//                    try
-//                    {
-//                        request.RequestFromCache = false;
-//						var r = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(request);
-//						update(r);
-//                    }
-//                    catch (NotModifiedException)
-//                    {
-//                        Console.WriteLine("Not modified: " + request.Url);
-//                    }
-//					catch (Exception)
-//                    {
-//                        Console.WriteLine("SHIT! " + request.Url);
-//                    }
-//                });
-//            }
         }
 
 		public static void CreateMore<T>(this MvxViewModel viewModel, BitbucketSharp.Models.V2.Collection<T> response, 

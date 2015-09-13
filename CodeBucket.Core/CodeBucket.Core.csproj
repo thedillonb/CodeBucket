@@ -138,11 +138,12 @@
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="PresentationValues.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="ViewModels\Commits\CommitsViewModel.cs" />
-    <Compile Include="ViewModels\Commits\ChangesetsViewModel.cs" />
-    <Compile Include="ViewModels\Commits\ChangesetViewModel.cs" />
     <Compile Include="Filters\FilterModel.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
+    <Compile Include="ViewModels\Commits\BaseCommitsViewModel.cs" />
+    <Compile Include="ViewModels\Commits\CommitsViewModel.cs" />
+    <Compile Include="ViewModels\Commits\CommitViewModel.cs" />
+    <Compile Include="Utils\Avatar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

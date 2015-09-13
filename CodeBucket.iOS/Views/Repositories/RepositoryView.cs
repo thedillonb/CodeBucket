@@ -169,7 +169,7 @@ namespace CodeBucket.Views.Repositories
 				new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
             };
 
-            root.Add(new[] { new Section() { split }, sec1, sec2, sec3 });
+            root.Add(new[] { new Section { split }, sec1, sec2, sec3 });
 
             if (!String.IsNullOrEmpty(ViewModel.Repository.Website))
             {

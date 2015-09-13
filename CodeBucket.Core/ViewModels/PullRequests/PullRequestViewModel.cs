@@ -53,7 +53,19 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
 		public ICommand GoToCommitsCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
+			get 
+            { 
+                return new MvxCommand(() => {
+                    if (PullRequest?.Source?.Repository == null)
+                    {
+                        DisplayAlert("The author has deleted the source repository for this pull request.");
+                    }
+                    else
+                    {
+                        ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId });
+                    }
+                }); 
+            }
 		}
 
         public void Init(NavObject navObject)

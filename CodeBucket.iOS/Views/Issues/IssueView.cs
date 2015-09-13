@@ -1,24 +1,19 @@
 using System;
-using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Utils;
 using CodeBucket.Elements;
 using System.Linq;
-using CodeBucket.Core.ViewModels;
 using Newtonsoft.Json;
-using Cirrious.MvvmCross.ViewModels;
 using Humanizer;
 
 namespace CodeBucket.Views.Issues
 {
-	public class IssueView : ViewModelDrivenDialogViewController
+    public class IssueView : PrettyDialogViewController
     {
-		private HeaderView _header;
 		private WebElement _descriptionElement;
 		private WebElement _commentsElement;
-
 
 		public new IssueViewModel ViewModel
 		{
@@ -35,7 +30,7 @@ namespace CodeBucket.Views.Issues
 		{
 			base.ViewDidLoad();
 
-            _header = new HeaderView();
+            HeaderView.SetImage(null, Images.Avatar);
 
 			var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "description_webview", false);
@@ -81,11 +76,17 @@ namespace CodeBucket.Views.Issues
 
 			NavigationItem.RightBarButtonItem.Enabled = true;
 
-			var root = new RootElement(Title);
-			_header.Title = ViewModel.Issue.Title;
-			_header.Subtitle = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
-			root.Add(new Section(_header));
+            HeaderView.Text = ViewModel.Issue.Title;
+            HeaderView.SubText = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
+            RefreshHeaderView();
 
+            var split = new SplitButtonElement();
+            split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
+            split.AddButton("Watches", 0.ToString());
+            split.AddButton("Votes", 0.ToString());
+
+            var root = new RootElement(Title);
+            root.Add(new Section { split });
 
 			var secDetails = new Section();
 

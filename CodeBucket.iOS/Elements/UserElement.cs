@@ -18,7 +18,7 @@ namespace CodeBucket.Elements
              if (!string.IsNullOrWhiteSpace(realName))
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            Image = Theme.CurrentTheme.AnonymousUserImage;
+            Image = Images.Avatar;
             if (avatar != null)
                 ImageUri = new Uri(avatar);
             UsePinnedImage = true;

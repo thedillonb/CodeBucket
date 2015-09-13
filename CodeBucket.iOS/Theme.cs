@@ -4,47 +4,7 @@ using CodeBucket.Elements;
 
 namespace CodeBucket
 {
-    /// <summary>
-    /// I'd really rather define these at the top most level available to the app. A.k.a the actually application
-    /// code itself instead of the library. All theme tuning will be done on that level.
-    /// </summary>
-    public interface ICodeFrameworkTheme
-    {
-        UIImage BackButton { get; }
-        UIImage ThreeLinesButton { get; }
-        UIImage CancelButton { get; }
-        UIImage SaveButton { get; }
-        UIImage ViewButton { get; }
-        UIImage WebBackButton { get; }
-        UIImage WebFowardButton { get; }
-        UIImage ForkButton { get; }
-
-        UIImage AnonymousUserImage { get; }
-
-        UIImage IssueCellImage1 { get; }
-        UIImage IssueCellImage2 { get; }
-        UIImage IssueCellImage3 { get; }
-        UIImage IssueCellImage4 { get; }
-
-        UIImage RepositoryCellFollowers { get; }
-        UIImage RepositoryCellForks { get; }
-        UIImage RepositoryCellUser { get; }
-
-        UIColor MainTitleColor { get; }
-        UIColor MainSubtitleColor { get; }
-        UIColor MainTextColor { get; }
-        UIColor ViewBackgroundColor { get; }
-
-        UIColor WebButtonTint { get; }
-
-        UIColor AccountsNavigationBarTint { get; }
-        UIColor SlideoutNavigationBarTint { get; }
-        UIColor ApplicationNavigationBarTint { get; }
-
-        float FontSizeRatio { get; }
-    }
-
-    public class Theme : ICodeFrameworkTheme
+    public class Theme
 	{
 		public static Theme CurrentTheme { get; private set; }
 
@@ -99,7 +59,6 @@ namespace CodeBucket
 
             CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
-            CodeBucket.Views.StartupView.StatusBarStyle = UIStatusBarStyle.LightContent;
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
@@ -134,8 +93,6 @@ namespace CodeBucket
 		public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
 		public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
 		public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
-
-		public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 
 		public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 

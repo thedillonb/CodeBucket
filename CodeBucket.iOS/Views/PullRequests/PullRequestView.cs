@@ -6,15 +6,13 @@ using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
 using CodeBucket.Utils;
 using CodeBucket.Elements;
-using CodeBucket.Core.ViewModels;
-using Cirrious.MvvmCross.ViewModels;
 using Humanizer;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.PullRequests
 {
-	public class PullRequestView : ViewModelDrivenDialogViewController
+    public class PullRequestView : PrettyDialogViewController
     {
-        private readonly HeaderView _header;
         private readonly SplitElement _split1;
 
         public new PullRequestViewModel ViewModel
@@ -26,13 +24,15 @@ namespace CodeBucket.Views.PullRequests
         public PullRequestView()
         {
             Root.UnevenRows = true;
-            _header = new HeaderView();
             _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Create, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            HeaderView.SetImage(null, Images.Avatar);
+
             ViewModel.Bind(x => x.PullRequest, Render);
             ViewModel.BindCollection(x => x.Comments, e => Render());
         }
@@ -48,11 +48,19 @@ namespace CodeBucket.Views.PullRequests
             if (ViewModel.PullRequest == null)
                 return;
 
+            var avatarUrl = ViewModel.PullRequest.Author?.Links?.Avatar?.Href;
+
+            HeaderView.Text = ViewModel.PullRequest.Title;
+            HeaderView.SubText = "Updated " + ViewModel.PullRequest.UpdatedOn.Humanize();
+            HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
+            RefreshHeaderView();
+
+            var split = new SplitButtonElement();
+            split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
+            split.AddButton("Participants", ViewModel.PullRequest.Participants.Count.ToString());
+
             var root = new RootElement(Title);
-            _header.Title = ViewModel.PullRequest.Title;
-            _header.Subtitle = "Updated " + ViewModel.PullRequest.UpdatedOn.Humanize();
-            _header.SetNeedsDisplay();
-            root.Add(new Section(_header));
+            root.Add(new Section { split });
 
             var secDetails = new Section();
 			if (!string.IsNullOrEmpty(ViewModel.PullRequest.Description))
@@ -107,7 +115,7 @@ namespace CodeBucket.Views.PullRequests
                         Name = x.User.Username,
                         Time = x.CreatedOn.Humanize(),
                         String = x.Content.Raw,
-                        Image = Theme.CurrentTheme.AnonymousUserImage,
+                        Image = Images.Avatar,
                         ImageUri = new Uri(x.User.Links.Avatar.Href),
                         BackgroundColor = UIColor.White,
                     });

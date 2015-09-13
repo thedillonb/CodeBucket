@@ -140,9 +140,6 @@
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
-    <Compile Include="Views\Source\ChangesetView.cs" />
-    <Compile Include="Views\Source\ChangesetsView.cs" />
-    <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
@@ -214,7 +211,6 @@
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
-    <Compile Include="Views\HeaderView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
@@ -247,6 +243,15 @@
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Elements\SplitButtonElement.cs" />
+    <Compile Include="Cells\CommitCellView.cs" />
+    <Compile Include="Cells\CommitCellView.designer.cs">
+      <DependentUpon>CommitCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
+    <Compile Include="Elements\CommitElement.cs" />
+    <Compile Include="Views\Commits\BaseCommitsView.cs" />
+    <Compile Include="Views\Commits\CommitsView.cs" />
+    <Compile Include="Views\Commits\CommitView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -303,8 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <BundleResource Include="Images\anonymous.png" />
-    <BundleResource Include="Images\anonymous%402x.png" />
     <BundleResource Include="Images\bin_closed.png" />
     <BundleResource Include="Images\bin_closed%402x.png" />
     <BundleResource Include="Images\branch.png" />
@@ -453,6 +456,7 @@
     <Folder Include="WebCell\" />
     <Folder Include="Views\Wiki\" />
     <Folder Include="Views\Teams\" />
+    <Folder Include="Views\Commits\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
