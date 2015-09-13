@@ -6,15 +6,17 @@ namespace CodeBucket.Views.Teams
 {
     public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public TeamsView()
         {
             Title = "Teams";
             NoItemsText = "No Teams";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
-
             var vm = (TeamsViewModel) ViewModel;
-			this.BindCollection(vm.Teams, x => new StyledStringElement(x, () => vm.GoToTeamCommand.Execute(x)));
+			BindCollection(vm.Teams, x => new StyledStringElement(x, () => vm.GoToTeamCommand.Execute(x)));
         }
     }
 }

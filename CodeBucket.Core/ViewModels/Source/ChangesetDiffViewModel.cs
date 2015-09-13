@@ -88,11 +88,11 @@ namespace CodeBucket.Core.ViewModels.Source
 
 			if (_commitFileModel.Type == "removed" || _commitFileModel.Type == "modified")
 			{
-				var changeset = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetInfo(forceCacheInvalidation));
-				if (changeset.Parents == null || changeset.Parents.Count == 0)
+                var changeset = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetCommit());
+                if (changeset.Parents == null || changeset.Parents.Count == 0)
 					throw new Exception("Diff has no parent. Unable to generate view.");
 
-				var parent = changeset.Parents[0];
+                var parent = changeset.Parents[0].Hash;
 				var filepath2 = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename) + ".parent");
                 var content = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[parent].Source.GetFile(Filename));
                 var isText = content.Encoding == null;

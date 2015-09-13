@@ -9,6 +9,7 @@ using BitbucketSharp.Models;
 using System.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.Core.Services;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -28,12 +29,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
 		}
 
 		public string RepositorySlug { get; private set; }
-
-		public string ImageUrl
-		{
-			get;
-			set;
-		}
 
         public bool HasReadme
         {
@@ -153,7 +148,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
             //Is it pinned already or not?
 			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, Repository.Slug);
             if (pinnedRepo == null)
-                this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, Repository.Slug, repoName, ImageUrl);
+            {
+                var avatar = new Avatar(Repository.Logo).ToUrl();
+                this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, Repository.Slug, repoName, avatar);
+            }
             else
 				this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }

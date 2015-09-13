@@ -1,5 +1,4 @@
 using UIKit;
-using CodeBucket.Cells;
 using CodeBucket.Elements;
 
 namespace CodeBucket
@@ -24,7 +23,6 @@ namespace CodeBucket
 			CurrentTheme = theme;
 			Theme.CurrentTheme = theme;
 			StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
-			NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
@@ -59,10 +57,6 @@ namespace CodeBucket
 
             CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
-
-//            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
-//            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
-//            CodeFramework.Elements.NewsFeedElement.NameColor = theme.MainTitleColor;
 		}
 
         public float FontSizeRatio

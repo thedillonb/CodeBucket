@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using CodeBucket.ViewControllers;
-using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
 using CodeBucket.Utils;
@@ -110,15 +109,9 @@ namespace CodeBucket.Views.PullRequests
                 var commentsSec = new Section();
                 foreach (var x in ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null).OrderBy(x => (x.CreatedOn)))
                 {
-                    commentsSec.Add(new CommentElement
-                    {
-                        Name = x.User.Username,
-                        Time = x.CreatedOn.Humanize(),
-                        String = x.Content.Raw,
-                        Image = Images.Avatar,
-                        ImageUri = new Uri(x.User.Links.Avatar.Href),
-                        BackgroundColor = UIColor.White,
-                    });
+                    var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
+                    var avatar = new Avatar(x.User.Links?.Avatar?.Href);
+                    commentsSec.Add(new NameTimeStringElement(name, x.Content.Raw, x.CreatedOn, avatar.ToUrl(), Images.Avatar));
                 }
 
                 //Load more if there's more comments

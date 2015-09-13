@@ -1,44 +1,41 @@
 ﻿using System;
-using CodeBucket.Cells;
-using Foundation;
 using UIKit;
-using CodeBucket.ViewControllers;
 using Humanizer;
+using CodeBucket.Cells;
+using CodeBucket.ViewControllers;
+using Foundation;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Elements
 {
-    public class CommitElement : Element
+    public class PullRequestElement : Element
     {       
+        private readonly Avatar _avatar;
         private readonly string _name;
-        private readonly string _description;
         private readonly string _time;
         private UIImage _image;
-        private readonly string _imageUri;
         public event Action Tapped;
 
-        public UIColor BackgroundColor { get; set; }
-
-        public CommitElement(string name, string description, DateTimeOffset time, string imageUri = null, UIImage image = null)
+        public PullRequestElement(string name, DateTimeOffset time, Avatar avatar, UIImage image = null)
             : base(null)
         {
             _name = name;
-            _description = description;
             _time = time.Humanize();
-            _imageUri = imageUri;
+            _avatar = avatar;
             _image = image ?? Images.Avatar;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(CommitCellView.Key) as CommitCellView;
-            cell.Bind(_name, _description, _time, _image, _imageUri);
+            var cell = tv.DequeueReusableCell(PullRequestCellView.Key) as PullRequestCellView;
+            cell.Bind(_name, _time, _avatar, _image);
             return cell;
         }
 
         public override bool Matches(string text)
         {
             var lowerText = text.ToLower();
-            return _name.ToLower().Contains(lowerText) || _description.ToLower().Contains(lowerText);
+            return _name.ToLower().Contains(lowerText);
         }
 
         public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)

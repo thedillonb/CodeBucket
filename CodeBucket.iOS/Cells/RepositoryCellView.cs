@@ -28,7 +28,7 @@ namespace CodeBucket.Cells
             DefaultContentConstraint = ContentConstraint.Constant;
         }
 
-        public void Bind(string name, string description, string repoOwner, UIImage logoImage, Uri logoUri)
+        public void Bind(string name, string description, string repoOwner, UIImage logoImage, string logoUri)
         {
             RepositoryName.Text = name;
             RepositoryOwner.Text = repoOwner;
@@ -39,7 +39,7 @@ namespace CodeBucket.Cells
             if (logoUri == null)
                 RepositoryImage.Image = logoImage;
             else
-                RepositoryImage.SetImage(new NSUrl(logoUri.AbsoluteUri), logoImage);
+                RepositoryImage.SetImage(new NSUrl(logoUri), logoImage);
         }
     }
 }

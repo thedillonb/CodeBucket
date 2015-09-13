@@ -186,7 +186,6 @@
     </Compile>
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\CommentElement.cs" />
     <Compile Include="Elements\IssueElement.cs" />
     <Compile Include="Elements\NewsFeedElement.cs" />
     <Compile Include="Elements\RepositoryElement.cs" />
@@ -252,6 +251,12 @@
     <Compile Include="Views\Commits\BaseCommitsView.cs" />
     <Compile Include="Views\Commits\CommitsView.cs" />
     <Compile Include="Views\Commits\CommitView.cs" />
+    <Compile Include="Cells\PullRequestCellView.cs" />
+    <Compile Include="Cells\PullRequestCellView.designer.cs">
+      <DependentUpon>PullRequestCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
+    <Compile Include="Elements\PullRequestElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

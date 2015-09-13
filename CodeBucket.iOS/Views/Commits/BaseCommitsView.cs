@@ -4,6 +4,7 @@ using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.Elements;
 using CodeBucket.Cells;
 using UIKit;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Commits
 {
@@ -38,7 +39,9 @@ namespace CodeBucket.Views.Commits
                     username = x.Author.Raw.Substring(0, bracketStart > 0 ? bracketStart : x.Author.Raw.Length);
                 }
 
-                var el = new CommitElement(username, desc, x.Date);
+                var avatarUrl = x.Author?.User?.Links?.Avatar?.Href;
+                var avatar = new Avatar(avatarUrl);
+                var el = new CommitElement(username, desc, x.Date, avatar.ToUrl());
                 el.Tapped += () => vm.GoToChangesetCommand.Execute(x);
                 return el;
             });

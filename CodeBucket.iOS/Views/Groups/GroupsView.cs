@@ -6,11 +6,14 @@ namespace CodeBucket.Views.Groups
 {
     public class GroupsView : ViewModelCollectionDrivenDialogViewController
 	{
-        public override void ViewDidLoad()
+        public GroupsView()
         {
             Title = "Groups";
             NoItemsText = "No Groups";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
 			var vm = (GroupsViewModel) ViewModel;

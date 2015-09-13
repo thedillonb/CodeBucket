@@ -3,6 +3,7 @@ using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Elements;
 using UIKit;
 using CoreGraphics;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.User
 {
@@ -31,7 +32,7 @@ namespace CodeBucket.Views.User
 			{
                 var name = x.FirstName + " " + x.LastName;
                 HeaderView.SubText = string.IsNullOrWhiteSpace(name) ? x.Username : name;
-                HeaderView.SetImage(x.Avatar, Images.RepoPlaceholder);
+                HeaderView.SetImage(new Avatar(x.Avatar).ToUrl(128), Images.Avatar);
                 RefreshHeaderView();
 
 				var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);

@@ -5,6 +5,7 @@ using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.Elements;
 using Humanizer;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -28,7 +29,6 @@ namespace CodeBucket.Views.Repositories
 
             ViewModel.Bind(x => x.Repository, x =>
             {
-				ViewModel.ImageUrl = x.LargeLogo(64);
                 NavigationItem.RightBarButtonItem.Enabled = true;
                 Render(x);
             });
@@ -80,9 +80,11 @@ namespace CodeBucket.Views.Repositories
 		public void Render(RepositoryDetailedModel model)
         {
 			Title = model.Name;
+
+            var avatar = new Avatar(model.Logo).ToUrl(128);
             var root = new RootElement(Title) { UnevenRows = true };
             HeaderView.SubText = "Updated " + model.UtcLastUpdated.Humanize();
-            HeaderView.SetImage(ViewModel.ImageUrl, Images.RepoPlaceholder);
+            HeaderView.SetImage(avatar, Images.RepoPlaceholder);
             RefreshHeaderView();
 
             var split = new SplitButtonElement();

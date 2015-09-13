@@ -6,6 +6,7 @@ using System;
 using CodeBucket.ViewControllers;
 using UIKit;
 using CodeBucket.Cells;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -17,11 +18,14 @@ namespace CodeBucket.Views.Repositories
             set { base.ViewModel = value; }
         }
 
-        public override void ViewDidLoad()
+        protected BaseRepositoriesView()
         {
             NoItemsText = "No Repositories"; 
             Title = "Repositories";
+        }
 
+        public override void ViewDidLoad()
+        {
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIBarButtonItemStyle.Plain, 
                 (s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
 
@@ -42,7 +46,8 @@ namespace CodeBucket.Views.Repositories
 		protected Element CreateElement(RepositoryDetailedModel repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Uri(repo.LargeLogo(64)), Images.RepoPlaceholder);
+            var avatarUrl = new Avatar(repo.Logo).ToUrl();
+            var sse = new RepositoryElement(repo.Name, description, repo.Owner, avatarUrl, Images.RepoPlaceholder);
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

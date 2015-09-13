@@ -17,6 +17,15 @@ namespace CodeBucket.Cells
         {
         }
 
+        public static CommitCellView Create() 
+            => Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
+
+        public nint MaxContentLines
+        {
+            get { return ContentLabel.Lines; }
+            set { ContentLabel.Lines = value; }
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();

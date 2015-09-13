@@ -1,10 +1,10 @@
-using System;
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
-using Humanizer;
+using CodeBucket.Core.Utils;
+using CodeBucket.Cells;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -28,23 +28,19 @@ namespace CodeBucket.Views.PullRequests
         {
             base.ViewDidLoad();
 
+            TableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
 			var vm = (PullRequestsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
 			var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
 			set.Bind(_viewSegment).To(x => x.SelectedFilter);
 			set.Apply();
 
-			BindCollection(vm.PullRequests, s =>
-            {
-                var sse = new NameTimeStringElement
-                {
-                    Name = s.Title,
-					String = s.Description.Replace('\n', ' ').Replace("\r", ""),
-                    Lines = 3,
-                    Time = s.UpdatedOn.Humanize(),
-                    Image = Images.Avatar,
-					ImageUri = new Uri(s.Author.Links.Avatar.Href)
-                };
+            BindCollection(vm.PullRequests, s => {
+                var avatar = new Avatar(s.Author?.Links?.Avatar?.Href);
+                var sse = new PullRequestElement(s.Title, s.UpdatedOn, avatar, Images.Avatar);
 				sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
                 return sse;
             });

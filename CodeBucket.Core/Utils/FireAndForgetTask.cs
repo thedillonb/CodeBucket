@@ -3,9 +3,9 @@ namespace System.Threading.Tasks
 {
     public static class FireAndForgetTask
     {
-        public static Task FireAndForget(this Task task)
+        public static void FireAndForget(this Task task)
         {
-            return task.ContinueWith(t =>
+            task.ContinueWith(t =>
             {
                 if (t.IsFaulted)
                 {

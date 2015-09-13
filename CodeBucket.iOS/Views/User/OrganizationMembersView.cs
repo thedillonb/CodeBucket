@@ -2,12 +2,10 @@ namespace CodeBucket.Views.User
 {
     public class OrganizationMembersView : BaseUserCollectionView
     {
-        public override void ViewDidLoad()
+        public OrganizationMembersView()
         {
             Title = "Members";
             NoItemsText = "No Members";
-
-            base.ViewDidLoad();
         }
     }
 }

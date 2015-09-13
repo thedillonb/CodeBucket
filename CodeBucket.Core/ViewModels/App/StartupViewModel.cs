@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Accounts;
 using BitbucketSharp;
 using BitbucketSharp.Models;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -18,7 +19,7 @@ namespace CodeBucket.Core.ViewModels.App
         private readonly IAccountsService _accountsService;
         private bool _isLoggingIn;
         private string _status;
-        private Uri _imageUrl;
+        private Avatar _avatar;
 
         public bool IsLoggingIn
         {
@@ -40,13 +41,13 @@ namespace CodeBucket.Core.ViewModels.App
             }
         }
 
-        public Uri ImageUrl
+        public Avatar Avatar
         {
-            get { return _imageUrl; }
+            get { return _avatar; }
             private set
             {
-                _imageUrl = value;
-                RaisePropertyChanged(() => ImageUrl);
+                _avatar = value;
+                RaisePropertyChanged(() => Avatar);
             }
         }
 
@@ -119,7 +120,7 @@ namespace CodeBucket.Core.ViewModels.App
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to login successfully: " + e.Message);
+                DisplayAlert("Unable to login successfully: " + e.Message).FireAndForget();
                 ShowViewModel<AccountsViewModel>();
             }
             finally
@@ -139,8 +140,8 @@ namespace CodeBucket.Core.ViewModels.App
                     avatarUrl = avatarUrl.Replace(match.Groups[0].Value, "&s=128");
             }
 
-            Uri.TryCreate(avatarUrl, UriKind.Absolute, out accountAvatarUri);
-            ImageUrl = accountAvatarUri;
+            if (Uri.TryCreate(avatarUrl, UriKind.Absolute, out accountAvatarUri))
+                Avatar = new Avatar(accountAvatarUri.AbsoluteUri);
 
             var client = await LoginAccount(account);
             _applicationService.ActivateUser(account, client);

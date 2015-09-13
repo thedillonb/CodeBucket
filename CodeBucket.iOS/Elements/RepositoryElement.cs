@@ -12,12 +12,12 @@ namespace CodeBucket.Elements
         private readonly string _description;
         private readonly string _owner;
         private UIImage _image;
-        private readonly Uri _imageUri;
+        private readonly string _imageUri;
         public event Action Tapped;
 
         public UIColor BackgroundColor { get; set; }
 
-        public RepositoryElement(string name, string description, string owner, Uri imageUri = null, UIImage image = null)
+        public RepositoryElement(string name, string description, string owner, string imageUri = null, UIImage image = null)
             : base(null)
         {
             _name = name;

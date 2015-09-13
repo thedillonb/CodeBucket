@@ -80,7 +80,7 @@ namespace CodeBucket.Cells
 
             if (imageUri != null)
             {
-                Image.SetImage(new NSUrl(imageUri.AbsoluteUri));
+                Image.SetImage(new NSUrl(imageUri.AbsoluteUri), Images.Avatar);
             }
             else
             {

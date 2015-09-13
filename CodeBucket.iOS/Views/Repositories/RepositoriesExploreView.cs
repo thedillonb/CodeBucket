@@ -5,6 +5,7 @@ using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Cells;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -53,8 +54,8 @@ namespace CodeBucket.Views.Repositories
 			BindCollection(vm.Repositories, repo =>
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-				var imageUrl = new Uri(repo.Logo);
-                var sse = new RepositoryElement(repo.Name, description, repo.Owner, imageUrl, Images.RepoPlaceholder);
+                var avatarUrl = new Avatar(repo.Logo).ToUrl();
+                var sse = new RepositoryElement(repo.Name, description, repo.Owner, avatarUrl, Images.RepoPlaceholder);
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });

@@ -4,6 +4,7 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using Foundation;
 using SDWebImage;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views
 {
@@ -17,7 +18,6 @@ namespace CodeBucket.Views
         private UIImageView _imgView;
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
-        private UIStatusBarStyle _previousStatusbarStyle;
 
         public override void ViewWillLayoutSubviews()
         {
@@ -67,16 +67,17 @@ namespace CodeBucket.Views
 				}
 			});
 
-            vm.Bind(x => x.ImageUrl, UpdatedImage);
+            vm.Bind(x => x.Avatar, UpdatedImage);
             vm.Bind(x => x.Status, x => _statusLabel.Text = x);
 
         }
 
-        public void UpdatedImage(Uri uri)
+        public void UpdatedImage(Avatar avatar)
         {
-            if (uri == null) return;
+            var avatarUrl = avatar?.ToUrl(Convert.ToInt32(imageSize));
+            if (avatarUrl == null) return;
             var placeholder = Images.Avatar;
-            _imgView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder, 0, (img, err, cache, type) => {
+            _imgView.SetImage(new NSUrl(avatarUrl), placeholder, 0, (img, err, cache, type) => {
                 UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
             });
         }

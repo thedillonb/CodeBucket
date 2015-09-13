@@ -6,6 +6,7 @@ using System.Linq;
 using CodeBucket.Elements;
 using CodeBucket.Core.ViewModels.Commits;
 using Humanizer;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Commits
 {
@@ -39,38 +40,41 @@ namespace CodeBucket.Views.Commits
             HeaderView.SetImage(null, Images.Avatar);
 
             ViewModel.Bind(x => x.Commits, Render);
+            ViewModel.Bind(x => x.Commit, Render);
 			ViewModel.BindCollection(x => x.Comments, a => Render());
-			ViewModel.BindCollection(x => x.Participants, a => Render());
 			_segmentBarButton.Width = View.Frame.Width - 10f;
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
 
         public void Render()
         {
-			if (ViewModel.Commits == null || ViewModel.Changeset == null)
+			if (ViewModel.Commits == null || ViewModel.Commit == null)
 				return;
 
-//            var titleMsg = (ViewModel.Changeset.Message ?? string.Empty).Split(new [] { '\n' }, 2).FirstOrDefault();
+            var titleMsg = (ViewModel.Commit.Message ?? string.Empty).Split(new [] { '\n' }, 2).FirstOrDefault();
+            var avatarUrl = ViewModel.Commit.Author?.User?.Links?.Avatar?.Href;
             var node = ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
-            HeaderView.Text = node;
-            HeaderView.SubText = "Commited " + (ViewModel.Changeset.Utctimestamp).Humanize();
-            RefreshHeaderView();
 
+            Title = node;
+            HeaderView.Text = titleMsg ?? node;
+            HeaderView.SubText = "Commited " + (ViewModel.Commit.Date).Humanize();
+            HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
+            RefreshHeaderView();
+     
+            var split = new SplitButtonElement();
+            split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
+            split.AddButton("Participants", ViewModel.Commit.Participants.Count.ToString());
+            split.AddButton("Approvals", ViewModel.Commit.Participants.Count(x => x.Approved).ToString());
 
             var commitModel = ViewModel.Commits;
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
-
-            var headerSection = new Section();
-            root.Add(headerSection);
+            root.Add(new Section { split });
 
             var detailSection = new Section();
             root.Add(detailSection);
 
-            var user = "Unknown";
-			if (ViewModel.Changeset.Author != null)
-				user = ViewModel.Changeset.Author;
-
-			detailSection.Add(new MultilinedElement(user, ViewModel.Changeset.Message)
+            var user = ViewModel.Commit.Author?.User?.DisplayName ?? ViewModel.Commit.Author.Raw ?? "Unknown";
+			detailSection.Add(new MultilinedElement(user, ViewModel.Commit.Message)
             {
                 CaptionColor = Theme.CurrentTheme.MainTextColor,
                 ValueColor = Theme.CurrentTheme.MainTextColor,
@@ -116,17 +120,11 @@ namespace CodeBucket.Views.Commits
 			else if (_viewSegment.SelectedSegment == 1)
 			{
 				var commentSection = new Section();
-				foreach (var comment in ViewModel.Comments.Where(x => !x.Deleted && string.IsNullOrEmpty(x.Filename)))
+				foreach (var comment in ViewModel.Comments)
 				{
-					commentSection.Add(new CommentElement
-					{
-						Name = comment.DisplayName,
-                        Time = comment.UtcCreatedOn.Humanize(),
-						String = comment.Content,
-                        Image = Images.Avatar,
-						ImageUri = new Uri(comment.UserAvatarUrl),
-						BackgroundColor = UIColor.White
-					});
+                    var name = comment.User.DisplayName ?? comment.User.Username;
+                    var imgUri = new Avatar(comment.User.Links?.Avatar?.Href);
+                    commentSection.Add(new NameTimeStringElement(name, comment.Content.Raw, comment.CreatedOn, imgUri.ToUrl(), Images.Avatar));
 				}
 
 				if (commentSection.Elements.Count > 0)
@@ -139,9 +137,9 @@ namespace CodeBucket.Views.Commits
 			else if (_viewSegment.SelectedSegment == 2)
 			{
 				var likeSection = new Section();
-				likeSection.AddAll(ViewModel.Participants.Where(x => x.Approved).Select(l => {
-					var el = new UserElement(l.Username, string.Empty, string.Empty, l.Avatar);
-					el.Tapped += () => ViewModel.GoToUserCommand.Execute(l.Username);
+                likeSection.AddAll(ViewModel.Commit.Participants.Where(x => x.Approved).Select(l => {
+                    var el = new UserElement(l.User.DisplayName, string.Empty, string.Empty, l.User.Links.Avatar.Href);
+                    el.Tapped += () => ViewModel.GoToUserCommand.Execute(l.User.Username);
 					return el;
 				}));
 
@@ -149,7 +147,7 @@ namespace CodeBucket.Views.Commits
 					root.Add(likeSection);
 
 				StyledStringElement approveButton;
-				if (ViewModel.Participants.Any(x => x.Username.Equals(ViewModel.GetApplication().Account.Username) && x.Approved))
+                if (ViewModel.Commit.Participants.Any(x => x.User.Username.Equals(ViewModel.GetApplication().Account.Username) && x.Approved))
 				{
 					approveButton = new StyledStringElement("Unapprove") { Image = Images.Cancel };
 					approveButton.Tapped += () => this.DoWorkAsync("Unapproving...", ViewModel.Unapprove);

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System;
 using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.Services;
+using BitbucketSharp.Models.V2;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -32,20 +34,14 @@ namespace CodeBucket.Core.ViewModels.Commits
             }
         }
 
-		private ChangesetModel _changeset;
-		public ChangesetModel Changeset
+        private CommitModel _commit;
+        public CommitModel Commit
 		{
-			get { return _changeset; }
+			get { return _commit; }
 			private set {
-				_changeset = value;
-				RaisePropertyChanged(() => Changeset);
+				_commit = value;
+				RaisePropertyChanged(() => Commit);
 			}
-		}
-
-		private readonly CollectionViewModel<ChangesetParticipantsModel> _participants = new CollectionViewModel<ChangesetParticipantsModel>();
-		public CollectionViewModel<ChangesetParticipantsModel> Participants
-		{
-			get { return _participants; }
 		}
 
 		public ICommand GoToUserCommand
@@ -78,8 +74,8 @@ namespace CodeBucket.Core.ViewModels.Commits
 			}
 		}
 
-		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
-		public CollectionViewModel<ChangesetCommentModel> Comments
+        private readonly CollectionViewModel<CommitComment> _comments = new CollectionViewModel<CommitComment>();
+        public CollectionViewModel<CommitComment> Comments
         {
             get { return _comments; }
         }
@@ -95,22 +91,36 @@ namespace CodeBucket.Core.ViewModels.Commits
 		protected override async Task Load(bool forceCacheInvalidation)
         {
 			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
-			var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetInfo(forceCacheInvalidation), response => Changeset = response);
+            var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit(), response => Commit = response);
 			await Task.WhenAll(t1, t2);
-			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
-			Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(forceCacheInvalidation)).FireAndForget();
+            GetAllComments().FireAndForget();
+        }
+
+        private async Task GetAllComments()
+        {
+            var comments = new List<CommitComment>();
+            var ret = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetComments());
+            comments.AddRange(ret.Values);
+
+            while (ret.Next != null)
+            {
+                ret = await Task.Run(() => this.GetApplication().Client.Request2<Collection<CommitComment>>(ret.Next));
+                comments.AddRange(ret.Values);
+            }
+
+            Comments.Items.Reset(comments.OrderBy(x => x.CreatedOn));
         }
 
         public async Task AddComment(string text)
         {
 			try
 			{
-				var c = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
-	            Comments.Items.Add(c);
+				await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
+                await GetAllComments();
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to add comment: " + e.Message);
+                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
 			}
         }
 
@@ -119,11 +129,11 @@ namespace CodeBucket.Core.ViewModels.Commits
 			try
 			{
                 await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve());
-                await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(true));
+                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to approve commit: " + e.Message);
+                DisplayAlert("Unable to approve commit: " + e.Message).FireAndForget();
 			}
 		}
 
@@ -132,11 +142,11 @@ namespace CodeBucket.Core.ViewModels.Commits
 			try
 			{
                 await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove());
-                await Participants.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Changeset.RawNode].GetParticipants(true));
+                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to unapprove commit: " + e.Message);
+                DisplayAlert("Unable to unapprove commit: " + e.Message).FireAndForget();
 			}
 		}
 
