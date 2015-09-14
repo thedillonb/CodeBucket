@@ -112,8 +112,27 @@ namespace CodeBucket.Views.App
 				private set; 
 			}
 
+            protected override string GetKey(int style)
+            {
+                return "pinned-repository";
+            }
+
+            protected override void OnCellCreated(UITableViewCell cell)
+            {
+                base.OnCellCreated(cell);
+                cell.ImageView.Layer.MasksToBounds = true;
+            }
+
+            public override UITableViewCell GetCell(UITableView tv)
+            {
+                var cell = base.GetCell(tv);
+                cell.ImageView.Layer.MasksToBounds = true;
+                cell.ImageView.Layer.CornerRadius = cell.ImageView.Bounds.Height / 2f;
+                return cell;
+            }
+    
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.Repo)
+                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.RepoPlaceholder)
 			{
 				PinnedRepo = pinnedRepo;
 				ImageUri = new System.Uri(PinnedRepo.ImageUri);

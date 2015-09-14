@@ -1,5 +1,4 @@
 using UIKit;
-using System.Drawing;
 using CoreGraphics;
 using System;
 using Foundation;
@@ -30,34 +29,28 @@ namespace CodeBucket.Elements
 
         public override nfloat Height(CGRect bounds)
         {
-	    return 36f;
+	        return 36f;
         }
 
 		public override UITableViewCell GetCell(UITableView tv)
 		{
 			var cell = base.GetCell(tv);
 			cell.SeparatorInset = UIEdgeInsets.Zero;
+            cell.LayoutMargins = UIEdgeInsets.Zero;
+            cell.PreservesSuperviewLayoutMargins = false;
 			return cell;
 		}
 
-
         public override void Draw(CGRect bounds, CGContext context, UIView view)
         {
+            var width = 0.5f / UIScreen.MainScreen.Scale;
             context.BeginPath();
-			context.SetLineWidth(1.0f);
-			context.SetStrokeColor(UIColor.FromRGB(199, 199, 205).CGColor);
-			var x = (int)System.Math.Ceiling(bounds.Width / 2 - 0.5f);
+            context.SetLineWidth(width);
+            context.SetStrokeColor(UIColor.FromRGB(150, 150, 154).CGColor);
+            var x = bounds.Width / 2f - width;
 			context.MoveTo(x, 0f);
 			context.AddLineToPoint(x, bounds.Height);
             context.StrokePath();
-
-            /*
-            context.BeginPath();
-            context.SetStrokeColor(UIColor.FromRGBA(250, 250, 250, 128).CGColor);
-            context.MoveTo(bounds.Width / 2 + 0.5f, 0);
-            context.AddLineToPoint(bounds.Width / 2 + 0.5f, bounds.Height);
-            context.StrokePath();
-            */
 
             var row = Value;
             var half = bounds.Height / 2;

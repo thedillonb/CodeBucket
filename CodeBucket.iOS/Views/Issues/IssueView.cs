@@ -7,6 +7,7 @@ using CodeBucket.Elements;
 using System.Linq;
 using Newtonsoft.Json;
 using Humanizer;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Issues
 {
@@ -74,16 +75,17 @@ namespace CodeBucket.Views.Issues
 			if (ViewModel.Issue == null)
 				return;
 
-			NavigationItem.RightBarButtonItem.Enabled = true;
+            var avatar = new Avatar(ViewModel.Issue.ReportedBy?.Avatar);
 
+			NavigationItem.RightBarButtonItem.Enabled = true;
             HeaderView.Text = ViewModel.Issue.Title;
+            HeaderView.SetImage(avatar.ToUrl(), Images.Avatar);
             HeaderView.SubText = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
             RefreshHeaderView();
 
             var split = new SplitButtonElement();
             split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
-            split.AddButton("Watches", 0.ToString());
-            split.AddButton("Votes", 0.ToString());
+            split.AddButton("Watches", ViewModel.Issue.FollowerCount.ToString());
 
             var root = new RootElement(Title);
             root.Add(new Section { split });

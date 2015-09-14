@@ -6,7 +6,7 @@ using CodeBucket.ViewControllers;
 
 namespace CodeBucket.Elements
 {
-    public class IssueElement : Element, IElementSizing, IColorizeBackground
+    public class IssueElement : Element, IElementSizing
     {       
         public UITableViewCellStyle Style { get; set; }
         public UIColor BackgroundColor { get; set; }
@@ -49,7 +49,6 @@ namespace CodeBucket.Elements
 
         public event Action Tapped;
 
-
         public override UITableViewCell GetCell (UITableView tv)
         {
             var cell = tv.DequeueReusableCell(CellKey) as IssueCellView ?? IssueCellView.Create();
@@ -57,18 +56,12 @@ namespace CodeBucket.Elements
             return cell;
         }
 
-
-
         public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
         {
             base.Selected(dvc, tableView, path);
             if (Tapped != null)
                 Tapped();
             tableView.DeselectRow (path, true);
-        }
-
-        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-        {
         }
 
         public override bool Matches(string text)

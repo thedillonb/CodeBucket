@@ -83,7 +83,7 @@ namespace CodeBucket.Views.Repositories
 
             var avatar = new Avatar(model.Logo).ToUrl(128);
             var root = new RootElement(Title) { UnevenRows = true };
-            HeaderView.SubText = "Updated " + model.UtcLastUpdated.Humanize();
+            HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UtcLastUpdated.Humanize() : model.Description;
             HeaderView.SetImage(avatar, Images.RepoPlaceholder);
             RefreshHeaderView();
 
@@ -92,19 +92,6 @@ namespace CodeBucket.Views.Repositories
             split.AddButton("Forks", model.ForkCount.ToString());
 
             var sec1 = new Section();
-
-            if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
-            {
-                var element = new MultilinedElement(model.Description)
-                {
-                    BackgroundColor = UIColor.White,
-                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
-                    ValueColor = Theme.CurrentTheme.MainTextColor
-                };
-                element.CaptionColor = element.ValueColor;
-                element.CaptionFont = element.ValueFont;
-                sec1.Add(element);
-            }
 
             sec1.Add(new SplitElement(new SplitElement.Row {
 				Text1 = model.IsPrivate ? "Private" : "Public",
