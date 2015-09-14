@@ -16,10 +16,13 @@ namespace CodeBucket.Cells
 		UIKit.UIImageView ActionImage { get; set; }
 
 		[Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
 
 		[Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
+		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+
+		[Outlet]
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
 
 		[Outlet]
 		UIKit.UIImageView Image { get; set; }
@@ -29,6 +32,16 @@ namespace CodeBucket.Cells
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ContentConstraint != null) {
+				ContentConstraint.Dispose ();
+				ContentConstraint = null;
+			}
+
+			if (ActionImage != null) {
+				ActionImage.Dispose ();
+				ActionImage = null;
+			}
+
 			if (Body != null) {
 				Body.Dispose ();
 				Body = null;
@@ -47,11 +60,6 @@ namespace CodeBucket.Cells
 			if (Time != null) {
 				Time.Dispose ();
 				Time = null;
-			}
-
-			if (ActionImage != null) {
-				ActionImage.Dispose ();
-				ActionImage = null;
 			}
 		}
 	}

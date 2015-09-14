@@ -214,7 +214,6 @@
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
     <Compile Include="Views\StartupView.cs" />
-    <Compile Include="Views\TableViewSectionView.cs" />
     <Compile Include="Views\ToolbarButton.cs" />
     <Compile Include="Views\WebBrowserView.cs" />
     <Compile Include="Views\WebView.cs" />

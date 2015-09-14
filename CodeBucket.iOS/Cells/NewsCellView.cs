@@ -10,22 +10,7 @@ namespace CodeBucket.Cells
     {
         public static readonly UINib Nib = UINib.FromName("NewsCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("NewsCellView");
-        public static readonly UIEdgeInsets EdgeInsets = new UIEdgeInsets(0, 48f, 0, 0);
-
-        public static UIFont TimeFont
-        {
-            get { return UIFont.SystemFontOfSize(12f * Theme.CurrentTheme.FontSizeRatio); }
-        }
-
-        public static UIFont HeaderFont
-        {
-            get { return UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio); }
-        }
-
-        public static UIFont BodyFont
-        {
-            get { return UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio); }
-        }
+        private static nfloat DefaultContentConstraint = 0f;
 
         public class Link
         {
@@ -36,6 +21,24 @@ namespace CodeBucket.Cells
 
         public NewsCellView(IntPtr handle) : base(handle)
         {
+        }
+
+        public override void AwakeFromNib()
+        {
+            base.AwakeFromNib();
+
+            Image.Layer.MasksToBounds = true;
+            Image.Layer.CornerRadius = Image.Bounds.Height / 2f;
+
+            Body.LinkAttributes = new NSDictionary();
+            Body.ActiveLinkAttributes = new NSMutableDictionary();
+            Body.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+
+            Header.LinkAttributes = new NSDictionary();
+            Header.ActiveLinkAttributes = new NSMutableDictionary();
+            Header.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+
+            DefaultContentConstraint = ContentConstraint.Constant;
         }
 
         class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate {
@@ -77,6 +80,8 @@ namespace CodeBucket.Cells
         {
             Time.Text = time;
             ActionImage.Image = actionImage;
+            Body.Hidden = body.Length == 0;
+            ContentConstraint.Constant = Body.Hidden ? 0 : DefaultContentConstraint;
 
             if (imageUri != null)
             {
@@ -104,57 +109,6 @@ namespace CodeBucket.Cells
 
             foreach (var b in bodyLinks)
                 Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
-        }
-
-        public static NewsCellView Create()
-        {
-            var cell = (NewsCellView)Nib.Instantiate(null, null)[0];
-            cell.SeparatorInset = EdgeInsets;
-            cell.Body.LinkAttributes = new NSDictionary();
-            cell.Body.ActiveLinkAttributes = new NSMutableDictionary();
-            cell.Body.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
-            cell.Body.Lines = 0;
-            cell.Body.LineBreakMode = UILineBreakMode.TailTruncation;
-
-            cell.Header.LinkAttributes = new NSDictionary();
-            cell.Header.ActiveLinkAttributes = new NSMutableDictionary();
-            cell.Header.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
-            cell.Header.Lines = 2;
-            cell.Header.LineBreakMode = UILineBreakMode.TailTruncation;
-
-            // Special for large fonts
-            if (Theme.CurrentTheme.FontSizeRatio > 1.0f)
-            {
-                cell.Header.Font = HeaderFont;
-                cell.Body.Font = BodyFont;
-                cell.Time.Font = TimeFont;
-
-                var timeSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
-                var timeFrame = cell.Time.Frame;
-                timeFrame.Height = timeSectionheight;
-                cell.Time.Frame = timeFrame;
-
-                var imageFrame = cell.ActionImage.Frame;
-                imageFrame.Y += (timeFrame.Height - imageFrame.Height) / 2f;
-                cell.ActionImage.Frame = imageFrame;
-
-                var headerSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
-                var headerFrame = cell.Header.Frame;
-                headerFrame.Height = headerSectionheight * 2f + (float)Math.Ceiling(3f * Theme.CurrentTheme.FontSizeRatio);
-                headerFrame.Y = 6 + timeFrame.Height + 5f;
-                cell.Header.Frame = headerFrame;
-
-                var picFrame = cell.Image.Frame;
-                picFrame.Y = 6 + timeFrame.Height + 5f;
-                picFrame.Y += (headerFrame.Height - picFrame.Height) / 2f;
-                cell.Image.Frame = picFrame;
-
-                var bodyFrame = cell.Body.Frame;
-                bodyFrame.Y = headerFrame.Y + headerFrame.Height + 4f;
-                cell.Body.Frame = bodyFrame;
-            }
-
-            return cell;
         }
     }
 }

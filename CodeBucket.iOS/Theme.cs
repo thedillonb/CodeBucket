@@ -59,11 +59,6 @@ namespace CodeBucket
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
 		}
 
-        public float FontSizeRatio
-        {
-            get { return 1.0f; }
-        }
-
 		public UITextAttributes SegmentedControlText
 		{
 			get

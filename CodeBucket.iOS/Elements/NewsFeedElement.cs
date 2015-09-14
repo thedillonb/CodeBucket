@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using CoreGraphics;
 using Foundation;
 using UIKit;
 using CodeBucket.ViewControllers;
@@ -10,12 +8,11 @@ using Humanizer;
 
 namespace CodeBucket.Elements
 {
-    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground
+    public class NewsFeedElement : Element
     {
         private readonly string _time;
         private readonly Uri _imageUri;
         private readonly UIImage _actionImage;
-        private readonly int _bodyBlocks;
         private readonly Action _tapped;
 
         private readonly NSMutableAttributedString _attributedHeader;
@@ -24,7 +21,6 @@ namespace CodeBucket.Elements
         private readonly List<NewsCellView.Link> _bodyLinks;
 
         public static UIColor LinkColor = Theme.CurrentTheme.MainTitleColor;
-        public static UIFont LinkFont = UIFont.BoldSystemFontOfSize(13f);
 
         private UIImage LittleImage { get; set; }
 
@@ -75,10 +71,9 @@ namespace CodeBucket.Elements
             var body = CreateAttributedStringFromBlocks(bodyBlocks);
             _attributedBody = body.Item1;
             _bodyLinks = body.Item2;
-            _bodyBlocks = bodyBlocks.Count();
         }
 
-        private Tuple<NSMutableAttributedString,List<NewsCellView.Link>> CreateAttributedStringFromBlocks(IEnumerable<TextBlock> blocks)
+        private static Tuple<NSMutableAttributedString,List<NewsCellView.Link>> CreateAttributedStringFromBlocks(IEnumerable<TextBlock> blocks)
         {
             var attributedString = new NSMutableAttributedString();
             var links = new List<NewsCellView.Link>();
@@ -97,23 +92,10 @@ namespace CodeBucket.Elements
                         color = LinkColor;
                 }
 
-                UIFont font = null;
-                if (b.Font != null)
-                    font = b.Font.WithSize(b.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                else
-                {
-                    if (b.Tapped != null)
-                        font = LinkFont.WithSize(LinkFont.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                }
-
-                if (color == null)
-                    color = Theme.CurrentTheme.MainTextColor;
-                if (font == null)
-                    font = NewsCellView.BodyFont;
-
-
+                var font = b.Font ?? UIFont.PreferredBody;
+                color = color ?? Theme.CurrentTheme.MainTextColor;
                 var ctFont = new CoreText.CTFont(font.Name, font.PointSize);
-                var str = new NSAttributedString(b.Value, new CoreText.CTStringAttributes() { ForegroundColor = color.CGColor, Font = ctFont });
+                var str = new NSAttributedString(b.Value, new CoreText.CTStringAttributes { ForegroundColor = color.CGColor, Font = ctFont });
                 attributedString.Append(str);
                 var strLength = str.Length;
 
@@ -126,38 +108,10 @@ namespace CodeBucket.Elements
             return new Tuple<NSMutableAttributedString, List<NewsCellView.Link>>(attributedString, links);
         }
 
-        private static nfloat CharacterHeight 
-        {
-            get { return "A".MonoStringHeight(NewsCellView.BodyFont, 1000); }
-        }
-
-        public nfloat GetHeight (UITableView tableView, NSIndexPath indexPath)
-        {
-            var s = 6f + NewsCellView.TimeFont.LineHeight + 5f + (NewsCellView.HeaderFont.LineHeight * 2) + 4f + 7f;
-
-            if (_attributedBody.Length == 0)
-                return s;
-
-            var rec = _attributedBody.GetBoundingRect(new CGSize(tableView.Bounds.Width - 56, 10000), NSStringDrawingOptions.UsesLineFragmentOrigin | NSStringDrawingOptions.UsesFontLeading, null);
-            var height = rec.Height;
-
-            if (_bodyBlocks == 1 && height > (CharacterHeight * 4))
-                height = CharacterHeight * 4;
-
-            var descCalc = s + height;
-            var ret = ((int)Math.Ceiling(descCalc)) + 1f + 8f;
-            return ret;
-        }
-
-        protected override NSString CellKey {
-            get {
-                return new NSString("NewsCellView");
-            }
-        }
-
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(CellKey) as NewsCellView ?? NewsCellView.Create();
+            var cell = tv.DequeueReusableCell(NewsCellView.Key) as NewsCellView;
+            cell.Set(_imageUri, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
             return cell;
         }
 
@@ -167,14 +121,6 @@ namespace CodeBucket.Elements
             if (_tapped != null)
                 _tapped();
             tableView.DeselectRow (path, true);
-        }
-
-        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-        {
-            var c = cell as NewsCellView;
-            if (c == null)
-                return;
-            c.Set(_imageUri, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
         }
     }
 }

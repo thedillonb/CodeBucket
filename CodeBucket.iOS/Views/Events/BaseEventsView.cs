@@ -6,6 +6,7 @@ using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.Utils;
+using CodeBucket.Cells;
 
 namespace CodeBucket.Views.Events
 {
@@ -21,7 +22,11 @@ namespace CodeBucket.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			TableView.SeparatorInset = CodeBucket.Cells.NewsCellView.EdgeInsets;
+
+            TableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
