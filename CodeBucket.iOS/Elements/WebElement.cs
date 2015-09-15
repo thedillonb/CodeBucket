@@ -8,31 +8,14 @@ namespace CodeBucket.Elements
     public class WebElement : Element, IElementSizing
     {
         protected readonly UIWebView WebView = null;
-        private nfloat _height;
-        private string _value;
-        private bool _isLoaded = false;
         protected readonly NSString Key;
-        private readonly bool _rawContentLoad;
-
+        private nfloat _height;
         public Action<nfloat> HeightChanged;
-
-
         public Action<string> UrlRequested;
 
         public nfloat Height
         {
             get { return _height; }
-        }
-
-        public string Value
-        {
-            get { return _value; }
-            set
-            {
-                _value = value;
-                if (_isLoaded)
-                    LoadContent(value);
-            }
         }
 
         private bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
@@ -65,39 +48,24 @@ namespace CodeBucket.Elements
             return true;
         }
 
-        public WebElement (string content, string cellKey, bool rawContentLoad) 
+        public WebElement (string cellKey) 
             : base (string.Empty)
         {
             Key = new NSString(cellKey);
-            _rawContentLoad = rawContentLoad;
             WebView = new UIWebView();
             WebView.ScrollView.ScrollEnabled = false;
             WebView.ScrollView.Bounces = false;
             WebView.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
-            WebView.LoadFinished += (sender, e) => {
-                if (!string.IsNullOrEmpty(_value))
-                    LoadContent(_value);
-                _isLoaded = true;
-            };
 
-            WebView.LoadHtmlString(content, new NSUrl(""));
             HeightChanged = (x) => {
                 if (GetImmediateRootElement() != null)
                     GetImmediateRootElement().Reload(this, UITableViewRowAnimation.Fade);
             };
         }
 
-        private void LoadContent(string content)
+        public void LoadContent(string content)
         {
-            if (_rawContentLoad)
-            {
-                WebView.EvaluateJavascript("var a = " + content + "; ins(a);");
-            }
-            else
-            {
-                content = System.Web.HttpUtility.JavaScriptStringEncode(content);
-                WebView.EvaluateJavascript("ins('" + content + "');");
-            }
+            WebView.LoadHtmlString(content, new NSUrl(""));
         }
 
         protected override NSString CellKey 

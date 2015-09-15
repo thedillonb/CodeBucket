@@ -36,28 +36,6 @@ namespace CodeBucket.Utils
 			
 			return path;
         }
-		
-        public static void FillRoundedRect (CGContext ctx, CGRect rect, float radius)
-		{
-				var p = GraphicsUtil.MakeRoundedRectPath (rect, radius);
-				ctx.AddPath (p);
-				ctx.FillPath ();
-		}
-
-		public static CGPath MakeRoundedPath (float size, float radius)
-		{
-			float hsize = size/2;
-			
-			var path = new CGPath ();
-			path.MoveToPoint (size, hsize);
-			path.AddArcToPoint (size, size, hsize, size, radius);
-			path.AddArcToPoint (0, size, 0, hsize, radius);
-			path.AddArcToPoint (0, 0, hsize, 0, radius);
-			path.AddArcToPoint (size, 0, size, hsize, radius);
-			path.CloseSubpath ();
-			
-			return path;
-		}
 	}
 }
 

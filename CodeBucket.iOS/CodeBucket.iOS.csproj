@@ -169,7 +169,6 @@
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
     <InterfaceDefinition Include="LaunchThis.storyboard" />
-    <Compile Include="Bindings\UISegmentControlBinding.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs">
       <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
@@ -196,7 +195,6 @@
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\EnvironmentService.cs" />
     <Compile Include="Services\ShareService.cs" />
-    <Compile Include="Services\UIThreadService.cs" />
     <Compile Include="Utils\Hud.cs" />
     <Compile Include="Utils\UIImageExtensions.cs" />
     <Compile Include="Utils\Util.cs" />
@@ -256,6 +254,13 @@
     </Compile>
     <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
     <Compile Include="Elements\PullRequestElement.cs" />
+    <Compile Include="WebCell\CommentsRazorView.cs">
+      <DependentUpon>CommentsRazorView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebCell\CommentViewModel.cs" />
+    <Compile Include="WebCell\MarkdownRazorView.cs">
+      <DependentUpon>MarkdownRazorView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -451,6 +456,14 @@
     <None Include="packages.config" />
     <BundleResource Include="Images\repository_placeholder%402x.png" />
     <BundleResource Include="Images\avatar%402x.png" />
+    <None Include="WebCell\CommentsRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsRazorView.cs</LastGenOutput>
+    </None>
+    <None Include="WebCell\MarkdownRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownRazorView.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -477,8 +490,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebCell\body.html" />
-    <Content Include="WebCell\comments.html" />
     <Content Include="Diff\app.js" />
     <Content Include="Diff\diffindex.html" />
     <Content Include="Diff\difflib.js" />

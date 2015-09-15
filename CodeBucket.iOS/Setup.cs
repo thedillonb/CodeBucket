@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Cirrious.CrossCore.IoC;
 using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeBucket;
-using CodeBucket.Views;
 using UIKit;
 using CodeBucket.Core.ViewModels.App;
 using CodeBucket.Elements;
@@ -44,23 +42,12 @@ namespace CodeBucket
 			list.Add(typeof(StartupViewModel).Assembly);
 			return list.ToArray();
 		}
-//
-//        protected override IMvxTrace CreateDebugTrace()
-//        {
-//            return new ;
-//        }
 
 		protected override void FillBindingNames(IMvxBindingNameRegistry obj)
 		{
 			base.FillBindingNames(obj);
 			obj.AddOrOverwrite(typeof(StyledStringElement), "Tapped");
 			obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
-		}
-
-		protected override void FillTargetFactories(Cirrious.MvvmCross.Binding.Bindings.Target.Construction.IMvxTargetBindingFactoryRegistry registry)
-		{
-			base.FillTargetFactories(registry);
-			registry.RegisterFactory(new Cirrious.MvvmCross.Binding.Bindings.Target.Construction.MvxCustomBindingFactory<UISegmentedControl>("ValueChanged", x => new UISegmentControlBinding(x)));
 		}
 
 		/// <summary>
@@ -80,55 +67,6 @@ namespace CodeBucket
 				.RegisterAsLazySingleton();
 
 			return new Core.App();
-		}
-	}
-
-	public class UISegmentControlBinding : Cirrious.MvvmCross.Binding.Bindings.Target.MvxTargetBinding
-	{
-		private readonly UISegmentedControl _ctrl;
-
-		public UISegmentControlBinding(UISegmentedControl ctrl)
-			: base(ctrl)
-		{
-			this._ctrl = ctrl;
-		}
-
-		public override void SetValue(object value)
-		{
-			_ctrl.SelectedSegment = (int)value;
-		}
-		public override void SubscribeToEvents()
-		{
-			_ctrl.ValueChanged += HandleValueChanged;
-		}
-
-		void HandleValueChanged (object sender, EventArgs e)
-		{
-			FireValueChanged(_ctrl.SelectedSegment);
-		}
-
-		public override Type TargetType
-		{
-			get
-			{
-				return typeof(int);
-			}
-		}
-		public override Cirrious.MvvmCross.Binding.MvxBindingMode DefaultMode
-		{
-			get
-			{
-				return Cirrious.MvvmCross.Binding.MvxBindingMode.TwoWay;
-			}
-		}
-
-		protected override void Dispose(bool isDisposing)
-		{
-			if (isDisposing)
-			{
-				_ctrl.ValueChanged -= HandleValueChanged;
-			}
-			base.Dispose(isDisposing);
 		}
 	}
 }

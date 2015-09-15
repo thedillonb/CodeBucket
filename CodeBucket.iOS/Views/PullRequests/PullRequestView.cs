@@ -7,12 +7,16 @@ using CodeBucket.Utils;
 using CodeBucket.Elements;
 using Humanizer;
 using CodeBucket.Core.Utils;
+using CodeBucket.WebCell;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
         private readonly SplitElement _split1;
+        private WebElement _descriptionElement;
+        private WebElement _commentsElement;
 
         public new PullRequestViewModel ViewModel
         {
@@ -30,16 +34,12 @@ namespace CodeBucket.Views.PullRequests
         {
             base.ViewDidLoad();
 
+            Title = "Pull Request #" + ViewModel.PullRequestId;
+
             HeaderView.SetImage(null, Images.Avatar);
 
             ViewModel.Bind(x => x.PullRequest, Render);
             ViewModel.BindCollection(x => x.Comments, e => Render());
-        }
-
-		public override void ViewWillAppear(bool animated)
-        {
-			base.ViewWillAppear(animated);
-            Title = "Pull Request #" + ViewModel.PullRequestId;
         }
 
         public void Render()
@@ -62,17 +62,16 @@ namespace CodeBucket.Views.PullRequests
             root.Add(new Section { split });
 
             var secDetails = new Section();
-			if (!string.IsNullOrEmpty(ViewModel.PullRequest.Description))
+            if (!string.IsNullOrWhiteSpace(ViewModel.Description))
             {
-				var desc = new MultilinedElement(ViewModel.PullRequest.Description.Trim()) 
-                { 
-                    BackgroundColor = UIColor.White,
-                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
-                    ValueColor = Theme.CurrentTheme.MainTextColor
-                };
-                desc.CaptionFont = desc.ValueFont;
-                desc.CaptionColor = desc.ValueColor;
-                secDetails.Add(desc);
+                if (_descriptionElement == null)
+                {
+                    _descriptionElement = new WebElement("description");
+                    _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+                }
+
+                _descriptionElement.LoadContent(new MarkdownRazorView { Model = ViewModel.Description }.GenerateString());
+                secDetails.Add(_descriptionElement);
             }
 
 			var merged = ViewModel.Merged;
@@ -103,28 +102,26 @@ namespace CodeBucket.Views.PullRequests
                 root.Add(new Section { new StyledStringElement("Merge", mergeAction, Images.Fork) });
             }
 
-
-            if (ViewModel.Comments.Items.Count > 0)
-            {
-                var commentsSec = new Section();
-                foreach (var x in ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null).OrderBy(x => (x.CreatedOn)))
+            var comments = ViewModel.Comments
+                .Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
+                .OrderBy(x => (x.CreatedOn))
+                .Select(x =>
                 {
                     var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
                     var avatar = new Avatar(x.User.Links?.Avatar?.Href);
-                    commentsSec.Add(new NameTimeStringElement(name, x.Content.Raw, x.CreatedOn, avatar.ToUrl(), Images.Avatar));
+                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn, avatar.ToUrl());
+                }).ToList();
+
+            if (comments.Count > 0)
+            {
+                if (_commentsElement == null)
+                {
+                    _commentsElement = new WebElement("comments");
+                    _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
                 }
 
-                //Load more if there's more comments
-//                if (model.MoreComments != null)
-//                {
-//                    var loadMore = new PaginateElement("Load More", "Loading...", 
-//                                                       e => this.DoWorkNoHud(() => model.MoreComments(),
-//                                          x => Utilities.ShowAlert("Unable to load more!", x.Message))) { AutoLoadOnVisible = false, Background = false };
-//                    commentsSec.Add(loadMore);
-//                }
-
-                if (commentsSec.Elements.Count > 0)
-                    root.Add(commentsSec);
+                _commentsElement.LoadContent(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
+                root.Add(new Section { _commentsElement });
             }
 
 

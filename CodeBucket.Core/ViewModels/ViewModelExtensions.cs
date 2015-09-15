@@ -11,15 +11,10 @@ namespace CodeBucket.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static Task RequestModel<TRequest>(this MvxViewModel viewModel, Func<TRequest> request, Action<TRequest> update) where TRequest : new()
+        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, Func<TRequest> request, Action<TRequest> update) where TRequest : new()
         {
-            var uiThread = Mvx.Resolve<IUIThreadService>();
-
-            return Task.Run(() =>
-            {
-                var data = request();
-                uiThread.MarshalOnUIThread(() => update(data));
-            });
+            var data = await Task.Run(() => request());
+            update(data);
         }
 
 		public static void CreateMore<T>(this MvxViewModel viewModel, BitbucketSharp.Models.V2.Collection<T> response, 

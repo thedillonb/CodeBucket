@@ -101,18 +101,6 @@ namespace MonoTouch
             alert.Show();
         }
 
-
-        public static bool IsTall
-        {
-            get 
-            { 
-                return UIDevice.CurrentDevice.UserInterfaceIdiom 
-                    == UIUserInterfaceIdiom.Phone 
-                        && UIScreen.MainScreen.Bounds.Height 
-                        * UIScreen.MainScreen.Scale >= 1136;
-            }     
-        }
-
         public static Tuple<int, int> iOSVersion
         {
             get

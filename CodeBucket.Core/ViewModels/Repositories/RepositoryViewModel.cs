@@ -164,19 +164,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
 				response => Branches = response.Values.ToList()).FireAndForget();
 
-            var uiThread = Cirrious.CrossCore.Mvx.Resolve<IUIThreadService>();
-            Task.Run(() =>
-            {
-                var primaryBranch = this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true);
-                _primaryBranch = primaryBranch.Name;
-                var data = this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches[primaryBranch.Name].Source[""].GetInfo(forceCacheInvalidation);
-                var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme"));
-                if (any != null)
-                {
-                    _readmeFilename = any.Path;
-                    uiThread.MarshalOnUIThread(() => HasReadme = true);
-                }
-            }).FireAndForget();
+            LoadReadme().FireAndForget();
 //
 //			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
 //				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
@@ -185,6 +173,19 @@ namespace CodeBucket.Core.ViewModels.Repositories
 //				forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
 
             return t1;
+        }
+
+        private async Task LoadReadme()
+        {
+            var primaryBranch = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true));
+            _primaryBranch = primaryBranch.Name;
+            var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches[primaryBranch.Name].Source[""].GetInfo());
+            var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme"));
+            if (any != null)
+            {
+                _readmeFilename = any.Path;
+                HasReadme = true;
+            }
         }
 
         public bool IsPinned

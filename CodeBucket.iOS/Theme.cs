@@ -9,9 +9,9 @@ namespace CodeBucket
 
         private static UIImage CreateBackgroundImage(UIColor color)
         {
-            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 64f));
+            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 1f));
             color.SetFill();
-            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 64));
+            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 1));
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return img;

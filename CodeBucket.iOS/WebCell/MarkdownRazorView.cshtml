@@ -1,3 +1,4 @@
+﻿@model String
 <html>
 <head>
 <style type="text/css">
@@ -83,14 +84,12 @@ border-bottom: 1px solid #ddd;
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <script>
-function ins(c) { document.getElementById('main').innerHTML = c; }
 function size() { return document.getElementById('main').scrollHeight + 28; }
 function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
 var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100);
 </script>
 </head>
 <body>
-<div id='main'>
-</div>
+<div id='main'>@{WriteLiteral(Model);}</div>
 </body>
 </html>

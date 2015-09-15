@@ -118,7 +118,6 @@
     <Compile Include="Services\IEnvrionmentService.cs" />
     <Compile Include="Services\IErrorService.cs" />
     <Compile Include="Services\IShareService.cs" />
-    <Compile Include="Services\IUIThreadService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />

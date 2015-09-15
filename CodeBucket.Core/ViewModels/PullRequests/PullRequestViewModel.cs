@@ -2,11 +2,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
     public class PullRequestViewModel : LoadableViewModel
     {
+        private readonly IMarkdownService _markdownService;
         private PullRequestModel _model;
         private bool _merged;
 		private readonly CollectionViewModel<PullRequestCommentModel> _comments = new CollectionViewModel<PullRequestCommentModel>();
@@ -35,12 +37,15 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             set { _merged = value; RaisePropertyChanged(() => Merged); }
         }
 
+        public string Description { get; private set; }
+
         public PullRequestModel PullRequest 
         { 
             get { return _model; }
             set
             {
                 _model = value;
+                Description = string.IsNullOrWhiteSpace(value.Description) ? null : _markdownService.ConvertMarkdown(value.Description);
                 _merged = string.Equals(value.State, "MERGED");
                 RaisePropertyChanged(() => PullRequest);
             }
@@ -67,6 +72,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 }); 
             }
 		}
+
+        public PullRequestViewModel(IMarkdownService markdownService)
+        {
+            _markdownService = markdownService;
+        }
 
         public void Init(NavObject navObject)
         {

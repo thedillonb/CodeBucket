@@ -5,9 +5,9 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Utils;
 using CodeBucket.Elements;
 using System.Linq;
-using Newtonsoft.Json;
 using Humanizer;
 using CodeBucket.Core.Utils;
+using CodeBucket.WebCell;
 
 namespace CodeBucket.Views.Issues
 {
@@ -31,14 +31,13 @@ namespace CodeBucket.Views.Issues
 		{
 			base.ViewDidLoad();
 
+            Title = "Issue #" + ViewModel.Id;
             HeaderView.SetImage(null, Images.Avatar);
 
-			var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-            _descriptionElement = new WebElement(content, "description_webview", false);
+            _descriptionElement = new WebElement("description_webview");
 			_descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
-			var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-            _commentsElement = new WebElement(content2, "body_webview", true);
+            _commentsElement = new WebElement("body_webview");
 			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
@@ -47,27 +46,14 @@ namespace CodeBucket.Views.Issues
 			ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
 		}
 
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-			Title = "Issue #" + ViewModel.Id;
-		}
-
 		public void RenderComments()
 		{
-			var comments = ViewModel.Comments.Where(x => !string.IsNullOrEmpty(x.Content)).Select(x => new { 
-				avatarUrl = x.AuthorInfo.Avatar, 
-				login = x.AuthorInfo.Username, 
-                created_at = x.UtcCreatedOn.Humanize(), 
-				body = ViewModel.ConvertToMarkdown(x.Content)
-			});
+            var comments = ViewModel.Comments
+                .Where(x => !string.IsNullOrEmpty(x.Content))
+                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn, x.AuthorInfo.Avatar));
 
-			var data = JsonConvert.SerializeObject(comments);
-			InvokeOnMainThread(() => {
-				_commentsElement.Value = data;
-				if (_commentsElement.GetImmediateRootElement() == null)
-					RenderIssue();
-			});
+            _commentsElement.LoadContent(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
+            InvokeOnMainThread(RenderIssue);
 		}
 
 		public void RenderIssue()
@@ -80,7 +66,7 @@ namespace CodeBucket.Views.Issues
 			NavigationItem.RightBarButtonItem.Enabled = true;
             HeaderView.Text = ViewModel.Issue.Title;
             HeaderView.SetImage(avatar.ToUrl(), Images.Avatar);
-            HeaderView.SubText = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
+            HeaderView.SubText = ViewModel.Issue.Content ?? "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
             RefreshHeaderView();
 
             var split = new SplitButtonElement();
@@ -94,7 +80,7 @@ namespace CodeBucket.Views.Issues
 
 			if (!string.IsNullOrEmpty(ViewModel.Issue.Content))
 			{
-				_descriptionElement.Value = ViewModel.MarkdownDescription;
+                _descriptionElement.LoadContent(new MarkdownRazorView { Model = ViewModel.Issue.Content }.GenerateString());
 				secDetails.Add(_descriptionElement);
 			}
 
