@@ -3,17 +3,29 @@ using CodeBucket.Core.Services;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using CodeBucket.Elements;
+using UIKit;
+using Foundation;
+using System;
 
 namespace CodeBucket.Views.App
 {
     public class SettingsView : PrettyDialogViewController
     {
+        public SettingsView()
+        {
+            Title = "Settings";
+        }
+
         public override void ViewWillAppear(bool animated)
         {
-            var application = Mvx.Resolve<IApplicationService>();
             base.ViewWillAppear(animated);
-            Title = application.Account.Username;
+
+            var application = Mvx.Resolve<IApplicationService>();
+            HeaderView.Text = application.Account.Username;
+            HeaderView.SubText = Title;
             HeaderView.SetImage(null, Images.Avatar);
+            RefreshHeaderView();
+
             CreateTable();
         }
 
@@ -49,7 +61,17 @@ namespace CodeBucket.Views.App
 
 			//Assign the root
 			var root = new RootElement(Title);
-			root.Add(new Section("Apperance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
+            root.Add(new Section());
+            root.Add(new Section { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
+            root.Add(new Section { new StyledStringElement("Source Code", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket"))) });
+            root.Add(new Section(String.Empty, "Thank you for downloading. Enjoy!")
+            {
+                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))),
+                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))),
+                new StyledStringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
+            });
+
+            root.UnevenRows = true;
 			Root = root;
 
 		}

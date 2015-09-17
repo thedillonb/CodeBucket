@@ -6,6 +6,8 @@
 
 using CodeBucket;
 using CodeBucket.Core.Services;
+using System;
+using Security;
 
 namespace CodeBucket
 {
@@ -48,6 +50,9 @@ namespace CodeBucket
 		/// <returns>True or false.</returns>
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
+            // Stamp the date this was installed (first run)
+            StampInstallDate("CodeBucket");
+            
             this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
             var presenter = new TouchViewPresenter(this.Window);
             var setup = new Setup(this, presenter);
@@ -94,5 +99,48 @@ namespace CodeBucket
 
 			return true;
 		}
+
+        /// <summary>
+        /// Record the date this application was installed (or the date that we started recording installation date).
+        /// </summary>
+        private static DateTime StampInstallDate(string name)
+        {
+            try
+            {
+                var key = DateTime.Now.ToString();
+                var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = key };
+
+                SecStatusCode secStatusCode;
+                var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
+                if (secStatusCode != SecStatusCode.Success)
+                {
+                    queriedRecord = new SecRecord(SecKind.GenericPassword)
+                    {
+                        Label = name + " Install Date",
+                        Service = name,
+                        Account = key,
+                        Description = string.Format("The first date {0} was installed", name),
+                        Generic = NSData.FromString(DateTime.UtcNow.ToString())
+                    };
+
+                    var err = SecKeyChain.Add(queriedRecord);
+                    if (err != SecStatusCode.Success)
+                        System.Diagnostics.Debug.WriteLine("Unable to save stamp date!");
+                }
+                else
+                {
+                    DateTime time;
+                    if (!DateTime.TryParse(queriedRecord.Generic.ToString(), out time))
+                        SecKeyChain.Remove(query);
+                }
+
+                return DateTime.Parse(NSString.FromData(queriedRecord.Generic, NSStringEncoding.UTF8));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return DateTime.Now;
+            }
+        }
 	}
 }

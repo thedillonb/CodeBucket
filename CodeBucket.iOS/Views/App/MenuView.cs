@@ -76,15 +76,10 @@ namespace CodeBucket.Views.App
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
 			infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
+            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.Execute(null), Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
 		}
-
-        private void PresentUserVoice()
-        {
-
-        }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
         {

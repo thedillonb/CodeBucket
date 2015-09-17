@@ -91,6 +91,9 @@
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <IpaPackageName>
+    </IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -107,6 +110,7 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
@@ -155,7 +159,6 @@
     <Compile Include="Views\Groups\GroupsView.cs" />
     <Compile Include="Views\Repositories\WatchersView.cs" />
     <Compile Include="Views\Groups\GroupView.cs" />
-    <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Views\Issues\IssueModifyView.cs" />
     <Compile Include="Views\Wiki\WikiView.cs" />

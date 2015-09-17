@@ -92,7 +92,7 @@ namespace CodeBucket.Elements
                         color = LinkColor;
                 }
 
-                var font = b.Font ?? UIFont.PreferredBody;
+                var font = b.Font ?? UIFont.PreferredSubheadline;
                 color = color ?? Theme.CurrentTheme.MainTextColor;
                 var ctFont = new CoreText.CTFont(font.Name, font.PointSize);
                 var str = new NSAttributedString(b.Value, new CoreText.CTStringAttributes { ForegroundColor = color.CGColor, Font = ctFont });
