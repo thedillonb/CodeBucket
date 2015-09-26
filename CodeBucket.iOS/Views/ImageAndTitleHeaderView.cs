@@ -125,7 +125,7 @@ namespace CodeBucket.Views
         public ImageAndTitleHeaderView()
             : base(new CGRect(0, 0, 320f, 100f))
         {
-            ImageButton = new UIButton(UIButtonType.Custom);
+            ImageButton = new UIButton();
             ImageButton.Frame = new CGRect(0, 0, 80, 80);
             ImageButton.TouchUpInside += (sender, e) => {
                 if (ImageButtonAction != null)

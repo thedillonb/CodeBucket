@@ -3,11 +3,22 @@ using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.Accounts;
 using UIKit;
 using CodeBucket.Utils;
+using System.Text;
+using System.Linq;
 
 namespace CodeBucket.Views.Accounts
 {
     public class LoginView : WebView
     {
+        // Routes that we shouldn't navigate to because apple will loose their shit because the user
+        // might purchase something from a service we're not affiliated with... Assholes.
+        private static string[] ForbiddenRoutes = {
+            "https://bitbucket.org/features",
+            "https://bitbucket.org/account/signup",
+            "https://bitbucket.org/plans",
+            "https://bitbucket.org/product/pricing",
+        };
+
 		public new LoginViewModel ViewModel
 		{
 			get { return (LoginViewModel)base.ViewModel; }
@@ -44,8 +55,11 @@ namespace CodeBucket.Views.Accounts
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
             // Fucking BitBucket and their horrible user interface.
-            if (request.Url.AbsoluteString == "https://bitbucket.org/features")
+            if (ForbiddenRoutes.Any(request.Url.AbsoluteString.StartsWith))
+            {
+                MonoTouch.Utilities.ShowAlert("Invalid Request", "Sorry, this portion of BitBucket is restricted due to Apple guideline 11.12.");
                 return false;
+            }
 
             //We're being redirected to our redirect URL so we must have been successful
             if (request.Url.Host == "codebucket")
@@ -67,6 +81,23 @@ namespace CodeBucket.Views.Accounts
 
 			MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with Bitbucket. " + e.Error.LocalizedDescription);
 		}
+
+        protected override void OnLoadFinished(object sender, EventArgs e)
+        {
+            base.OnLoadFinished(sender, e);
+
+            if (Web.Request?.Url?.AbsoluteString?.StartsWith("https://bitbucket") ?? false)
+            {
+                var script = new StringBuilder();
+
+                //Apple is full of clowns. The GitHub login page has links that can ultimiately end you at a place where you can purchase something
+                //so we need to inject javascript that will remove these links. What a bunch of idiots...
+                script.Append("$('#header').hide();");
+                script.Append("$('#footer').hide();");
+
+                Web.EvaluateJavascript("(function(){setTimeout(function(){" + script + "}, 100); })();");
+            }
+        }
 
         private void LoadRequest()
         {

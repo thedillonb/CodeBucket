@@ -77,7 +77,7 @@ namespace CodeBucket.ViewControllers
         {
             var fontSize = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 22 : 28f;
 
-            var btn = new UIButton(UIButtonType.System);
+            var btn = new UIButton();
             btn.Frame = new CGRect(0, 0, 32, 32);
             btn.SetTitle(title, UIControlState.Normal);
             btn.BackgroundColor = UIColor.White;
