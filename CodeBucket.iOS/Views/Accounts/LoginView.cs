@@ -57,7 +57,7 @@ namespace CodeBucket.Views.Accounts
             // Fucking BitBucket and their horrible user interface.
             if (ForbiddenRoutes.Any(request.Url.AbsoluteString.StartsWith))
             {
-                MonoTouch.Utilities.ShowAlert("Invalid Request", "Sorry, this portion of BitBucket is restricted due to Apple guideline 11.12.");
+                MonoTouch.Utilities.ShowAlert("Invalid Request", "Sorry, due to restrictions, you can not sign-up for a new account in CodeBucket.");
                 return false;
             }
 
