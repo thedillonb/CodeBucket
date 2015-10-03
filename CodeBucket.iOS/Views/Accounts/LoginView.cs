@@ -10,7 +10,7 @@ namespace CodeBucket.Views.Accounts
 {
     public class LoginView : WebView
     {
-        // Routes that we shouldn't navigate to because apple will loose their shit because the user
+        // Routes that we shouldn't navigate to because apple will lose their shit because the user
         // might purchase something from a service we're not affiliated with... Assholes.
         private static string[] ForbiddenRoutes = {
             "https://bitbucket.org/features",
