@@ -62,5 +62,10 @@
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

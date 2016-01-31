@@ -13,6 +13,7 @@ using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
 using Cirrious.CrossCore;
 using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Issues;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -192,7 +193,7 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ICommand GoToFeedbackCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = "https://codebucket.uservoice.com/" }));}
+            get { return new MvxCommand(() => ShowMenuViewModel<IssuesViewModel>(new IssuesViewModel.NavObject { Repository = "CodeBucket", Username = "thedillonb" }));}
         }
 
 

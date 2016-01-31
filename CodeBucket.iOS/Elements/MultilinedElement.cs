@@ -45,8 +45,8 @@ namespace CodeBucket.Elements
         {
             Caption = caption;
 			BackgroundColor = UIColor.White;
-            CaptionFont = UIFont.SystemFontOfSize(15f * Element.FontSizeRatio);
-            ValueFont = UIFont.SystemFontOfSize(13f * Element.FontSizeRatio);
+            CaptionFont = UIFont.PreferredHeadline;
+            ValueFont = UIFont.PreferredBody;
             CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
             Accessory = UITableViewCellAccessory.None;
         }

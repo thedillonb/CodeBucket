@@ -114,7 +114,6 @@ namespace CodeBucket.Elements
             }
 
             public SplitButton(string caption, string text)
-                : base(UIButtonType.Custom)
             {
                 AutosizesSubviews = true;
 

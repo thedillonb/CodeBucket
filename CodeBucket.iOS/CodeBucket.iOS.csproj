@@ -263,6 +263,10 @@
     <Compile Include="WebCell\MarkdownRazorView.cs">
       <DependentUpon>MarkdownRazorView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="Elements\ExpandingInputElement.cs" />
+    <Compile Include="Views\ExtendedUITextView.cs" />
+    <Compile Include="Views\App\SupportView.cs" />
+    <Compile Include="Elements\ButtonElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

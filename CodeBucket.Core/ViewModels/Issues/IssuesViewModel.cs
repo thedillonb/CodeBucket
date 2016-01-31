@@ -20,6 +20,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
+        public bool Simple { get; private set; }
 
 		protected FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
 		public FilterableCollectionViewModel<IssueModel, IssuesFilterModel> Issues
@@ -41,6 +42,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			Username = nav.Username;
 			Repository = nav.Repository;
+            Simple = nav.Simple;
 			_issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
 			_issues.GroupingFunction = Group;
 			_issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
@@ -212,6 +214,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
+            public bool Simple { get; set; }
+
+            public NavObject()
+            {
+                Simple = false;
+            }
 		}
     }
 }

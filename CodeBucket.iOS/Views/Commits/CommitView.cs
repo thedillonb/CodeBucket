@@ -33,6 +33,9 @@ namespace CodeBucket.Views.Commits
         {
             base.ViewDidLoad();
 
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
             Title = "Commit";
             Root.UnevenRows = true;
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());

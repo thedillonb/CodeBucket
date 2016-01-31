@@ -232,11 +232,12 @@ namespace CodeBucket.Core.ViewModels.Events
                     return null;
 
                 var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(eventModel.Description);
+                var commits = data.Commits.Count;
 
 				if (eventModel.Repository != null)
 					eventBlock.Tapped = () => GoToCommits(eventModel.Repository, null);
 
-				eventBlock.Header.Add(new TextBlock(" pushed " + data.TotalCommits + " commit" + (data.TotalCommits > 1 ? "s" : string.Empty)));
+                eventBlock.Header.Add(new TextBlock(" pushed " + commits + " commit" + (commits > 1 ? "s" : string.Empty)));
 
                 if (ReportRepository)
                 {
