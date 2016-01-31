@@ -9,9 +9,7 @@ namespace System
     {
 		public static void Report(this Exception e)
 		{
-			var service = Mvx.Resolve<IErrorService>();
-			if (service != null)
-				service.ReportError(e);
+
 		}
 
         [System.Diagnostics.Conditional("DEBUG")]
