@@ -67,5 +67,9 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Atlassian-icons.ttf</string>
+	</array>
 </dict>
 </plist>

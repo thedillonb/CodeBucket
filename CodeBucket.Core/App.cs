@@ -1,5 +1,5 @@
-using Cirrious.MvvmCross.ViewModels;
 using CodeBucket.Core.ViewModels.App;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core
 {
@@ -14,7 +14,7 @@ namespace CodeBucket.Core
         public override void Initialize()
         {
 			//Ensure this is loaded
-			Cirrious.MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
+            MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
 
             // Start the app with the First View Model.
 			this.RegisterAppStart<StartupViewModel>();

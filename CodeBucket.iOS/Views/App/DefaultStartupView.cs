@@ -3,7 +3,7 @@ using System.Linq;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using CodeBucket.Elements;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Views.App
 {

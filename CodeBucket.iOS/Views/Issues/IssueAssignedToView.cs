@@ -5,7 +5,7 @@ using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Views.Issues
 {

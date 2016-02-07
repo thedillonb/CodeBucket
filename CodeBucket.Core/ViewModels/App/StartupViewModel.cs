@@ -4,7 +4,7 @@ using CodeBucket.Core.Services;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Accounts;
 using BitbucketSharp;

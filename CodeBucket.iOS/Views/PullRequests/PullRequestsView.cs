@@ -1,10 +1,10 @@
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
 using CodeBucket.Core.Utils;
 using CodeBucket.Cells;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeBucket.Views.PullRequests
 {

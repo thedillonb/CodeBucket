@@ -47,7 +47,7 @@ namespace CodeBucket.Core.ViewModels.App
             {
                 _accountsService.ActiveAccount.DefaultStartupView = x;
                 _accountsService.Update(_accountsService.ActiveAccount);
-                ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+                ChangePresentation(new MvvmCross.Core.ViewModels.MvxClosePresentationHint(this));
             });
         }
     }

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BitbucketSharp.Models;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {

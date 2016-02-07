@@ -8,12 +8,12 @@ using CodeBucket;
 using CodeBucket.Core.Services;
 using System;
 using Security;
+using MvvmCross.iOS.Platform;
 
 namespace CodeBucket
 {
-	using Cirrious.CrossCore;
-	using Cirrious.MvvmCross.Touch.Platform;
-	using Cirrious.MvvmCross.ViewModels;
+	using MvvmCross.Platform;
+	using MvvmCross.Core.ViewModels;
 	using Foundation;
 	using UIKit;
 
@@ -54,7 +54,7 @@ namespace CodeBucket
             StampInstallDate("CodeBucket");
             
             this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            var presenter = new TouchViewPresenter(this.Window);
+            var presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, presenter);
             setup.Initialize();
 

@@ -1,8 +1,8 @@
 using CodeBucket.Core.ViewModels.Source;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeBucket.Views.Source
 {

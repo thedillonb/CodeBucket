@@ -8,7 +8,7 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Utils;
 using System.Text;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using Newtonsoft.Json;
 
 namespace CodeBucket.Views.Source

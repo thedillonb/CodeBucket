@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Accounts;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 

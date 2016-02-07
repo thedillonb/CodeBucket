@@ -6,7 +6,7 @@ using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels;
 using CodeBucket.Elements;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Views.Issues
 {

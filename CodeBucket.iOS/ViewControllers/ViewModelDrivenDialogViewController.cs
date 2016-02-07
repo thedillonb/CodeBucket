@@ -1,12 +1,12 @@
 using System;
-using Cirrious.CrossCore.Core;
-using Cirrious.CrossCore.Touch.Views;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using UIKit;
 using CodeBucket.Core.ViewModels;
 using CodeBucket.Views;
+using MvvmCross.iOS.Views;
+using MvvmCross.Platform.iOS.Views;
+using MvvmCross.Platform.Core;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeBucket.ViewControllers
 {
@@ -111,7 +111,7 @@ namespace CodeBucket.ViewControllers
 
 
 
-    public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxTouchView, IMvxEventSourceViewController
+    public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
     {
         private UIRefreshControl _refreshControl;
         private bool _manualRefreshRequested;

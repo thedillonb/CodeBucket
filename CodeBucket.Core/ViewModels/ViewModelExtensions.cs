@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Services;
 using System.Collections.Generic;
 using System.Collections.Specialized;

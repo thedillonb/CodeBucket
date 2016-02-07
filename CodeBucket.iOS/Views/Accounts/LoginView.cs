@@ -5,6 +5,7 @@ using UIKit;
 using CodeBucket.Utils;
 using System.Text;
 using System.Linq;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Views.Accounts
 {
@@ -28,7 +29,7 @@ namespace CodeBucket.Views.Accounts
         public LoginView()
             : base(true)
         {
-            Request = new Cirrious.MvvmCross.ViewModels.MvxViewModelRequest { ViewModelType = typeof(LoginViewModel) };
+            Request = new MvxViewModelRequest { ViewModelType = typeof(LoginViewModel) };
             Title = "Login";
         }
 

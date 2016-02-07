@@ -2,7 +2,7 @@ using System;
 using CodeBucket.Views;
 using UIKit;
 using Foundation;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Core.ViewModels;
 using CodeBucket.Core.Services;
 

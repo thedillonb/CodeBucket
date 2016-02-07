@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Elements;
 using CodeBucket.ViewControllers;
 using UIKit;
@@ -7,7 +7,7 @@ using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Data;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Views.Accounts
 {

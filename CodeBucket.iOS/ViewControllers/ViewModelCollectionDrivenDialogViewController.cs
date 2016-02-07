@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
 using UIKit;

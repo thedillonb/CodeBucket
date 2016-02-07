@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
 using System.Text;

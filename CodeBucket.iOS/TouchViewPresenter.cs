@@ -1,25 +1,25 @@
 using System;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.Touch.Views;
-using Cirrious.MvvmCross.Touch.Views.Presenters;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.ViewControllers;
 using UIKit;
 using MonoTouch.SlideoutNavigation;
 using CodeBucket.Views;
 using CodeBucket.Core;
 using CodeBucket.Views.Accounts;
+using MvvmCross.iOS.Views.Presenters;
+using MvvmCross.iOS.Views;
 
 namespace CodeBucket
 {
-    public class TouchViewPresenter : MvxBaseTouchViewPresenter
+    public class IosViewPresenter : MvxBaseIosViewPresenter
     {
         private readonly UIWindow _window;
         private UINavigationController _generalNavigationController;
         private SlideoutNavigationController _slideoutController;
-        private IMvxModalTouchView _currentModal;
+        private IMvxModalIosView _currentModal;
 
-        public TouchViewPresenter(UIWindow window)
+        public IosViewPresenter(UIWindow window)
         {
             _window = window;
         }
@@ -38,7 +38,7 @@ namespace CodeBucket
                 for (int i = _generalNavigationController.ViewControllers.Length - 1; i >= 1; i--)
                 {
                     var vc = _generalNavigationController.ViewControllers[i];
-                    var touchView = vc as IMvxTouchView;
+                    var touchView = vc as IMvxIosView;
                     if (touchView != null && touchView.ViewModel == closeHint.ViewModelToClose)
                     {
                         _generalNavigationController.PopToViewController(_generalNavigationController.ViewControllers[i - 1], true);
@@ -58,19 +58,19 @@ namespace CodeBucket
             if (uiView == null)
                 throw new InvalidOperationException("Asking to show a view which is not a UIViewController!");
 
-            if (uiView is IMvxModalTouchView)
+            if (uiView is IMvxModalIosView)
             {
                 if (_currentModal != null)
                     throw new InvalidOperationException("Cannot have multiple modals");
 
-                _currentModal = (IMvxModalTouchView)uiView;
+                _currentModal = (IMvxModalIosView)uiView;
                 var modalNavigationController = new UINavigationController(uiView);
                 modalNavigationController.NavigationBar.Translucent = false;
                 modalNavigationController.Toolbar.Translucent = false;
                 uiView.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) =>
                 {
-                    var vm = ((IMvxModalTouchView)uiView).ViewModel;
-                    Mvx.Resolve<Cirrious.MvvmCross.Plugins.Messenger.IMvxMessenger>().Publish(new CodeFramework.Core.Messages.CancelationMessage(vm));
+                    var vm = ((IMvxModalIosView)uiView).ViewModel;
+                    Mvx.Resolve<MvvmCross.Plugins.Messenger.IMvxMessenger>().Publish(new CodeFramework.Core.Messages.CancelationMessage(vm));
                     modalNavigationController.DismissViewController(true, null);
                     _currentModal = null;
                 });

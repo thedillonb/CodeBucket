@@ -1,5 +1,5 @@
 using System;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Filters;
 using System.Linq;

@@ -1,7 +1,7 @@
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.Accounts

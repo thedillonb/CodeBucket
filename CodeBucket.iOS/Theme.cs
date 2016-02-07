@@ -57,6 +57,10 @@ namespace CodeBucket
 
             CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
+
+            var iconColor = UIColor.FromRGB(0x4a, 0x67, 0x85);
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
+
 		}
 
 		public UITextAttributes SegmentedControlText

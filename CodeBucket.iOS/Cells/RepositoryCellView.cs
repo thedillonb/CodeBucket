@@ -1,8 +1,8 @@
 using System;
-using Cirrious.MvvmCross.Binding.Touch.Views;
 using Foundation;
 using UIKit;
 using SDWebImage;
+using MvvmCross.Binding.iOS.Views;
 
 namespace CodeBucket.Cells
 {

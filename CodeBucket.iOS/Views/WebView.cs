@@ -1,8 +1,8 @@
 using System;
-using Cirrious.MvvmCross.Touch.Views;
 using UIKit;
 using Foundation;
 using CodeBucket.Core.ViewModels;
+using MvvmCross.iOS.Views;
 
 namespace CodeBucket.Views
 {

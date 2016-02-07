@@ -1,4 +1,3 @@
-using Cirrious.MvvmCross.Touch.Views;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Views.Filters;
 using UIKit;
@@ -6,10 +5,11 @@ using System;
 using Foundation;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
+using MvvmCross.iOS.Views;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssuesFiltersView : ViewModelCollectionDrivenDialogViewController, IMvxModalTouchView
+    public class IssuesFiltersView : ViewModelCollectionDrivenDialogViewController, IMvxModalIosView
     {
         public new IssuesFiltersViewModel ViewModel
         {

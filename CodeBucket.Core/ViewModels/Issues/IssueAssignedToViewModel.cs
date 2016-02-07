@@ -4,7 +4,7 @@ using CodeBucket.Core.Messages;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {

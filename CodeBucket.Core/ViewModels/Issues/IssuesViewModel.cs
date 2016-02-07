@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using CodeBucket.Core.Filters;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Messages;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;

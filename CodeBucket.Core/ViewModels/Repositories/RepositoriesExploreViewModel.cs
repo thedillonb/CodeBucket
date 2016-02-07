@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Repositories;
 using BitbucketSharp.Models;

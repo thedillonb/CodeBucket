@@ -1,7 +1,7 @@
-using Cirrious.MvvmCross.Touch.Views;
 using CodeBucket.Utils;
 using UIKit;
 using CodeBucket.Core.ViewModels;
+using MvvmCross.iOS.Views;
 
 namespace CodeBucket.ViewControllers
 {

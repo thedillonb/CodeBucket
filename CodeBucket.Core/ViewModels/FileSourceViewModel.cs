@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels

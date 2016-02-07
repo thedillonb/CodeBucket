@@ -525,6 +525,8 @@ namespace CodeBucket.ViewControllers
             base.ViewDidLoad();
             if (Title != null && Root != null)
                 Root.Caption = Title;
+
+            TableView.CellLayoutMarginsFollowReadableWidth = false;
         }
 
 		public DialogViewController (RootElement root) 

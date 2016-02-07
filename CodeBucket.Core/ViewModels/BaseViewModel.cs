@@ -1,7 +1,7 @@
 using System;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using CodeFramework.Core.Messages;
 using CodeBucket.Core.Services;

@@ -3,7 +3,7 @@ using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Core.Filters;
 using CodeBucket.ViewControllers;
 using CodeBucket.Elements;
