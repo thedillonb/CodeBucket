@@ -42,7 +42,7 @@ namespace CodeBucket
 
             CodeBucket.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
 
-            UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(45,80,148);
+            UISegmentedControl.Appearance.TintColor = Theme.CurrentTheme.PrimaryColor;
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
@@ -57,7 +57,7 @@ namespace CodeBucket
             CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
 
-            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = Theme.CurrentTheme.SecondaryColor;
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = Theme.CurrentTheme.IconColor;
 
 		}
 
@@ -87,11 +87,6 @@ namespace CodeBucket
 
 		public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
-
-		//Cache these because we make a smaller size of them
-		private UIImage _issueCell1, _issueCell2, _issueCell3, _issueCell4;
-		private UIImage _repoCell1, _repoCell2, _repoCell3;
-
 		public UIImage IssueCellImage1
 		{
             get { return AtlassianIcon.Configure.ToImage(); }
@@ -110,21 +105,6 @@ namespace CodeBucket
 		public UIImage IssueCellImage4
 		{
             get { return AtlassianIcon.Edit.ToImage(); }
-		}
-
-		public UIImage RepositoryCellFollowers
-		{
-            get { return AtlassianIcon.Star.ToImage(); }
-		}
-
-		public UIImage RepositoryCellForks
-		{
-            get { return AtlassianIcon.Devtoolsfork.ToImage(); }
-		}
-
-		public UIImage RepositoryCellUser
-		{
-            get { return AtlassianIcon.User.ToImage(); }
 		}
 
 		public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
@@ -181,8 +161,14 @@ namespace CodeBucket
 
         public UIColor SecondaryColor
         {
-            get { return UIColor.FromRGB(0x4a, 0x67, 0x85); }
-                //            var iconColor = UIColor.FromRGB(0x70, 0x70, 0x70);
+            get { return UIColor.FromRGB(0x35, 0x72, 0xb0); }
+            //            var iconColor = UIColor.FromRGB(0x70, 0x70, 0x70);#3572b0
+        }
+
+
+        public UIColor IconColor
+        {
+            get { return UIColor.FromRGB(0x70, 0x70, 0x70); }
         }
 
 		public UITextAttributes PrimaryNavigationBarTextAttributes

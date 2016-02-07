@@ -39,12 +39,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 		private IEnumerable<IGrouping<string, RepositoryDetailedModel>> CreateGroupedItems(IEnumerable<RepositoryDetailedModel> model)
         {
             var order = Repositories.Filter.OrderBy;
-            if (order == RepositoriesFilterModel.Order.Forks)
-            {
-				var a = model.OrderBy(x => x.ForkCount).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.ForkCount));
-                a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Forks");
-            }
+
             if (order == RepositoriesFilterModel.Order.LastUpdated)
             {
                 var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
@@ -56,12 +51,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
                 a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
-            }
-            if (order == RepositoriesFilterModel.Order.Followers)
-            {
-				var a = model.OrderBy(x => x.FollowersCount).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.FollowersCount));
-                a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Followers");
             }
             if (order == RepositoriesFilterModel.Order.Owner)
             {

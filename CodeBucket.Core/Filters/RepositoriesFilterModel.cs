@@ -20,14 +20,12 @@ namespace CodeBucket.Core.Filters
 
         public enum Order : int
         { 
-            Name, 
-            Owner,
+            Name = 0, 
+            Owner = 1,
             [Description("Last Updated")]
-            LastUpdated,
-            Followers,
-            Forks,
+            LastUpdated = 2,
             [Description("Created Date")]
-            CreatedOn, 
+            CreatedOn = 5, 
         };
     }
 }

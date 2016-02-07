@@ -25,7 +25,7 @@ namespace CodeBucket.Views.Repositories
 
             HeaderView.SetImage(null, Images.RepoPlaceholder);
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action);
             NavigationItem.RightBarButtonItem.Enabled = false;
 
             ViewModel.Bind(x => x.Repository, x =>
@@ -34,15 +34,24 @@ namespace CodeBucket.Views.Repositories
                 Render(x);
             });
 
-            ViewModel.Bind(x => x.HasReadme, () =>
-            {
-                // Not very efficient but it'll work for now.
-                if (ViewModel.Repository != null)
-                    Render(ViewModel.Repository);
-            });
+            ViewModel.Bind(x => x.Branches, () => Render(ViewModel.Repository));
+            ViewModel.Bind(x => x.Issues, () => Render(ViewModel.Repository));
+            ViewModel.Bind(x => x.HasReadme, () => Render(ViewModel.Repository));
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem.Clicked += ShowExtraMenu;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem.Clicked -= ShowExtraMenu;
         }
 		
-        private void ShowExtraMenu()
+        private void ShowExtraMenu(object o, EventArgs args)
         {
             var repoModel = ViewModel.Repository;
             if (repoModel == null)
@@ -81,9 +90,13 @@ namespace CodeBucket.Views.Repositories
 
         SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.Pagedefault.ToImage());
         SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
+        SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
 
 		public void Render(RepositoryDetailedModel model)
         {
+            if (model == null)
+                return;
+            
 			Title = model.Name;
 
             var avatar = new Avatar(model.Logo).ToUrl(128);
@@ -95,6 +108,7 @@ namespace CodeBucket.Views.Repositories
             var split = new SplitButtonElement();
             split.AddButton("Followers", model.FollowersCount.ToString());
             split.AddButton("Forks", model.ForkCount.ToString());
+            split.AddButton("Branches", ViewModel.Branches?.Count.ToString() ?? "-");
 
             var sec1 = new Section();
 
@@ -103,26 +117,12 @@ namespace CodeBucket.Views.Repositories
             _split1.Button2.Text = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language;
             sec1.Add(_split1);
 
-
-            //Calculate the best representation of the size
-            string size;
-            if (model.Size / 1024f < 1)
-                size = string.Format("{0:0.##}B", model.Size);
-            else if ((model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}KB", model.Size / 1024f);
-            else
-                size = string.Format("{0:0.##}MB", model.Size / 1024f / 1024f);
-//
-//            sec1.Add(new SplitElement(new SplitElement.Row {
-//				Text1 = model + (model.HasIssues == 1 ? " Issue" : " Issues"),
-//                Image1 = Images.Flag,
-//				Text2 = model.ForkCount.ToString() + (model.ForkCount == 1 ? " Fork" : " Forks"),
-//                Image2 = Images.Fork
-//            }));
-//
+            _split3.Button1.Text = model.Scm.ApplyCase(LetterCasing.Title);
+            _split3.Button2.Text = "Issues".ToQuantity(ViewModel.Issues);
+            sec1.Add(_split3);
 
             _split2.Button1.Text = (model.UtcCreatedOn).ToString("MM/dd/yy");
-            _split2.Button2.Text = size;
+            _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 
             var owner = new StyledStringElement("Owner", model.Owner) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };

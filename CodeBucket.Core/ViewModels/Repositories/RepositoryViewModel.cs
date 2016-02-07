@@ -60,6 +60,16 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
         }
 
+        private int _issues;
+        public int Issues
+        {
+            get { return _issues; }
+            private set {
+                _issues = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
@@ -165,6 +175,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
 				response => Branches = response.Values.ToList()).FireAndForget();
 
             LoadReadme().FireAndForget();
+
+            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
+                .ContinueWith(x => {
+                    Issues = x.Result.Count;
+                }, TaskContinuationOptions.OnlyOnRanToCompletion);
 //
 //			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
 //				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
