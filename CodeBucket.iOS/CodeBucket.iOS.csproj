@@ -227,7 +227,6 @@
     <Compile Include="Elements\NoItemsElement.cs" />
     <Compile Include="Elements\OwnerDrawnElement.cs" />
     <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SplitElement.cs" />
     <Compile Include="Elements\TrueFalseElement.cs" />
     <Compile Include="Elements\LoadMoreElement.cs" />
     <Compile Include="Utils\Graphics.cs" />
@@ -238,7 +237,6 @@
     <Compile Include="Views\Accounts\AccountsView.cs" />
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
-    <Compile Include="Elements\SplitButtonElement.cs" />
     <Compile Include="Cells\CommitCellView.cs" />
     <Compile Include="Cells\CommitCellView.designer.cs">
       <DependentUpon>CommitCellView.cs</DependentUpon>
@@ -268,6 +266,8 @@
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="AtlassianIcons.cs" />
     <Compile Include="AtlassianIconsExtensions.cs" />
+    <Compile Include="Elements\SplitViewElement.cs" />
+    <Compile Include="Elements\SplitButtonElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -324,72 +324,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <BundleResource Include="Images\bin_closed.png" />
-    <BundleResource Include="Images\bin_closed%402x.png" />
-    <BundleResource Include="Images\branch.png" />
-    <BundleResource Include="Images\branch%402x.png" />
-    <BundleResource Include="Images\cog.png" />
-    <BundleResource Include="Images\cog%402x.png" />
-    <BundleResource Include="Images\comments.png" />
-    <BundleResource Include="Images\comments%402x.png" />
-    <BundleResource Include="Images\commit.png" />
-    <BundleResource Include="Images\commit%402x.png" />
-    <BundleResource Include="Images\create.png" />
-    <BundleResource Include="Images\create%402x.png" />
-    <BundleResource Include="Images\events.png" />
-    <BundleResource Include="Images\events%402x.png" />
-    <BundleResource Include="Images\explore.png" />
-    <BundleResource Include="Images\explore%402x.png" />
-    <BundleResource Include="Images\file.png" />
-    <BundleResource Include="Images\file%402x.png" />
-    <BundleResource Include="Images\flag.png" />
-    <BundleResource Include="Images\flag%402x.png" />
-    <BundleResource Include="Images\folder.png" />
-    <BundleResource Include="Images\folder%402x.png" />
-    <BundleResource Include="Images\following.png" />
-    <BundleResource Include="Images\following%402x.png" />
-    <BundleResource Include="Images\fork.png" />
-    <BundleResource Include="Images\fork%402x.png" />
-    <BundleResource Include="Images\group.png" />
-    <BundleResource Include="Images\group%402x.png" />
-    <BundleResource Include="Images\hand.png" />
-    <BundleResource Include="Images\hand%402x.png" />
-    <BundleResource Include="Images\heart.png" />
-    <BundleResource Include="Images\heart%402x.png" />
-    <BundleResource Include="Images\info.png" />
-    <BundleResource Include="Images\info%402x.png" />
-    <BundleResource Include="Images\language.png" />
-    <BundleResource Include="Images\language%402x.png" />
-    <BundleResource Include="Images\locked.png" />
-    <BundleResource Include="Images\locked%402x.png" />
-    <BundleResource Include="Images\merge.png" />
-    <BundleResource Include="Images\merge%402x.png" />
-    <BundleResource Include="Images\milestone.png" />
-    <BundleResource Include="Images\milestone%402x.png" />
-    <BundleResource Include="Images\notifications.png" />
-    <BundleResource Include="Images\notifications%402x.png" />
-    <BundleResource Include="Images\pencil.png" />
-    <BundleResource Include="Images\pencil%402x.png" />
-    <BundleResource Include="Images\person.png" />
-    <BundleResource Include="Images\person%402x.png" />
-    <BundleResource Include="Images\priority.png" />
-    <BundleResource Include="Images\priority%402x.png" />
-    <BundleResource Include="Images\repo.png" />
-    <BundleResource Include="Images\repo%402x.png" />
-    <BundleResource Include="Images\script.png" />
-    <BundleResource Include="Images\script%402x.png" />
-    <BundleResource Include="Images\size.png" />
-    <BundleResource Include="Images\size%402x.png" />
-    <BundleResource Include="Images\tag.png" />
-    <BundleResource Include="Images\tag%402x.png" />
-    <BundleResource Include="Images\team.png" />
-    <BundleResource Include="Images\team%402x.png" />
-    <BundleResource Include="Images\unlocked.png" />
-    <BundleResource Include="Images\unlocked%402x.png" />
-    <BundleResource Include="Images\user.png" />
-    <BundleResource Include="Images\user%402x.png" />
-    <BundleResource Include="Images\webpage.png" />
-    <BundleResource Include="Images\webpage%402x.png" />
     <BundleResource Include="Images\Buttons\back.png" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
     <BundleResource Include="Images\Buttons\cancel.png" />
@@ -413,18 +347,6 @@
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
-    <BundleResource Include="Images\cancel.png" />
-    <BundleResource Include="Images\accept.png" />
-    <BundleResource Include="Images\cancel%402x.png" />
-    <BundleResource Include="Images\accept%402x.png" />
-    <BundleResource Include="Images\sitemap_color%402x.png" />
-    <BundleResource Include="Images\sitemap_color.png" />
-    <BundleResource Include="Images\server_components%402x.png" />
-    <BundleResource Include="Images\server_components.png" />
-    <BundleResource Include="Images\book_link%402x.png" />
-    <BundleResource Include="Images\book_link.png" />
-    <BundleResource Include="Images\star.png" />
-    <BundleResource Include="Images\star%402x.png" />
     <BundleResource Include="CodeBucketIcon.png" />
     <None Include="SourceBrowser\css\arta.css" />
     <None Include="SourceBrowser\css\ascetic.css" />
@@ -482,6 +404,7 @@
     <Folder Include="Views\Wiki\" />
     <Folder Include="Views\Teams\" />
     <Folder Include="Views\Commits\" />
+    <Folder Include="Markdown\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
@@ -508,6 +431,9 @@
     <Content Include="SourceBrowser\css\vs.css" />
     <Content Include="SourceBrowser\highlight.pack.js" />
     <Content Include="SourceBrowser\file-loader.js" />
+    <Content Include="Markdown\markdown.html" />
+    <Content Include="Markdown\marked.js" />
+    <Content Include="Markdown\textile.js" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

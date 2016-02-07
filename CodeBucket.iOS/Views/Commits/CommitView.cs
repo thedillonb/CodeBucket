@@ -38,7 +38,6 @@ namespace CodeBucket.Views.Commits
 
             Title = "Commit";
             Root.UnevenRows = true;
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 
             HeaderView.SetImage(null, Images.Avatar);
 
@@ -46,7 +45,13 @@ namespace CodeBucket.Views.Commits
             ViewModel.Bind(x => x.Commit, Render);
 			ViewModel.BindCollection(x => x.Comments, a => Render());
 			_segmentBarButton.Width = View.Frame.Width - 10f;
-			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+            ToolbarItems = null;
         }
 
         public void Render()
@@ -91,7 +96,7 @@ namespace CodeBucket.Views.Commits
                     Lines = 1, 
                     Font = StyledStringElement.DefaultDetailFont, 
                     TextColor = StyledStringElement.DefaultDetailColor,
-                    Image = Images.Repo
+                    Image = AtlassianIcon.Devtoolsrepository.ToImage()
                 };
                 repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
                 detailSection.Add(repo);
@@ -133,7 +138,7 @@ namespace CodeBucket.Views.Commits
 				if (commentSection.Elements.Count > 0)
 					root.Add(commentSection);
 
-				var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+                var addComment = new StyledStringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
 				addComment.Tapped += AddCommentTapped;
 				root.Add(new Section { addComment });
 			}
@@ -152,12 +157,12 @@ namespace CodeBucket.Views.Commits
 				StyledStringElement approveButton;
                 if (ViewModel.Commit.Participants.Any(x => x.User.Username.Equals(ViewModel.GetApplication().Account.Username) && x.Approved))
 				{
-					approveButton = new StyledStringElement("Unapprove") { Image = Images.Cancel };
+                    approveButton = new StyledStringElement("Unapprove") { Image = AtlassianIcon.Approve.ToImage() };
 					approveButton.Tapped += () => this.DoWorkAsync("Unapproving...", ViewModel.Unapprove);
 				}
 				else
 				{
-					approveButton = new StyledStringElement("Approve") { Image = Images.Accept };
+                    approveButton = new StyledStringElement("Approve") { Image = AtlassianIcon.Approve.ToImage() };
 					approveButton.Tapped += () => this.DoWorkAsync("Approving...", ViewModel.Approve);
 				}
 				root.Add(new Section { approveButton });
@@ -192,7 +197,7 @@ namespace CodeBucket.Views.Commits
 			if (changeset == null)
 				return;
 
-			var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet();
 			var addComment = sheet.AddButton("Add Comment");
 			var copySha = sheet.AddButton("Copy Sha");
 //			var shareButton = sheet.AddButton("Share");
@@ -204,28 +209,30 @@ namespace CodeBucket.Views.Commits
 
                 BeginInvokeOnMainThread(() =>
                 {
-				// Pin to menu
-				if (e.ButtonIndex == addComment)
-				{
-					AddCommentTapped();
-				}
-				else if (e.ButtonIndex == copySha)
-				{
-					UIPasteboard.General.String = ViewModel.Node;
-				}
-//				else if (e.ButtonIndex == shareButton)
-//				{
-//					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
-//					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
-//					UIActivity[] applicationActivities = null;
-//					var activityController = new UIActivityViewController (activityItems, applicationActivities);
-//					PresentViewController (activityController, true, null);
-//				}
-//				else if (e.ButtonIndex == showButton)
-//				{
-//					ViewModel.GoToHtmlUrlCommand.Execute(null);
-//				}
+    				// Pin to menu
+    				if (e.ButtonIndex == addComment)
+    				{
+    					AddCommentTapped();
+    				}
+    				else if (e.ButtonIndex == copySha)
+    				{
+    					UIPasteboard.General.String = ViewModel.Node;
+    				}
+    //				else if (e.ButtonIndex == shareButton)
+    //				{
+    //					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
+    //					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
+    //					UIActivity[] applicationActivities = null;
+    //					var activityController = new UIActivityViewController (activityItems, applicationActivities);
+    //					PresentViewController (activityController, true, null);
+    //				}
+    //				else if (e.ButtonIndex == showButton)
+    //				{
+    //					ViewModel.GoToHtmlUrlCommand.Execute(null);
+    //				}
                 });
+
+                sheet.Dispose();
 			};
 
 			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
@@ -233,6 +240,9 @@ namespace CodeBucket.Views.Commits
 
 		public override void ViewWillAppear(bool animated)
 		{
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+
 			if (ToolbarItems != null)
 				NavigationController.SetToolbarHidden(false, animated);
 			base.ViewWillAppear(animated);

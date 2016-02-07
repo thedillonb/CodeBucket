@@ -77,26 +77,26 @@ namespace CodeBucket.Views.Events
 			switch (eventModel.Event)
 			{
 				case EventModel.Type.ForkRepo:
-					return Images.Fork;
+                    return AtlassianIcon.Devtoolsrepositoryforked.ToImage();
 				case EventModel.Type.CreateRepo:
-					return Images.Repo;
+                    return AtlassianIcon.Devtoolsrepository.ToImage();
 				case EventModel.Type.Commit:
 				case EventModel.Type.Pushed:
 				case EventModel.Type.PullRequestFulfilled:
-					return Images.Commit;
+                    return AtlassianIcon.Devtoolscommit.ToImage();
 				case EventModel.Type.WikiUpdated:
 				case EventModel.Type.WikiCreated:
 				case EventModel.Type.PullRequestUpdated:
-					return Images.Pencil;
-				case EventModel.Type.WikiDeleted:
-				case EventModel.Type.DeleteRepo:
-					return Images.BinClosed;
+                    return AtlassianIcon.Edit.ToImage();
+                case EventModel.Type.WikiDeleted:
+                case EventModel.Type.DeleteRepo:
+                    return AtlassianIcon.Delete.ToImage();
 				case EventModel.Type.StartFollowUser:
 				case EventModel.Type.StartFollowRepo:
 				case EventModel.Type.StopFollowRepo:
 				case EventModel.Type.StartFollowIssue:
 				case EventModel.Type.StopFollowIssue:
-					return Images.Following;
+                    return AtlassianIcon.Star.ToImage();
 				case EventModel.Type.IssueComment:
 				case EventModel.Type.ChangeSetCommentCreated:
 				case EventModel.Type.ChangeSetCommentDeleted:
@@ -104,22 +104,22 @@ namespace CodeBucket.Views.Events
 				case EventModel.Type.PullRequestCommentCreated:
 				case EventModel.Type.PullRequestCommentUpdated:
 				case EventModel.Type.PullRequestCommentDeleted:
-					return Images.Comments;
+                    return AtlassianIcon.Comment.ToImage();
 				case EventModel.Type.IssueUpdated:
 				case EventModel.Type.IssueReported:
-					return Images.Flag;
+                    return AtlassianIcon.Flag.ToImage();
 				case EventModel.Type.ChangeSetLike:
 				case EventModel.Type.PullRequestLike:
-					return Images.Accept;
+                    return AtlassianIcon.Like.ToImage();
 				case EventModel.Type.PullRequestUnlike:
 				case EventModel.Type.PullRequestRejected:
 				case EventModel.Type.ChangeSetUnlike:
-					return Images.Cancel;
-				case EventModel.Type.PullRequestCreated:
-				case EventModel.Type.PullRequestSuperseded:
-					return Images.Hand;
+                    return AtlassianIcon.Like.ToImage();
+                case EventModel.Type.PullRequestCreated:
+                case EventModel.Type.PullRequestSuperseded:
+                    return AtlassianIcon.Devtoolspullrequest.ToImage();
 			}
-            return Images.Priority;
+            return AtlassianIcon.Info.ToImage();
         }
     }
 }

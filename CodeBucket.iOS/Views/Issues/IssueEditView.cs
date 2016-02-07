@@ -27,7 +27,7 @@ namespace CodeBucket.Views.Issues
                 NavigationController.PushViewController(ctrl, true);
             };
 
-            var delete = new StyledStringElement("Delete", () => ViewModel.DeleteCommand.Execute(null), Images.BinClosed) { BackgroundColor = UIColor.FromRGB(1.0f, 0.7f, 0.7f) };
+            var delete = new StyledStringElement("Delete", () => ViewModel.DeleteCommand.Execute(null), AtlassianIcon.Delete.ToImage()) { BackgroundColor = UIColor.FromRGB(1.0f, 0.7f, 0.7f) };
             delete.Accessory = UITableViewCellAccessory.None;
 
             Root[0].Insert(1, UITableViewRowAnimation.None, status);

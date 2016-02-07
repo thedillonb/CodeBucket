@@ -39,6 +39,8 @@ namespace CodeBucket.Cells
             Header.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
 
             DefaultContentConstraint = ContentConstraint.Constant;
+
+            ActionImage.TintColor = Time.TextColor;
         }
 
         class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate {

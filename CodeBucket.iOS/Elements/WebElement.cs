@@ -93,7 +93,9 @@ namespace CodeBucket.Elements
             cell.ContentView.AddSubview (WebView);
             cell.ContentView.Layer.MasksToBounds = true;
             cell.ContentView.AutosizesSubviews = true;
-            cell.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
+            cell.PreservesSuperviewLayoutMargins = false;
+            cell.LayoutMargins = UIEdgeInsets.Zero;
+            cell.SeparatorInset = UIEdgeInsets.Zero;
             return cell;
         }
     }

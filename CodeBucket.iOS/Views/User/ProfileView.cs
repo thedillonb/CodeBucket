@@ -35,11 +35,11 @@ namespace CodeBucket.Views.User
                 HeaderView.SetImage(new Avatar(x.Avatar).ToUrl(128), Images.Avatar);
                 RefreshHeaderView();
 
-				var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-				var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-                var organizations = new StyledStringElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group);
-				var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
-                var following = new StyledStringElement("Following", () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
+                var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), AtlassianIcon.Star.ToImage());
+                var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), AtlassianIcon.Blogroll.ToImage());
+                var organizations = new StyledStringElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), AtlassianIcon.Group.ToImage());
+                var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), AtlassianIcon.Devtoolsrepository.ToImage());
+                var following = new StyledStringElement("Following", () => ViewModel.GoToFollowingCommand.Execute(null), AtlassianIcon.View.ToImage());
                 var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, organizations, followers, following };
 				Root = new RootElement(Title) { midSec, new Section { repos } };
 			});

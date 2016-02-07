@@ -6,6 +6,7 @@ using BitbucketSharp.Models;
 using CodeBucket.Elements;
 using Humanizer;
 using CodeBucket.Core.Utils;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -47,7 +48,7 @@ namespace CodeBucket.Views.Repositories
             if (repoModel == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet();
 			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
             var forkButton = sheet.AddButton("Fork Repository");
 			var showButton = sheet.AddButton("Show in Bitbucket");
@@ -55,8 +56,7 @@ namespace CodeBucket.Views.Repositories
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {
-                BeginInvokeOnMainThread(() =>
-                {
+                BeginInvokeOnMainThread(() => {
                 // Pin to menu
                 if (e.ButtonIndex == pinButton)
                 {
@@ -72,10 +72,15 @@ namespace CodeBucket.Views.Repositories
 					ViewModel.GoToUrlCommand.Execute(ViewModel.HtmlUrl);
                 }
                 });
+
+                sheet.Dispose();
             };
 
-            sheet.ShowInView(this.View);
+            sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
         }
+
+        SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.Pagedefault.ToImage());
+        SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
 
 		public void Render(RepositoryDetailedModel model)
         {
@@ -93,12 +98,10 @@ namespace CodeBucket.Views.Repositories
 
             var sec1 = new Section();
 
-            sec1.Add(new SplitElement(new SplitElement.Row {
-				Text1 = model.IsPrivate ? "Private" : "Public",
-				Image1 = model.IsPrivate ? Images.Locked : Images.Unlocked,
-				Text2 = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language,
-                Image2 = Images.Language
-            }));
+            _split1.Button1.Image = model.IsPrivate ? AtlassianIcon.Locked.ToImage() : AtlassianIcon.Unlocked.ToImage();
+            _split1.Button1.Text = model.IsPrivate ? "Private" : "Public";
+            _split1.Button2.Text = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language;
+            sec1.Add(_split1);
 
 
             //Calculate the best representation of the size
@@ -117,45 +120,43 @@ namespace CodeBucket.Views.Repositories
 //                Image2 = Images.Fork
 //            }));
 //
-            sec1.Add(new SplitElement(new SplitElement.Row {
-				Text1 = (model.UtcCreatedOn).ToString("MM/dd/yy"),
-                Image1 = Images.Create,
-                Text2 = size,
-                Image2 = Images.Size
-            }));
 
-            var owner = new StyledStringElement("Owner", model.Owner) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _split2.Button1.Text = (model.UtcCreatedOn).ToString("MM/dd/yy");
+            _split2.Button2.Text = size;
+            sec1.Add(_split2);
+
+            var owner = new StyledStringElement("Owner", model.Owner) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
             sec1.Add(owner);
 
 			if (model.ForkOf != null)
             {
-				var parent = new StyledStringElement("Forked From", model.ForkOf.Name) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                var parent = new StyledStringElement("Forked From", model.ForkOf.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.ForkOf);
                 sec1.Add(parent);
             }
 
-			var followers = new StyledStringElement("Watchers", "" + model.FollowersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var followers = new StyledStringElement("Watchers", "" + model.FollowersCount) { Image = AtlassianIcon.Watch.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
             sec1.Add(followers);
 
-			var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), AtlassianIcon.Blogroll.ToImage());
             var sec2 = new Section { events };
 
 			if (model.HasWiki)
-				sec2.Add(new StyledStringElement("Wiki", () => ViewModel.GoToWikiCommand.Execute(null), Images.Pencil));
+                sec2.Add(new StyledStringElement("Wiki", () => ViewModel.GoToWikiCommand.Execute(null), AtlassianIcon.Edit.ToImage()));
 
             if (model.HasIssues)
-				sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), AtlassianIcon.Flag.ToImage()));
 
             if (ViewModel.HasReadme)
-                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
+                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), AtlassianIcon.Pagedefault.ToImage()));
 
             var sec3 = new Section
             {
-				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-				new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
-				new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
+                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), AtlassianIcon.Devtoolscommit.ToImage()),
+                new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), AtlassianIcon.Devtoolspullrequest.ToImage()),
+                new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), AtlassianIcon.Filecode.ToImage()),
             };
 
             root.Add(new[] { new Section { split }, sec1, sec2, sec3 });
@@ -164,7 +165,7 @@ namespace CodeBucket.Views.Repositories
             {
                 root.Add(new Section
                 {
-                    new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(ViewModel.Repository.Website), Images.Webpage)
+                    new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(ViewModel.Repository.Website), AtlassianIcon.Homepage.ToImage())
                 });
             }
 

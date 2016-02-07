@@ -38,7 +38,7 @@ namespace CodeBucket.Views.Filters
                     new StyledStringElement("Save as Default", () =>{
                         _filterController.ApplyFilter(CreateFilterModel(), true);
                         CloseViewController();
-                    }, Images.Size) { Accessory = UITableViewCellAccessory.None },
+                    }) { Accessory = UITableViewCellAccessory.None },
                 }
             };
 

@@ -27,20 +27,20 @@ namespace CodeBucket.Views.App
 
             root.Add(new Section
             {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), AtlassianIcon.User.ToImage()),
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), AtlassianIcon.Blogroll.ToImage()));
 			if (ViewModel.Teams != null && ViewModel.Account.ShowTeamEvents)
-				ViewModel.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), Images.Event)));
+                ViewModel.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), AtlassianIcon.Blogroll.ToImage())));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Images.Repo));
-            repoSection.Add(new MenuElement("Shared", () => ViewModel.GoToSharedRepositoriesCommand.Execute(null), Images.BookLink));
-			repoSection.Add(new MenuElement("Watched", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
-			repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
+            repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), AtlassianIcon.Devtoolsrepository.ToImage()));
+            repoSection.Add(new MenuElement("Shared", () => ViewModel.GoToSharedRepositoriesCommand.Execute(null), AtlassianIcon.Spacedefault.ToImage()));
+            repoSection.Add(new MenuElement("Watched", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), AtlassianIcon.Star.ToImage()));
+            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), AtlassianIcon.Search.ToImage()));
             root.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
@@ -55,29 +55,34 @@ namespace CodeBucket.Views.App
 				_favoriteRepoSection = null;
 			}
 
-            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
 			if (ViewModel.Account.ExpandTeamsAndGroups)
 			{
-				if (ViewModel.Groups != null)
-					ViewModel.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), Images.Group)));
-				if (ViewModel.Teams != null)
-					ViewModel.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), Images.Team)));
+                if (ViewModel.Groups?.Count > 0)
+                {
+                    var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Groups") };
+                    ViewModel.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), AtlassianIcon.Group.ToImage())));
+                    root.Add(groupsTeamsSection);
+                }
+                if (ViewModel.Teams?.Count > 0)
+                {
+                    var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Teams") };
+                    ViewModel.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), AtlassianIcon.Userstatus.ToImage())));
+                    root.Add(groupsTeamsSection);
+                }
 			}
 			else
 			{
-				groupsTeamsSection.Add(new MenuElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), Images.Group));
-				groupsTeamsSection.Add(new MenuElement("Teams", () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team));
+                var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
+                groupsTeamsSection.Add(new MenuElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), AtlassianIcon.Group.ToImage()));
+                groupsTeamsSection.Add(new MenuElement("Teams", () => ViewModel.GoToTeamsCommand.Execute(null), AtlassianIcon.Userstatus.ToImage()));
+                root.Add(groupsTeamsSection);
 			}
-
-            //There should be atleast 1 thing...
-			if (groupsTeamsSection.Elements.Count > 0)
-				root.Add(groupsTeamsSection);
 
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-			infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.Execute(null), Images.Flag));
-            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
+            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), AtlassianIcon.Configure.ToImage()));
+            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.Execute(null), AtlassianIcon.Comment.ToImage()));
+            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), AtlassianIcon.User.ToImage()));
             Root = root;
 		}
 

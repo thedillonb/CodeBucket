@@ -79,13 +79,6 @@ namespace MonoTouch
 			//Analytics.TrackException(false, e.Message + " - " + e.StackTrace);
         }
 
-        static UIActionSheet _sheet;
-        public static UIActionSheet GetSheet ()
-        {
-            _sheet = new UIActionSheet ();
-            return _sheet;
-        }
-
         static CultureInfo _americanCulture;
         public static CultureInfo AmericanCulture {
             get { return _americanCulture ?? (_americanCulture = new CultureInfo("en-US")); }
@@ -97,7 +90,11 @@ namespace MonoTouch
             var alert = new UIAlertView {Title = title, Message = message};
             alert.DismissWithClickedButtonIndex(alert.AddButton("Ok"), true);
             if (dismissed != null)
-                alert.Dismissed += (sender, e) => dismissed();
+                alert.Dismissed += (sender, e) =>
+                {
+                    dismissed();    
+                    alert.Dispose();
+                };
             alert.Show();
         }
 

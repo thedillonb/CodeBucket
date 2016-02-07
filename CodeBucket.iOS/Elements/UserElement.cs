@@ -43,6 +43,8 @@ namespace CodeBucket.Elements
             { 
                 this.SeparatorInset = new UIKit.UIEdgeInsets(0, 48f, 0, 0); 
                 ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
+                ImageView.Layer.CornerRadius = 16f;
+                ImageView.Layer.MasksToBounds = true;
 //                ImageView.Layer.CornerRadius = 4.0f;
 //                ImageView.Layer.MasksToBounds = true;
 //                ImageView.Layer.ShouldRasterize = true;

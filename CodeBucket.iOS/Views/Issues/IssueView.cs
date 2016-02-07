@@ -8,6 +8,7 @@ using System.Linq;
 using Humanizer;
 using CodeBucket.Core.Utils;
 using CodeBucket.WebCell;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Issues
 {
@@ -56,6 +57,11 @@ namespace CodeBucket.Views.Issues
             InvokeOnMainThread(RenderIssue);
 		}
 
+
+        SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Configure.ToImage(), AtlassianIcon.Error.ToImage());
+        SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Flag.ToImage(), AtlassianIcon.Spacedefault.ToImage());
+        SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Copyclipboard.ToImage(), AtlassianIcon.Calendar.ToImage());
+
 		public void RenderIssue()
 		{
 			if (ViewModel.Issue == null)
@@ -84,25 +90,20 @@ namespace CodeBucket.Views.Issues
 				secDetails.Add(_descriptionElement);
 			}
 
-			var split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Priority });
-			split1.Value.Text1 = ViewModel.Issue.Status;
-			split1.Value.Text2 = ViewModel.Issue.Priority;
-			secDetails.Add(split1);
+            _split1.Button1.Text = ViewModel.Issue.Status;
+            _split1.Button2.Text = ViewModel.Issue.Priority;
+            secDetails.Add(_split1);
 
+            _split2.Button1.Text = ViewModel.Issue.Metadata.Kind;
+            _split2.Button2.Text = ViewModel.Issue.Metadata.Component ?? "No Component";
+			secDetails.Add(_split2);
 
-			var split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Flag, Image2 = Images.ServerComponents });
-			split2.Value.Text1 = ViewModel.Issue.Metadata.Kind;
-			split2.Value.Text2 = ViewModel.Issue.Metadata.Component ?? "No Component";
-			secDetails.Add(split2);
-
-
-			var split3 = new SplitElement(new SplitElement.Row { Image1 = Images.SitemapColor, Image2 = Images.Milestone });
-			split3.Value.Text1 = ViewModel.Issue.Metadata.Version ?? "No Version";
-			split3.Value.Text2 = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
-			secDetails.Add(split3);
+            _split3.Button1.Text = ViewModel.Issue.Metadata.Version ?? "No Version";
+            _split3.Button2.Text = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
+            secDetails.Add(_split3);
 
 			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
-				Image = Images.Person,
+                Image = AtlassianIcon.User.ToImage(),
 				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
 			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
@@ -115,7 +116,7 @@ namespace CodeBucket.Views.Issues
 				root.Add(new Section { _commentsElement });
 			}
 
-			var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+            var addComment = new StyledStringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
 			addComment.Tapped += AddCommentTapped;
 			root.Add(new Section { addComment });
 			Root = root;

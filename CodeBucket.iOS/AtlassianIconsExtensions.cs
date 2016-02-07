@@ -30,7 +30,7 @@ namespace CodeBucket
                 extension = "@3x";
             }
 
-            var fileName = string.Format("octicon-{0}-{1}{2}.png", (int)@this.CharacterCode, size, extension);
+            var fileName = string.Format("atlassian-{0}-{1}{2}.png", (int)@this.CharacterCode, size, extension);
             var combinedPath = Path.Combine(cacheDir, fileName);
 
             if (File.Exists(combinedPath))
@@ -40,7 +40,7 @@ namespace CodeBucket
             }
             else
             {
-                var img = Graphics.ImageFromFont(UIFont.FromName("octicons", size), @this.CharacterCode, UIColor.Black);
+                var img = Graphics.ImageFromFont(UIFont.FromName("Atlassian-icons", size), @this.CharacterCode, UIColor.Black);
                 if (img == null)
                     return null;
                 var pngData = img.AsPNG();
@@ -51,7 +51,7 @@ namespace CodeBucket
 
         public static UIImage ToImage(this AtlassianIcon @this, bool cache = true)
         {
-            return @this.ToImage(24f, cache);
+            return @this.ToImage(22f, cache);
         }
 
         public static UIImage ToEmptyListImage(this AtlassianIcon @this)

@@ -32,10 +32,10 @@ namespace CodeBucket.Views.Source
 		private Element CreateElement(SourceTreeViewModel.SourceModel x)
         {
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
-                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), Images.Folder);
+                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), AtlassianIcon.Devtoolsfolderclosed.ToImage());
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
-				return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
-            return new StyledStringElement(x.Name) { Image = Images.File };
+                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), AtlassianIcon.Devtoolsfile.ToImage());
+            return new StyledStringElement(x.Name) { Image = AtlassianIcon.Devtoolsfilebinary.ToImage() };
         }
     }
 }

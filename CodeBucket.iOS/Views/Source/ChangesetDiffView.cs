@@ -119,7 +119,7 @@ namespace CodeBucket.Views.Source
         {
 			string title = "Line " + (model.LineFrom ?? model.LineTo);
 
-            var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet(title);
             var addButton = sheet.AddButton("Add Comment");
             var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
@@ -127,9 +127,11 @@ namespace CodeBucket.Views.Source
             sheet.Dismissed += (sender, e) => {
                 BeginInvokeOnMainThread(() =>
                 {
-                if (e.ButtonIndex == addButton)
-					ShowCommentComposer(model.LineFrom, model.LineTo);
+                    if (e.ButtonIndex == addButton)
+    					ShowCommentComposer(model.LineFrom, model.LineTo);
                 });
+
+                sheet.Dispose();
             };
 
             sheet.ShowInView(this.View);

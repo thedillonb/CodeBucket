@@ -26,12 +26,11 @@ namespace CodeBucket
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
-            var primaryColor = UIColor.FromRGB(45, 80, 148);
-            var backgroundImg = CreateBackgroundImage(primaryColor);
+            var backgroundImg = CreateBackgroundImage(Theme.CurrentTheme.PrimaryColor);
 
             UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.BarTintColor = primaryColor;
-            UINavigationBar.Appearance.BackgroundColor = primaryColor;
+            UINavigationBar.Appearance.BarTintColor = Theme.CurrentTheme.PrimaryColor;
+            UINavigationBar.Appearance.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
             UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
@@ -58,8 +57,7 @@ namespace CodeBucket
             CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
             CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
 
-            var iconColor = UIColor.FromRGB(0x4a, 0x67, 0x85);
-            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = Theme.CurrentTheme.SecondaryColor;
 
 		}
 
@@ -96,42 +94,42 @@ namespace CodeBucket
 
 		public UIImage IssueCellImage1
 		{
-			get { return _issueCell1 ?? (_issueCell1 = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.Configure.ToImage(); }
 		}
 
 		public UIImage IssueCellImage2
 		{
-			get { return _issueCell2 ?? (_issueCell2 = new UIImage(Images.Comments.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.Comment.ToImage(); }
 		}
 
 		public UIImage IssueCellImage3
 		{
-			get { return _issueCell3 ?? (_issueCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.User.ToImage(); }
 		}
 
 		public UIImage IssueCellImage4
 		{
-			get { return _issueCell4 ?? (_issueCell4 = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.Edit.ToImage(); }
 		}
 
 		public UIImage RepositoryCellFollowers
 		{
-			get { return _repoCell1 ?? (_repoCell1 = new UIImage(Images.Star.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.Star.ToImage(); }
 		}
 
 		public UIImage RepositoryCellForks
 		{
-			get { return _repoCell2 ?? (_repoCell2 = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.Devtoolsfork.ToImage(); }
 		}
 
 		public UIImage RepositoryCellUser
 		{
-			get { return _repoCell3 ?? (_repoCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return AtlassianIcon.User.ToImage(); }
 		}
 
 		public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
 
-		public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
+        public UIColor MainTitleColor { get { return SecondaryColor; } }
 		public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
 		public UIColor MainTextColor { get { return UIColor.FromRGB(41, 41, 41); } }
 
@@ -173,8 +171,19 @@ namespace CodeBucket
 
 		public UIColor PrimaryNavigationBarBarTintColor
 		{
-			get { return UIColor.FromRGB(45, 80, 148); }
+            get { return PrimaryColor; }
 		}
+
+        public UIColor PrimaryColor
+        {
+            get { return UIColor.FromRGB(0x20, 0x50, 0x81); } //UIColor.FromRGB(45, 80, 148)
+        }
+
+        public UIColor SecondaryColor
+        {
+            get { return UIColor.FromRGB(0x4a, 0x67, 0x85); }
+                //            var iconColor = UIColor.FromRGB(0x70, 0x70, 0x70);
+        }
 
 		public UITextAttributes PrimaryNavigationBarTextAttributes
 		{

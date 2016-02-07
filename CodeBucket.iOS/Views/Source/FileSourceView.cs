@@ -21,8 +21,13 @@ namespace CodeBucket.Views.Source
 		protected FileSourceView()
 			: base(false)
 		{
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 		}
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
 
 		public override void ViewWillAppear(bool animated)
 		{
@@ -36,11 +41,12 @@ namespace CodeBucket.Views.Source
 			}
 
 			Title = ViewModel.Title;
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 		}
 
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet();
 			var openButton = sheet.AddButton("Open In");
 			var shareButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Share") : -1;
 			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in Bitbucket") : -1;
@@ -65,9 +71,11 @@ namespace CodeBucket.Views.Source
 					ViewModel.GoToHtmlUrlCommand.Execute(null);
 				}
                 });
+
+                sheet.Dispose();
 			};
 
-			sheet.ShowInView(this.View);
+            sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
 		}
     }
 }

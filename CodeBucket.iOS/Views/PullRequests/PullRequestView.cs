@@ -9,12 +9,13 @@ using Humanizer;
 using CodeBucket.Core.Utils;
 using CodeBucket.WebCell;
 using CodeBucket.Core.Services;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
-        private readonly SplitElement _split1;
+        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
         private WebElement _descriptionElement;
         private WebElement _commentsElement;
 
@@ -27,7 +28,6 @@ namespace CodeBucket.Views.PullRequests
         public PullRequestView()
         {
             Root.UnevenRows = true;
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Create, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
         }
 
         public override void ViewDidLoad()
@@ -76,14 +76,11 @@ namespace CodeBucket.Views.PullRequests
 
 			var merged = ViewModel.Merged;
 
-            _split1.Value.Text1 = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
-            _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
+            _split1.Button1.Text = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
+            _split1.Button2.Text = merged ? "Merged" : "Not Merged";
             secDetails.Add(_split1);
+            secDetails.Add(new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), AtlassianIcon.Devtoolscommit.ToImage()));
             root.Add(secDetails);
-
-            root.Add(new Section {
-				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-            });
 
             if (!merged)
             {
@@ -99,7 +96,7 @@ namespace CodeBucket.Views.PullRequests
                     }
                 };
  
-                root.Add(new Section { new StyledStringElement("Merge", mergeAction, Images.Fork) });
+                root.Add(new Section { new StyledStringElement("Merge", mergeAction, AtlassianIcon.Approve.ToImage()) });
             }
 
             var comments = ViewModel.Comments
@@ -125,7 +122,7 @@ namespace CodeBucket.Views.PullRequests
             }
 
 
-            var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+            var addComment = new StyledStringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
             addComment.Tapped += AddCommentTapped;
             root.Add(new Section { addComment });
             Root = root;
