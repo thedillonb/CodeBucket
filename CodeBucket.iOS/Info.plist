@@ -51,11 +51,11 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CFBundleVersion</key>
-	<string>2.3.0.3</string>
+	<string>2.4.0.1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.0</string>
+	<string>2.4.0</string>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>9.0</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchThis</string>
 	<key>XSAppIconAssets</key>

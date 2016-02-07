@@ -88,12 +88,11 @@
     <BuildIpa>True</BuildIpa>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseSGen>true</MtouchUseSGen>
-    <MtouchI18n>
-    </MtouchI18n>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <IpaPackageName>
     </IpaPackageName>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
