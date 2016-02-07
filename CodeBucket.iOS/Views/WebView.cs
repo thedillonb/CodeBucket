@@ -150,16 +150,15 @@ namespace CodeBucket.Views
 			if (path == null)
 				return string.Empty;
 
-            var uri = Uri.EscapeUriString("file://" + path);
+            var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
             InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
             return uri;
         }
 
-		protected void LoadContent(string content, string contextPath)
-		{
-			contextPath = contextPath.Replace("/", "//").Replace(" ", "%20");
-			Web.LoadHtmlString(content, NSUrl.FromString("file:/" + contextPath + "//"));
-		}
+        protected void LoadContent(string content)
+        {
+            Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
+        }
         
         public override void ViewWillAppear(bool animated)
         {

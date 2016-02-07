@@ -177,15 +177,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             LoadReadme().FireAndForget();
 
             Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
-                .ContinueWith(x => {
-                    Issues = x.Result.Count;
-                }, TaskContinuationOptions.OnlyOnRanToCompletion);
-//
-//			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-//				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
-//         
-//			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-//				forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
+                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             return t1;
         }
