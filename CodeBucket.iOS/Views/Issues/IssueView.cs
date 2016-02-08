@@ -7,7 +7,6 @@ using CodeBucket.Elements;
 using System.Linq;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using CodeBucket.WebCell;
 using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Issues
@@ -51,7 +50,7 @@ namespace CodeBucket.Views.Issues
 		{
             var comments = ViewModel.Comments
                 .Where(x => !string.IsNullOrEmpty(x.Content))
-                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn, x.AuthorInfo.Avatar));
+                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn.Humanize(), x.AuthorInfo.Avatar));
 
             _commentsElement.LoadContent(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
             InvokeOnMainThread(RenderIssue);

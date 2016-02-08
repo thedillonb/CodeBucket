@@ -1,22 +1,21 @@
 ﻿using System;
-using Humanizer;
 
-namespace CodeBucket.WebCell
+namespace CodeBucket.Views
 {
     public class CommentViewModel
     {
-        public CommentViewModel(string title, string content, DateTimeOffset created, string avatarUrl)
+        public CommentViewModel(string title, string content, string created, string avatarUrl)
         {
             Title = title;
             Content = content;
-            Created = created.Humanize();
+            Created = created;
             AvatarUrl = avatarUrl;
         }
 
-        public string AvatarUrl { get; private set; }
-        public string Title { get; private set; }
-        public string Created { get; private set; }
-        public string Content { get; private set; }
+        public string AvatarUrl { get; }
+        public string Title { get; }
+        public string Created { get; }
+        public string Content { get; }
     }
 }
 

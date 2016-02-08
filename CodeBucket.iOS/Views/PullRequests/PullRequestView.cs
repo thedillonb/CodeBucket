@@ -7,8 +7,6 @@ using CodeBucket.Utils;
 using CodeBucket.Elements;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using CodeBucket.WebCell;
-using CodeBucket.Core.Services;
 using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.PullRequests
@@ -106,7 +104,7 @@ namespace CodeBucket.Views.PullRequests
                 {
                     var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
                     var avatar = new Avatar(x.User.Links?.Avatar?.Href);
-                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn, avatar.ToUrl());
+                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn.Humanize(), avatar.ToUrl());
                 }).ToList();
 
             if (comments.Count > 0)

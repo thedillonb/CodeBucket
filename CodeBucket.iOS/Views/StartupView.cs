@@ -52,7 +52,7 @@ namespace CodeBucket.Views
             _activityView.Color = SpinnerColor;
             Add(_activityView);
 
-            View.BackgroundColor = UIColor.FromRGB(51, 88, 162);
+            View.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
            
 			var vm = (StartupViewModel)ViewModel;
 			vm.Bind(x => x.IsLoggingIn, x =>

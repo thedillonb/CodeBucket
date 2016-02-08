@@ -105,8 +105,9 @@ namespace CodeBucket.Views.Repositories
             HeaderView.SetImage(avatar, Images.RepoPlaceholder);
             RefreshHeaderView();
 
+            var stargazersCommand = ViewModel.GoToStargazersCommand;
             var split = new SplitButtonElement();
-            split.AddButton("Followers", model.FollowersCount.ToString());
+            split.AddButton("Watchers", model.FollowersCount.ToString(), () => stargazersCommand.Execute(null));
             split.AddButton("Forks", model.ForkCount.ToString());
             split.AddButton("Branches", ViewModel.Branches?.Count.ToString() ?? "-");
 
@@ -135,10 +136,6 @@ namespace CodeBucket.Views.Repositories
 				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.ForkOf);
                 sec1.Add(parent);
             }
-
-            var followers = new StyledStringElement("Watchers", "" + model.FollowersCount) { Image = AtlassianIcon.Watch.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator };
-			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
-            sec1.Add(followers);
 
             var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), AtlassianIcon.Blogroll.ToImage());
             var sec2 = new Section { events };
