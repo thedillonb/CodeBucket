@@ -32,6 +32,7 @@ namespace CodeBucket
                 if (_currentModal != null)
                 {
                     ((UIViewController)_currentModal).DismissViewController(true, null);
+                    _currentModal = null;
                     return;
                 }
 
