@@ -88,22 +88,14 @@ namespace CodeBucket.Core.ViewModels.App
 		public List<GroupModel> Groups
 		{
 			get { return _groups; }
-			set
-			{
-				_groups = value;
-				RaisePropertyChanged(() => Groups);
-			}
+            set { this.RaiseAndSetIfChanged(ref _groups, value); }
 		}
 
 		private List<string> _teams;
 		public List<string> Teams
 		{
 			get { return _teams; }
-			set
-			{
-				_teams = value;
-				RaisePropertyChanged(() => Teams);
-			}
+            set { this.RaiseAndSetIfChanged(ref _teams, value); }
 		}
 
 		public BitbucketAccount Account
@@ -114,11 +106,6 @@ namespace CodeBucket.Core.ViewModels.App
         public MenuViewModel(IApplicationService application)
         {
             _application = application;
-        }
-
-        public ICommand GoToAccountsCommand
-        {
-            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>(requestedBy: new MvxRequestedBy(MvxRequestedByType.Other, "menu"))); }
         }
 
 		[PotentialStartupViewAttribute("Profile")]

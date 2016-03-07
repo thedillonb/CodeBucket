@@ -10,150 +10,59 @@
 // MIT X11 license
 //
 using System;
-using System.Drawing;
-using System.Collections.Generic;
 using UIKit;
-using Foundation;
-using CodeBucket.Elements;
 using CoreGraphics;
+using System.Collections.Generic;
+using Foundation;
+using CodeBucket.DialogElements;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers
 {
-	/// <summary>
-	///   The DialogViewController is the main entry point to use MonoTouch.Dialog,
-	///   it provides a simplified API to the UITableViewController.
-	/// </summary>
-	public class DialogViewController : UITableViewController
-	{
-		public UITableViewStyle Style = UITableViewStyle.Grouped;
-		public event Action<NSIndexPath> OnSelection;
-		public UISearchBar searchBar;
-		UITableView tableView;
-		RootElement root;
-		bool dirty;
-		bool reloading;
+    /// <summary>
+    ///   The DialogViewController is the main entry point to use MonoTouch.Dialog,
+    ///   it provides a simplified API to the UITableViewController.
+    /// </summary>
+    public class DialogViewController : TableViewController
+    {
+        private readonly Lazy<RootElement> _rootElement;
+        private UISearchBar _searchBar;
+        bool pushing;
 
-		/// <summary>
-		/// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
-		/// </summary>
-		public RootElement Root {
-			get {
-				return root;
-			}
-			set {
-				if (root == value)
-					return;
+        /// <summary>
+        /// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
+        /// </summary>
+        public RootElement Root {
+            get 
+            {
+                return _rootElement.Value;
+            }
+        } 
 
-                if (originalSections != null)
-                {
-                    CreateOriginals(value);
-                }
-                else
-                {
-                    if (root != null)
-                        root.Dispose();
+        public bool EnableSearch { get; set; }
 
-                    root = value;
-                    root.TableView = tableView; 
-                    ReloadData ();
-                }
-			}
-		} 
+        public string SearchPlaceholder { get; set; }
 
-		EventHandler refreshRequested;
-		/// <summary>
-		/// If you assign a handler to this event before the view is shown, the
-		/// DialogViewController will have support for pull-to-refresh UI.
-		/// </summary>
-		public event EventHandler RefreshRequested {
-			add {
-				if (tableView != null)
-					throw new ArgumentException ("You should set the handler before the controller is shown");
-				refreshRequested += value; 
-			}
-			remove {
-				refreshRequested -= value;
-			}
-		}
+        public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
+        {
+            base.DidRotate (fromInterfaceOrientation);
+            ReloadData ();
+        }
 
-		// If the value is true, we are enabled, used in the source for quick computation
-		bool enableSearch;
-		public bool EnableSearch {
-			get {
-				return enableSearch;
-			}
-			set {
-				if (enableSearch == value)
-					return;
+        Section [] originalSections;
+        Element [][] originalElements;
 
-				// After MonoTouch 3.0, we can allow for the search to be enabled/disable
-				if (tableView != null)
-					throw new ArgumentException ("You should set EnableSearch before the controller is shown");
-				enableSearch = value;
-			}
-		}
+        /// <summary>
+        /// Allows caller to programatically activate the search bar and start the search process
+        /// </summary>
+        public void StartSearch ()
+        {
+            if (originalSections != null)
+                return;
 
-		// If set, we automatically scroll the content to avoid showing the search bar until 
-		// the user manually pulls it down.
-		public bool AutoHideSearch { get; set; }
-
-		public string SearchPlaceholder { get; set; }
-
-		/// <summary>
-		/// Invoke this method to trigger a data refresh.   
-		/// </summary>
-		/// <remarks>
-		/// This will invoke the RerfeshRequested event handler, the code attached to it
-		/// should start the background operation to fetch the data and when it completes
-		/// it should call ReloadComplete to restore the control state.
-		/// </remarks>
-		public void TriggerRefresh ()
-		{
-			TriggerRefresh (false);
-		}
-
-		void TriggerRefresh (bool showStatus)
-		{
-			if (refreshRequested == null)
-				return;
-
-			if (reloading)
-				return;
-
-			reloading = true;
-			refreshRequested (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Controls whether the DialogViewController should auto rotate
-		/// </summary>
-		public bool Autorotate { get; set; }
-
-		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
-		{
-			return Autorotate || toInterfaceOrientation == UIInterfaceOrientation.Portrait;
-		}
-
-		public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
-		{
-			base.DidRotate (fromInterfaceOrientation);
-			ReloadData ();
-		}
-
-		Section [] originalSections;
-		Element [][] originalElements;
-
-		/// <summary>
-		/// Allows caller to programatically activate the search bar and start the search process
-		/// </summary>
-		public void StartSearch ()
-		{
-			if (originalSections != null)
-				return;
-
-			searchBar.BecomeFirstResponder ();
+            _searchBar.BecomeFirstResponder ();
             CreateOriginals(Root);
-		}
+        }
 
         private void CreateOriginals(RootElement root)
         {
@@ -163,399 +72,284 @@ namespace CodeBucket.ViewControllers
                 originalElements [i] = originalSections [i].Elements.ToArray ();
         }
 
-		/// <summary>
-		/// Allows the caller to programatically stop searching.
-		/// </summary>
-		public virtual void FinishSearch ()
-		{
-			if (originalSections == null)
-				return;
+        /// <summary>
+        /// Allows the caller to programatically stop searching.
+        /// </summary>
+        public virtual void FinishSearch ()
+        {
+            if (originalSections == null)
+                return;
 
-            searchBar.Text = "";
+            _searchBar.Text = "";
 
-			Root.Sections = new List<Section> (originalSections);
-			originalSections = null;
-			originalElements = null;
-			searchBar.ResignFirstResponder ();
-			ReloadData ();
-		}
+            Root.Reset(originalSections);
+            originalSections = null;
+            originalElements = null;
+            _searchBar.ResignFirstResponder ();
+            ReloadData ();
+        }
 
-		public delegate void SearchTextEventHandler (object sender, SearchChangedEventArgs args);
-		public event SearchTextEventHandler SearchTextChanged;
+        public void PerformFilter (string text)
+        {
+            if (originalSections == null)
+                return;
 
-		public virtual void OnSearchTextChanged (string text)
-		{
-			if (SearchTextChanged != null)
-				SearchTextChanged (this, new SearchChangedEventArgs (text));
-		}
+            var newSections = new List<Section> ();
 
-		public void PerformFilter (string text)
-		{
-			if (originalSections == null)
-				return;
+            for (int sidx = 0; sidx < originalSections.Length; sidx++){
+                Section newSection = null;
+                var section = originalSections [sidx];
+                Element [] elements = originalElements [sidx];
 
-			OnSearchTextChanged (text);
-
-			var newSections = new List<Section> ();
-
-			for (int sidx = 0; sidx < originalSections.Length; sidx++){
-				Section newSection = null;
-				var section = originalSections [sidx];
-				Element [] elements = originalElements [sidx];
-
-				for (int eidx = 0; eidx < elements.Length; eidx++){
-					if (elements [eidx].Matches (text)){
-						if (newSection == null){
-							newSection = new Section (section.Header, section.Footer){
-								FooterView = section.FooterView,
-								HeaderView = section.HeaderView
-							};
-							newSections.Add (newSection);
-						}
-						newSection.Add (elements [eidx]);
-					}
-				}
-			}
-
-			Root.Sections = newSections;
-
-			ReloadData ();
-		}
-
-		public virtual void SearchButtonClicked (string text)
-		{
-			searchBar.ResignFirstResponder();
-		}
-
-		public class Source : UITableViewSource {
-			const float yboundary = 65;
-			protected DialogViewController Container;
-			protected RootElement Root;
-
-			public Source (DialogViewController container)
-			{
-				this.Container = container;
-				Root = container.root;
-			}
-
-			public override void AccessoryButtonTapped (UITableView tableView, NSIndexPath indexPath)
-			{
-				var section = Root.Sections [indexPath.Section];
-				var element = (section.Elements [indexPath.Row] as StyledStringElement);
-				if (element != null)
-					element.AccessoryTap ();
-			}
-
-			public override nint RowsInSection (UITableView tableview, nint section)
-			{
-                var s = Root.Sections [(int)section];
-				var count = s.Elements.Count;
-
-				return count;
-			}
-
-			public override nint NumberOfSections (UITableView tableView)
-			{
-				return Root.Sections.Count;
-			}
-
-			public override string TitleForHeader (UITableView tableView, nint section)
-			{
-                return Root.Sections [(int)section].Caption;
-			}
-
-			public override string TitleForFooter (UITableView tableView, nint section)
-			{
-                return Root.Sections [(int)section].Footer;
-			}
-
-			public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-			{
-				var section = Root.Sections [indexPath.Section];
-				var element = section.Elements [indexPath.Row];
-
-				return element.GetCell (tableView);
-			}
-
-			public override void WillDisplay (UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-			{
-				if (Root.NeedColorUpdate){
-					var section = Root.Sections [indexPath.Section];
-					var element = section.Elements [indexPath.Row];
-					var colorized = element as IColorizeBackground;
-					if (colorized != null)
-						colorized.WillDisplay (tableView, cell, indexPath);
-				}
-			}
-
-			public override void RowDeselected (UITableView tableView, NSIndexPath indexPath)
-			{
-				Container.Deselected (indexPath);
-			}
-
-			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
-			{
-				var onSelection = Container.OnSelection;
-				if (onSelection != null)
-					onSelection (indexPath);
-				Container.Selected (indexPath);
-			}			
-
-			public override UIView GetViewForHeader (UITableView tableView, nint sectionIdx)
-			{
-                var section = Root.Sections [(int)sectionIdx];
-				return section.HeaderView;
-			}
-
-			public override nfloat GetHeightForHeader (UITableView tableView, nint sectionIdx)
-			{
-                var section = Root.Sections [(int)sectionIdx];
-				if (section.HeaderView == null)
-					return -1;
-				return section.HeaderView.Frame.Height;
-			}
-
-			public override UIView GetViewForFooter (UITableView tableView, nint sectionIdx)
-			{
-                var section = Root.Sections [(int)sectionIdx];
-				return section.FooterView;
-			}
-
-			public override nfloat GetHeightForFooter (UITableView tableView, nint sectionIdx)
-			{
-                var section = Root.Sections [(int)sectionIdx];
-				if (section.FooterView == null)
-					return -1;
-				return section.FooterView.Frame.Height;
-			}
-
-            public override void Scrolled(UIScrollView scrollView)
-            {
-                Container.DidScroll(Root.TableView.ContentOffset);
+                for (int eidx = 0; eidx < elements.Length; eidx++){
+                    if (elements [eidx].Matches (text)){
+                        if (newSection == null){
+                            newSection = new Section (section.Header, section.Footer){
+                                FooterView = section.FooterView,
+                                HeaderView = section.HeaderView
+                            };
+                            newSections.Add (newSection);
+                        }
+                        newSection.Add (elements [eidx]);
+                    }
+                }
             }
-		}
+
+            Root.Reset(newSections);
+            ReloadData ();
+        }
+
+        public virtual void SearchButtonClicked (string text)
+        {
+            _searchBar.ResignFirstResponder();
+        }
+
+        protected class SearchDelegate : UISearchBarDelegate {
+            readonly WeakReference<DialogViewController> container;
+
+            public SearchDelegate (DialogViewController container)
+            {
+                this.container = new WeakReference<DialogViewController>(container);
+            }
+
+            public override void OnEditingStarted (UISearchBar searchBar)
+            {
+                searchBar.ShowsCancelButton = true;
+                container.Get()?.StartSearch ();
+            }
+
+            public override void OnEditingStopped (UISearchBar searchBar)
+            {
+                searchBar.ShowsCancelButton = false;
+                //container.FinishSearch ();
+            }
+
+            public override void TextChanged (UISearchBar searchBar, string searchText)
+            {
+                container.Get()?.PerformFilter (searchText ?? "");
+            }
+
+            public override void CancelButtonClicked (UISearchBar searchBar)
+            {
+                var r = container.Get();
+                searchBar.ShowsCancelButton = false;
+                if (r != null)
+                {
+                    r._searchBar.Text = "";
+                    r.FinishSearch();
+                }
+                searchBar.ResignFirstResponder ();
+            }
+
+            public override void SearchButtonClicked (UISearchBar searchBar)
+            {
+                container.Get()?.SearchButtonClicked (searchBar.Text);
+            }
+        }
 
         protected virtual void DidScroll(CGPoint p)
         {
         }
 
-		//
-		// Performance trick, if we expose GetHeightForRow, the UITableView will
-		// probe *every* row for its size;   Avoid this by creating a separate
-		// model that is used only when we have items that require resizing
-		//
-		public class SizingSource : Source {
-			public SizingSource (DialogViewController controller) : base (controller) {}
+        public class Source : UITableViewSource {
+            private readonly WeakReference<DialogViewController> _container;
+            private readonly WeakReference<RootElement> _root;
 
-			public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
-			{
-				var section = Root.Sections [indexPath.Section];
-				var element = section.Elements [indexPath.Row];
-
-				var sizable = element as IElementSizing;
-				if (sizable == null)
-					return tableView.RowHeight;
-				return sizable.GetHeight (tableView, indexPath);
-			}
-		}
-
-        protected virtual void SetUpSearchDelegates(UISearchBar searchBar)
-        {
-            searchBar.OnEditingStarted += (sender, e) =>
+            public RootElement Root
             {
-                searchBar.ShowsCancelButton = true;
-                this.StartSearch();
-            };
+                get { return _root.Get(); }
+            }
 
-            searchBar.OnEditingStopped += (sender, e) => 
+            public DialogViewController Container
             {
-                searchBar.ShowsCancelButton = false;
-            };
+                get { return _container.Get(); }
+            }
 
-            searchBar.TextChanged += (sender, e) => PerformFilter(e.SearchText ?? string.Empty);
-
-            searchBar.CancelButtonClicked += (sender, e) => 
+            public Source (DialogViewController container)
             {
-                searchBar.ShowsCancelButton = false;
-                searchBar.Text = string.Empty;
-                FinishSearch();
-                searchBar.ResignFirstResponder();
-            };
+                _container = new WeakReference<DialogViewController>(container);
+                _root = new WeakReference<RootElement>(container.Root);
+            }
 
-            searchBar.SearchButtonClicked += (sender, e) => {
-                SearchButtonClicked(searchBar.Text);
-            };
+            public override nint RowsInSection (UITableView tableview, nint section)
+            {
+                var s = Root?[(int)section];
+                var count = s?.Elements.Count;
+                return count ?? 0;
+            }
+
+            public override nint NumberOfSections (UITableView tableView)
+            {
+                return Root?.Count ?? 0;
+            }
+
+            public override string TitleForHeader (UITableView tableView, nint section)
+            {
+                return Root?[(int)section]?.Header;
+            }
+
+            public override string TitleForFooter (UITableView tableView, nint section)
+            {
+                return Root?[(int)section]?.Footer;
+            }
+
+            public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+            {
+                var section = Root?[indexPath.Section];
+                var element = section?[indexPath.Row];
+                return element?.GetCell (tableView);
+            }
+
+            public override void RowDeselected (UITableView tableView, NSIndexPath indexPath)
+            {
+                _container.Get()?.Deselected (indexPath);
+            }
+
+            public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+            {
+                _container.Get()?.Selected (indexPath);
+            }            
+
+            public override UIView GetViewForHeader (UITableView tableView, nint sectionIdx)
+            {
+                var section = Root?[(int)sectionIdx];
+                return section?.HeaderView;
+            }
+
+            public override nfloat GetHeightForHeader (UITableView tableView, nint sectionIdx)
+            {
+                var section = Root?[(int)sectionIdx];
+                return section?.HeaderView?.Frame.Height ?? -1;
+            }
+
+            public override UIView GetViewForFooter (UITableView tableView, nint sectionIdx)
+            {
+                var section = Root?[(int)sectionIdx];
+                return section?.FooterView;
+            }
+
+            public override nfloat GetHeightForFooter (UITableView tableView, nint sectionIdx)
+            {
+                var section = Root?[(int)sectionIdx];
+                return section?.FooterView?.Frame.Height ?? -1;
+            }
+
+            public override void Scrolled (UIScrollView scrollView)
+            {
+                _container.Get()?.DidScroll(Root?.TableView?.ContentOffset ?? CGPoint.Empty);
+            }
+
+            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
+            {
+                var section = Root?[indexPath.Section];
+                var element = section?[indexPath.Row];
+
+                var sizable = element as IElementSizing;
+                return sizable?.GetHeight(tableView, indexPath) ?? tableView.RowHeight;
+            }
         }
 
-		void SetupSearch ()
-		{
-			if (enableSearch){
-                searchBar = new UISearchBar(new CGRect(0, 0, tableView.Bounds.Width, 44));
-                SetUpSearchDelegates(searchBar);
-
-				if (SearchPlaceholder != null)
-					searchBar.Placeholder = this.SearchPlaceholder;
-				tableView.TableHeaderView = searchBar;					
-			} else {
-				// Does not work with current Monotouch, will work with 3.0
-				// tableView.TableHeaderView = null;
-			}
-		}
-
-		public virtual void Deselected (NSIndexPath indexPath)
-		{
-			var section = root.Sections [indexPath.Section];
-			var element = section.Elements [indexPath.Row];
-
-			element.Deselected (this, tableView, indexPath);
-		}
-
-		public virtual void Selected (NSIndexPath indexPath)
-		{
-			var section = root.Sections [indexPath.Section];
-			var element = section.Elements [indexPath.Row];
-
-			element.Selected (this, tableView, indexPath);
-		}
-
-		public virtual UITableView MakeTableView (CGRect bounds, UITableViewStyle style)
-		{
-			return new UITableView (bounds, style);
-		}
-
-		public override void LoadView ()
-		{
-			tableView = MakeTableView (UIScreen.MainScreen.Bounds, Style);
-			tableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
-			tableView.AutosizesSubviews = true;
-
-			if (root != null)
-				root.Prepare ();
-
-			UpdateSource ();
-			View = tableView;
-			SetupSearch ();
-			ConfigureTableView ();
-
-			if (root == null)
-				return;
-			root.TableView = tableView;
-		}
-
-		void ConfigureTableView ()
-		{
-
-		}
-
-		public override void ViewWillAppear (bool animated)
-		{
-			base.ViewWillAppear (animated);
-			if (AutoHideSearch){
-				if (enableSearch){
-					if (TableView.ContentOffset.Y < 44)
-						TableView.ContentOffset = new PointF (0, 44);
-				}
-			}
-			if (root == null)
-				return;
-
-			root.Prepare ();
-
-			if (root.Caption != null)
-				NavigationItem.Title = root.Caption;
-			if (dirty){
-				tableView.ReloadData ();
-				dirty = false;
-			}
-		}
-
-		public virtual Source CreateSizingSource (bool unevenRows)
-		{
-			return unevenRows ? new SizingSource (this) : new Source (this);
-		}
-
-		Source TableSource;
-
-		void UpdateSource ()
-		{
-			if (root == null)
-				return;
-
-			TableSource = CreateSizingSource (root.UnevenRows);
-			tableView.Source = TableSource;
-		}
-
-		public void ReloadData ()
-		{
-			if (root == null)
-				return;
-
-			if(root.Caption != null) 
-				NavigationItem.Title = root.Caption;
-
-			root.Prepare ();
-			if (tableView != null){
-				UpdateSource ();
-				tableView.ReloadData ();
-			}
-			dirty = false;
-		}
-
-		public event EventHandler ViewDisappearing;
-
-		[Obsolete ("Use the ViewDisappearing event instead")]
-		public event EventHandler ViewDissapearing {
-			add {
-				ViewDisappearing += value;
-			}
-			remove {
-				ViewDisappearing -= value;
-			}
-		}
-
-		public override void ViewWillDisappear (bool animated)
-		{
-			base.ViewWillDisappear (animated);
-			if (ViewDisappearing != null)
-				ViewDisappearing (this, EventArgs.Empty);
-		}
-
-        public override void ViewDidLoad()
+        protected virtual IUISearchBarDelegate CreateSearchDelegate()
         {
-            base.ViewDidLoad();
-            if (Title != null && Root != null)
-                Root.Caption = Title;
-
-            TableView.CellLayoutMarginsFollowReadableWidth = false;
+            return new SearchDelegate(this);
         }
 
-		public DialogViewController (RootElement root) 
-            : this (UITableViewStyle.Grouped, root)
-		{
-		}
+        void SetupSearch ()
+        {
+            if (EnableSearch){
+                _searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
+                    Delegate = CreateSearchDelegate()
+                };
+                if (SearchPlaceholder != null)
+                    _searchBar.Placeholder = this.SearchPlaceholder;
+                TableView.TableHeaderView = _searchBar;                    
+            } else {
+                // Does not work with current Monotouch, will work with 3.0
+                // tableView.TableHeaderView = null;
+            }
+        }
 
-		public DialogViewController (UITableViewStyle style, RootElement root) : base (style)
-		{
-			Style = style;
-			this.root = root;
+        public virtual void Deselected (NSIndexPath indexPath)
+        {
+            var section = Root[indexPath.Section];
+            var element = section[indexPath.Row];
+
+            element.Deselected (TableView, indexPath);
+        }
+
+        public virtual void Selected (NSIndexPath indexPath)
+        {
+            var section = Root[indexPath.Section];
+            var element = section[indexPath.Row];
+
+            element.Selected (TableView, indexPath);
+        }
+
+        public virtual Source CreateSizingSource()
+        {
+            return new Source (this);
+        }
+
+
+        public override void LoadView ()
+        {
+            base.LoadView();
+            SetupSearch ();
+            TableView.Source = CreateSizingSource();
+        }
+
+        public override void ViewWillAppear (bool animated)
+        {
+            base.ViewWillAppear (animated);
+            NavigationItem.HidesBackButton = !pushing;
+            TableView.ReloadData ();
+        }
+
+        public bool Pushing {
+            get {
+                return pushing;
+            }
+            set {
+                pushing = value;
+                if (NavigationItem != null)
+                    NavigationItem.HidesBackButton = !pushing;
+            }
+        }
+
+        public void ReloadData ()
+        {
+            TableView.ReloadData();
+        }
+
+        public DialogViewController (UITableViewStyle style, bool pushing = true) 
+            : base (style)
+        {
+            _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
+
             EdgesForExtendedLayout = UIRectEdge.None;
-            Autorotate = true;
             SearchPlaceholder = "Search";
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
-		}
-
-        public DialogViewController()
-            : this (UITableViewStyle.Grouped, new RootElement(string.Empty))
-        {
-        }
-	}
-
-    public class SearchChangedEventArgs : EventArgs
-    {
-        public string Text { get; private set; }
-        public SearchChangedEventArgs(string text)
-        {
-            Text = text;
+            this.pushing = pushing;
         }
     }
 }

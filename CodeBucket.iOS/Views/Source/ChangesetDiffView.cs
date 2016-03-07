@@ -10,6 +10,9 @@ using System.Text;
 using System.Linq;
 using MvvmCross.Core.ViewModels;
 using Newtonsoft.Json;
+using WebKit;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.Views.Source
 {
@@ -28,7 +31,7 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-			ViewModel.Bind(x => x.IsLoading, x =>
+            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
 			{
 					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
 					{
@@ -50,7 +53,7 @@ namespace CodeBucket.Views.Source
 					}
 			});
 
-			ViewModel.BindCollection(x => x.Comments, e =>
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ =>
 			{
 				//Convert it to something light weight
 				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new { 
@@ -83,9 +86,9 @@ namespace CodeBucket.Views.Source
 			public int? LineTo { get; set; }
         }
 
-        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-            var url = request.Url;
+            var url = navigationAction.Request.Url;
 			if(url != null && url.Scheme.Equals("app")) {
                 var func = url.Host;
 
@@ -93,7 +96,7 @@ namespace CodeBucket.Views.Source
 				{
 					_domLoaded = true;
 					foreach (var e in _toBeExecuted)
-						Web.EvaluateJavascript(e);
+                        webView.EvaluateJavaScript(e, null);
 				}
 				else if(func.Equals("comment")) 
 				{
@@ -104,13 +107,13 @@ namespace CodeBucket.Views.Source
 				return false;
             }
 
-            return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
         }
 
 		private void ExecuteJavascript(string data)
 		{
 			if (_domLoaded)
-				InvokeOnMainThread(() => Web.EvaluateJavascript(data));
+                InvokeOnMainThread(() => Web.EvaluateJavaScript(data, null));
 			else
 				_toBeExecuted.Add(data);
 		}
@@ -148,7 +151,7 @@ namespace CodeBucket.Views.Source
 				}
 				catch (Exception e)
 				{
-					MonoTouch.Utilities.ShowAlert("Unable to Comment", e.Message);
+					AlertDialogService.ShowAlert("Unable to Comment", e.Message);
 					composer.EnableSendButton = true;
 				}
             });

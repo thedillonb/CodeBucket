@@ -114,17 +114,12 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Accounts\AddAccountView.designer.cs" />
-    <Compile Include="Views\Accounts\LoginView.cs" />
-    <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Events\RepositoryEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
-    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
@@ -171,94 +166,105 @@
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
     <InterfaceDefinition Include="LaunchThis.storyboard" />
-    <Compile Include="Cells\IssueCellView.cs" />
-    <Compile Include="Cells\IssueCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
-    <Compile Include="Cells\NewsCellView.cs" />
-    <Compile Include="Cells\NewsCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\NewsCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
-    <Compile Include="Cells\RepositoryCellView.cs" />
-    <Compile Include="Cells\RepositoryCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\RepositoryCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\IssueElement.cs" />
-    <Compile Include="Elements\NewsFeedElement.cs" />
-    <Compile Include="Elements\RepositoryElement.cs" />
-    <Compile Include="Elements\UserElement.cs" />
-    <Compile Include="Elements\WebElement.cs" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\ShareService.cs" />
-    <Compile Include="Utils\Hud.cs" />
-    <Compile Include="Utils\UIImageExtensions.cs" />
-    <Compile Include="Utils\Util.cs" />
-    <Compile Include="Utils\ViewControllerExtensions.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
-    <Compile Include="ViewControllers\MenuBaseViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
-    <Compile Include="Views\StartupView.cs" />
-    <Compile Include="Views\ToolbarButton.cs" />
-    <Compile Include="Views\WebBrowserView.cs" />
     <Compile Include="Views\WebView.cs" />
     <Compile Include="Views\App\DefaultStartupView.cs" />
-    <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
-    <Compile Include="Elements\CustomElement.cs" />
-    <Compile Include="Elements\InputElement.cs" />
-    <Compile Include="Elements\MultilinedElement.cs" />
-    <Compile Include="Elements\NameTimeStringElement.cs" />
-    <Compile Include="Elements\NoItemsElement.cs" />
-    <Compile Include="Elements\OwnerDrawnElement.cs" />
-    <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\TrueFalseElement.cs" />
-    <Compile Include="Elements\LoadMoreElement.cs" />
-    <Compile Include="Utils\Graphics.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
-    <Compile Include="Elements\Elements.cs" />
-    <Compile Include="Views\Accounts\AccountsView.cs" />
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
-    <Compile Include="Cells\CommitCellView.cs" />
-    <Compile Include="Cells\CommitCellView.designer.cs">
-      <DependentUpon>CommitCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
-    <Compile Include="Elements\CommitElement.cs" />
     <Compile Include="Views\Commits\BaseCommitsView.cs" />
     <Compile Include="Views\Commits\CommitsView.cs" />
     <Compile Include="Views\Commits\CommitView.cs" />
-    <Compile Include="Cells\PullRequestCellView.cs" />
-    <Compile Include="Cells\PullRequestCellView.designer.cs">
-      <DependentUpon>PullRequestCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
-    <Compile Include="Elements\PullRequestElement.cs" />
-    <Compile Include="Elements\ExpandingInputElement.cs" />
     <Compile Include="Views\ExtendedUITextView.cs" />
-    <Compile Include="Views\App\SupportView.cs" />
-    <Compile Include="Elements\ButtonElement.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="AtlassianIcons.cs" />
     <Compile Include="AtlassianIconsExtensions.cs" />
-    <Compile Include="Elements\SplitViewElement.cs" />
-    <Compile Include="Elements\SplitButtonElement.cs" />
+    <Compile Include="ViewControllers\TableViewController.cs" />
+    <Compile Include="ViewControllers\BaseViewController.cs" />
+    <Compile Include="DialogElements\SplitButtonElement.cs" />
+    <Compile Include="DialogElements\UserElement.cs" />
+    <Compile Include="DialogElements\EntryElement.cs" />
+    <Compile Include="DialogElements\ChangesetElement.cs" />
+    <Compile Include="DialogElements\ExpandingInputElement.cs" />
+    <Compile Include="DialogElements\DummyInputElement.cs" />
+    <Compile Include="DialogElements\BooleanElement.cs" />
+    <Compile Include="DialogElements\CommentElement.cs" />
+    <Compile Include="DialogElements\CommitElement.cs" />
+    <Compile Include="DialogElements\Element.cs" />
+    <Compile Include="DialogElements\HtmlElement.cs" />
+    <Compile Include="DialogElements\IElementSizing.cs" />
+    <Compile Include="DialogElements\IssueElement.cs" />
+    <Compile Include="DialogElements\LabelElement.cs" />
+    <Compile Include="DialogElements\LoadMoreElement.cs" />
+    <Compile Include="DialogElements\MenuElement.cs" />
+    <Compile Include="DialogElements\MultilinedElement.cs" />
+    <Compile Include="DialogElements\NewsFeedElement.cs" />
+    <Compile Include="DialogElements\OwnerDrawnElement.cs" />
+    <Compile Include="DialogElements\PaginateElement.cs" />
+    <Compile Include="DialogElements\PullRequestElement.cs" />
+    <Compile Include="DialogElements\RepositoryElement.cs" />
+    <Compile Include="DialogElements\RootElement.cs" />
+    <Compile Include="DialogElements\Section.cs" />
+    <Compile Include="DialogElements\SplitViewElement.cs" />
+    <Compile Include="DialogElements\StringElement.cs" />
+    <Compile Include="TableViewCells\IssueCellView.cs" />
+    <Compile Include="TableViewCells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\IssueCellView.xib" />
+    <Compile Include="TableViewCells\NewsCellView.cs" />
+    <Compile Include="TableViewCells\NewsCellView.designer.cs">
+      <DependentUpon>NewsCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\NewsCellView.xib" />
+    <Compile Include="TableViewCells\RepositoryCellView.cs" />
+    <Compile Include="TableViewCells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\RepositoryCellView.xib" />
+    <Compile Include="TableViewCells\CommitCellView.cs" />
+    <Compile Include="TableViewCells\CommitCellView.designer.cs">
+      <DependentUpon>CommitCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
+    <Compile Include="TableViewCells\PullRequestCellView.cs" />
+    <Compile Include="TableViewCells\PullRequestCellView.designer.cs">
+      <DependentUpon>PullRequestCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\PullRequestCellView.xib" />
+    <Compile Include="TableViewCells\MultilinedCellView.cs" />
+    <InterfaceDefinition Include="TableViewCells\MultilinedCellView.xib" />
+    <Compile Include="TableViewCells\MultilinedCellView.designer.cs" />
+    <Compile Include="Utilities\Hud.cs" />
+    <Compile Include="Utilities\UIImageExtensions.cs" />
+    <Compile Include="Utilities\ViewControllerExtensions.cs" />
+    <Compile Include="Utilities\Graphics.cs" />
+    <Compile Include="Utilities\UIKitExtensions.cs" />
+    <Compile Include="Utilities\UIImageViewExtensions.cs" />
+    <Compile Include="Utilities\NetworkActivity.cs" />
+    <Compile Include="Utilities\UIWindowExtensions.cs" />
+    <Compile Include="Views\EmptyListView.cs" />
+    <Compile Include="ViewControllers\WebBrowserViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\StartupViewController.cs" />
+    <Compile Include="ViewControllers\ThemedNavigationController.cs" />
+    <Compile Include="ViewControllers\Application\MenuViewController.cs" />
+    <Compile Include="ViewControllers\BasicWebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -276,9 +282,6 @@
       <HintPath>..\packages\BTProgressHUD.1.0.0\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Services" />
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
@@ -311,6 +314,27 @@
     </Reference>
     <Reference Include="MvvmCross.Localization">
       <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +380,9 @@
     <Folder Include="Markdown\" />
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
+    <Folder Include="DialogElements\" />
+    <Folder Include="ViewControllers\Accounts\" />
+    <Folder Include="ViewControllers\Application\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">

@@ -2,10 +2,11 @@ using MvvmCross.Platform;
 using CodeBucket.Core.Services;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
-using CodeBucket.Elements;
 using UIKit;
 using Foundation;
 using System;
+using CodeBucket.DialogElements;
+using System.Collections.Generic;
 
 namespace CodeBucket.Views.App
 {
@@ -35,44 +36,49 @@ namespace CodeBucket.Views.App
 			var vm = (SettingsViewModel)ViewModel;
 			var currentAccount = application.Account;
 
-			var showOrganizationsInEvents = new TrueFalseElement("Show Teams under Events", currentAccount.ShowTeamEvents, e =>
+            var showOrganizationsInEvents = new BooleanElement("Show Teams under Events", currentAccount.ShowTeamEvents);
+            showOrganizationsInEvents.Changed.Subscribe(e =>
 			{ 
-				currentAccount.ShowTeamEvents = e.Value;
+				currentAccount.ShowTeamEvents = e;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var showOrganizations = new TrueFalseElement("List Teams & Groups in Menu", currentAccount.ExpandTeamsAndGroups, e =>
-			{ 
-				currentAccount.ExpandTeamsAndGroups = e.Value;
+            var showOrganizations = new BooleanElement("List Teams & Groups in Menu", currentAccount.ExpandTeamsAndGroups);
+            showOrganizations.Changed.Subscribe(x =>
+            {
+				currentAccount.ExpandTeamsAndGroups = x;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions", currentAccount.RepositoryDescriptionInList, e =>
+            var repoDescriptions = new BooleanElement("Show Repo Descriptions", currentAccount.RepositoryDescriptionInList);
+            repoDescriptions.Changed.Subscribe(e =>
 			{ 
-				currentAccount.RepositoryDescriptionInList = e.Value;
+				currentAccount.RepositoryDescriptionInList = e;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, UIKit.UITableViewCellStyle.Value1)
-			{ 
-				Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator,
-			};
-			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
+            var startupView = new ButtonElement("Startup View", vm.DefaultStartupViewName);
+            startupView.Clicked.BindCommand(vm.GoToDefaultStartupViewCommand);
+
+            var sourceCommand = new ButtonElement("Source Code");
+            sourceCommand.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")));
+
+            var twitter = new StringElement("Follow On Twitter");
+            twitter.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp")));
+
+            var rate = new StringElement("Rate This App");
+            rate.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8")));
 
 			//Assign the root
-			var root = new RootElement(Title);
+            ICollection<Section> root = new LinkedList<Section>();
             root.Add(new Section());
             root.Add(new Section { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
-            root.Add(new Section { new StyledStringElement("Source Code", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket"))) });
             root.Add(new Section(String.Empty, "Thank you for downloading. Enjoy!")
             {
-                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp"))),
-                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8"))),
-                new StyledStringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
+                sourceCommand, twitter, rate,
+                new StringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
             });
-
-            root.UnevenRows = true;
-			Root = root;
+            Root.Reset(root);
 
 		}
     }

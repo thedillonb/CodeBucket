@@ -24,133 +24,81 @@ namespace CodeBucket.Core.ViewModels.Issues
 		public string Title
 		{
 			get { return _title; }
-			set
-			{
-				_title = value;
-				RaisePropertyChanged(() => Title);
-			}
+            set { this.RaiseAndSetIfChanged(ref _title, value); }
 		}
 
 		public string Content
 		{
 			get { return _content; }
-			set
-			{
-				_content = value;
-				RaisePropertyChanged(() => Content);
-			}
+            set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
 		private string _milestone;
 		public string Milestone
 		{
 			get { return _milestone; }
-			set
-			{
-				_milestone = value;
-				RaisePropertyChanged(() => Milestone);
-			}
+            set { this.RaiseAndSetIfChanged(ref _milestone, value); }
 		}
 
 		private bool _milestonesAvailable;
 		public bool MilestonesAvailable
 		{
 			get { return _milestonesAvailable; }
-			private set
-			{
-				_milestonesAvailable = value;
-				RaisePropertyChanged(() => MilestonesAvailable);
-			}
+            private set { this.RaiseAndSetIfChanged(ref _milestonesAvailable, value); }
 		}
 
 		public UserModel AssignedTo
 		{
 			get { return _assignedTo; }
-			set
-			{
-				_assignedTo = value;
-				RaisePropertyChanged(() => AssignedTo);
-			}
+            set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
 		}
 
 		private string _version;
 		public string Version
 		{
 			get { return _version; }
-			set
-			{
-				_version = value;
-				RaisePropertyChanged(() => Version);
-			}
+            set { this.RaiseAndSetIfChanged(ref _version, value); }
 		}
 
 		private bool _versionsAvailable;
 		public bool VersionsAvailable
 		{
 			get { return _versionsAvailable; }
-			private set
-			{
-				_versionsAvailable = value;
-				RaisePropertyChanged(() => VersionsAvailable);
-			}
+            private set { this.RaiseAndSetIfChanged(ref _versionsAvailable, value); }
 		}
 
 		private string _component;
 		public string Component
 		{
 			get { return _component; }
-			set
-			{
-				_component = value;
-				RaisePropertyChanged(() => Component);
-			}
-		
+            set { this.RaiseAndSetIfChanged(ref _component, value); }
 		}
 
 		private bool _componentsAvailable;
 		public bool ComponentsAvailable
 		{
 			get { return _componentsAvailable; }
-			private set
-			{
-				_componentsAvailable = value;
-				RaisePropertyChanged(() => ComponentsAvailable);
-			}
+            private set { this.RaiseAndSetIfChanged(ref _componentsAvailable, value); }
 		}
 
 		private string _kind;
 		public string Kind
 		{
 			get { return _kind; }
-			set
-			{
-				_kind = value;
-				RaisePropertyChanged(() => Kind);
-			}
+            set { this.RaiseAndSetIfChanged(ref _kind, value); }
 		}
 
 		private string _priority;
 		public string Priority
 		{
 			get { return _priority; }
-			set
-			{
-				_priority = value;
-				RaisePropertyChanged(() => Priority);
-			}
+            set { this.RaiseAndSetIfChanged(ref _priority, value); }
 		}
        
 		public bool IsSaving
 		{
-			get
-			{
-				return _isSaving;
-			}
-			set
-			{
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
+			get { return _isSaving; }
+            set { this.RaiseAndSetIfChanged(ref _isSaving, value); }
 		}
 
 		public string Username { get; private set; }

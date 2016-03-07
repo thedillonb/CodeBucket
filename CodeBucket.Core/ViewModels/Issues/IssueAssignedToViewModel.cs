@@ -49,7 +49,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			Username = navObject.Username;
 			Repository = navObject.Repository;
 			SelectedUser = TxSevice.Get() as UserModel;
-			this.Bind(x => x.SelectedUser, x => {
+            this.Bind(x => x.SelectedUser).Subscribe(x => {
 				Messenger.Publish(new SelectedAssignedToMessage(this) { User = x });
 				ChangePresentation(new MvxClosePresentationHint(this));
 			});

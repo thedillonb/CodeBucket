@@ -33,7 +33,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			_repositories = new FilterableCollectionViewModel<RepositoryDetailedModel, RepositoriesFilterModel>(filterKey);
 			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
             _repositories.GroupingFunction = CreateGroupedItems;
-			_repositories.Bind(x => x.Filter, Repositories.Refresh);
+            _repositories.Bind(x => x.Filter).Subscribe(x => Repositories.Refresh());
         }
 
 		private IEnumerable<IGrouping<string, RepositoryDetailedModel>> CreateGroupedItems(IEnumerable<RepositoryDetailedModel> model)

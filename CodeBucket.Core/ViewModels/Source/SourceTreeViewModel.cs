@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Filters;
 using System;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -29,28 +29,16 @@ namespace CodeBucket.Core.ViewModels.Source
         public SourceFilterModel Filter
         {
             get { return _filter; }
-            set
-            {
-                _filter = value;
-                RaisePropertyChanged(() => Filter);
-                _content.Refresh();
-            }
+            set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
-        public ICommand GoToSourceTreeCommand
-        {
-			get { return new MvxCommand<SourceModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path })); }
-        }
+        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
+
 
 //        public ICommand GoToSubmoduleCommand
 //        {
 //			get { return new MvxCommand<SourceModel>(GoToSubmodule);}
 //        }
-
-        public ICommand GoToSourceCommand
-        {
-			get { return new MvxCommand<SourceModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, User = Username, Repository = Repository, Branch = Branch, Path = x.Path }));}
-        }
 
 //		private void GoToSubmodule(SourceModel x)
 //        {
@@ -64,7 +52,35 @@ namespace CodeBucket.Core.ViewModels.Source
         {
 			_content = new FilterableCollectionViewModel<SourceModel, SourceFilterModel>("SourceViewModel");
             _content.FilteringFunction = FilterModel;
-			_content.Bind(x => x.Filter, _content.Refresh);
+            _content.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
+
+            this.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
+
+            GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
+            GoToSourceCommand.OfType<SourceModel>().Subscribe(x =>
+            {
+                if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
+                {
+                    ShowViewModel<SourceTreeViewModel>(new NavObject
+                    {
+                        Username = Username,
+                        Branch = Branch,
+                        Repository = Repository,
+                        Path = x.Path
+                    });
+                }
+                else if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
+                {
+                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject 
+                    { 
+                        Name = x.Name, 
+                        User = Username,
+                        Repository = Repository, 
+                        Branch = Branch, 
+                        Path = x.Path 
+                    });
+                }
+            });
         }
 
         public void Init(NavObject navObject)

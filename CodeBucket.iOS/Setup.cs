@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UIKit;
 using CodeBucket.Core.ViewModels.App;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels;
 using MvvmCross.iOS.Platform;
 using MvvmCross.iOS.Views.Presenters;
@@ -41,13 +41,6 @@ namespace CodeBucket
 			list.Add(typeof(StartupViewModel).Assembly);
 			return list.ToArray();
 		}
-
-        protected override void FillBindingNames(MvvmCross.Binding.BindingContext.IMvxBindingNameRegistry obj)
-        {
-            base.FillBindingNames(obj);
-            obj.AddOrOverwrite(typeof(StyledStringElement), "Tapped");
-            obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
-        }
 
 		/// <summary>
 		/// Creates the app.

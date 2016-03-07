@@ -1,9 +1,7 @@
-using System;
 using MvvmCross.Platform;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
-using CodeFramework.Core.Messages;
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
 
@@ -76,16 +74,6 @@ namespace CodeBucket.Core.ViewModels
         protected Task DisplayAlert(string message)
         {
             return AlertService.Alert("Error!", message);
-        }
-
-        /// <summary>
-        /// Reports the error by displaying it and reporting it to analytics
-        /// </summary>
-        /// <param name="e">E.</param>
-        protected void ReportException(Exception e)
-        {
-            e.Report();
-            Messenger.Publish(new ErrorMessage(this, e));
         }
     }
 }

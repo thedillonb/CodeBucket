@@ -6,8 +6,8 @@ namespace CodeBucket.Views.Groups
 	public class GroupView : BaseUserCollectionView
     {
         public GroupView()
+            : base("There are no members.")
         {
-            NoItemsText = "No Members";
         }
 
 		public override void ViewWillAppear(bool animated)

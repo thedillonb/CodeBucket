@@ -5,10 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using CodeBucket;
-using CodeBucket.Core.Services;
 using System;
 using Security;
 using MvvmCross.iOS.Platform;
+using ReactiveUI;
+using CodeBucket.Core.Messages;
+using CodeBucket.Services;
+using System.Reactive.Subjects;
 
 namespace CodeBucket
 {
@@ -25,11 +28,9 @@ namespace CodeBucket
 	[Register("AppDelegate")]
 	public class AppDelegate : MvxApplicationDelegate
 	{
-        public override UIWindow Window
-        {
-            get;
-            set;
-        }
+        public override UIWindow Window { get; set; }
+
+        public IosViewPresenter Presenter { get; private set; }
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -52,23 +53,21 @@ namespace CodeBucket
 		{
             // Stamp the date this was installed (first run)
             StampInstallDate("CodeBucket");
+
+            var exceptionSubject = new Subject<Exception>();
+            RxApp.DefaultExceptionHandler = exceptionSubject;
+            exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));
             
-            this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            var presenter = new IosViewPresenter(this.Window);
-            var setup = new Setup(this, presenter);
-            setup.Initialize();
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            Presenter = new IosViewPresenter(Window);
+            new Setup(this, Presenter).Initialize();
 
 			// Setup theme
 			Theme.Setup();
 
-			var startup = Mvx.Resolve<IMvxAppStart>();
-			startup.Start();
+            GoToStartupView();
 
-            this.Window.MakeKeyAndVisible();
-
-            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, false);
-            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
-
+            Window.MakeKeyAndVisible();
 			return true;
 		}
 
@@ -97,6 +96,20 @@ namespace CodeBucket
 
 			return true;
 		}
+
+
+        private void GoToStartupView()
+        {
+            var startup = new CodeBucket.ViewControllers.StartupViewController();
+            TransitionToViewController(startup);
+            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => startup.DismissViewController(true, null));
+        }
+
+        private void TransitionToViewController(UIViewController viewController)
+        {
+            UIView.Transition(Window, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () => 
+                Window.RootViewController = viewController, null);
+        }
 
         /// <summary>
         /// Record the date this application was installed (or the date that we started recording installation date).

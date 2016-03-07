@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             var value = TxSevice.Get() as string;
             SelectedValue = value;
 
-            this.Bind(x => x.SelectedValue, x => SelectValue(x));
+            this.Bind(x => x.SelectedValue).Subscribe(x => SelectValue(x));
 		}
 
         private async Task SelectValue(string x)

@@ -45,7 +45,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             Simple = nav.Simple;
 			_issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
 			_issues.GroupingFunction = Group;
-			_issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
+            _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(true));
 
 			_addToken = Messenger.SubscribeOnMainThread<IssueAddMessage>(x =>
 			{

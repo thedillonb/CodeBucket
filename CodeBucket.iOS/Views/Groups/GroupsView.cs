@@ -1,6 +1,9 @@
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using System;
+using UIKit;
+using CodeBucket.DialogElements;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Groups
 {
@@ -9,7 +12,8 @@ namespace CodeBucket.Views.Groups
         public GroupsView()
         {
             Title = "Groups";
-            NoItemsText = "No Groups";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Group.ToEmptyListImage(), "There are no groups."));
         }
 
         public override void ViewDidLoad()
@@ -17,10 +21,11 @@ namespace CodeBucket.Views.Groups
             base.ViewDidLoad();
 
 			var vm = (GroupsViewModel) ViewModel;
+            var weakVm = new WeakReference<GroupsViewModel>(vm);
 			BindCollection(vm.Organizations, x =>
 			{
-				var e = new StyledStringElement(x.Name);
-				e.Tapped += () => vm.GoToGroupCommand.Execute(x);
+                var e = new StringElement(x.Name);
+                e.Clicked.Select(_ => x).BindCommand(weakVm.Get()?.GoToGroupCommand);
 				return e;
 			});
         }

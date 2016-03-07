@@ -1,5 +1,6 @@
 using System;
 using UIKit;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Source
 {
@@ -9,7 +10,7 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.FilePath, x =>
+            ViewModel.Bind(x => x.FilePath, true).IsNotNull().Subscribe(x =>
             {
                 if (ViewModel.IsText)
                 {

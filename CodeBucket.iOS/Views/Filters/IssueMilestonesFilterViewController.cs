@@ -21,7 +21,7 @@
 //
 //			try
 //			{
-//				MonoTouch.Utilities.PushNetworkActive();
+//				AlertDialogService.PushNetworkActive();
 //				var app = Cirrious.CrossCore.Mvx.Resolve<CodeBucket.Core.Services.IApplicationService>();
 //				await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll(), false);
 //			}
@@ -29,7 +29,7 @@
 //			}
 //			finally
 //			{
-//				MonoTouch.Utilities.PopNetworkActive();
+//				AlertDialogService.PopNetworkActive();
 //			}
 //		}
 //
@@ -59,7 +59,7 @@
 //				foreach (var item in items)
 //				{
 //					var x = item;
-//					sec.Add(new StyledStringElement(x.Title, () => {
+//					sec.Add(new StringElement(x.Title, () => {
 //						if (MilestoneSelected != null)
 //						{
 //							if (x == noMilestone)

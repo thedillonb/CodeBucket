@@ -4,7 +4,7 @@ using UIKit;
 using System;
 using Foundation;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using MvvmCross.iOS.Views;
 
 namespace CodeBucket.Views.Issues
@@ -27,7 +27,11 @@ namespace CodeBucket.Views.Issues
         {
             base.ViewDidLoad();
             NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Add, (s, e) => CreateNewFilter());
-            BindCollection(ViewModel.Filters, x => new FilterElement(x, () => ViewModel.SelectFilterCommand.Execute(x), () => EditFilter(x)), true);
+//            BindCollection(ViewModel.Filters, x => {
+//                var element = new FilterElement(x, () => EditFilter(x));
+//                element.Clicked.Select(_ => x).BindCommand(ViewModel.SelectFilterCommand);
+//                return element;
+//            }, true);
         }
 
         private void CreateNewFilter()
@@ -48,24 +52,24 @@ namespace CodeBucket.Views.Issues
             NavigationController.PushViewController(ctrl, true);
         }
 
-        private class FilterElement : StyledStringElement
+        private class FilterElement : StringElement
         {
             public IssuesFiltersViewModel.FilterModel FilterModel { get; private set; }
-            public FilterElement(IssuesFiltersViewModel.FilterModel filterModel, Action action, Action accessory)
-                : base(filterModel.IssueModel.FilterName, action)
+            public FilterElement(IssuesFiltersViewModel.FilterModel filterModel)
+                : base(filterModel.IssueModel.FilterName)
             {
                 Accessory = UITableViewCellAccessory.DetailButton;
-                AccessoryTapped += () => accessory();
+//                AccessoryTapped += () => accessory();
                 FilterModel = filterModel;
             }
         }
 
-        public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+        public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }
 
-        private class EditSource : SizingSource
+        private class EditSource : Source
         {
             private readonly IssuesFiltersView _parent;
             public EditSource(IssuesFiltersView dvc) 

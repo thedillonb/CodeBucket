@@ -1,12 +1,11 @@
 using System;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Events;
-using MonoTouch;
 using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.Utils;
-using CodeBucket.Cells;
+using CodeBucket.TableViewCells;
 
 namespace CodeBucket.Views.Events
 {
@@ -15,7 +14,6 @@ namespace CodeBucket.Views.Events
         protected BaseEventsView()
         {
             Title = "Events";
-            Root.UnevenRows = true;
             EnableSearch = false;
         }
 
@@ -59,15 +57,13 @@ namespace CodeBucket.Views.Events
 					if (anchorBlock != null)
 						act = anchorBlock.Tapped;
 					var block = new NewsFeedElement.TextBlock(h.Text, act);
-					if (act == null) block.Color = UIColor.DarkGray;
 					bodyBlocks.Add(block);
 				}
 
-                return new NewsFeedElement(avatar.ToUrl(), e.Item1.UtcCreatedOn, headerBlocks, bodyBlocks, img, e.Item2.Tapped);
+                return new NewsFeedElement(avatar.ToUrl(), e.Item1.UtcCreatedOn, headerBlocks, bodyBlocks, img, e.Item2.Tapped, e.Item2.Multilined);
             }
             catch (Exception ex)
             {
-                Utilities.LogException("Unable to add event", ex);
                 return null;
             }
         }

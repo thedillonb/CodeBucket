@@ -3,15 +3,20 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
 using UIKit;
 using BitbucketSharp.Models;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using CodeBucket.DialogElements;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Repositories
 {
     public class RepositoryView : PrettyDialogViewController
     {
+        private readonly SplitButtonElement _split = new SplitButtonElement();
+        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.Pagedefault.ToImage());
+        private readonly SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
+        private readonly SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
 
         public new RepositoryViewModel ViewModel
         {
@@ -28,15 +33,26 @@ namespace CodeBucket.Views.Repositories
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action);
             NavigationItem.RightBarButtonItem.Enabled = false;
 
-            ViewModel.Bind(x => x.Repository, x =>
-            {
-                NavigationItem.RightBarButtonItem.Enabled = true;
-                Render(x);
-            });
+            var watchers = _split.AddButton("Watchers", "-");
+            var forks = _split.AddButton("Forks", "-");
+            var branches = _split.AddButton("Branches", "-");
+ 
+            ViewModel.Bind(x => x.Branches).Subscribe(_ => Render(ViewModel.Repository));
+            ViewModel.Bind(x => x.Issues).Subscribe(_ => Render(ViewModel.Repository));
+            ViewModel.Bind(x => x.HasReadme).Subscribe(_ => Render(ViewModel.Repository));
 
-            ViewModel.Bind(x => x.Branches, () => Render(ViewModel.Repository));
-            ViewModel.Bind(x => x.Issues, () => Render(ViewModel.Repository));
-            ViewModel.Bind(x => x.HasReadme, () => Render(ViewModel.Repository));
+            OnActivation(d =>
+            {
+                d(watchers.Clicked.BindCommand(ViewModel.GoToStargazersCommand));
+                d(ViewModel.Bind(x => x.Branches, true).Subscribe(x => branches.Text = x?.Count.ToString() ?? "-"));
+                d(ViewModel.Bind(x => x.Repository, true).Subscribe(x =>
+                {
+                    watchers.Text = x?.FollowersCount.ToString();
+                    forks.Text = x?.ForkCount.ToString();
+                    NavigationItem.RightBarButtonItem.Enabled = true;
+                    Render(x);
+                }));
+            });
         }
 
         public override void ViewWillAppear(bool animated)
@@ -88,9 +104,6 @@ namespace CodeBucket.Views.Repositories
             sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
         }
 
-        SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.Pagedefault.ToImage());
-        SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
-        SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
 
 		public void Render(RepositoryDetailedModel model)
         {
@@ -100,16 +113,10 @@ namespace CodeBucket.Views.Repositories
 			Title = model.Name;
 
             var avatar = new Avatar(model.Logo).ToUrl(128);
-            var root = new RootElement(Title) { UnevenRows = true };
+            ICollection<Section> root = new LinkedList<Section>();
             HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UtcLastUpdated.Humanize() : model.Description;
             HeaderView.SetImage(avatar, Images.RepoPlaceholder);
             RefreshHeaderView();
-
-            var stargazersCommand = ViewModel.GoToStargazersCommand;
-            var split = new SplitButtonElement();
-            split.AddButton("Watchers", model.FollowersCount.ToString(), () => stargazersCommand.Execute(null));
-            split.AddButton("Forks", model.ForkCount.ToString());
-            split.AddButton("Branches", ViewModel.Branches?.Count.ToString() ?? "-");
 
             var sec1 = new Section();
 
@@ -126,47 +133,63 @@ namespace CodeBucket.Views.Repositories
             _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 
-            var owner = new StyledStringElement("Owner", model.Owner) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
+            var owner = new StringElement("Owner", model.Owner) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
             sec1.Add(owner);
 
 			if (model.ForkOf != null)
             {
-                var parent = new StyledStringElement("Forked From", model.ForkOf.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.ForkOf);
+                var parent = new StringElement("Forked From", model.ForkOf.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                parent.Clicked.Select(_ => model.ForkOf).BindCommand(ViewModel.GoToForkParentCommand);
                 sec1.Add(parent);
             }
 
-            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), AtlassianIcon.Blogroll.ToImage());
+            var events = new StringElement("Events", AtlassianIcon.Blogroll.ToImage());
+            events.Clicked.BindCommand(ViewModel.GoToEventsCommand);
             var sec2 = new Section { events };
 
-			if (model.HasWiki)
-                sec2.Add(new StyledStringElement("Wiki", () => ViewModel.GoToWikiCommand.Execute(null), AtlassianIcon.Edit.ToImage()));
+            if (model.HasWiki)
+            {
+                var wiki = new StringElement("Wiki", AtlassianIcon.Edit.ToImage());
+                wiki.Clicked.BindCommand(ViewModel.GoToWikiCommand);
+                sec2.Add(wiki);
+            }
 
             if (model.HasIssues)
-                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), AtlassianIcon.Flag.ToImage()));
+            {
+                var issues = new StringElement("Issues", AtlassianIcon.Flag.ToImage());
+                issues.Clicked.BindCommand(ViewModel.GoToIssuesCommand);
+                sec2.Add(issues);
+            }
 
             if (ViewModel.HasReadme)
-                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), AtlassianIcon.Pagedefault.ToImage()));
-
-            var sec3 = new Section
             {
-                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), AtlassianIcon.Devtoolscommit.ToImage()),
-                new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), AtlassianIcon.Devtoolspullrequest.ToImage()),
-                new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), AtlassianIcon.Filecode.ToImage()),
-            };
+                var readme = new StringElement("Readme", AtlassianIcon.Pagedefault.ToImage());
+                readme.Clicked.BindCommand(ViewModel.GoToReadmeCommand);
+                sec2.Add(readme);
+            }
 
-            root.Add(new[] { new Section { split }, sec1, sec2, sec3 });
+            var commits = new StringElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
+            commits.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
+
+            var pullRequests = new StringElement("Pull Requests", AtlassianIcon.Devtoolspullrequest.ToImage());
+            pullRequests.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand);
+
+            var source = new StringElement("Source", AtlassianIcon.Filecode.ToImage());
+            source.Clicked.BindCommand(ViewModel.GoToSourceCommand);
+
+            var sec3 = new Section { commits, pullRequests, source };
+            foreach (var s in new[] { new Section { _split }, sec1, sec2, sec3 })
+                root.Add(s);
 
             if (!String.IsNullOrEmpty(ViewModel.Repository.Website))
             {
-                root.Add(new Section
-                {
-                    new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(ViewModel.Repository.Website), AtlassianIcon.Homepage.ToImage())
-                });
+                var website = new StringElement("Website", AtlassianIcon.Homepage.ToImage());
+                website.Clicked.Select(_ => ViewModel.Repository.Website).BindCommand(ViewModel.GoToUrlCommand);
+                root.Add(new Section { website });
             }
 
-            Root = root;
+            Root.Reset(root);
         }
     }
 }

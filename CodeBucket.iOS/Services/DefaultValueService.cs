@@ -1,53 +1,85 @@
-using System;
-using MonoTouch;
+using Foundation;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Services
 {
     public class DefaultValueService : IDefaultValueService
     {
-        public T Get<T>(string key)
-        {
-            if (typeof(T) == typeof(int))
-                return (T)(object)(int)Utilities.Defaults.IntForKey(key);
-            if (typeof(T) == typeof(bool))
-                return (T)(object)Utilities.Defaults.BoolForKey(key);
-            throw new Exception("Key does not exist in Default database.");
-        }
+        public static NSUserDefaults Defaults = NSUserDefaults.StandardUserDefaults;
 
-        public bool TryGet<T>(string key, out T value)
+        public bool TryGet(string key, out string value)
         {
-            try
+            if (Defaults[key] == null)
             {
-                value = Get<T>(key);
-                return true;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-                value = default(T);
+                value = default(string);
                 return false;
             }
 
-//            var val = Utilities.Defaults.ValueForKey(new MonoTouch.Foundation.NSString(key));
-//            if (val == null)
-//            {
-//                value = default(T);
-//                return false;
-//            }
-//            value = Get<T>(key);
-//            return true;
+            value = Defaults.StringForKey(key);
+            return true;
         }
 
-        public void Set(string key, object value)
+        public bool TryGet(string key, out int value)
+        {
+            if (Defaults[key] == null)
+            {
+                value = default(int);
+                return false;
+            }
+
+            value = (int)Defaults.IntForKey(key);
+            return true;
+        }
+
+        public bool TryGet(string key, out bool value)
+        {
+            if (Defaults[key] == null)
+            {
+                value = default(bool);
+                return false;
+            }
+
+            value = Defaults.BoolForKey(key);
+            return true;
+        }
+
+        public void Set(string key, string value)
         {
             if (value == null)
-                Utilities.Defaults.RemoveObject(key);
-            else if (value is int)
-                Utilities.Defaults.SetInt((int)value, key);
-            else if (value is bool)
-                Utilities.Defaults.SetBool((bool)value, key);
-            Utilities.Defaults.Synchronize();
+                Clear(key);
+            else
+            {
+                Defaults.SetString(value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Set(string key, int? value)
+        {
+            if (!value.HasValue)
+                Clear(key);
+            else
+            {
+                Defaults.SetInt(value.Value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Set(string key, bool? value)
+        {
+            if (!value.HasValue)
+                Clear(key);
+            else
+            {
+                Defaults.SetBool(value.Value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Clear(string key)
+        {
+            Defaults.RemoveObject(key);
+            Defaults.Synchronize();
         }
     }
 }

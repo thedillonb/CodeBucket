@@ -71,5 +71,7 @@
 	<array>
 		<string>Atlassian-icons.ttf</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 </dict>
 </plist>

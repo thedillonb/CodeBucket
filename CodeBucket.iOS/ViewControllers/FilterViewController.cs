@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using UIKit;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using Humanizer;
 
 namespace CodeBucket.ViewControllers
@@ -9,13 +9,20 @@ namespace CodeBucket.ViewControllers
     public abstract class FilterViewController : DialogViewController
     {
         protected FilterViewController()
+            : base(UITableViewStyle.Grouped)
         {
-            Style = UITableViewStyle.Grouped;
             Title = "Filter & Sort";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
-                ApplyButtonPressed();
-                DismissViewController(true, null); 
+
+            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Save };
+
+            OnActivation(d =>
+            {
+                d(cancel.GetClickedObservable().Subscribe(_ => DismissViewController(true, null)));
+                d(save.GetClickedObservable().Subscribe(_ => {
+                    ApplyButtonPressed();
+                    DismissViewController(true, null); 
+                }));
             });
         }
 
@@ -32,7 +39,7 @@ namespace CodeBucket.ViewControllers
             TableView.ReloadData();
         }
 
-        public class EnumChoiceElement<T> : StyledStringElement where T : struct, IConvertible
+        public class EnumChoiceElement<T> : StringElement where T : struct, IConvertible
         {
             private T _value;
 
@@ -58,31 +65,35 @@ namespace CodeBucket.ViewControllers
         {
             var element = new EnumChoiceElement<T>(title, value);
 
-            element.Tapped += () =>
+            element.Clicked.Subscribe(_ =>
             {
-                var ctrl = new DialogViewController();
+                var ctrl = new DialogViewController(UITableViewStyle.Grouped);
                 ctrl.Title = title;
-                ctrl.Style = UIKit.UITableViewStyle.Grouped;
 
                 var sec = new Section();
-                foreach (var x in System.Enum.GetValues(typeof(T)).Cast<System.Enum>())
+                foreach (var x in Enum.GetValues(typeof(T)).Cast<Enum>())
                 {
-                    sec.Add(new StyledStringElement(x.Humanize(), () => { 
+                    var e = new StringElement(x.Humanize())
+                    { 
+                        Accessory = object.Equals(x, element.Value) ? 
+                            UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None 
+                    };
+                    e.Clicked.Subscribe(__ =>
+                    { 
                         element.Value = (T)Enum.ToObject(typeof(T), x); 
                         NavigationController.PopViewController(true);
-                    }) { 
-                        Accessory = object.Equals(x, element.Value) ? 
-                            UIKit.UITableViewCellAccessory.Checkmark : UIKit.UITableViewCellAccessory.None 
                     });
+
+                    sec.Add(e);
                 }
-                ctrl.Root = new RootElement(title) { sec };
+                ctrl.Root.Reset(sec);
                 NavigationController.PushViewController(ctrl, true);
-            };
-            
+            });
+
             return element;
         }
 
-        public class MultipleChoiceElement<T> : StyledStringElement
+        public class MultipleChoiceElement<T> : StringElement
         {
             public T Obj;
             public MultipleChoiceElement(string title, T obj)
@@ -96,14 +107,14 @@ namespace CodeBucket.ViewControllers
         protected MultipleChoiceElement<T> CreateMultipleChoiceElement<T>(string title, T o)
         {
             var element = new MultipleChoiceElement<T>(title, o);
-            element.Tapped += () =>
+            element.Clicked.Subscribe(_ =>
             {
                 var en = new MultipleChoiceViewController(element.Caption, o);
-                en.ViewDisappearing += (sender, e) => {
+                en.Disappearing.Subscribe(__ => {
                     element.Value = CreateCaptionForMultipleChoice(o);
-                };
+                });
                 NavigationController.PushViewController(en, true);
-            };
+            });
 
             return element;
         }

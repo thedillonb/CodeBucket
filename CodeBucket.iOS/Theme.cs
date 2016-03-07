@@ -1,5 +1,8 @@
 using UIKit;
-using CodeBucket.Elements;
+using CodeBucket.Views;
+using CodeBucket.ViewControllers;
+using MonoTouch.SlideoutNavigation;
+using System.Linq;
 
 namespace CodeBucket
 {
@@ -22,44 +25,47 @@ namespace CodeBucket
 			var theme = new Theme();
 			CurrentTheme = theme;
 			Theme.CurrentTheme = theme;
-			StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
-
-            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
             var backgroundImg = CreateBackgroundImage(Theme.CurrentTheme.PrimaryColor);
+            var barTypes = new [] { typeof(MainNavigationController), typeof(ThemedNavigationController) };
+            foreach (var bar in barTypes.Select(x => UINavigationBar.AppearanceWhenContainedIn(x)))
+                SetApperance(bar, backgroundImg, Theme.CurrentTheme.PrimaryColor);
 
-            UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.BarTintColor = Theme.CurrentTheme.PrimaryColor;
-            UINavigationBar.Appearance.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
-            UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
-            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-            UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
-            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
+            var menuColor = UIColor.FromRGB(50, 50, 50);
+            var menuImg = CreateBackgroundImage(menuColor);
+            var menuApp = UINavigationBar.AppearanceWhenContainedIn(typeof(MenuNavigationController));
+            SetApperance(menuApp, menuImg, menuColor);
 
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
+            foreach (var buttonItem in barTypes.Select(x => UIBarButtonItem.AppearanceWhenContainedIn(x)))
+            {
+                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
+                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
+            }
 
+            UISegmentedControl.AppearanceWhenContainedIn(typeof(UIToolbar)).TintColor = Theme.CurrentTheme.PrimaryColor;
 
-            CodeBucket.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-
-            UISegmentedControl.Appearance.TintColor = Theme.CurrentTheme.PrimaryColor;
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
-            UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes()
-            {
-                TextColor = UIColor.White,
-            }, UIControlState.Normal);
+            UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor  = UIColor.White }, UIControlState.Normal);
 
-            CodeBucket.Views.StartupView.TextColor = UIColor.FromWhiteAlpha(0.9f, 1.0f);
-            CodeBucket.Views.StartupView.SpinnerColor = UIColor.FromWhiteAlpha(0.85f, 1.0f);
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MainNavigationController)).TintColor = Theme.CurrentTheme.IconColor;
 
-            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = Theme.CurrentTheme.IconColor;
-
+            EmptyListView.DefaultColor = Theme.CurrentTheme.PrimaryColor;
 		}
+
+        private static void SetApperance(UINavigationBar.UINavigationBarAppearance bar, UIImage backgroundImg, UIColor color)
+        {
+            bar.TintColor = UIColor.White;
+            bar.BarTintColor = bar.BackgroundColor = color;
+            bar.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
+            bar.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+            bar.BackIndicatorImage = Images.Buttons.Back;
+            bar.BackIndicatorTransitionMaskImage = Images.Buttons.Back;
+        }
 
 		public UITextAttributes SegmentedControlText
 		{
@@ -74,18 +80,6 @@ namespace CodeBucket
 				};
 			}
 		}
-		public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
-		public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
-		public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
-		public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
-		public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
-		public UIImage SaveButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
-		public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
-		public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
-		public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
-		public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
-
-		public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
 		public UIImage IssueCellImage1
 		{
@@ -119,30 +113,6 @@ namespace CodeBucket
 		public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
 
 		public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
-
-		public UIColor AccountsNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Red;
-			}
-		}
-
-		public UIColor SlideoutNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Black;
-			}
-		}
-
-		public UIColor ApplicationNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Black;
-			}
-		}
 
 		public UIColor PrimaryNavigationBarTintColor
 		{

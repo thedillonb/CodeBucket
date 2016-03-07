@@ -1,6 +1,8 @@
+using System;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Views;
 using UIKit;
+using WebKit;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -15,13 +17,12 @@ namespace CodeBucket.Views.Repositories
         public ReadmeView() : base(false)
         {
             Title = "Readme";
-            Web.ScalesPageToFit = true;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.Path, x => LoadFile(x));
+            ViewModel.Bind(x => x.Path).Subscribe(x => LoadFile(x));
             ViewModel.LoadCommand.Execute(false);
         }
 
@@ -37,15 +38,15 @@ namespace CodeBucket.Views.Repositories
             NavigationItem.RightBarButtonItem = null;
         }
 
-        protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-            if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
+            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
             {
-                ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
+                ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
                 return false;
             }
 
-            return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
         }
 
         private void ShareButtonPress()

@@ -1,11 +1,10 @@
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.Views.Filters;
 using BitbucketSharp.Models;
 using System;
 using CodeBucket.ViewControllers;
 using UIKit;
-using CodeBucket.Cells;
+using CodeBucket.TableViewCells;
 using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Repositories
@@ -20,15 +19,13 @@ namespace CodeBucket.Views.Repositories
 
         protected BaseRepositoriesView()
         {
-            NoItemsText = "No Repositories"; 
             Title = "Repositories";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
         }
 
         public override void ViewDidLoad()
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIBarButtonItemStyle.Plain, 
-                (s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
-
             TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;
@@ -38,7 +35,7 @@ namespace CodeBucket.Views.Repositories
             BindCollection(ViewModel.Repositories, CreateElement);
         }
 
-        public override Source CreateSizingSource(bool unevenRows)
+        public override Source CreateSizingSource()
         {
             return new DialogViewController.Source(this);
         }
@@ -46,8 +43,7 @@ namespace CodeBucket.Views.Repositories
 		protected Element CreateElement(RepositoryDetailedModel repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var avatarUrl = new Avatar(repo.Logo).ToUrl();
-            var sse = new RepositoryElement(repo.Name, description, repo.Owner, avatarUrl, Images.RepoPlaceholder);
+            var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Avatar(repo.Logo));
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

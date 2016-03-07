@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using BitbucketSharp.Models;
 using MvvmCross.Core.ViewModels;
+using System;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
@@ -35,7 +36,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
 		public PullRequestsViewModel()
 		{
-			this.Bind(x => x.SelectedFilter, () => LoadCommand.Execute(null));
+            this.Bind(x => x.SelectedFilter).BindCommand(LoadCommand);
 		}
 
 		public void Init(NavObject navObject) 

@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			var issue = TxSevice.Get() as string;
 			SelectedMilestone = issue;
 
-			this.Bind(x => x.SelectedMilestone, x => SelectMilestone(x));
+            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
 		}
 
 		private async Task SelectMilestone(string x)

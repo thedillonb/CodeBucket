@@ -1,12 +1,14 @@
 using System;
 using MvvmCross.Core.ViewModels;
 using UIKit;
-using CodeBucket.Core.ViewModels;
-using CodeBucket.Views;
-using MvvmCross.iOS.Views;
 using MvvmCross.Platform.iOS.Views;
-using MvvmCross.Platform.Core;
+using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;
+using MvvmCross.Platform.Core;
+using System.Linq;
+using CodeBucket.Views;
+using CodeBucket.Core.ViewModels;
+using CodeBucket.Utilities;
 
 namespace CodeBucket.ViewControllers
 {
@@ -100,7 +102,7 @@ namespace CodeBucket.ViewControllers
         {
             if (NavigationController == null)
                 return;
-            
+
             if (p.Y > 0)
                 NavigationController.NavigationBar.ShadowImage = null;
             if (p.Y <= 0 && NavigationController.NavigationBar.ShadowImage == null)
@@ -109,13 +111,10 @@ namespace CodeBucket.ViewControllers
         }
     }
 
-
-
     public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
     {
-        private UIRefreshControl _refreshControl;
         private bool _manualRefreshRequested;
-  
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -124,47 +123,46 @@ namespace CodeBucket.ViewControllers
             var loadableViewModel = ViewModel as LoadableViewModel;
             if (loadableViewModel != null)
             {
-                _refreshControl = new UIRefreshControl();
-                RefreshControl = _refreshControl;
-                _refreshControl.ValueChanged += HandleRefreshRequested;
-                loadableViewModel.Bind(x => x.IsLoading, x =>
+                RefreshControl = new UIRefreshControl();
+                OnActivation(d =>
                 {
-                    if (x)
+                    d(loadableViewModel.Bind(x => x.IsLoading, true).Subscribe(x =>
                     {
-                        MonoTouch.Utilities.PushNetworkActive();
-                        _refreshControl.BeginRefreshing();
-
-                        if (!_manualRefreshRequested)
+                        if (x)
                         {
-                            UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -_refreshControl.Frame.Height), null);
-                        }
+                            NetworkActivity.PushNetworkActive();
+                            RefreshControl.BeginRefreshing();
 
-                        if (ToolbarItems != null)
-                        {
-                            foreach (var t in ToolbarItems)
+                            if (!_manualRefreshRequested)
+                            {
+                                UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                                    () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -RefreshControl.Frame.Height), null);
+                            }
+
+                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
                                 t.Enabled = false;
                         }
-                    }
-                    else
-                    {
-                        MonoTouch.Utilities.PopNetworkActive();
-
-                        // Stupid bug...
-                        BeginInvokeOnMainThread(() => {
-                            UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                            _refreshControl.EndRefreshing(); 
-                        });
-
-                        if (ToolbarItems != null)
+                        else
                         {
-                            foreach (var t in ToolbarItems)
-                                t.Enabled = true;
-                        }
+                            NetworkActivity.PopNetworkActive();
 
-                        _manualRefreshRequested = false;
-                    }
+                            if (RefreshControl.Refreshing)
+                            {
+                                // Stupid bug...
+                                BeginInvokeOnMainThread(() =>
+                                {
+                                    UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                                        () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
+                                    RefreshControl.EndRefreshing(); 
+                                });
+                            }
+
+                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
+                                t.Enabled = true;
+
+                            _manualRefreshRequested = false;
+                        }
+                    }));
                 });
             }
         }
@@ -172,9 +170,8 @@ namespace CodeBucket.ViewControllers
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name='push'>True if navigation controller should push, false if otherwise</param>
-        /// <param name='refresh'>True if the data can be refreshed, false if otherwise</param>
-        protected ViewModelDrivenDialogViewController()
+        protected ViewModelDrivenDialogViewController(bool push = true, UITableViewStyle style = UITableViewStyle.Grouped)
+            : base(style, push)
         {
             this.AdaptForBinding();
         }
@@ -202,6 +199,9 @@ namespace CodeBucket.ViewControllers
                     loadableViewModel.LoadCommand.Execute(false);
                 _isLoaded = true;
             }
+
+            if (RefreshControl != null)
+                RefreshControl.ValueChanged += HandleRefreshRequested;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -230,6 +230,9 @@ namespace CodeBucket.ViewControllers
         {
             base.ViewDidDisappear(animated);
             ViewDidDisappearCalled.Raise(this, animated);
+
+            if (RefreshControl != null)
+                RefreshControl.ValueChanged -= HandleRefreshRequested;
         }
 
         public override void ViewDidAppear(bool animated)

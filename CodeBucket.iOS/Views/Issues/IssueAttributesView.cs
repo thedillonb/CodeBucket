@@ -1,6 +1,6 @@
 using System;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Issues
 {
@@ -12,8 +12,8 @@ namespace CodeBucket.Views.Issues
 		public Action<string> SelectedValue;
 
 		public IssueAttributesView(string[] values, string selected)
+            : base(UIKit.UITableViewStyle.Plain)
 		{
-			Style = UIKit.UITableViewStyle.Plain;
 			_values = values;
 			_selected = selected;
 		}
@@ -26,18 +26,18 @@ namespace CodeBucket.Views.Issues
 			foreach (var val in _values)
 			{
 				var capture = val;
-				var el = new StyledStringElement(val);
+				var el = new StringElement(val);
 				if (string.Equals(val, _selected, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UIKit.UITableViewCellAccessory.Checkmark;
-				el.Tapped += () => {
-					if (SelectedValue != null)
-                        SelectedValue(capture);
-					NavigationController.PopViewController(true);
-				};
+                el.Clicked.Subscribe(_ =>
+                {
+                    SelectedValue?.Invoke(capture);
+                    NavigationController.PopViewController(true);
+                });
 				sec.Add(el);
 			}
 
-			Root = new RootElement(Title) { sec };
+            Root.Reset(sec);
 		}
 
     }

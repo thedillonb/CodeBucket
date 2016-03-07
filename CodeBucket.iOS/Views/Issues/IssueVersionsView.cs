@@ -1,11 +1,11 @@
+using System;
 using System.Linq;
 using UIKit;
-using CodeBucket.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
-using CodeBucket.Core.ViewModels;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
+using CodeBucket.Utilities;
 
 namespace CodeBucket.Views.Issues
 {
@@ -14,7 +14,6 @@ namespace CodeBucket.Views.Issues
         public IssueVersionsView()
 		{
 			Title = "Versions";
-			NoItemsText = "No Versions";
 			EnableSearch = false;
 		}
 
@@ -25,35 +24,28 @@ namespace CodeBucket.Views.Issues
             var vm = (IssueVersionsViewModel)ViewModel;
             BindCollection(vm.Versions, x => {
 				var e = new VersionElement(x);
-				e.Tapped += () => {
+                e.Clicked.Subscribe(_ => {
                     if (vm.SelectedValue != null && string.Equals(vm.SelectedValue, x.Name))
                         vm.SelectedValue = null;
 					else
                         vm.SelectedValue = x.Name;
-				};
+                });
                 if (vm.SelectedValue != null && string.Equals(vm.SelectedValue, x.Name))
 					e.Accessory = UITableViewCellAccessory.Checkmark;
 				return e;
 			});
 
-            vm.Bind(x => x.SelectedValue, x =>
+            vm.Bind(x => x.SelectedValue).Subscribe(x =>
 				{
-					if (Root.Count == 0)
-						return;
+					if (Root.Count == 0) return;
 					foreach (var m in Root[0].Elements.Cast<VersionElement>())
 						m.Accessory = (x != null && string.Equals(m.Version.Name, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-					Root.Reload(Root[0], UITableViewRowAnimation.None);
 				});
 
-			var _hud = new Hud(View);
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x) _hud.Show("Saving...");
-				else _hud.Hide();
-			});
+            OnActivation(d => d(vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...")));
 		}
 
-		private class VersionElement : StyledStringElement
+        private class VersionElement : StringElement
 		{
 			public VersionModel Version { get; private set; }
 			public VersionElement(VersionModel m) 

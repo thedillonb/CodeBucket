@@ -1,9 +1,9 @@
+using System;
 using UIKit;
 using System.Linq;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
-using CodeBucket.Elements;
-using MvvmCross.Core.ViewModels;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.App
 {
@@ -21,21 +21,20 @@ namespace CodeBucket.Views.App
 
 			var vm = (DefaultStartupViewModel)ViewModel;
 			BindCollection(vm.StartupViews, x => {
-				var e = new StyledStringElement(x);
-				e.Tapped += () => vm.SelectedStartupView = x;
+                var e = new StringElement(x);
+                e.Clicked.Subscribe(_ => vm.SelectedStartupView = x);
 				if (string.Equals(vm.SelectedStartupView, x))
 					e.Accessory = UITableViewCellAccessory.Checkmark;
 				return e;
 			}, true);
 
-			vm.Bind(x => x.SelectedStartupView, x =>
+            vm.Bind(x => x.SelectedStartupView, true).Subscribe(x =>
 			{
 				if (Root.Count == 0)
 					return;
-				foreach (var m in Root[0].Elements.Cast<StyledStringElement>())
+                foreach (var m in Root[0].Elements.Cast<StringElement>())
 					m.Accessory = (string.Equals(m.Caption, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Root.Reload(Root[0], UITableViewRowAnimation.None);
-			}, true);
+			});
 		}
     }
 }
