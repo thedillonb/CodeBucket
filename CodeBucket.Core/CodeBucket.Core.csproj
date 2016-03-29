@@ -36,8 +36,6 @@
   <ItemGroup>
     <Compile Include="Data\BitbucketAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
-    <Compile Include="Filters\RepositoriesFilterModel.cs" />
-    <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Messages\IssueAddMessage.cs" />
@@ -55,7 +53,6 @@
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
-    <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
@@ -74,7 +71,6 @@
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
-    <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
@@ -82,7 +78,6 @@
     <Compile Include="ViewModels\User\ProfileViewModel.cs" />
     <Compile Include="ViewModels\User\UserFollowersViewModel.cs" />
     <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
-    <Compile Include="ViewModels\User\GroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
@@ -145,20 +140,16 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
+    <Compile Include="ViewModels\Source\BranchesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="RestSharp.MonoTouch">
-      <HintPath>..\lib\BitbucketSharp\lib\RestSharp.MonoTouch.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="MvvmCross.Platform.iOS">
       <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
     </Reference>
@@ -195,6 +186,12 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\lib\BitbucketSharp\lib\RestSharp.MonoTouch.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -220,9 +217,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
-      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
-      <Name>BitbucketSharp.MonoTouch</Name>
+    <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp\BitbucketSharp.csproj">
+      <Project>{F57D02B4-BECF-405F-B3F9-D7ED653BC3AE}</Project>
+      <Name>BitbucketSharp</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

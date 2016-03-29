@@ -130,33 +130,33 @@ namespace CodeBucket.Core.ViewModels.Issues
 			return null;
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load(bool forceCacheInvalidation)
         {
 
-            LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();
-			var issuesFilter = Issues.Filter;
-			if (issuesFilter != null)
-            {
-				if (issuesFilter.Status != null && !issuesFilter.Status.IsDefault())
-                    foreach (var a in PropertyToUrl("status", issuesFilter.Status)) filter.AddLast(a);
-				if (issuesFilter.Kind != null && !issuesFilter.Kind.IsDefault())
-                    foreach (var a in PropertyToUrl("kind", issuesFilter.Kind)) filter.AddLast(a);
-				if (issuesFilter.Priority != null && !issuesFilter.Priority.IsDefault())
-                    foreach (var a in PropertyToUrl("priority", issuesFilter.Priority)) filter.AddLast(a);
-				if (!string.IsNullOrEmpty(issuesFilter.AssignedTo))
-                {
-					if (issuesFilter.AssignedTo.Equals("unassigned"))
-                        filter.AddLast(new Tuple<string, string>("responsible", ""));
-                    else
-						filter.AddLast(new Tuple<string, string>("responsible", issuesFilter.AssignedTo));
-                }
-				if (!string.IsNullOrEmpty(issuesFilter.ReportedBy))
-					filter.AddLast(new Tuple<string, string>("reported_by", issuesFilter.ReportedBy));
-
-				filter.AddLast(new Tuple<string, string>("sort", ((IssuesFilterModel.Order)issuesFilter.OrderBy).ToString().ToLower()));
-            }
-
-			return Issues.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetIssues(0, 50, filter).Issues);
+//            LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();
+//			var issuesFilter = Issues.Filter;
+//			if (issuesFilter != null)
+//            {
+//				if (issuesFilter.Status != null && !issuesFilter.Status.IsDefault())
+//                    foreach (var a in PropertyToUrl("status", issuesFilter.Status)) filter.AddLast(a);
+//				if (issuesFilter.Kind != null && !issuesFilter.Kind.IsDefault())
+//                    foreach (var a in PropertyToUrl("kind", issuesFilter.Kind)) filter.AddLast(a);
+//				if (issuesFilter.Priority != null && !issuesFilter.Priority.IsDefault())
+//                    foreach (var a in PropertyToUrl("priority", issuesFilter.Priority)) filter.AddLast(a);
+//				if (!string.IsNullOrEmpty(issuesFilter.AssignedTo))
+//                {
+//					if (issuesFilter.AssignedTo.Equals("unassigned"))
+//                        filter.AddLast(new Tuple<string, string>("responsible", ""));
+//                    else
+//						filter.AddLast(new Tuple<string, string>("responsible", issuesFilter.AssignedTo));
+//                }
+//				if (!string.IsNullOrEmpty(issuesFilter.ReportedBy))
+//					filter.AddLast(new Tuple<string, string>("reported_by", issuesFilter.ReportedBy));
+//
+//				filter.AddLast(new Tuple<string, string>("sort", ((IssuesFilterModel.Order)issuesFilter.OrderBy).ToString().ToLower()));
+//            }
+//
+//			return Issues.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetIssues(0, 50, filter).Issues);
 
         }
 

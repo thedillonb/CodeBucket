@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
-using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.User;
@@ -14,10 +14,12 @@ using CodeBucket.Core.ViewModels.Teams;
 using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Issues;
+using System.Reactive.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.App
 {
-    public class MenuViewModel : BaseViewModel
+    public class MenuViewModel : BaseViewModel, ILoadableViewModel
     {
         private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.SlideoutRootPresentation, string.Empty}};  
 
@@ -106,6 +108,25 @@ namespace CodeBucket.Core.ViewModels.App
         public MenuViewModel(IApplicationService application)
         {
             _application = application;
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                application.Client.Users.GetPrivileges()
+                    .ToObservable()
+                    .Where(x => x.Teams != null)
+                    .Subscribe(x =>
+                    {
+                        var teams = x.Teams.Keys.ToList();
+                        teams.Remove(Account.Username);
+                        Teams = teams;
+                    });
+
+                application.Client.Groups.GetGroups(Account.Username)
+                    .ToObservable()
+                    .Subscribe(x => Groups = x);
+
+                return Task.FromResult(0);
+            });
         }
 
 		[PotentialStartupViewAttribute("Profile")]
@@ -189,24 +210,6 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name }));}
 		}
 
-        public ICommand LoadCommand
-        {
-            get { return new MvxCommand(Load);}    
-        }
-
-        private void Load()
-        {
-			Task.Run(() => this.GetApplication().Client.Account.GetPrivileges()).ContinueWith(x =>
-			{
-				if (x.Result != null && x.Result.Teams != null)
-				{
-					var teams = x.Result.Teams.Keys.ToList();
-					teams.Remove(Account.Username);
-					Teams = teams;
-				}
-			}, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
-
-			Task.Run(() => this.GetApplication().Client.Account.Groups.GetGroups()).ContinueWith(x => Groups = x.Result, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
-        }
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
     }
 }

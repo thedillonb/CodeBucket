@@ -22,68 +22,17 @@ namespace CodeBucket.Core.ViewModels.Events
             get { return _events; }
         }
 
-        public bool ReportRepository
-        {
-            get;
-            private set;
-        }
+        public bool ReportRepository { get; private set; }
 
         protected BaseEventsViewModel()
         {
             ReportRepository = true;
         }
 
-//		public void Update(bool force)
-//		{
-//			var sizeRequest = GetTotalItemCount();
-//			var items = CreateRequest(0, 100);
-//
-//
-//			Model = new ListModel<EventModel> { Data = GetData() };
-//			if (Model.Data.Count < _dataLimit)
-//				return;
-//
-//			if (Model.Data.Count < sizeRequest)
-//			{
-//				Model.More = () => {
-//					var data = GetData(Model.Data.Count);
-//					Model.Data.AddRange(data);
-//					if (Model.Data.Count >= sizeRequest || data.Count < _dataLimit)
-//						Model.More = null;
-//					Render();
-//				};
-//			}
-//		}
-
-		protected abstract List<EventModel> CreateRequest(int start, int limit);
-
-		protected abstract int GetTotalItemCount();
-
-//
-//		protected virtual List<EventModel> GetData(int start = 0, int limit = _dataLimit)
-//		{
-//			var events = Application.Client.Users[Username].GetEvents(start, limit);
-//			return events.Events.OrderByDescending(x => x.UtcCreatedOn).ToList();
-//		}
-//
-//		protected virtual int GetTotalItemCount()
-//		{
-//			return Application.Client.Users[Username].GetEvents(0, 0).Count;
-//		}
-
-		protected override Task Load(bool forceDataRefresh)
-        {
-			return Task.Run(() => this.RequestModel(() => CreateRequest(0, 50), response => {
-				//this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
-                Events.Items.Reset(CreateDataFromLoad(response));
-            }));
-        }
-
-        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
+        protected IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
         {
 			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x))).Where(x => x.Item2 != null);
         }
-
 
 		private void GoToCommits(RepositoryDetailedModel repoModel, string branch)
         {
@@ -98,7 +47,7 @@ namespace CodeBucket.Core.ViewModels.Events
 			}
 			else
 			{
-				ShowViewModel<ChangesetBranchesViewModel>(new ChangesetBranchesViewModel.NavObject
+				ShowViewModel<BranchesViewModel>(new BranchesViewModel.NavObject
 				{
 					Username = repoModel.Owner,
 					Repository = repoModel.Name
@@ -184,18 +133,18 @@ namespace CodeBucket.Core.ViewModels.Events
 //            });
 //        }
 //
-		private void GoToPullRequest(RepositoryDetailedModel repo, ulong id)
-        {
-			if (repo == null)
-				return;
-            ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name,
-                Id = id
-            });
-        }
-
+//		private void GoToPullRequest(RepositoryDetailedModel repo, int id)
+//        {
+//			if (repo == null)
+//				return;
+//            ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
+//            {
+//                Username = repo.Owner,
+//                Repository = repo.Name,
+//                Id = id
+//            });
+//        }
+//
 		private void GoToPullRequests(RepositoryDetailedModel repo)
         {
 			if (repo == null)
@@ -231,7 +180,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 if (eventModel.Repository == null)
                     return null;
 
-                var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(eventModel.Description);
+                var data = eventModel.Description.ToObject<PushedEventDescriptionModel>();
                 var commits = data.Commits.Count;
 
 				if (eventModel.Repository != null)
@@ -284,7 +233,8 @@ namespace CodeBucket.Core.ViewModels.Events
 					eventBlock.Header.Add(new TextBlock(" in "));
 					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
 				}
-				var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
+                var description = eventModel.Description.ToObject<string>();
+                var desc = string.IsNullOrEmpty(description) ? "" : description.Replace("\n", " ").Trim();
 				eventBlock.Body.Add(new TextBlock(desc));
 			}
 			else if (eventModel.Event == EventModel.Type.ChangeSetCommentCreated || eventModel.Event == EventModel.Type.ChangeSetCommentDeleted ||
@@ -480,9 +430,10 @@ namespace CodeBucket.Core.ViewModels.Events
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
+                var description = eventModel.Description.ToObject<string>();
+                eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
 				eventBlock.Header.Add(new TextBlock(" updated wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+                eventBlock.Header.Add(new AnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{
@@ -494,9 +445,10 @@ namespace CodeBucket.Core.ViewModels.Events
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
+                var description = eventModel.Description.ToObject<string>();
+                eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
 				eventBlock.Header.Add(new TextBlock(" created wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+                eventBlock.Header.Add(new AnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{
@@ -509,7 +461,8 @@ namespace CodeBucket.Core.ViewModels.Events
                 if (eventModel.Repository == null)
                     return null;
 				eventBlock.Header.Add(new TextBlock(" deleted wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+                var description = eventModel.Description.ToObject<string>();
+                eventBlock.Header.Add(new AnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{

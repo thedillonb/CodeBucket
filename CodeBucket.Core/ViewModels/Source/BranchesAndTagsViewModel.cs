@@ -1,14 +1,16 @@
 using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Reactive.Linq;
 using MvvmCross.Core.ViewModels;
 using System.Linq;
 using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-	public class BranchesAndTagsViewModel : LoadableViewModel
+    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel
 	{
+        public CollectionViewModel<ViewObject> Items { get; } = new CollectionViewModel<ViewObject>();
+
 		private int _selectedFilter;
 		public int SelectedFilter
 		{
@@ -20,55 +22,45 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public string Repository { get; private set; }
 
-        public CollectionViewModel<ViewObject> Items { get; }
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
-		public ICommand GoToSourceCommand
+        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
+
+        public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
-			get { return new MvxCommand<ViewObject>(GoToSource); }
-		}
-
-		private void GoToSource(ViewObject obj)
-		{
-			var branch = obj.Object as BranchModel;
-			var tag = obj.Object as TagModel;
-
-			if (branch != null)
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = branch.Node });
-			else if (tag != null)
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = tag.Node });
-		}
-
-		public BranchesAndTagsViewModel()
-		{
-            Items = new CollectionViewModel<ViewObject>();
             this.Bind(x => x.SelectedFilter).Subscribe(x => LoadCommand.Execute(false));
+
+            GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
+            GoToSourceCommand.OfType<ViewObject>().Subscribe(obj =>
+            {
+                var branch = obj.Object as BranchModel;
+                var tag = obj.Object as TagModel;
+
+                if (branch != null)
+                    ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = branch.Node });
+                else if (tag != null)
+                    ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = tag.Node });
+            });
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                if (SelectedFilter == 0)
+                {
+                    var branches = await applicationService.Client.Repositories.GetBranches(Username, Repository);
+                    Items.Items.Reset(branches.Values.OrderBy(x => x.Branch).Select(x => new ViewObject { Name = x.Branch, Object = x }));
+                }
+                else
+                {
+                    var branches = await applicationService.Client.Repositories.GetTags(Username, Repository);
+                    Items.Items.Reset(branches.Select(x => new ViewObject { Name = x.Key, Object = x.Value }));
+                }
+            });
 		}
 
 		public void Init(NavObject navObject)
 		{
 			Username = navObject.Username;
 			Repository = navObject.Repository;
-			_selectedFilter = navObject.IsShowingBranches ? 0 : 1;
-		}
-
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-			if (SelectedFilter == 0)
-			{
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches.GetBranches(forceCacheInvalidation), response =>
-				{
-						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-						Items.Items.Reset(response.Values.OrderBy(x => x.Branch).Select(x => new ViewObject { Name = x.Branch, Object = x }));
-				});
-			}
-			else
-			{
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags(forceCacheInvalidation), response => 
-				{
-						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-						Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x.Value }));
-				});
-			}
 		}
 
 		public class ViewObject
@@ -81,12 +73,6 @@ namespace CodeBucket.Core.ViewModels.Source
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
-			public bool IsShowingBranches { get; set; }
-
-			public NavObject()
-			{
-				IsShowingBranches = true;
-			}
 		}
 	}
 }

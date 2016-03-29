@@ -23,7 +23,7 @@ namespace CodeBucket.Views.Teams
             var weakVm = new WeakReference<TeamsViewModel>(vm);
             BindCollection(vm.Teams, x => 
             {
-                var e = new StringElement(x);
+                var e = new StringElement(x.Username);
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToTeamCommand.Execute(x));
                 return e;
             });

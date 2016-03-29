@@ -1,42 +1,46 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using BitbucketSharp.Models;
 using MvvmCross.Core.ViewModels;
 using System;
+using BitbucketSharp.Models.V2;
+using CodeBucket.Core.Services;
+using BitbucketSharp;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : LoadableViewModel
+    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {
-		private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
-		public CollectionViewModel<PullRequestModel> PullRequests
-        {
-            get { return _pullrequests; }
-        }
+        public CollectionViewModel<PullRequest> PullRequests { get; } = new CollectionViewModel<PullRequest>();
 
         public string Username { get; private set; }
 
         public string Repository { get; private set; }
 
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+
+        public ReactiveUI.IReactiveCommand<object> GoToPullRequestCommand { get; }
+
 		private int _selectedFilter;
 		public int SelectedFilter
 		{
 			get { return _selectedFilter; }
-			set 
-			{
-				_selectedFilter = value;
-				RaisePropertyChanged(() => SelectedFilter);
-			}
+            set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
 
-        public ICommand GoToPullRequestCommand
-        {
-			get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Id })); }
-        }
-
-		public PullRequestsViewModel()
+        public PullRequestsViewModel(IApplicationService applicationService)
 		{
             this.Bind(x => x.SelectedFilter).BindCommand(LoadCommand);
+
+            GoToPullRequestCommand = ReactiveUI.ReactiveCommand.Create();
+            GoToPullRequestCommand
+                .OfType<PullRequest>()
+                .Select(x => new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Id })
+                .Subscribe(x => ShowViewModel<PullRequestViewModel>(x));
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                PullRequests.Items.Clear();
+                return applicationService.Client.ForAllItems(x => x.Repositories.GetPullRequests(Username, Repository, GetState()), PullRequests.Items.AddRange);
+            });
 		}
 
 		public void Init(NavObject navObject) 
@@ -45,14 +49,14 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 			Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        private PullRequestState GetState()
         {
-			var state = "OPEN";
-			if (SelectedFilter == 1)
-				state = "MERGED";
-			else if (SelectedFilter == 2)
-				state = "DECLINED";
-			return PullRequests.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state, forceCacheInvalidation));
+            switch (SelectedFilter)
+            {
+                case 1: return PullRequestState.Merged;
+                case 2: return PullRequestState.Declined;
+                default: return PullRequestState.Open;
+            }
         }
 
         public class NavObject

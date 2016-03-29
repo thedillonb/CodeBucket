@@ -1,21 +1,20 @@
-using System.Collections.Generic;
 using BitbucketSharp.Models;
-using System.Linq;
+using CodeBucket.Core.Services;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
     public class RepositoryEventsViewModel : BaseEventsViewModel
     {
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
+        private readonly IApplicationService _applicationService;
 
-        public string Username
+        public string Repository { get; private set; }
+
+        public string Username { get; private set; }
+
+        public RepositoryEventsViewModel(IApplicationService applicationService)
         {
-            get;
-            private set;
+            _applicationService = applicationService;
         }
 
         public void Init(NavObject navObject)
@@ -24,15 +23,10 @@ namespace CodeBucket.Core.ViewModels.Events
             Repository = navObject.Repository;
         }
 
-		protected override int GetTotalItemCount()
-		{
-			return this.GetApplication().Client.Users[Username].Repositories[Repository].GetEvents(0, 0).Count;
-		}
-
-		protected override List<EventModel> CreateRequest(int start, int limit)
+        protected override async Task Load(bool forceDataRefresh)
         {
-			var events = this.GetApplication().Client.Users[Username].Repositories[Repository].GetEvents(start, limit);
-			return events.Events.OrderByDescending(x => x.UtcCreatedOn).ToList();
+            var events = await _applicationService.Client.Repositories.GetEvents(Username, Repository);
+            Events.Items.Reset(CreateDataFromLoad(events.Events));
         }
 
         public class NavObject

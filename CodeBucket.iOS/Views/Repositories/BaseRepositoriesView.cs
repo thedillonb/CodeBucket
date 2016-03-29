@@ -6,6 +6,7 @@ using CodeBucket.ViewControllers;
 using UIKit;
 using CodeBucket.TableViewCells;
 using CodeBucket.Core.Utils;
+using BitbucketSharp.Models.V2;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -40,10 +41,10 @@ namespace CodeBucket.Views.Repositories
             return new DialogViewController.Source(this);
         }
 
-		protected Element CreateElement(RepositoryDetailedModel repo)
+        protected Element CreateElement(Repository repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Avatar(repo.Logo));
+            var sse = new RepositoryElement(repo.Name, description, repo.Owner.Username, new Avatar(repo.Links.Avatar.Href));
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

@@ -9,13 +9,14 @@ using System;
 using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models.V2;
-using System.Linq;
 using MvvmCross.Platform;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public class CommitViewModel : LoadableViewModel
+    public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly IApplicationService _applicationService;
+
 		public string Node { get; private set; }
 
 		public string User { get; private set; }
@@ -24,25 +25,20 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public bool ShowRepository { get; private set; }
 
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+
 		private List<ChangesetDiffModel> _commitModel;
 		public List<ChangesetDiffModel> Commits
         {
             get { return _commitModel; }
-            private set
-            {
-                _commitModel = value;
-                RaisePropertyChanged(() => Commits);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
         }
 
-        private CommitModel _commit;
-        public CommitModel Commit
+        private Commit _commit;
+        public Commit Commit
 		{
 			get { return _commit; }
-			private set {
-				_commit = value;
-				RaisePropertyChanged(() => Commit);
-			}
+            private set { this.RaiseAndSetIfChanged(ref _commit, value); }
 		}
 
 		public ICommand GoToUserCommand
@@ -75,10 +71,17 @@ namespace CodeBucket.Core.ViewModels.Commits
 			}
 		}
 
-        private readonly CollectionViewModel<CommitComment> _comments = new CollectionViewModel<CommitComment>();
-        public CollectionViewModel<CommitComment> Comments
+        public CollectionViewModel<CommitComment> Comments { get; } = new CollectionViewModel<CommitComment>();
+
+        public CommitViewModel(IApplicationService applicationService)
         {
-            get { return _comments; }
+            _applicationService = applicationService;
+
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                Commit = await applicationService.Client.Repositories.GetCommit(User, Repository, Node);
+            });
         }
 
         public void Init(NavObject navObject)
@@ -89,48 +92,48 @@ namespace CodeBucket.Core.ViewModels.Commits
             ShowRepository = navObject.ShowRepository;
         }
 
-		protected override async Task Load(bool forceCacheInvalidation)
-        {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
-            var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit(), response => Commit = response);
-			await Task.WhenAll(t1, t2);
-            GetAllComments().FireAndForget();
-        }
+//		protected override async Task Load(bool forceCacheInvalidation)
+//        {
+//			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
+//            var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit(), response => Commit = response);
+//			await Task.WhenAll(t1, t2);
+//            GetAllComments().FireAndForget();
+//        }
 
         private async Task GetAllComments()
         {
-            var comments = new List<CommitComment>();
-            var ret = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetComments());
-            comments.AddRange(ret.Values);
-
-            while (ret.Next != null)
-            {
-                ret = await Task.Run(() => this.GetApplication().Client.Request2<Collection<CommitComment>>(ret.Next));
-                comments.AddRange(ret.Values);
-            }
-
-            Comments.Items.Reset(comments.OrderBy(x => x.CreatedOn));
+//            var comments = new List<CommitComment>();
+//            var ret = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetComments());
+//            comments.AddRange(ret.Values);
+//
+//            while (ret.Next != null)
+//            {
+//                ret = await Task.Run(() => this.GetApplication().Client.Request2<Collection<CommitComment>>(ret.Next));
+//                comments.AddRange(ret.Values);
+//            }
+//
+//            Comments.Items.Reset(comments.OrderBy(x => x.CreatedOn));
         }
 
         public async Task AddComment(string text)
         {
-			try
-			{
-				await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
-                await GetAllComments();
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
-			}
+//			try
+//			{
+//				await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
+//                await GetAllComments();
+//			}
+//			catch (Exception e)
+//			{
+//                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
+//			}
         }
 
 		public async Task Approve()
 		{
 			try
 			{
-                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve());
-                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
+                await _applicationService.Client.Repositories.ApproveCommit(User, Repository, Node);
+
 			}
 			catch (Exception e)
 			{
@@ -142,8 +145,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 		{
 			try
 			{
-                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove());
-                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
+                await _applicationService.Client.Repositories.UnapproveCommit(User, Repository, Node);
 			}
 			catch (Exception e)
 			{

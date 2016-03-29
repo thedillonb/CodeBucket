@@ -136,7 +136,6 @@
     <Compile Include="Views\Repositories\RepositoryView.cs" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
-    <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
@@ -265,6 +264,7 @@
     <Compile Include="ViewControllers\ThemedNavigationController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
     <Compile Include="ViewControllers\BasicWebViewController.cs" />
+    <Compile Include="Views\Source\BranchesView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -284,9 +284,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
@@ -335,6 +332,9 @@
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -389,13 +389,13 @@
       <Project>{F23D3AC1-1422-468B-AAE6-D74FB1DBAE74}</Project>
       <Name>CodeBucket.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
-      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
-      <Name>BitbucketSharp.MonoTouch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CodeBucket\CodeBucket.csproj">
       <Project>{A7FA501E-E9E1-477B-B8F7-E919F9AA1C20}</Project>
       <Name>CodeBucket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BitbucketSharp\BitbucketSharp\BitbucketSharp.csproj">
+      <Project>{F57D02B4-BECF-405F-B3F9-D7ED653BC3AE}</Project>
+      <Name>BitbucketSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -404,7 +404,6 @@
     <Content Include="Diff\difflib.js" />
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
-    <Content Include="Diff\jquery.min.js" />
     <Content Include="Markdown\markdown.html" />
     <Content Include="Markdown\marked.js" />
     <Content Include="Markdown\textile.js" />

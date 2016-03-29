@@ -1,12 +1,21 @@
-using System.Threading.Tasks;
+using ReactiveUI;
+using CodeBucket.Core.Services;
+using BitbucketSharp;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesStarredViewModel : RepositoriesViewModel
+    public class RepositoriesStarredViewModel : RepositoriesViewModel, ILoadableViewModel
     {
-        protected override Task Load(bool forceCacheInvalidation)
+        public IReactiveCommand LoadCommand { get; }
+
+        public RepositoriesStarredViewModel(IApplicationService applicationService)
+            : base(applicationService)
         {
-            return Repositories.SimpleCollectionLoad(() => this.GetApplication().Client.Account.GetRepositoriesFollowing(forceCacheInvalidation));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                Repositories.Items.Clear();
+                return applicationService.Client.ForAllItems(x => x.Repositories.GetRepositories(applicationService.Account.Username), Repositories.Items.AddRange);
+            });
         }
     }
 }

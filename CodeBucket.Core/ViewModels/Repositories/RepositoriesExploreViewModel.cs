@@ -56,20 +56,20 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         private async Task Search()
         {
-			try
-			{
-				IsSearching = true;
-				var data = await Task.Run(() => this.GetApplication().Client.Repositories.Search(SearchText).Repositories);
-                Repositories.Items.Reset(data);
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Failed to retrieve list of repositories. " + e.Message);
-			}
-			finally
-			{
-				IsSearching = false;
-			}
+//			try
+//			{
+//				IsSearching = true;
+//				var data = await Task.Run(() => this.GetApplication().Client.Repositories.Search(SearchText).Repositories);
+//                Repositories.Items.Reset(data);
+//			}
+//			catch (Exception e)
+//			{
+//                DisplayAlert("Failed to retrieve list of repositories. " + e.Message);
+//			}
+//			finally
+//			{
+//				IsSearching = false;
+//			}
         }
     }
 }

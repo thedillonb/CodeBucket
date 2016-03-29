@@ -1,26 +1,20 @@
 using System;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using System.Net;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels
 {
-    public abstract class LoadableViewModel : BaseViewModel
+    public interface ILoadableViewModel
     {
-        private readonly ICommand _loadCommand;
-        private bool _isLoading;
+        IReactiveCommand LoadCommand { get; }
+    }
 
-        public ICommand LoadCommand
-        {
-            get { return _loadCommand; }
-        }
+    public abstract class LoadableViewModel : BaseViewModel, ILoadableViewModel
+    {
+        public IReactiveCommand LoadCommand { get; }
 
-        public bool IsLoading
-        {
-            get { return _isLoading; }
-            set { _isLoading = value; RaisePropertyChanged(() => IsLoading); }
-        }
+        protected abstract Task Load(bool forceCacheInvalidation);
 
         private async Task LoadResource(bool forceCacheInvalidation)
         {
@@ -45,39 +39,11 @@ namespace CodeBucket.Core.ViewModels
             }
         }
 
-        protected virtual Task ExecuteLoadResource(bool forceCacheInvalidation)
-        {
-            return LoadResource(forceCacheInvalidation);
-        }
-
         protected LoadableViewModel()
         {
-            _loadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(x), _ => !IsLoading);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => LoadResource(false));
         }
 
-        private async Task HandleLoadCommand(bool? forceCacheInvalidation)
-        {
-            try
-            {
-                IsLoading = true;
-                await ExecuteLoadResource(forceCacheInvalidation ?? false);
-            }
-            catch (OperationCanceledException e)
-            {
-                // The operation was canceled... Don't worry
-                System.Diagnostics.Debug.WriteLine("The operation was canceled: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("The request to load this item did not complete successfuly! " + e.Message);
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        protected abstract Task Load(bool forceCacheInvalidation);
     }
 }
 

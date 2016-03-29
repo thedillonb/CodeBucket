@@ -57,55 +57,55 @@ namespace CodeBucket.Core.ViewModels.Issues
 
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
-			var owner = await Task.Run(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation));
-			if (owner.User.IsTeam)
-			{
-				var members = await Task.Run(() => this.GetApplication().Client.Teams[Username].GetMembers(forceCacheInvalidation));
-				var users = new List<UserModel>();
-				users.AddRange(members.Values.Select(x => new UserModel { Username = x.Username, Avatar = x.Links.Avatar.Href }));
-				users.Add(owner.User);
-				Users.Items.Reset(users);
-			}
-			else
-			{
-				List<PrivilegeModel> privileges;
-				try
-				{
-					privileges = new List<PrivilegeModel>();
-					privileges.AddRange(await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Privileges.GetPrivileges(forceCacheInvalidation)));
-
-					//Get it from the group
-					try
-					{
-						var groupPrivileges = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GroupPrivileges.GetPrivileges(forceCacheInvalidation));
-						groupPrivileges.ForEach(x =>
-						{
-							if (x.Group == null || x.Group.Members == null)
-								return;
-
-							x.Group.Members.ForEach(m =>
-							{
-								if (!privileges.Any(p => p.User.Equals(m)))
-									privileges.Add(new PrivilegeModel { Privilege = x.Privilege, Repo = x.Repo, User = m });
-							});
-						});
-					}
-					catch (Exception e)
-					{
-						System.Diagnostics.Debug.WriteLine("Unable to get privileges from group: {0}", e);
-					}
-		
-				}
-				catch (Exception e)
-				{
-					privileges = new List<PrivilegeModel>();
-				}
-
-				var users = privileges.Select(x => x.User).ToList();
-				if (users.All(x => x.Username != Username))
-					users.Add(owner.User);
-				Users.Items.Reset(users);
-			}
+//			var owner = await Task.Run(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation));
+//			if (owner.User.IsTeam)
+//			{
+//				var members = await Task.Run(() => this.GetApplication().Client.Teams[Username].GetMembers(forceCacheInvalidation));
+//				var users = new List<UserModel>();
+//				users.AddRange(members.Values.Select(x => new UserModel { Username = x.Username, Avatar = x.Links.Avatar.Href }));
+//				users.Add(owner.User);
+//				Users.Items.Reset(users);
+//			}
+//			else
+//			{
+//				List<PrivilegeModel> privileges;
+//				try
+//				{
+//					privileges = new List<PrivilegeModel>();
+//					privileges.AddRange(await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Privileges.GetPrivileges(forceCacheInvalidation)));
+//
+//					//Get it from the group
+//					try
+//					{
+//						var groupPrivileges = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GroupPrivileges.GetPrivileges(forceCacheInvalidation));
+//						groupPrivileges.ForEach(x =>
+//						{
+//							if (x.Group == null || x.Group.Members == null)
+//								return;
+//
+//							x.Group.Members.ForEach(m =>
+//							{
+//								if (!privileges.Any(p => p.User.Equals(m)))
+//									privileges.Add(new PrivilegeModel { Privilege = x.Privilege, Repo = x.Repo, User = m });
+//							});
+//						});
+//					}
+//					catch (Exception e)
+//					{
+//						System.Diagnostics.Debug.WriteLine("Unable to get privileges from group: {0}", e);
+//					}
+//		
+//				}
+//				catch (Exception e)
+//				{
+//					privileges = new List<PrivilegeModel>();
+//				}
+//
+//				var users = privileges.Select(x => x.User).ToList();
+//				if (users.All(x => x.Username != Username))
+//					users.Add(owner.User);
+//				Users.Items.Reset(users);
+//			}
 		}
 
 		public class NavObject

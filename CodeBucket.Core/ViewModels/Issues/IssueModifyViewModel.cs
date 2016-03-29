@@ -105,51 +105,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 
 		public string Repository { get; private set; }
 
-		public ICommand GoToMilestonesCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Milestone);
-					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
-				});
-			}
-		}
+        public ReactiveUI.IReactiveCommand<object> GoToMilestonesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToVersionsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToComponentsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToAssigneeCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
-        public ICommand GoToVersionsCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Version);
-                    ShowViewModel<IssueVersionsViewModel>(new IssueVersionsViewModel.NavObject { Username = Username, Repository = Repository });
-                });
-            }
-        }
-
-
-        public ICommand GoToComponentsCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Component);
-                    ShowViewModel<IssueComponentsViewModel>(new IssueVersionsViewModel.NavObject { Username = Username, Repository = Repository });
-                });
-            }
-        }
-
-
-		public ICommand GoToAssigneeCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(AssignedTo);
-					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
-				}); 
-			}
-		}
 
 		public ICommand SaveCommand
 		{

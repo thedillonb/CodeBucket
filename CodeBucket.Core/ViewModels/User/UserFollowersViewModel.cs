@@ -1,25 +1,27 @@
-using System.Threading.Tasks;
-using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using BitbucketSharp;
 
 namespace CodeBucket.Core.ViewModels.User
 {
-    public class UserFollowersViewModel : BaseUserCollectionViewModel
+    public class UserFollowersViewModel : BaseUserCollectionViewModel, ILoadableViewModel
     {
-        public string Name
+        public string Name { get; private set; }
+
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+
+        public UserFollowersViewModel(IApplicationService applicationService)
         {
-            get;
-            private set;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            {
+                Users.Items.Clear();
+                return applicationService.Client.ForAllItems(x => x.Users.GetFollowers(Name), Users.Items.AddRange);
+            });
         }
 
         public void Init(NavObject navObject)
         {
             Name = navObject.Username;
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Name].GetFollowers(forceCacheInvalidation).Followers.Cast<UserModel>().OrderBy(x => x.Username).ToList());
         }
 
         public class NavObject

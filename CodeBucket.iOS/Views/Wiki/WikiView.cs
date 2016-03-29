@@ -34,29 +34,29 @@ namespace CodeBucket.Views.Wiki
 
         private async Task HandleEditButton()
         {
-            try
-            {
-                var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
-                var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
-                var composer = new Composer { Title = "Edit" + Title, Text = wiki.Data };
-                composer.NewComment(this, async (text) => {
-                    try
-                    {
-                        await composer.DoWorkAsync("Saving...", () => Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page))));
-                        composer.CloseComposer();
-                        Refresh();
-                    }
-                    catch (Exception ex)
-                    {
-                        AlertDialogService.ShowAlert("Unable to update page!", ex.Message);
-                        composer.EnableSendButton = true;
-                    };
-                });
-            }
-            catch (Exception e)
-            {
-                AlertDialogService.ShowAlert("Error", e.Message);
-            }
+//            try
+//            {
+//                var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
+//                var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
+//                var composer = new Composer { Title = "Edit" + Title, Text = wiki.Data };
+//                composer.NewComment(this, async (text) => {
+//                    try
+//                    {
+//                        await composer.DoWorkAsync("Saving...", () => Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page))));
+//                        composer.CloseComposer();
+//                        Refresh();
+//                    }
+//                    catch (Exception ex)
+//                    {
+//                        AlertDialogService.ShowAlert("Unable to update page!", ex.Message);
+//                        composer.EnableSendButton = true;
+//                    };
+//                });
+//            }
+//            catch (Exception e)
+//            {
+//                AlertDialogService.ShowAlert("Error", e.Message);
+//            }
         }
 
         public async override void ViewWillAppear(bool animated)
@@ -64,12 +64,12 @@ namespace CodeBucket.Views.Wiki
 			base.ViewWillAppear(animated);
 
 			//Stupid but I can't put this in the ViewDidLoad...
-			if (!_loaded)
-			{
-				_loaded = true;
-                var data = await ViewModel.GetData(ViewModel.Page);
-                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
-			}
+//			if (!_loaded)
+//			{
+//				_loaded = true;
+//                var data = await ViewModel.GetData(ViewModel.Page);
+//                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
+//			}
 		}
 
 
@@ -95,19 +95,19 @@ namespace CodeBucket.Views.Wiki
 
         protected async override void Refresh()
 		{
-            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
-            if (page != null)
-            {
-                try
-                {
-                    await ViewModel.GetData(page);
-                }
-                catch (Exception e)
-                {
-                    AlertDialogService.ShowAlert("Error", e.Message);
-                }
-            }
-     
+//            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
+//            if (page != null)
+//            {
+//                try
+//                {
+//                    await ViewModel.GetData(page);
+//                }
+//                catch (Exception e)
+//                {
+//                    AlertDialogService.ShowAlert("Error", e.Message);
+//                }
+//            }
+//     
 			base.Refresh();
 		}
 
@@ -117,43 +117,43 @@ namespace CodeBucket.Views.Wiki
             if (repoModel == null)
                 return null;
 
-            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
+//            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
             var sheet = new UIActionSheet();
-            var editButton = page != null ? sheet.AddButton("Edit") : -1;
-            var gotoButton = sheet.AddButton("Goto Wiki Page");
-            var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;
-            var cancelButton = sheet.AddButton("Cancel");
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) => 
-            {
-                BeginInvokeOnMainThread(() =>
-                {
-                if (e.ButtonIndex == editButton)
-                    HandleEditButton();
-                else if (e.ButtonIndex == gotoButton)
-                    PromptForWikiPage();
-                else if (e.ButtonIndex == showButton)
-                    ViewModel.GoToWebCommand.Execute(page);
-                });
-
-                sheet.Dispose();
-            };
-
+//            var editButton = page != null ? sheet.AddButton("Edit") : -1;
+//            var gotoButton = sheet.AddButton("Goto Wiki Page");
+//            var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;
+//            var cancelButton = sheet.AddButton("Cancel");
+//            sheet.CancelButtonIndex = cancelButton;
+//            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+//            sheet.Dismissed += (s, e) => 
+//            {
+//                BeginInvokeOnMainThread(() =>
+//                {
+//                if (e.ButtonIndex == editButton)
+//                    HandleEditButton();
+//                else if (e.ButtonIndex == gotoButton)
+//                    PromptForWikiPage();
+//                else if (e.ButtonIndex == showButton)
+//                    ViewModel.GoToWebCommand.Execute(page);
+//                });
+//
+//                sheet.Dispose();
+//            };
+//
             return sheet;
         }
 
         private async Task GoToPage(string page)
         {
-            try
-            {
-                var data = await ViewModel.GetData(page);
-                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
-            }
-            catch (Exception e)
-            {
-                AlertDialogService.ShowAlert("Error", e.Message);
-            }
+//            try
+//            {
+//                var data = await ViewModel.GetData(page);
+//                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
+//            }
+//            catch (Exception e)
+//            {
+//                AlertDialogService.ShowAlert("Error", e.Message);
+//            }
         }
 
         private void PromptForWikiPage()

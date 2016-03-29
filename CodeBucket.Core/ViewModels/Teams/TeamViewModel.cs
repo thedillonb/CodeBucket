@@ -1,30 +1,27 @@
 using System;
-using BitbucketSharp.Models;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.ViewModels.Events;
-using System.Threading.Tasks;
+using BitbucketSharp.Models.V2;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamViewModel : LoadableViewModel
+    public class TeamViewModel : BaseViewModel, ILoadableViewModel
     {
-        private UserModel _userModel;
+        public string Name { get; private set; }
 
-        public string Name
+        private Team _team;
+        public Team Team
         {
-            get;
-            private set;
+            get { return _team; }
+            private set { this.RaiseAndSetIfChanged(ref _team, value); }
         }
 
-        public UserModel User
-        {
-            get { return _userModel; }
-            private set { _userModel = value; RaisePropertyChanged(() => User); }
-        }
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
         public ICommand GoToFollowersCommand
         {
@@ -33,7 +30,7 @@ namespace CodeBucket.Core.ViewModels.Teams
 
         public ICommand GoToFollowingCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Name = Name })); }
+            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Username = Name })); }
         }
 
         public ICommand GoToEventsCommand
@@ -61,9 +58,12 @@ namespace CodeBucket.Core.ViewModels.Teams
             Name = navObject.Name;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        public TeamViewModel(IApplicationService applicationService)
         {
-            return this.RequestModel(() => this.GetApplication().Client.Users[Name].GetInfo(forceCacheInvalidation), response => User = response.User);
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                Team = await applicationService.Client.Teams.GetTeam(Name);
+            });
         }
 
         public class NavObject

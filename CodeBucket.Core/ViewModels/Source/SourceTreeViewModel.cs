@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.Filters;
 using System;
 using System.Reactive.Linq;
 
@@ -10,13 +8,7 @@ namespace CodeBucket.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : LoadableViewModel
     {
-		private readonly FilterableCollectionViewModel<SourceModel, SourceFilterModel> _content;
-        private SourceFilterModel _filter;
-
-		public FilterableCollectionViewModel<SourceModel, SourceFilterModel> Content
-        {
-            get { return _content; }
-        }
+        public CollectionViewModel<SourceModel> Content { get; } = new CollectionViewModel<SourceModel>();
 
 		public string Username { get; private set; }
 
@@ -25,12 +17,6 @@ namespace CodeBucket.Core.ViewModels.Source
 		public string Branch { get; private set; }
 
 		public string Repository { get; private set; }
-
-        public SourceFilterModel Filter
-        {
-            get { return _filter; }
-            set { this.RaiseAndSetIfChanged(ref _filter, value); }
-        }
 
         public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
 
@@ -50,12 +36,6 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public SourceTreeViewModel()
         {
-			_content = new FilterableCollectionViewModel<SourceModel, SourceFilterModel>("SourceViewModel");
-            _content.FilteringFunction = FilterModel;
-            _content.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
-
-            this.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
-
             GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
             GoToSourceCommand.OfType<SourceModel>().Subscribe(x =>
             {
@@ -91,26 +71,13 @@ namespace CodeBucket.Core.ViewModels.Source
             Path = navObject.Path ?? "";
         }
 
-		private IEnumerable<SourceModel> FilterModel(IEnumerable<SourceModel> model)
+        protected override async Task Load(bool forceCacheInvalidation)
         {
-            var ret = model;
-            var order = _content.Filter.OrderBy;
-            if (order == SourceFilterModel.Order.Alphabetical)
-                ret = model.OrderBy(x => x.Name);
-            else if (order == SourceFilterModel.Order.FoldersThenFiles)
-                ret = model.OrderBy(x => x.Type).ThenBy(x => x.Name);
-            return _content.Filter.Ascending ? ret : ret.Reverse();
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return Content.SimpleCollectionLoad(() => {
-				var source = new List<SourceModel>();
-				var data = this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source[Path].GetInfo(forceCacheInvalidation);
-				source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
-				source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
-				return source;
-			});
+            var data = await this.GetApplication().Client.Repositories.GetSource(Username, Repository, Branch, Path);
+			var source = new List<SourceModel>();
+			source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
+			source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
+            Content.Items.Reset(source);
         }
 
 		public class SourceModel

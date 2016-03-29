@@ -59,23 +59,17 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-                var ret = await Task.Run(() => Client.GetAuthorizationCode(ClientId, ClientSecret, Code));
-                var data = await Task.Run(() => {
-                    UsersModel u;
-                    var c = Client.BearerLogin(ret.AccessToken, out u);
-                    return Tuple.Create(c, u);
-                });
+                var ret = await Client.GetAuthorizationCode(ClientId, ClientSecret, Code);
+                var client = Client.WithBearerAuthentication(ret.AccessToken);
+                var user = await client.Users.GetUser();
 
-                var bitbucketClient = data.Item1;
-                var usersModel = data.Item2;
-
-                var account = _accountsService.Find(usersModel.User.Username);
+                var account = _accountsService.Find(user.Username);
                 if (account == null)
                 {
                     account = new BitbucketAccount
                     {
-                        Username = usersModel.User.Username,
-                        AvatarUrl = usersModel.User.Avatar,
+                        Username = user.Username,
+                        AvatarUrl = user.Links.Avatar.Href,
                         RefreshToken = ret.RefreshToken,
                         Token = ret.AccessToken
                     };
@@ -85,11 +79,11 @@ namespace CodeBucket.Core.ViewModels.Accounts
                 {
                     account.RefreshToken = ret.RefreshToken;
                     account.Token = ret.AccessToken;
-                    account.AvatarUrl = usersModel.User.Avatar;
+                    account.AvatarUrl = user.Links.Avatar.Href;
                     _accountsService.Update(account);
                 }
 
-                _applicationService.ActivateUser(account, bitbucketClient);
+                _applicationService.ActivateUser(account, client);
 			}
 			finally
 			{

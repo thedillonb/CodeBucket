@@ -41,7 +41,7 @@ namespace CodeBucket.ViewControllers.Accounts
             // Fucking BitBucket and their horrible user interface.
             if (ForbiddenRoutes.Any(navigationAction.Request.Url.AbsoluteString.StartsWith))
             {
-                AlertDialogService.ShowAlert("Invalid Request", "Sorry, due to restrictions you can not sign-up for a new account in CodeBucket.");
+                AlertDialogService.ShowAlert("Invalid Request", "Sorry, due to restrictions, you can not sign-up for a new account in CodeBucket.");
                 return false;
             }
 

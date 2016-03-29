@@ -1,9 +1,7 @@
 using CodeBucket.Core.Data;
-using System.Linq;
 using BitbucketSharp;
 using System.Timers;
 using CodeBucket.Core.ViewModels.Accounts;
-using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.Services
 {
@@ -27,7 +25,7 @@ namespace CodeBucket.Core.Services
 
                 try
                 {
-                    var ret = Client.RefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken);
+                    var ret = Client.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken).Result;
                     if (ret == null)
                         return;
 
@@ -35,8 +33,7 @@ namespace CodeBucket.Core.Services
                     Account.Token = ret.AccessToken;
                     accounts.Update(Account);
 
-                    UsersModel userInfo;
-                    Client = Client.BearerLogin(Account.Token, out userInfo);
+                    Client = Client.WithBearerAuthentication(Account.Token);
                 }
                 catch
                 {

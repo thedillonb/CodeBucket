@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CodeBucket.Utilities;
 using CodeBucket.Services;
+using ReactiveUI;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -119,7 +120,8 @@ namespace CodeBucket.Views.PullRequests
         {
             try
             {
-                await this.DoWorkAsync("Merging...", ViewModel.Merge);
+                ViewModel.MergeCommand.ExecuteIfCan();
+//                await this.DoWorkAsync("Merging...", ViewModel.Merge);
             }
             catch (Exception e)
             {

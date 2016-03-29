@@ -1,10 +1,10 @@
 using System;
 using CodeBucket.ViewControllers;
-using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.TableViewCells;
 using UIKit;
 using CodeBucket.Core.Utils;
 using CodeBucket.DialogElements;
+using CodeBucket.Core.ViewModels.Commits;
 
 namespace CodeBucket.Views.Commits
 {
@@ -20,7 +20,7 @@ namespace CodeBucket.Views.Commits
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;
 
-			var vm = (BaseCommitsViewModel) ViewModel;
+            var vm = (ICommitsViewModel)ViewModel;
             BindCollection(vm.Commits, x =>
             {
                 var msg = x.Message ?? string.Empty;
@@ -40,7 +40,7 @@ namespace CodeBucket.Views.Commits
 
                 var avatarUrl = x.Author?.User?.Links?.Avatar?.Href;
                 var el = new CommitElement(username, desc, x.Date, new Avatar(avatarUrl));
-                el.Clicked += () => vm.GoToChangesetCommand.Execute(x);
+                el.Clicked += () => vm.GoToCommitCommand.Execute(x);
                 return el;
             });
 		}

@@ -2,10 +2,10 @@ using System;
 using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Events;
 using UIKit;
-using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.Utils;
 using CodeBucket.TableViewCells;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Views.Events
 {

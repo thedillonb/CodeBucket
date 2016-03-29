@@ -31,27 +31,27 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
-			{
-					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
-					{
-						var sb = new StringBuilder(2000);
-						sb.Append("a=\"");
-						if (ViewModel.File1 != null)
-							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
-						sb.Append("\";");
-						sb.Append("b=\"");
-						if (ViewModel.File2 != null)
-							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
-						sb.Append("\";");
-						sb.Append("diff(b,a);");
-						ExecuteJavascript(sb.ToString());
-					}
-					else if (ViewModel.FilePath != null)
-					{
-						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
-					}
-			});
+//            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
+//			{
+//					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
+//					{
+//						var sb = new StringBuilder(2000);
+//						sb.Append("a=\"");
+//						if (ViewModel.File1 != null)
+//							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
+//						sb.Append("\";");
+//						sb.Append("b=\"");
+//						if (ViewModel.File2 != null)
+//							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
+//						sb.Append("\";");
+//						sb.Append("diff(b,a);");
+//						ExecuteJavascript(sb.ToString());
+//					}
+//					else if (ViewModel.FilePath != null)
+//					{
+//						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
+//					}
+//			});
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(_ =>
 			{

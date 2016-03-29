@@ -67,61 +67,61 @@ namespace CodeBucket.Core.ViewModels.Issues
 
 		protected override async Task Save()
 		{
-            try
-            {
-                if (string.IsNullOrEmpty(Title))
-                    throw new Exception("Issue must have a title!");
-
-                var createIssueModel = new CreateIssueModel 
-                { 
-                    Title = Title, 
-                    Content = Content ?? string.Empty, 
-                    Responsible = AssignedTo != null ? AssignedTo.Username : string.Empty,
-                    Milestone = Milestone ?? string.Empty,
-                    Component = Component ?? string.Empty,
-                    Version = Version ?? string.Empty,
-                    Kind = Kind.ToLower(),
-                    Status = Status.ToLower(),
-                    Priority = Priority.ToLower(),
-                };
-
-                IsSaving = true;
-                var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Update(createIssueModel));
-                Messenger.Publish(new IssueEditMessage(this) { Issue = data });
-                ChangePresentation(new MvxClosePresentationHint(this));
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to save the issue: " + e.Message);
-            }
-            finally
-            {
-                IsSaving = false;
-            }
+//            try
+//            {
+//                if (string.IsNullOrEmpty(Title))
+//                    throw new Exception("Issue must have a title!");
+//
+//                var createIssueModel = new CreateIssueModel 
+//                { 
+//                    Title = Title, 
+//                    Content = Content ?? string.Empty, 
+//                    Responsible = AssignedTo != null ? AssignedTo.Username : string.Empty,
+//                    Milestone = Milestone ?? string.Empty,
+//                    Component = Component ?? string.Empty,
+//                    Version = Version ?? string.Empty,
+//                    Kind = Kind.ToLower(),
+//                    Status = Status.ToLower(),
+//                    Priority = Priority.ToLower(),
+//                };
+//
+//                IsSaving = true;
+//                var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Update(createIssueModel));
+//                Messenger.Publish(new IssueEditMessage(this) { Issue = data });
+//                ChangePresentation(new MvxClosePresentationHint(this));
+//            }
+//            catch (Exception e)
+//            {
+//                DisplayAlert("Unable to save the issue: " + e.Message);
+//            }
+//            finally
+//            {
+//                IsSaving = false;
+//            }
 		}
 
         private async Task Delete()
         {
-            try
-            {
-                IsSaving = true;
-                await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Delete());
-                Messenger.Publish(new IssueDeleteMessage(this) { Issue = Issue });
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to delete issue: " + e.Message);
-            }
-            finally
-            {
-                IsSaving = false;
-            }
+//            try
+//            {
+//                IsSaving = true;
+//                await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Delete());
+//                Messenger.Publish(new IssueDeleteMessage(this) { Issue = Issue });
+//            }
+//            catch (Exception e)
+//            {
+//                DisplayAlert("Unable to delete issue: " + e.Message);
+//            }
+//            finally
+//            {
+//                IsSaving = false;
+//            }
         }
 
 		protected override Task Load(bool forceCacheInvalidation)
 		{
-			if (forceCacheInvalidation || Issue == null)
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
+//			if (forceCacheInvalidation || Issue == null)
+//				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
 			return Task.FromResult(false);
 		}
 

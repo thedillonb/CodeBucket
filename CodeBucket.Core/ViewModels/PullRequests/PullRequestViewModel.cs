@@ -3,58 +3,45 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
+using BitbucketSharp.Models.V2;
+using BitbucketSharp;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestViewModel : LoadableViewModel
+    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IMarkdownService _markdownService;
-        private PullRequestModel _model;
+        private readonly IApplicationService _applicationService;
+
+        public string User { get; private set; }
+
+        public string Repo { get; private set; }
+
+        public int PullRequestId { get; private set; }
+
+        public CollectionViewModel<PullRequestComment> Comments { get; } = new CollectionViewModel<PullRequestComment>();
+
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+
         private bool _merged;
-		private readonly CollectionViewModel<PullRequestCommentModel> _comments = new CollectionViewModel<PullRequestCommentModel>();
-
-        public string User 
-        { 
-            get; 
-            private set; 
-        }
-
-        public string Repo 
-        { 
-            get; 
-            private set; 
-        }
-
-        public ulong PullRequestId 
-        { 
-            get; 
-            private set; 
-        }
-
         public bool Merged
         {
             get { return _merged; }
-            set { _merged = value; RaisePropertyChanged(() => Merged); }
+            set { this.RaiseAndSetIfChanged(ref _merged, value); }
         }
 
         public string Description { get; private set; }
 
-        public PullRequestModel PullRequest 
+        private PullRequest _pullRequest;
+        public PullRequest PullRequest 
         { 
-            get { return _model; }
-            set
-            {
-                _model = value;
-                Description = string.IsNullOrWhiteSpace(value.Description) ? null : _markdownService.ConvertMarkdown(value.Description);
-                _merged = string.Equals(value.State, "MERGED");
-                RaisePropertyChanged(() => PullRequest);
-            }
+            get { return _pullRequest; }
+            private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
-		public CollectionViewModel<PullRequestCommentModel> Comments
-        {
-            get { return _comments; }
-        }
+        public ReactiveUI.IReactiveCommand<Unit> MergeCommand { get; }
 
 		public ICommand GoToCommitsCommand
 		{
@@ -73,9 +60,22 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             }
 		}
 
-        public PullRequestViewModel(IMarkdownService markdownService)
+        public PullRequestViewModel(IMarkdownService markdownService, IApplicationService applicationService)
         {
             _markdownService = markdownService;
+            _applicationService = applicationService;
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                PullRequest = await applicationService.Client.Repositories.GetPullRequest(User, Repo, PullRequestId);
+                await applicationService.Client.ForAllItems(x => x.Repositories.GetPullRequestComments(User, Repo, PullRequestId), Comments.Items.AddRange);
+            });
+
+            var canMerge = this.Bind(x => x.PullRequest, true).Select(x => string.Equals(x?.State, "open"));
+            MergeCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canMerge, async t =>
+            {
+                PullRequest = await applicationService.Client.Repositories.MergePullRequest(User, Repo, PullRequestId);
+            });
         }
 
         public void Init(NavObject navObject)
@@ -85,42 +85,18 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             PullRequestId = navObject.Id;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get(forceCacheInvalidation), response => PullRequest = response);
-			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetComments()).FireAndForget();
-            return t1;
-        }
-
         public async Task AddComment(string text)
         {
-			await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].AddComment(text));
-            await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetComments());
-        }
-
-        public async Task Merge()
-        {
-			await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Merge());
-			await this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get(true), r => PullRequest = r);
-        }
-
-        public ICommand MergeCommand
-        {
-            get { return new MvxCommand(() => Merge(), CanMerge); }
-        }
-
-        private bool CanMerge()
-        {
-            if (PullRequest == null)
-                return false;
-			return string.Equals(PullRequest.State, "open");
+            var res = await _applicationService.Client.Repositories.CommentPullRequest(User, Repo, PullRequestId, text);
+            var comment = await _applicationService.Client.Repositories.GetPullRequestComment(User, Repo, PullRequestId, res.CommentId);
+            Comments.Items.Add(comment);
         }
 
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public ulong Id { get; set; }
+            public int Id { get; set; }
         }
     }
 }

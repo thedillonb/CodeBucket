@@ -8,6 +8,7 @@ using Humanizer;
 using CodeBucket.Core.Utils;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using BitbucketSharp.Models.V2;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -47,8 +48,8 @@ namespace CodeBucket.Views.Repositories
                 d(ViewModel.Bind(x => x.Branches, true).Subscribe(x => branches.Text = x?.Count.ToString() ?? "-"));
                 d(ViewModel.Bind(x => x.Repository, true).Subscribe(x =>
                 {
-                    watchers.Text = x?.FollowersCount.ToString();
-                    forks.Text = x?.ForkCount.ToString();
+//                    watchers.Text = x?.FollowersCount.ToString();
+//                    forks.Text = x?.ForkCount.ToString();
                     NavigationItem.RightBarButtonItem.Enabled = true;
                     Render(x);
                 }));
@@ -105,16 +106,16 @@ namespace CodeBucket.Views.Repositories
         }
 
 
-		public void Render(RepositoryDetailedModel model)
+        public void Render(Repository model)
         {
             if (model == null)
                 return;
             
 			Title = model.Name;
 
-            var avatar = new Avatar(model.Logo).ToUrl(128);
+            var avatar = new Avatar(model.Links.Avatar.Href).ToUrl(128);
             ICollection<Section> root = new LinkedList<Section>();
-            HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UtcLastUpdated.Humanize() : model.Description;
+            HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UpdatedOn.Humanize() : model.Description;
             HeaderView.SetImage(avatar, Images.RepoPlaceholder);
             RefreshHeaderView();
 
@@ -129,18 +130,18 @@ namespace CodeBucket.Views.Repositories
             _split3.Button2.Text = "Issues".ToQuantity(ViewModel.Issues);
             sec1.Add(_split3);
 
-            _split2.Button1.Text = (model.UtcCreatedOn).ToString("MM/dd/yy");
+            _split2.Button1.Text = (model.UpdatedOn).ToString("MM/dd/yy");
             _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 
-            var owner = new StringElement("Owner", model.Owner) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StringElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
             sec1.Add(owner);
 
-			if (model.ForkOf != null)
+            if (model.Parent != null)
             {
-                var parent = new StringElement("Forked From", model.ForkOf.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-                parent.Clicked.Select(_ => model.ForkOf).BindCommand(ViewModel.GoToForkParentCommand);
+                var parent = new StringElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                parent.Clicked.BindCommand(ViewModel.GoToForkParentCommand);
                 sec1.Add(parent);
             }
 

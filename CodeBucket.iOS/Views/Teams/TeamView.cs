@@ -38,7 +38,7 @@ namespace CodeBucket.Views.Teams
                 d(repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand));
                 d(members.Clicked.BindCommand(ViewModel.GoToMembersCommand));
 
-                d(ViewModel.Bind(x => x.User, true).Subscribe(x =>
+                d(ViewModel.Bind(x => x.Team, true).Subscribe(x =>
                 {
                     if (x == null)
                     {
@@ -46,9 +46,8 @@ namespace CodeBucket.Views.Teams
                     }
                     else
                     {
-                        var name = x.FirstName + " " + x.LastName;
-                        HeaderView.SubText = string.IsNullOrWhiteSpace(name) ? x.Username : name;
-                        HeaderView.SetImage(new Avatar(x.Avatar).ToUrl(128), Images.Avatar);
+                        HeaderView.SubText = string.IsNullOrWhiteSpace(x.DisplayName) ? x.Username : x.DisplayName;
+                        HeaderView.SetImage(new Avatar(x.Links.Avatar.Href).ToUrl(128), Images.Avatar);
                         RefreshHeaderView();
                     }
                 }));

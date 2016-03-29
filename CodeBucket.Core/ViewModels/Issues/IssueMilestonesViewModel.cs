@@ -1,101 +1,44 @@
-using System.Threading.Tasks;
-using CodeBucket.Core.Messages;
-using System;
 using BitbucketSharp.Models;
-using MvvmCross.Core.ViewModels;
+using System.Collections.Generic;
+using CodeBucket.Core.Services;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-	public class IssueMilestonesViewModel : LoadableViewModel
+    public class IssueMilestonesViewModel : ReactiveObject, ILoadableViewModel
 	{
-		private string _selectedMilestone;
-		public string SelectedMilestone
-		{
-			get
-			{
-				return _selectedMilestone;
-			}
-			set
-			{
-				_selectedMilestone = value;
-				RaisePropertyChanged(() => SelectedMilestone);
-			}
-		}
+        private IList<IssueMilestone> _milestones;
+        public IList<IssueMilestone> Milestones
+        {
+            get { return _milestones; }
+            private set { this.RaiseAndSetIfChanged(ref _milestones, value); }
+        }
 
-		private bool _isSaving;
-		public bool IsSaving
+        private string _selectedValue;
+		public string SelectedValue
 		{
-			get { return _isSaving; }
-			private set {
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
-
-		private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
-		public CollectionViewModel<MilestoneModel> Milestones
-		{
-			get { return _milestones; }
+            get { return _selectedValue; }
+            private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
 		}
 
 		public string Username  { get; private set; }
 
 		public string Repository { get; private set; }
 
-		public int Id { get; private set; }
+        public IReactiveCommand LoadCommand { get; }
 
-		public bool SaveOnSelect { get; private set; }
+        public IssueMilestonesViewModel(IApplicationService applicationService)
+        {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                Milestones = await applicationService.Client.Issues.GetMilestones(Username, Repository);
+            });
+        }
 
-		public void Init(NavObject navObject)
+        public void Init(string username, string repository)
 		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Id = navObject.Id;
-			SaveOnSelect = navObject.SaveOnSelect;
-			var issue = TxSevice.Get() as string;
-			SelectedMilestone = issue;
-
-            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
-		}
-
-		private async Task SelectMilestone(string x)
-		{
-			if (SaveOnSelect)
-			{
-				try
-				{
-					IsSaving = true;
-					var newIssue = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(x));
-					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
-				}
-				catch (Exception e)
-				{
-                    DisplayAlert("Unable to update issue milestone: " + e.Message);
-				}
-				finally
-				{
-					IsSaving = false;
-				}
-			}
-			else
-			{
-                Messenger.Publish(new SelectedMilestoneMessage(this) { Value = x });
-			}
-
-			ChangePresentation(new MvxClosePresentationHint(this));
-		}
-
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-			return Milestones.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetMilestones(forceCacheInvalidation));
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public int Id { get; set; }
-			public bool SaveOnSelect { get; set; }
+            Username = username;
+            Repository = repository;
 		}
 	}
 }

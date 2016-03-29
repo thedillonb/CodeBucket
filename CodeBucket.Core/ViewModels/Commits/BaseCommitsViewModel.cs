@@ -1,53 +1,50 @@
-using System.Windows.Input;
+
 using System.Threading.Tasks;
-using MvvmCross.Core.ViewModels;
 using BitbucketSharp.Models.V2;
 using CodeBucket.Core.Utils;
+using System;
+using ReactiveUI;
+using System.Reactive.Linq;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-	public abstract class BaseCommitsViewModel : LoadableViewModel
+    public interface ICommitsViewModel
+    {
+        CollectionViewModel<Commit> Commits { get; }
+        IReactiveCommand<object> GoToCommitCommand { get; }
+    }
+
+    public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, ICommitsViewModel
 	{
-        private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
+        public CollectionViewModel<Commit> Commits { get; } = new CollectionViewModel<Commit>();
 
-        public string Username { get; private set; }
+        protected IApplicationService ApplicationService { get; }
 
-        public string Repository { get; private set; }
+        public IReactiveCommand<object> GoToCommitCommand { get; }
 
-		public ICommand GoToChangesetCommand
-		{
-            get 
-            { 
-                return new MvxCommand<CommitModel>(GoToCommit); 
-            }
-		}
+        public IReactiveCommand LoadCommand { get; }
 
-        protected virtual void GoToCommit(CommitModel x)
+        protected BaseCommitsViewModel(IApplicationService applicationService)
         {
-            var repo = new RepositoryIdentifier(x.Repository.FullName);
-            ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash });
+            ApplicationService = applicationService;
+
+            GoToCommitCommand = ReactiveCommand.Create();
+            GoToCommitCommand.OfType<Commit>().Subscribe(x =>
+            {
+                var repo = new RepositoryIdentifier(x.Repository.FullName);
+                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash });
+            });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var commits = await GetRequest();
+                Commits.Items.Reset(commits.Values);
+                SetMoreItems(commits);
+            });
         }
 
-        public CollectionViewModel<CommitModel> Commits
-		{
-			get { return _commits; }
-		}
-
-		public virtual void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-		}
-
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-            return Commits.RequestModel(() => GetRequest(null), response => {
-                SetMoreItems(response);
-                Commits.Items.Reset(response.Values);
-            });
-		}
-
-        private void SetMoreItems(Collection<CommitModel> c)
+        private void SetMoreItems(Collection<Commit> c)
         {
             if (c.Next == null)
             {
@@ -55,21 +52,16 @@ namespace CodeBucket.Core.ViewModels.Commits
             }
             else
             {
-                Commits.MoreItems = () => {
-                    var items = GetRequest(c.Next);
+                var uri = new Uri(c.Next);
+                Commits.MoreItems = async () => {
+                    var items = await ApplicationService.Client.Get<Collection<Commit>>(uri);
                     Commits.Items.AddRange(items.Values);
                     SetMoreItems(items);
                 };
             }
         }
 
-        protected abstract Collection<CommitModel> GetRequest(string next);
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-		}
+        protected abstract Task<Collection<Commit>> GetRequest();
 	}
 }
 

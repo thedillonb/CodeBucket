@@ -2,19 +2,19 @@
 using Foundation;
 using UIKit;
 using CodeBucket.TableViewCells;
-using BitbucketSharp.Models;
 using Humanizer;
 using CodeBucket.Core.Utils;
+using BitbucketSharp.Models.V2;
 
 namespace CodeBucket.DialogElements
 {
     public class PullRequestElement : Element
     {   
         private readonly Action _action;    
-        private readonly PullRequestModel _model;
+        private readonly PullRequest _model;
         private readonly Avatar _avatar;
 
-        public PullRequestElement(PullRequestModel model, Action action)
+        public PullRequestElement(PullRequest model, Action action)
         {
             _model = model;
             _action = action;

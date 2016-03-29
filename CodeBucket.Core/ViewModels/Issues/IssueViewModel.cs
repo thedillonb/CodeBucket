@@ -63,11 +63,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			get 
 			{ 
-				return new MvxCommand(() => {
-					if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
-						GetService<IViewModelTxService>().Add(new VersionModel { Name = Issue.Metadata.Milestone });
-					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-				}); 
+//				return new MvxCommand(() => {
+//					if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
+//						GetService<IViewModelTxService>().Add(new IssueVersion { Name = Issue.Metadata.Milestone });
+//					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+//				}); 
+                return null;
 			}
 		}
 
@@ -93,15 +94,15 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load(bool forceCacheInvalidation)
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
-
-			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.GetComments(forceCacheInvalidation), response => {
-                Comments.Items.Reset(response);
-			}).FireAndForget();
-
-            return t1;
+//			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
+//
+//			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.GetComments(forceCacheInvalidation), response => {
+//                Comments.Items.Reset(response);
+//			}).FireAndForget();
+//
+//            return t1;
         }
 
         public string ConvertToMarkdown(string str)
@@ -128,8 +129,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public async Task AddComment(string text)
         {
-			var comment = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.Create(text));
-			Comments.Items.Add(comment);
+//			var comment = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.Create(text));
+//			Comments.Items.Add(comment);
         }
 
         public class NavObject

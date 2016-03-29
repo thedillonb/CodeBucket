@@ -6,9 +6,9 @@ using UIKit;
 
 namespace CodeBucket.Views.Source
 {
-    public class ChangesetBranchesView : ViewModelCollectionDrivenDialogViewController
+    public class BranchesView : ViewModelCollectionDrivenDialogViewController
     {
-        public ChangesetBranchesView()
+        public BranchesView()
         {
             Title = "Branches";
             EmptyView = new Lazy<UIView>(() =>
@@ -18,11 +18,11 @@ namespace CodeBucket.Views.Source
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            var vm = (ChangesetBranchesViewModel) ViewModel;
-            var weakVm = new WeakReference<ChangesetBranchesViewModel>(vm);
+            var vm = (BranchesViewModel) ViewModel;
+            var weakVm = new WeakReference<BranchesViewModel>(vm);
             BindCollection(vm.Branches, x => 
             {
-                var e = new StringElement(x.Name);
+                var e = new StringElement(x.Branch);
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToBranchCommand.Execute(x));
                 return e;
             });

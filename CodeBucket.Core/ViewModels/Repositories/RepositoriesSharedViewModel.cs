@@ -1,15 +1,25 @@
 using System.Linq;
-using System.Threading.Tasks;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using BitbucketSharp;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesSharedViewModel : RepositoriesViewModel
+    public class RepositoriesSharedViewModel : RepositoriesViewModel, ILoadableViewModel
     {
-        protected override Task Load(bool forceCacheInvalidation)
+        public IReactiveCommand LoadCommand { get; }
+
+        public RepositoriesSharedViewModel(IApplicationService applicationService)
+            : base(applicationService)
         {
-            return Repositories.SimpleCollectionLoad(() => {
-                var items = this.GetApplication().Client.Account.GetRepositories(forceCacheInvalidation);
-                return items.Where(x => !string.Equals(x.Owner, this.GetApplication().Account.Username, System.StringComparison.OrdinalIgnoreCase)).OrderBy(x => x.Name).ToList();
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                var username = applicationService.Account.Username;
+                Repositories.Items.Clear();
+                return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(applicationService.Account.Username), repos => {
+                    var shared = repos.Where(x => !string.Equals(x.Owner?.Username, username, System.StringComparison.OrdinalIgnoreCase));
+                    Repositories.Items.AddRange(shared);
+                });
             });
         }
     }

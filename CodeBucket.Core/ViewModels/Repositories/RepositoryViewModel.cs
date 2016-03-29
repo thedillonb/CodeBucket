@@ -10,14 +10,14 @@ using System.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Utils;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoryViewModel : LoadableViewModel
+    public class RepositoryViewModel : BaseViewModel, ILoadableViewModel
     {
-		private RepositoryDetailedModel _repository;
-        private List<BranchModel> _branches;
-        private bool _hasReadme;
+        private readonly IApplicationService _applicationService;
         private string _primaryBranch;
         private string _readmeFilename;
 
@@ -30,44 +30,32 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public string RepositorySlug { get; private set; }
 
+        private bool _hasReadme;
         public bool HasReadme
         {
             get { return _hasReadme; }
-            private set
-            {
-                _hasReadme = value;
-                RaisePropertyChanged(() => HasReadme);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _hasReadme, value); }
         }
 
-		public RepositoryDetailedModel Repository
+        private BitbucketSharp.Models.V2.Repository _repository;
+        public BitbucketSharp.Models.V2.Repository Repository
         {
             get { return _repository; }
-            private set
-            {
-                _repository = value;
-                RaisePropertyChanged(() => Repository);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
+        private List<BranchModel> _branches;
         public List<BranchModel> Branches
         {
             get { return _branches; }
-            private set
-            {
-                _branches = value;
-                RaisePropertyChanged(() => Branches);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
         private int _issues;
         public int Issues
         {
             get { return _issues; }
-            private set {
-                _issues = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _issues, value); }
         }
 
         public void Init(NavObject navObject)
@@ -76,15 +64,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			RepositorySlug = navObject.RepositorySlug;
         }
 
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+
 		public ICommand GoToOwnerCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Username })); }
 		}
 
-		public ICommand GoToForkParentCommand
-		{
-			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }
-		}
+        public ReactiveUI.IReactiveCommand<object> GoToForkParentCommand { get; }
 
 		public ICommand GoToStargazersCommand
 		{
@@ -142,7 +129,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             if (Branches != null && Branches.Count == 1)
                 ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject {Username = Username, Repository = RepositorySlug});
             else
-				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
+				ShowViewModel<Source.BranchesViewModel>(new Source.BranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
         }
 		
         public ICommand PinCommand
@@ -150,92 +137,82 @@ namespace CodeBucket.Core.ViewModels.Repositories
             get { return new MvxCommand(PinRepository, () => Repository != null); }
         }
 
+        public ReactiveUI.IReactiveCommand<Unit> ForkCommand { get; }
+
+        public RepositoryViewModel(IApplicationService applicationService)
+        {
+            _applicationService = applicationService;
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                Repository = await applicationService.Client.Repositories.GetRepository(Username, RepositorySlug);
+
+                LoadReadme().ToBackground();
+                LoadBranches().ToBackground();
+            });
+
+            ForkCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var fork = await applicationService.Client.Repositories.Fork(Username, RepositorySlug);
+                ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
+            });
+
+            var canGoToFork = this.Bind(x => x.Repository, true).Select(x => x.Parent != null);
+            GoToForkParentCommand = ReactiveUI.ReactiveCommand.Create(canGoToFork);
+            GoToForkParentCommand
+                .Select(_ => new RepositoryIdentifier(Repository.Parent.Fullname))
+                .Select(x => new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name })
+                .Subscribe(x => ShowViewModel<RepositoryViewModel>(x));
+        }
+
         private void PinRepository()
         {
-            var repoOwner = Repository.Owner;
-			var repoName = Repository.Name;
+            var repoInfo = new RepositoryIdentifier(Repository.FullName);
 
             //Is it pinned already or not?
-			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, Repository.Slug);
+            var pinnedRepo = _applicationService.Account.PinnnedRepositories.GetPinnedRepository(repoInfo.Owner, repoInfo.Name);
             if (pinnedRepo == null)
             {
-                var avatar = new Avatar(Repository.Logo).ToUrl();
-                this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, Repository.Slug, repoName, avatar);
+                var avatar = new Avatar(Repository.Links.Avatar.Href).ToUrl();
+                this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoInfo.Owner, repoInfo.Name, Repository.Name, avatar);
             }
             else
 				this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }
 
-
-        protected override Task Load(bool forceCacheInvalidation)
+//
+//        protected override Task Load(bool forceCacheInvalidation)
+//        {
+//            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
+//                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
+//
+//            return t1;
+//        }
+//
+        private async Task LoadBranches()
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetInfo(forceCacheInvalidation), response => Repository = response);
+            var branches = await _applicationService.Client.Repositories.GetBranches(Username, RepositorySlug);
+            Branches = branches.Values.ToList();
+        }
 
-			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
-				response => Branches = response.Values.ToList()).FireAndForget();
-
-            LoadReadme().FireAndForget();
-
-            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
-                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
-
-            return t1;
+        private async Task LoadIssues()
+        {
+            
         }
 
         private async Task LoadReadme()
         {
-            var primaryBranch = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true));
-            _primaryBranch = primaryBranch.Name;
-            var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches[primaryBranch.Name].Source[""].GetInfo());
-            var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme"));
-            if (any != null)
-            {
-                _readmeFilename = any.Path;
-                HasReadme = true;
-            }
+            var mainBranch = await _applicationService.Client.Repositories.GetMainBranch(Username, RepositorySlug);
+            var sources = await _applicationService.Client.Repositories.GetSource(Username, RepositorySlug, mainBranch.Name);
+            var readme = sources.Files.FirstOrDefault(x => x.Path.StartsWith("readme", StringComparison.OrdinalIgnoreCase));
+            HasReadme = readme != null;
+            _readmeFilename = readme.Path;
         }
 
         public bool IsPinned
         {
 			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositorySlug) != null; }
         }
-
-		public ICommand ForkCommand
-		{
-			get { return new MvxCommand(() => PromptFork()); }
-		}
-
-        private async Task PromptFork()
-        {
-            try
-            {
-                var alertSerivce = GetService<IAlertDialogService>();
-                var name = await alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!");
-                await Fork(name);
-            }
-            catch (TaskCanceledException e)
-            {
-                // Nothing to see here...
-            }
-        }
-		
-		public async Task Fork(string name)
-		{
-			try
-			{
-                IsLoading = true;
-				var fork = await Task.Run(() => this.GetApplication().Client.Users[Repository.Owner].Repositories[Repository.Name].ForkRepository(name));
-				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to successfully fork the repository: " + e.Message);
-			}
-            finally
-            {
-                IsLoading = false;
-            }
-		}
 
         public class NavObject
         {

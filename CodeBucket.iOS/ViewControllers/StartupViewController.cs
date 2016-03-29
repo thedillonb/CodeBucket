@@ -26,7 +26,8 @@ namespace CodeBucket.ViewControllers
         {
             ViewModel = new StartupViewModel(
                 Mvx.Resolve<IAccountsService>(),
-                Mvx.Resolve<IApplicationService>());
+                Mvx.Resolve<IApplicationService>(),
+                Mvx.Resolve<IAlertDialogService>());
         }
 
         public override void ViewWillLayoutSubviews()

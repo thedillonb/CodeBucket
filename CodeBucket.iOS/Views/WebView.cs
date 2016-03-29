@@ -10,6 +10,7 @@ namespace CodeBucket.Views
 {
     public class WebView : MvxViewController
     {
+        private readonly LoadingIndicator _loadIndicator = new LoadingIndicator();
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;
         protected UIBarButtonItem ForwardButton;
@@ -154,13 +155,13 @@ namespace CodeBucket.Views
             Web.NavigationDelegate = new NavigationDelegate(this);
             Add(Web);
 
-            var loadableViewModel = ViewModel as LoadableViewModel;
+            var loadableViewModel = ViewModel as ILoadableViewModel;
             if (loadableViewModel != null)
             {
-                loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
+                loadableViewModel.LoadCommand.IsExecuting.Subscribe(x =>
                 {
-                    if (x) NetworkActivity.PushNetworkActive();
-                    else NetworkActivity.PopNetworkActive();
+                    if (x) _loadIndicator.Up();
+                    else _loadIndicator.Down();
                 });
             }
         }

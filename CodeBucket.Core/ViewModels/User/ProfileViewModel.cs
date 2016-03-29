@@ -1,28 +1,24 @@
-using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Events;
-using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.User
 {
-    public class ProfileViewModel : LoadableViewModel
+    public class ProfileViewModel : BaseViewModel, ILoadableViewModel
     {
-        private UserModel _userModel;
+        public string Username { get; private set; }
 
-        public string Username
+        private BitbucketSharp.Models.V2.User _user;
+        public BitbucketSharp.Models.V2.User User
         {
-            get;
-            private set;
+            get { return _user; }
+            private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
-        public UserModel User
-        {
-            get { return _userModel; }
-            private set { _userModel = value; RaisePropertyChanged(() => User); }
-        }
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
         public ICommand GoToFollowersCommand
         {
@@ -31,7 +27,7 @@ namespace CodeBucket.Core.ViewModels.User
 
         public ICommand GoToFollowingCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Name = Username })); }
+            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Username = Username })); }
         }
 
         public ICommand GoToEventsCommand
@@ -49,14 +45,17 @@ namespace CodeBucket.Core.ViewModels.User
             get { return new MvxCommand(() => ShowViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Username })); }
         }
 
+        public ProfileViewModel(IApplicationService applicationService)
+        {
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                User = await applicationService.Client.Users.GetUser();
+            });
+        }
+
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return this.RequestModel(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation), response => User = response.User);
         }
 
         public class NavObject

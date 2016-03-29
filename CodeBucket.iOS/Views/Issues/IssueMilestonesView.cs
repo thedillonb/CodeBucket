@@ -2,10 +2,9 @@ using System;
 using System.Linq;
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
-using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
-using CodeBucket.Utilities;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Views.Issues
 {
@@ -22,33 +21,39 @@ namespace CodeBucket.Views.Issues
 			base.ViewDidLoad();
 
 			var vm = (IssueMilestonesViewModel)ViewModel;
-			BindCollection(vm.Milestones, x => {
-				var e = new MilestoneElement(x);
-                e.Clicked.Subscribe(_ => {
-					if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone, x.Name))
-						vm.SelectedMilestone = null;
-					else
-						vm.SelectedMilestone = x.Name;
-                });
-				if (vm.SelectedMilestone != null && string.Equals(vm.SelectedMilestone, x.Name))
-					e.Accessory = UITableViewCellAccessory.Checkmark;
-				return e;
-			});
-
-            vm.Bind(x => x.SelectedMilestone).Subscribe(x =>
+//            vm.Bind(x => x.Milestones, true).Subscribe(milestones =>
+//            {
+//                var items = milestones ?? Enumerable.Empty<IssueMilestone>();
+//                var elements = items.Select(x => 
+//                {
+//                    var e = new MilestoneElement(x);
+//                    e.Clicked.Subscribe(_ => {
+//                        if (vm.SelectedValue != null && string.Equals(vm.SelectedValue, x.Name))
+//                            vm.SelectedValue = null;
+//                        else
+//                            vm.SelectedValue = x.Name;
+//                    });
+//                    if (vm.SelectedValue != null && string.Equals(vm.SelectedValue, x.Name))
+//                        e.Accessory = UITableViewCellAccessory.Checkmark;
+//
+//                    return e;
+//                });
+//
+//                Root.Reset(new Section() { elements });
+//            });
+//
+            vm.Bind(x => x.SelectedValue).Subscribe(x =>
 			{
                 var elements = Root.FirstOrDefault()?.Elements ?? Enumerable.Empty<Element>();
                 foreach (var m in elements.Cast<MilestoneElement>())
 					m.Accessory = (x != null && string.Equals(m.Milestone.Name, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			});
-
-            OnActivation(d => d(vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...")));
 		}
 
         private class MilestoneElement : StringElement
 		{
-			public MilestoneModel Milestone { get; private set; }
-			public MilestoneElement(MilestoneModel m) 
+			public IssueMilestone Milestone { get; private set; }
+            public MilestoneElement(IssueMilestone m) 
 				: base(m.Name)
 			{
 				Milestone = m;

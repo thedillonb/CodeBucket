@@ -114,23 +114,24 @@ namespace CodeBucket.ViewControllers
     public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
     {
         private bool _manualRefreshRequested;
+        private readonly LoadingIndicator _loadingIndicator = new LoadingIndicator();
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             ViewDidLoadCalled.Raise(this);
 
-            var loadableViewModel = ViewModel as LoadableViewModel;
+            var loadableViewModel = ViewModel as ILoadableViewModel;
             if (loadableViewModel != null)
             {
                 RefreshControl = new UIRefreshControl();
+
                 OnActivation(d =>
                 {
-                    d(loadableViewModel.Bind(x => x.IsLoading, true).Subscribe(x =>
-                    {
+                    d(loadableViewModel.LoadCommand.IsExecuting.Subscribe(x => {
                         if (x)
                         {
-                            NetworkActivity.PushNetworkActive();
+                            _loadingIndicator.Up();
                             RefreshControl.BeginRefreshing();
 
                             if (!_manualRefreshRequested)
@@ -144,7 +145,7 @@ namespace CodeBucket.ViewControllers
                         }
                         else
                         {
-                            NetworkActivity.PopNetworkActive();
+                            _loadingIndicator.Down();
 
                             if (RefreshControl.Refreshing)
                             {
@@ -178,7 +179,7 @@ namespace CodeBucket.ViewControllers
 
         private void HandleRefreshRequested(object sender, EventArgs e)
         {
-            var loadableViewModel = ViewModel as LoadableViewModel;
+            var loadableViewModel = ViewModel as ILoadableViewModel;
             if (loadableViewModel != null)
             {
                 _manualRefreshRequested = true;
@@ -194,9 +195,7 @@ namespace CodeBucket.ViewControllers
 
             if (!_isLoaded)
             {
-                var loadableViewModel = ViewModel as LoadableViewModel;
-                if (loadableViewModel != null)
-                    loadableViewModel.LoadCommand.Execute(false);
+                (ViewModel as ILoadableViewModel)?.LoadCommand.Execute(false);
                 _isLoaded = true;
             }
 
