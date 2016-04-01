@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using System.Net;
 
@@ -70,7 +70,6 @@ namespace CodeBucket.Core.ViewModels
             catch (Exception e)
             {
                 DisplayAlert("The request to load this item did not complete successfuly! " + e.Message);
-                ReportException(e);
             }
             finally
             {

@@ -1,6 +1,8 @@
+using System;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Views;
-using CodeBucket.Core.ViewModels;
+using UIKit;
+using WebKit;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -15,31 +17,41 @@ namespace CodeBucket.Views.Repositories
         public ReadmeView() : base(false)
         {
             Title = "Readme";
-            Web.ScalesPageToFit = true;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.Path, x => LoadFile(x));
-            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
+            ViewModel.Bind(x => x.Path).Subscribe(x => LoadFile(x));
             ViewModel.LoadCommand.Execute(false);
         }
 
-        protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+        public override void ViewWillAppear(bool animated)
         {
-            if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
+
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
+        {
+            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
             {
-                ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
+                ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
                 return false;
             }
 
-            return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
         }
 
         private void ShareButtonPress()
         {
-            var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet();
             var shareButton = sheet.AddButton("Share");
             var showButton = sheet.AddButton("Show in Bitbucket");
             var cancelButton = sheet.AddButton("Cancel");
@@ -48,11 +60,13 @@ namespace CodeBucket.Views.Repositories
             sheet.Dismissed += (s, e) => {
                 BeginInvokeOnMainThread(() =>
                 {
-                if (e.ButtonIndex == showButton)
-                    ViewModel.GoToGitHubCommand.Execute(null);
-                else if (e.ButtonIndex == shareButton)
-                    ViewModel.ShareCommand.Execute(null);
+                    if (e.ButtonIndex == showButton)
+                        ViewModel.GoToGitHubCommand.Execute(null);
+                    else if (e.ButtonIndex == shareButton)
+                        ViewModel.ShareCommand.Execute(null);
                 });
+
+                sheet.Dispose();
             };
 
             sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);

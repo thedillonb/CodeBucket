@@ -1,6 +1,6 @@
 using System;
-using Cirrious.MvvmCross.Plugins.Messenger;
 using BitbucketSharp.Models;
+using MvvmCross.Plugins.Messenger;
 
 namespace CodeBucket.Core.Messages
 {

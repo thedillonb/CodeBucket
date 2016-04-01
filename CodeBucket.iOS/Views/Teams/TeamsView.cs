@@ -1,6 +1,8 @@
 using CodeBucket.Core.ViewModels.Teams;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
+using System;
+using UIKit;
 
 namespace CodeBucket.Views.Teams
 {
@@ -9,14 +11,22 @@ namespace CodeBucket.Views.Teams
         public TeamsView()
         {
             Title = "Teams";
-            NoItemsText = "No Teams";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Userstatus.ToEmptyListImage(), "There are no teams."));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
             var vm = (TeamsViewModel) ViewModel;
-			BindCollection(vm.Teams, x => new StyledStringElement(x, () => vm.GoToTeamCommand.Execute(x)));
+            var weakVm = new WeakReference<TeamsViewModel>(vm);
+            BindCollection(vm.Teams, x => 
+            {
+                var e = new StringElement(x);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToTeamCommand.Execute(x));
+                return e;
+            });
         }
     }
 }

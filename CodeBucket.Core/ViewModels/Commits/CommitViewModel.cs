@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Repositories;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Source;
@@ -10,6 +10,7 @@ using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models.V2;
 using System.Linq;
+using MvvmCross.Platform;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -66,7 +67,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 //						}
 //						else
 //						{
-						Cirrious.CrossCore.Mvx.Resolve<IViewModelTxService>().Add(x);
+						Mvx.Resolve<IViewModelTxService>().Add(x);
 						ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = Node, Filename = x.File });
 //						}
 

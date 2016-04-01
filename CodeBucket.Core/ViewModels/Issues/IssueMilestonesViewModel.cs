@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using System;
 using BitbucketSharp.Models;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			var issue = TxSevice.Get() as string;
 			SelectedMilestone = issue;
 
-			this.Bind(x => x.SelectedMilestone, x => SelectMilestone(x));
+            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
 		}
 
 		private async Task SelectMilestone(string x)
@@ -82,7 +82,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 Messenger.Publish(new SelectedMilestoneMessage(this) { Value = x });
 			}
 
-			ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+			ChangePresentation(new MvxClosePresentationHint(this));
 		}
 
 		protected override Task Load(bool forceCacheInvalidation)

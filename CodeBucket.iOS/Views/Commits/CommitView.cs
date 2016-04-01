@@ -1,12 +1,15 @@
 using System;
 using CodeBucket.ViewControllers;
 using UIKit;
-using CodeBucket.Utils;
 using System.Linq;
-using CodeBucket.Elements;
+using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using Humanizer;
 using CodeBucket.Core.Utils;
+using CodeBucket.DialogElements;
+using System.Collections.Generic;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.Views.Commits
 {
@@ -33,17 +36,24 @@ namespace CodeBucket.Views.Commits
         {
             base.ViewDidLoad();
 
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
             Title = "Commit";
-            Root.UnevenRows = true;
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 
             HeaderView.SetImage(null, Images.Avatar);
 
-            ViewModel.Bind(x => x.Commits, Render);
-            ViewModel.Bind(x => x.Commit, Render);
-			ViewModel.BindCollection(x => x.Comments, a => Render());
+            ViewModel.Bind(x => x.Commits).Subscribe(_ => Render());
+            ViewModel.Bind(x => x.Commit).Subscribe(_ => Render());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
 			_segmentBarButton.Width = View.Frame.Width - 10f;
-			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+            ToolbarItems = null;
         }
 
         public void Render()
@@ -67,30 +77,24 @@ namespace CodeBucket.Views.Commits
             split.AddButton("Approvals", ViewModel.Commit.Participants.Count(x => x.Approved).ToString());
 
             var commitModel = ViewModel.Commits;
-            var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
+            ICollection<Section> root = new LinkedList<Section>();
             root.Add(new Section { split });
 
             var detailSection = new Section();
             root.Add(detailSection);
 
             var user = ViewModel.Commit.Author?.User?.DisplayName ?? ViewModel.Commit.Author.Raw ?? "Unknown";
-			detailSection.Add(new MultilinedElement(user, ViewModel.Commit.Message)
-            {
-                CaptionColor = Theme.CurrentTheme.MainTextColor,
-                ValueColor = Theme.CurrentTheme.MainTextColor,
-                BackgroundColor = UIColor.White
-            });
+            detailSection.Add(new MultilinedElement(user, ViewModel.Commit.Message));
 
             if (ViewModel.ShowRepository)
             {
-                var repo = new StyledStringElement(ViewModel.Repository) { 
+                var repo = new StringElement(ViewModel.Repository) { 
                     Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
-                    Font = StyledStringElement.DefaultDetailFont, 
-                    TextColor = StyledStringElement.DefaultDetailColor,
-                    Image = Images.Repo
+                    TextColor = StringElement.DefaultDetailColor,
+                    Image = AtlassianIcon.Devtoolsrepository.ToImage()
                 };
-                repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
+                repo.Clicked.BindCommand(ViewModel.GoToRepositoryCommand);
                 detailSection.Add(repo);
             }
 
@@ -111,7 +115,7 @@ namespace CodeBucket.Views.Commits
 						var y = x;
 						var file = x.File.Substring(x.File.LastIndexOf('/') + 1);
 						var sse = new ChangesetElement(file, x.Type, x.Diffstat.Added, x.Diffstat.Removed);
-						sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
+                        sse.Clicked.Select(_ => y).BindCommand(ViewModel.GoToFileCommand);
 						fileSection.Add(sse);
 					}
 					root.Add(fileSection);
@@ -123,44 +127,45 @@ namespace CodeBucket.Views.Commits
 				foreach (var comment in ViewModel.Comments)
 				{
                     var name = comment.User.DisplayName ?? comment.User.Username;
-                    var imgUri = new Avatar(comment.User.Links?.Avatar?.Href);
-                    commentSection.Add(new NameTimeStringElement(name, comment.Content.Raw, comment.CreatedOn, imgUri.ToUrl(), Images.Avatar));
+                    var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
+                    commentSection.Add(new CommentElement(name, comment.Content.Raw, comment.CreatedOn, avatar));
 				}
 
 				if (commentSection.Elements.Count > 0)
 					root.Add(commentSection);
 
-				var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-				addComment.Tapped += AddCommentTapped;
+                var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
+                addComment.Clicked.Subscribe(_ => AddCommentTapped());
 				root.Add(new Section { addComment });
 			}
 			else if (_viewSegment.SelectedSegment == 2)
 			{
 				var likeSection = new Section();
                 likeSection.AddAll(ViewModel.Commit.Participants.Where(x => x.Approved).Select(l => {
-                    var el = new UserElement(l.User.DisplayName, string.Empty, string.Empty, l.User.Links.Avatar.Href);
-                    el.Tapped += () => ViewModel.GoToUserCommand.Execute(l.User.Username);
+                    var avatar = new Avatar(l.User?.Links?.Avatar?.Href);
+                    var el = new UserElement(l.User.DisplayName, string.Empty, string.Empty, avatar);
+                    el.Clicked.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
 					return el;
 				}));
 
 				if (likeSection.Elements.Count > 0)
 					root.Add(likeSection);
 
-				StyledStringElement approveButton;
+				StringElement approveButton;
                 if (ViewModel.Commit.Participants.Any(x => x.User.Username.Equals(ViewModel.GetApplication().Account.Username) && x.Approved))
 				{
-					approveButton = new StyledStringElement("Unapprove") { Image = Images.Cancel };
-					approveButton.Tapped += () => this.DoWorkAsync("Unapproving...", ViewModel.Unapprove);
+                    approveButton = new StringElement("Unapprove") { Image = AtlassianIcon.Approve.ToImage() };
+                    approveButton.Clicked.Subscribe(_ => this.DoWorkAsync("Unapproving...", ViewModel.Unapprove));
 				}
 				else
 				{
-					approveButton = new StyledStringElement("Approve") { Image = Images.Accept };
-					approveButton.Tapped += () => this.DoWorkAsync("Approving...", ViewModel.Approve);
+                    approveButton = new StringElement("Approve") { Image = AtlassianIcon.Approve.ToImage() };
+                    approveButton.Clicked.Subscribe(_ => this.DoWorkAsync("Approving...", ViewModel.Approve));
 				}
 				root.Add(new Section { approveButton });
 			}
 
-			Root = root; 
+            Root.Reset(root); 
         }
 
         void AddCommentTapped()
@@ -174,7 +179,7 @@ namespace CodeBucket.Views.Commits
                 }
                 catch (Exception e)
                 {
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+					AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
                 }
                 finally
                 {
@@ -189,7 +194,7 @@ namespace CodeBucket.Views.Commits
 			if (changeset == null)
 				return;
 
-			var sheet = MonoTouch.Utilities.GetSheet();
+            var sheet = new UIActionSheet();
 			var addComment = sheet.AddButton("Add Comment");
 			var copySha = sheet.AddButton("Copy Sha");
 //			var shareButton = sheet.AddButton("Share");
@@ -201,28 +206,30 @@ namespace CodeBucket.Views.Commits
 
                 BeginInvokeOnMainThread(() =>
                 {
-				// Pin to menu
-				if (e.ButtonIndex == addComment)
-				{
-					AddCommentTapped();
-				}
-				else if (e.ButtonIndex == copySha)
-				{
-					UIPasteboard.General.String = ViewModel.Node;
-				}
-//				else if (e.ButtonIndex == shareButton)
-//				{
-//					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
-//					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
-//					UIActivity[] applicationActivities = null;
-//					var activityController = new UIActivityViewController (activityItems, applicationActivities);
-//					PresentViewController (activityController, true, null);
-//				}
-//				else if (e.ButtonIndex == showButton)
-//				{
-//					ViewModel.GoToHtmlUrlCommand.Execute(null);
-//				}
+    				// Pin to menu
+    				if (e.ButtonIndex == addComment)
+    				{
+    					AddCommentTapped();
+    				}
+    				else if (e.ButtonIndex == copySha)
+    				{
+    					UIPasteboard.General.String = ViewModel.Node;
+    				}
+    //				else if (e.ButtonIndex == shareButton)
+    //				{
+    //					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
+    //					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
+    //					UIActivity[] applicationActivities = null;
+    //					var activityController = new UIActivityViewController (activityItems, applicationActivities);
+    //					PresentViewController (activityController, true, null);
+    //				}
+    //				else if (e.ButtonIndex == showButton)
+    //				{
+    //					ViewModel.GoToHtmlUrlCommand.Execute(null);
+    //				}
                 });
+
+                sheet.Dispose();
 			};
 
 			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
@@ -230,6 +237,9 @@ namespace CodeBucket.Views.Commits
 
 		public override void ViewWillAppear(bool animated)
 		{
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+
 			if (ToolbarItems != null)
 				NavigationController.SetToolbarHidden(false, animated);
 			base.ViewWillAppear(animated);

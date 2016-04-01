@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using CodeBucket.Core.Filters;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Messages;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
+        public bool Simple { get; private set; }
 
 		protected FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
 		public FilterableCollectionViewModel<IssueModel, IssuesFilterModel> Issues
@@ -41,9 +42,10 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			Username = nav.Username;
 			Repository = nav.Repository;
+            Simple = nav.Simple;
 			_issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
 			_issues.GroupingFunction = Group;
-			_issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
+            _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(true));
 
 			_addToken = Messenger.SubscribeOnMainThread<IssueAddMessage>(x =>
 			{
@@ -212,6 +214,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
+            public bool Simple { get; set; }
+
+            public NavObject()
+            {
+                Simple = false;
+            }
 		}
     }
 }

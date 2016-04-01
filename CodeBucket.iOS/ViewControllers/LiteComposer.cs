@@ -67,9 +67,9 @@ namespace CodeBucket.ViewControllers
 			EdgesForExtendedLayout = UIRectEdge.None;
 			// Navigation Bar
 
-			var close = new UIBarButtonItem (Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
+            var close = new UIBarButtonItem (Images.Buttons.Back, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
 			NavigationItem.LeftBarButtonItem = close;
-			SendItem = new UIBarButtonItem (Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => PostCallback());
+            SendItem = new UIBarButtonItem (Images.Buttons.Save, UIBarButtonItemStyle.Plain, (s, e) => PostCallback());
 			NavigationItem.RightBarButtonItem = SendItem;
 
 			// Composer

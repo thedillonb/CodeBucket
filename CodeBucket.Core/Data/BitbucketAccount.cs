@@ -2,9 +2,9 @@ using CodeFramework.Core.Data;
 using SQLite;
 using System.IO;
 using System;
-using Cirrious.CrossCore;
 using CodeBucket.Core.Services;
 using System.Globalization;
+using MvvmCross.Platform;
 
 namespace CodeBucket.Core.Data
 {

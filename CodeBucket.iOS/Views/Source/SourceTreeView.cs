@@ -1,8 +1,8 @@
 using System;
 using CodeBucket.Core.ViewModels.Source;
-using CodeBucket.Views.Filters;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Source
 {
@@ -18,9 +18,8 @@ namespace CodeBucket.Views.Source
         {
             base.ViewDidLoad();
 
-			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
-				(s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
-            BindCollection(ViewModel.Content, CreateElement);
+            var weakVm = new WeakReference<SourceTreeViewModel>(ViewModel);
+            BindCollection(ViewModel.Content, x => CreateElement(x, weakVm));
         }
 
 		public override void ViewWillAppear(bool animated)
@@ -29,13 +28,21 @@ namespace CodeBucket.Views.Source
 			Title = string.IsNullOrEmpty(ViewModel.Path) ? ViewModel.Repository : ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
 		}
 
-		private Element CreateElement(SourceTreeViewModel.SourceModel x)
+        private static Element CreateElement(SourceTreeViewModel.SourceModel x, WeakReference<SourceTreeViewModel> viewModel)
         {
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
-                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), Images.Folder);
+            {
+                var e = new StringElement(x.Name, AtlassianIcon.Devtoolsfolderclosed.ToImage());
+                e.Clicked.Select(_ => x).BindCommand(viewModel.Get()?.GoToSourceCommand);
+                return e;
+            }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
-				return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
-            return new StyledStringElement(x.Name) { Image = Images.File };
+            {
+                var e = new StringElement(x.Name, AtlassianIcon.Devtoolsfile.ToImage());
+                e.Clicked.Select(_ => x).BindCommand(viewModel.Get()?.GoToSourceCommand);
+                return e;
+            }
+            return new StringElement(x.Name) { Image = AtlassianIcon.Devtoolsfilebinary.ToImage() };
         }
     }
 }

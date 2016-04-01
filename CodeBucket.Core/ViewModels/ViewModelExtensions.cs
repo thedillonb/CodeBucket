@@ -1,11 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Services;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -46,110 +48,43 @@ namespace CodeBucket.Core.ViewModels
 
 		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<BitbucketSharp.Models.V2.Collection<T>> request)
 		{
-			return viewModel.RequestModel(request, response => {
-				viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
-				viewModel.Items.Reset(response.Values);
-			});
+            var weakVm = new WeakReference<CollectionViewModel<T>>(viewModel);
+            return viewModel.RequestModel(request, response =>
+            {
+                weakVm.Get()?.CreateMore(response, m => {
+                    var weak = weakVm.Get();
+                    if (weak != null)
+                        weak.MoreItems = m;
+                }, viewModel.Items.AddRange);
+                weakVm.Get()?.Items.Reset(response.Values);
+            });
 		}
     }
 }
 
 public static class BindExtensions
 {
-    public static void Bind<T, TR>(this T viewModel, System.Linq.Expressions.Expression<Func<T, TR>> outExpr, Action b, bool activateNow = false) where T : INotifyPropertyChanged
-    {
-        var expr = (System.Linq.Expressions.MemberExpression) outExpr.Body;
-        var prop = (System.Reflection.PropertyInfo) expr.Member;
-        var name = prop.Name;
-        viewModel.PropertyChanged += (sender, e) =>
-        {
-            if (e.PropertyName.Equals(name))
-            {
-                try
-                {
-                    b();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-        };
-
-        if (activateNow)
-        {
-            try
-            {
-                b();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-    }
-
-    public static void Bind<T, TR>(this T viewModel, System.Linq.Expressions.Expression<Func<T, TR>> outExpr, Action<TR> b, bool activateNow = false) where T : INotifyPropertyChanged
+    public static IObservable<TR> Bind<T, TR>(this T viewModel, System.Linq.Expressions.Expression<Func<T, TR>> outExpr, bool activate = false) where T : INotifyPropertyChanged
     {
         var expr = (System.Linq.Expressions.MemberExpression) outExpr.Body;
         var prop = (System.Reflection.PropertyInfo) expr.Member;
         var name = prop.Name;
         var comp = outExpr.Compile();
-        viewModel.PropertyChanged += (sender, e) =>
-        {
-            if (e.PropertyName.Equals(name))
-            {
-                try
-                {
-                    b(comp(viewModel));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-        };
 
-        if (activateNow)
-        {
-            try
-            {
-                b(comp(viewModel));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+        var ret = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(t => viewModel.PropertyChanged += t, t => viewModel.PropertyChanged -= t)
+            .Where(x => string.Equals(x.EventArgs.PropertyName, name))
+            .Select(x => comp(viewModel));
+        return activate ? ret.StartWith(comp(viewModel)) : ret;
     }
 
-    public static void BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, Action<NotifyCollectionChangedEventArgs> b, bool activateNow = false) where T : INotifyPropertyChanged
+    public static IObservable<Unit> BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, bool activate = false) where T : INotifyPropertyChanged
     {
         var exp = outExpr.Compile();
         var m = exp(viewModel);
-        m.CollectionChanged += (sender, e) =>
-        {
-            try
-            {
-                b(e);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        };
 
-        if (activateNow)
-        {
-            try
-            {
-                b(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+        var ret = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(t => m.CollectionChanged += t, t => m.CollectionChanged -= t)
+            .Select(_ => Unit.Default);
+        return activate ? ret.StartWith(Unit.Default) : ret;
     }
 }
 

@@ -1,6 +1,7 @@
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
+using System;
 
 namespace CodeBucket.Views.Issues
 {
@@ -18,25 +19,24 @@ namespace CodeBucket.Views.Issues
 
 			base.ViewDidLoad();
 
-            var status = new StyledStringElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
-            status.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            status.Tapped += () => 
-            {
-                var ctrl = new IssueAttributesView(IssueModifyViewModel.Statuses, ViewModel.Status) { Title = "Status" };
-                ctrl.SelectedValue = x => ViewModel.Status = x.ToLower();
-                NavigationController.PushViewController(ctrl, true);
-            };
-
-            var delete = new StyledStringElement("Delete", () => ViewModel.DeleteCommand.Execute(null), Images.BinClosed) { BackgroundColor = UIColor.FromRGB(1.0f, 0.7f, 0.7f) };
-            delete.Accessory = UITableViewCellAccessory.None;
+            var status = new StringElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
+            var delete = new StringElement("Delete", AtlassianIcon.Delete.ToImage()) { Accessory = UITableViewCellAccessory.None };
 
             Root[0].Insert(1, UITableViewRowAnimation.None, status);
             Root.Insert(Root.Count, UITableViewRowAnimation.None, new Section { delete });
 
-            ViewModel.Bind(x => x.Status, x => {
-                status.Value = x;
-                Root.Reload(status, UITableViewRowAnimation.None);
-            }, true);
+            OnActivation(d =>
+            {
+                d(ViewModel.Bind(x => x.Status, true).Subscribe(x => status.Value = x));
+                d(delete.Clicked.BindCommand(ViewModel.DeleteCommand));
+                d(status.Clicked.Subscribe(_ =>
+                {
+                    var ctrl = new IssueAttributesView(IssueModifyViewModel.Statuses, ViewModel.Status) { Title = "Status" };
+                    ctrl.SelectedValue = x => ViewModel.Status = x.ToLower();
+                    NavigationController.PushViewController(ctrl, true);
+                }));
+            });
+
 		}
     }
 }

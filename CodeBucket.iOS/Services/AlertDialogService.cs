@@ -1,6 +1,8 @@
 using System;
 using UIKit;
 using System.Threading.Tasks;
+using Foundation;
+using CoreGraphics;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Services
@@ -21,8 +23,53 @@ namespace CodeBucket.Services
         public Task Alert(string title, string message)
         {
             var tcs = new TaskCompletionSource<object>();
-            MonoTouch.Utilities.ShowAlert(title, message, () => tcs.SetResult(null));
+            ShowAlert(title, message, () => tcs.SetResult(null));
             return tcs.Task;
+        }
+
+        public static void ShowAlert(string title, string message, Action dismissed = null)
+        {
+            var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
+            alert.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, x => {
+                dismissed?.Invoke();
+                alert.Dispose();
+            }));
+            UIApplication.SharedApplication.KeyWindow.GetVisibleViewController().PresentViewController(alert, true, null);
+        }
+
+        public static void ShareUrl(string url, UIBarButtonItem barButtonItem = null)
+        {
+            try
+            {
+                var item = new NSUrl(url);
+                var activityItems = new NSObject[] { item };
+                UIActivity[] applicationActivities = null;
+                var activityController = new UIActivityViewController (activityItems, applicationActivities);
+
+                if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad) 
+                {
+                    var window = UIApplication.SharedApplication.KeyWindow;
+                    var pop = new UIPopoverController (activityController);
+
+                    if (barButtonItem != null)
+                    {
+                        pop.PresentFromBarButtonItem(barButtonItem, UIPopoverArrowDirection.Any, true);
+                    }
+                    else
+                    {
+                        var rect = new CGRect(window.RootViewController.View.Frame.Width / 2, window.RootViewController.View.Frame.Height / 2, 0, 0);
+                        pop.PresentFromRect (rect, window.RootViewController.View, UIPopoverArrowDirection.Any, true);
+                    }
+                } 
+                else 
+                {
+                    var viewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
+                    viewController.PresentViewController(activityController, true, null);
+                }
+            }
+            catch
+            {
+            }
         }
 
         public Task<string> PromptTextBox(string title, string message, string defaultValue, string okTitle)
@@ -35,7 +82,6 @@ namespace CodeBucket.Services
             var cancelButton = alert.AddButton("Cancel");
             var okButton = alert.AddButton(okTitle);
             alert.CancelButtonIndex = cancelButton;
-            alert.DismissWithClickedButtonIndex(cancelButton, true);
             alert.GetTextField(0).Text = defaultValue;
             alert.Clicked += (s, e) =>
             {

@@ -232,11 +232,12 @@ namespace CodeBucket.Core.ViewModels.Events
                     return null;
 
                 var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(eventModel.Description);
+                var commits = data.Commits.Count;
 
 				if (eventModel.Repository != null)
 					eventBlock.Tapped = () => GoToCommits(eventModel.Repository, null);
 
-				eventBlock.Header.Add(new TextBlock(" pushed " + data.TotalCommits + " commit" + (data.TotalCommits > 1 ? "s" : string.Empty)));
+                eventBlock.Header.Add(new TextBlock(" pushed " + commits + " commit" + (commits > 1 ? "s" : string.Empty)));
 
                 if (ReportRepository)
                 {
@@ -262,6 +263,8 @@ namespace CodeBucket.Core.ViewModels.Events
 						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, sha)));
 						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
 					}
+
+                    eventBlock.Multilined = true;
 				}
 				return eventBlock;
 			}
@@ -561,6 +564,8 @@ namespace CodeBucket.Core.ViewModels.Events
             public IList<TextBlock> Header { get; private set; }
             public IList<TextBlock> Body { get; private set; } 
             public Action Tapped { get; set; }
+
+            public bool Multilined { get; set; }
 
             public EventBlock()
             {

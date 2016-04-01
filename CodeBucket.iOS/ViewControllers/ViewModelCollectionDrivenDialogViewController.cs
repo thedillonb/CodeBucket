@@ -1,40 +1,39 @@
 using System;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
-using CodeBucket.Utils;
-using CodeBucket.ViewControllers;
 using UIKit;
-using MonoTouch;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeBucket.Elements;
+using Foundation;
+using CoreGraphics;
 using CodeBucket.Core.ViewModels;
+using CodeBucket.DialogElements;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers
 {
     public abstract class ViewModelCollectionDrivenDialogViewController : ViewModelDrivenDialogViewController
     {
-        public string NoItemsText { get; set; }
+        private static NSObject _dumb = new NSObject();
+
+        public Lazy<UIView> EmptyView { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
-        protected ViewModelCollectionDrivenDialogViewController()
+        protected ViewModelCollectionDrivenDialogViewController(bool push = true)
+            : base(push, UITableViewStyle.Plain)
         {
-            NoItemsText = "No Items";
-            Style = UITableViewStyle.Plain;
             EnableSearch = true;
         }
 
-        protected void BindCollection<T, R>(T viewModel, Func<T, CollectionViewModel<R>> outExpr, Func<R, Element> element, bool activateNow = false) where T : MvxViewModel
-        {
-            BindCollection(outExpr(viewModel), element, activateNow);
-        }
-
         protected void BindCollection<TElement>(CollectionViewModel<TElement> viewModel, 
-                                                Func<TElement, Element> element, bool activateNow = false)
+            Func<TElement, Element> element, bool activateNow = false)
         {
+            var weakVm = new WeakReference<CollectionViewModel<TElement>>(viewModel);
+            var weakRoot = new WeakReference<RootElement>(Root);
+
             Action updateDel = () =>
             {
                 try
@@ -53,50 +52,81 @@ namespace CodeBucket.ViewControllers
                     if (groupingFn != null)
                         groupedItems = groupingFn(items);
 
+                    ICollection<Section> newSections;
                     if (groupedItems == null)
-                        RenderList(items, element, viewModel.MoreItems);
+                        newSections = RenderList(items, element, weakVm.Get()?.MoreItems);
                     else
-                        RenderGroupedItems(groupedItems, element, viewModel.MoreItems);
+                        newSections = RenderGroupedItems(groupedItems, element, weakVm.Get()?.MoreItems);
+
+                    CreateEmptyHandler(newSections.Sum(s => s.Elements.Count) == 0);
+                    weakRoot.Get()?.Reset(newSections);
                 }
-                catch (Exception e)
+                catch
                 {
-                    e.Report();
                 }
             };
 
-            viewModel.Bind(x => x.GroupingFunction, updateDel);
-            viewModel.Bind(x => x.FilteringFunction, updateDel);
-            viewModel.Bind(x => x.SortingFunction, updateDel);
+            viewModel.Bind(x => x.GroupingFunction).Subscribe(_ => updateDel());
+            viewModel.Bind(x => x.FilteringFunction).Subscribe(_ => updateDel());
+            viewModel.Bind(x => x.SortingFunction).Subscribe(_ => updateDel());
 
             //The CollectionViewModel binds all of the collection events from the observablecollection + more
             //So just listen to it.
-            viewModel.CollectionChanged += (sender, e) => InvokeOnMainThread(() => updateDel());
+            viewModel.CollectionChanged += (sender, e) => _dumb.InvokeOnMainThread(updateDel);
 
             if (activateNow)
                 updateDel();
         }
 
-        protected void RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)
+        private void CreateEmptyHandler(bool x)
         {
-            var sec = new Section();
-            if (items != null)
+            if (EmptyView == null)
             {
-                foreach (var item in items.ToList())
-                {
-                    try
-                    {
-                        var element = select(item);
-                        if (element != null)
-                            sec.Add(element);
-                    }
-                    catch (Exception e)
-                    {
-                        e.Report();
-                    }
-                }
+                return;
             }
+            if (x)
+            {
+                if (!EmptyView.IsValueCreated)
+                {
+                    EmptyView.Value.Alpha = 0f;
+                    TableView.AddSubview(EmptyView.Value);
+                }
 
-            RenderSections(new [] { sec }, moreAction);
+                EmptyView.Value.UserInteractionEnabled = true;
+                EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height);
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                TableView.BringSubviewToFront(EmptyView.Value);
+                TableView.TableHeaderView.Do(y => y.Hidden = true);
+                UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 1.0f, null);
+            }
+            else if (EmptyView.IsValueCreated)
+            {
+                EmptyView.Value.UserInteractionEnabled = false;
+                TableView.TableHeaderView.Do(y => y.Hidden = false);
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                UIView.Animate(0.1f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 0f, null);
+            }
+        }
+
+        protected ICollection<Section> RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)
+        {
+            items = items ?? Enumerable.Empty<T>();
+            var sec = new Section();
+            sec.AddAll(items.Select(item =>
+            {
+                try
+                {
+                    return @select(item);
+                }
+                catch
+                {
+                    return null;
+                }
+            }).Where(x => x != null));
+
+            return RenderSections(new [] { sec }, moreAction);
         }
 
         protected virtual Section CreateSection(string text)
@@ -104,7 +134,7 @@ namespace CodeBucket.ViewControllers
             return new Section(text);
         }
 
-        protected void RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Action moreAction)
+        protected ICollection<Section> RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Action moreAction)
         {
             var sections = new List<Section>();
 
@@ -121,59 +151,50 @@ namespace CodeBucket.ViewControllers
                         if (sec.Elements.Count > 0)
                             sections.Add(sec);
                     }
-                    catch (Exception e)
+                    catch 
                     {
-                        e.Report();
                     }
                 }
             }
 
-            RenderSections(sections, moreAction);
+            return RenderSections(sections, moreAction);
         }
 
-        private void RenderSections(IEnumerable<Section> sections, Action moreAction)
+        private static ICollection<Section> RenderSections(IEnumerable<Section> sections, Action moreAction)
         {
-            var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
-
-            foreach (var section in sections)
-                root.Add(section);
-
-            var elements = root.Sum(s => s.Elements.Count);
-
-            //There are no items! We must have filtered them out
-            if (elements == 0)
-                root.Add(new Section { new NoItemsElement(NoItemsText) });
+            var weakAction = new WeakReference<Action>(moreAction);
+            ICollection<Section> newSections = new LinkedList<Section>(sections);
 
             if (moreAction != null)
             {
                 var loadMore = new PaginateElement("Load More", "Loading...") { AutoLoadOnVisible = true };
-                root.Add(new Section { loadMore });
+                newSections.Add(new Section { loadMore });
                 loadMore.Tapped += async (obj) =>
                 {
                     try
                     {
-                        await this.DoWorkNoHudAsync(() => Task.Run(moreAction));
-                        if (loadMore.GetImmediateRootElement() != null)
-                        {
-                            var section = loadMore.Parent as Section;
-                            Root.Remove(section, UITableViewRowAnimation.Fade);
-                        }
+                        NetworkActivity.PushNetworkActive();
+
+                        var a = weakAction.Get();
+                        if (a != null)
+                            await Task.Run(a);
+
+                        var root = loadMore.GetRootElement();
+                        root?.Remove(loadMore.Section, UITableViewRowAnimation.Fade);
                     }
                     catch (Exception e)
                     {
-                        Utilities.ShowAlert("Unable to load more!", e.Message);
+                        AlertDialogService.ShowAlert("Unable to load more!", e.Message);
+                    }
+                    finally
+                    {
+                        NetworkActivity.PopNetworkActive();
                     }
 
                 };    
             }
 
-            Root = root;
-        }
-
-        protected void ShowFilterController(FilterViewController filter)
-        {
-            var nav = new UINavigationController(filter);
-            PresentViewController(nav, true, null);
+            return newSections;
         }
     }
 }

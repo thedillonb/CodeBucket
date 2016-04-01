@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.User

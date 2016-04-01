@@ -1,6 +1,8 @@
 using CodeBucket.Core.ViewModels.Source;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
+using System;
+using UIKit;
 
 namespace CodeBucket.Views.Source
 {
@@ -8,15 +10,22 @@ namespace CodeBucket.Views.Source
     {
         public ChangesetBranchesView()
         {
-            Title = "Changeset Branch";
-            NoItemsText = "No Branches";
+            Title = "Branches";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsbranch.ToEmptyListImage(), "There are no branches."));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             var vm = (ChangesetBranchesViewModel) ViewModel;
-            BindCollection(vm.Branches, x => new StyledStringElement(x.Name, () => vm.GoToBranchCommand.Execute(x)));
+            var weakVm = new WeakReference<ChangesetBranchesViewModel>(vm);
+            BindCollection(vm.Branches, x => 
+            {
+                var e = new StringElement(x.Name);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToBranchCommand.Execute(x));
+                return e;
+            });
         }
     }
 }

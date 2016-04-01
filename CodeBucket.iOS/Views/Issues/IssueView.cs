@@ -3,18 +3,20 @@ using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Utils;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using System.Linq;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using CodeBucket.WebCell;
+using System.Collections.Generic;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.Views.Issues
 {
     public class IssueView : PrettyDialogViewController
     {
-		private WebElement _descriptionElement;
-		private WebElement _commentsElement;
+        private HtmlElement _descriptionElement = new HtmlElement("description");
+        private HtmlElement _commentsElement = new HtmlElement("comments");
 
 		public new IssueViewModel ViewModel
 		{
@@ -24,7 +26,11 @@ namespace CodeBucket.Views.Issues
 
 		public IssueView()
 		{
-			Root.UnevenRows = true;
+            OnActivation(d =>
+            {
+                d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+            });
 		}
 
 		public override void ViewDidLoad()
@@ -34,27 +40,27 @@ namespace CodeBucket.Views.Issues
             Title = "Issue #" + ViewModel.Id;
             HeaderView.SetImage(null, Images.Avatar);
 
-            _descriptionElement = new WebElement("description_webview");
-			_descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            ViewModel.Bind(x => x.Issue).Subscribe(_ => RenderIssue());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
 
-            _commentsElement = new WebElement("body_webview");
-			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
-
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
-			NavigationItem.RightBarButtonItem.Enabled = false;
-			ViewModel.Bind(x => x.Issue, RenderIssue);
-			ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
+            var compose = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose) { Enabled = false };
+            OnActivation(d => d(compose.GetClickedObservable().BindCommand(ViewModel.GoToEditCommand)));
 		}
 
 		public void RenderComments()
 		{
             var comments = ViewModel.Comments
                 .Where(x => !string.IsNullOrEmpty(x.Content))
-                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn, x.AuthorInfo.Avatar));
+                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn.Humanize(), x.AuthorInfo.Avatar));
 
-            _commentsElement.LoadContent(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
+            _commentsElement.SetValue(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
             InvokeOnMainThread(RenderIssue);
 		}
+
+
+        SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Configure.ToImage(), AtlassianIcon.Error.ToImage());
+        SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Flag.ToImage(), AtlassianIcon.Spacedefault.ToImage());
+        SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Copyclipboard.ToImage(), AtlassianIcon.Calendar.ToImage());
 
 		public void RenderIssue()
 		{
@@ -73,39 +79,33 @@ namespace CodeBucket.Views.Issues
             split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
             split.AddButton("Watches", ViewModel.Issue.FollowerCount.ToString());
 
-            var root = new RootElement(Title);
+            ICollection<Section> root = new LinkedList<Section>();
             root.Add(new Section { split });
 
 			var secDetails = new Section();
 
 			if (!string.IsNullOrEmpty(ViewModel.Issue.Content))
 			{
-                _descriptionElement.LoadContent(new MarkdownRazorView { Model = ViewModel.Issue.Content }.GenerateString());
+                _descriptionElement.SetValue(new MarkdownRazorView { Model = ViewModel.Issue.Content }.GenerateString());
 				secDetails.Add(_descriptionElement);
 			}
 
-			var split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Priority });
-			split1.Value.Text1 = ViewModel.Issue.Status;
-			split1.Value.Text2 = ViewModel.Issue.Priority;
-			secDetails.Add(split1);
+            _split1.Button1.Text = ViewModel.Issue.Status;
+            _split1.Button2.Text = ViewModel.Issue.Priority;
+            secDetails.Add(_split1);
 
+            _split2.Button1.Text = ViewModel.Issue.Metadata.Kind;
+            _split2.Button2.Text = ViewModel.Issue.Metadata.Component ?? "No Component";
+			secDetails.Add(_split2);
 
-			var split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Flag, Image2 = Images.ServerComponents });
-			split2.Value.Text1 = ViewModel.Issue.Metadata.Kind;
-			split2.Value.Text2 = ViewModel.Issue.Metadata.Component ?? "No Component";
-			secDetails.Add(split2);
+            _split3.Button1.Text = ViewModel.Issue.Metadata.Version ?? "No Version";
+            _split3.Button2.Text = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
+            secDetails.Add(_split3);
 
-
-			var split3 = new SplitElement(new SplitElement.Row { Image1 = Images.SitemapColor, Image2 = Images.Milestone });
-			split3.Value.Text1 = ViewModel.Issue.Metadata.Version ?? "No Version";
-			split3.Value.Text2 = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
-			secDetails.Add(split3);
-
-			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
-				Image = Images.Person,
-				Accessory = UITableViewCellAccessory.DisclosureIndicator
+            var assigneeElement = new StringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
+                Image = AtlassianIcon.User.ToImage(),
 			};
-			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
+            assigneeElement.Clicked.BindCommand(ViewModel.GoToAssigneeCommand);
 			secDetails.Add(assigneeElement);
 
 			root.Add(secDetails);
@@ -115,10 +115,10 @@ namespace CodeBucket.Views.Issues
 				root.Add(new Section { _commentsElement });
 			}
 
-			var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-			addComment.Tapped += AddCommentTapped;
+            var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
+            addComment.Clicked.Subscribe(_ => AddCommentTapped());
 			root.Add(new Section { addComment });
-			Root = root;
+            Root.Reset(root);
 		}
 
 		void AddCommentTapped()
@@ -132,7 +132,7 @@ namespace CodeBucket.Views.Issues
 				}
 				catch (Exception e)
 				{
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+                    AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
 				}
 				finally
 				{

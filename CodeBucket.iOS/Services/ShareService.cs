@@ -2,18 +2,18 @@ using System;
 using CodeBucket.Core.Services;
 using Foundation;
 using UIKit;
-using Cirrious.CrossCore.Touch.Views;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
+using MvvmCross.Platform.iOS.Views;
 
 namespace CodeBucket.Services
 {
 	public class ShareService : IShareService
     {
-		private readonly IMvxTouchModalHost _modalHost;
+        private readonly IMvxIosModalHost _modalHost;
 
 		public ShareService()
 		{
-			_modalHost = Mvx.Resolve<IMvxTouchModalHost>();
+            _modalHost = Mvx.Resolve<IMvxIosModalHost>();
 		}
 
 		public void ShareUrl(string url)

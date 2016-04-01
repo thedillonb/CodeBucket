@@ -4,12 +4,12 @@ using CodeBucket.Core.Services;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Accounts;
 using BitbucketSharp;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Utils;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -24,36 +24,30 @@ namespace CodeBucket.Core.ViewModels.App
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
-            private set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(() => IsLoggingIn);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
         public string Status
         {
             get { return _status; }
-            private set
-            {
-                _status = value;
-                RaisePropertyChanged(() => Status);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
         public Avatar Avatar
         {
             get { return _avatar; }
-            private set
-            {
-                _avatar = value;
-                RaisePropertyChanged(() => Avatar);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
+
+        public ReactiveUI.ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+
+        public ReactiveUI.ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+
+        public ReactiveUI.ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
         public ICommand StartupCommand
         {
-            get { return new MvxCommand(() => Startup());}
+            get { return new MvxAsyncCommand(Startup); }
         }
 
         /// <summary>
@@ -76,14 +70,14 @@ namespace CodeBucket.Core.ViewModels.App
 		{
 			if (!_applicationService.Accounts.Any())
 			{
-                ShowViewModel<LoginViewModel>();
+                GoToLoginCommand.Execute(null);
 				return;
 			}
 
 			var account = GetDefaultAccount();
 			if (account == null)
 			{
-				ShowViewModel<AccountsViewModel>();
+                GoToAccountsCommand.Execute(null);
 				return;
 			}
 
@@ -92,7 +86,7 @@ namespace CodeBucket.Core.ViewModels.App
                 await AlertService.Alert("Welcome!", "CodeBucket is now OAuth compliant!\n\nFor your security, " +
                 "you will now be prompted to login to Bitbucket via their OAuth portal. This will swap out your credentials" +
                 " for an OAuth token you may revoke at any time!");
-                ShowViewModel<LoginViewModel>();
+                GoToLoginCommand.Execute(null);
                 return;
             }
 
@@ -105,8 +99,7 @@ namespace CodeBucket.Core.ViewModels.App
                 if (ret == null)
                 {
                     await DisplayAlert("Unable to refresh OAuth token. Please login again.");
-                    ShowViewModel<AccountsViewModel>();
-                    ShowViewModel<LoginViewModel>();
+                    GoToLoginCommand.Execute(null);
                     return;
                 }
 
@@ -116,12 +109,12 @@ namespace CodeBucket.Core.ViewModels.App
 
                 await AttemptLogin(account);
 
-                ShowViewModel<MenuViewModel>();
+                GoToMenuCommand.Execute(null);
             }
             catch (Exception e)
             {
                 DisplayAlert("Unable to login successfully: " + e.Message).FireAndForget();
-                ShowViewModel<AccountsViewModel>();
+                GoToAccountsCommand.Execute(null);
             }
             finally
             {

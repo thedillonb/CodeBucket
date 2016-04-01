@@ -1,10 +1,10 @@
 using System;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Commits;
-using CodeBucket.Elements;
-using CodeBucket.Cells;
+using CodeBucket.TableViewCells;
 using UIKit;
 using CodeBucket.Core.Utils;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Commits
 {
@@ -13,7 +13,6 @@ namespace CodeBucket.Views.Commits
 		public override void ViewDidLoad()
 		{
 			Title = "Commits";
-			Root.UnevenRows = true;
 
 			base.ViewDidLoad();
 
@@ -40,9 +39,8 @@ namespace CodeBucket.Views.Commits
                 }
 
                 var avatarUrl = x.Author?.User?.Links?.Avatar?.Href;
-                var avatar = new Avatar(avatarUrl);
-                var el = new CommitElement(username, desc, x.Date, avatar.ToUrl());
-                el.Tapped += () => vm.GoToChangesetCommand.Execute(x);
+                var el = new CommitElement(username, desc, x.Date, new Avatar(avatarUrl));
+                el.Clicked += () => vm.GoToChangesetCommand.Execute(x);
                 return el;
             });
 		}

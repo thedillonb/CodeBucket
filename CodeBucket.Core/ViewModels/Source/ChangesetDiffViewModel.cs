@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using System.Collections.Generic;
 using System.Linq;
 using BitbucketSharp.Models;

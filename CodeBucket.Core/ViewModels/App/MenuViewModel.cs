@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Accounts;
@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Issues;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -87,22 +88,14 @@ namespace CodeBucket.Core.ViewModels.App
 		public List<GroupModel> Groups
 		{
 			get { return _groups; }
-			set
-			{
-				_groups = value;
-				RaisePropertyChanged(() => Groups);
-			}
+            set { this.RaiseAndSetIfChanged(ref _groups, value); }
 		}
 
 		private List<string> _teams;
 		public List<string> Teams
 		{
 			get { return _teams; }
-			set
-			{
-				_teams = value;
-				RaisePropertyChanged(() => Teams);
-			}
+            set { this.RaiseAndSetIfChanged(ref _teams, value); }
 		}
 
 		public BitbucketAccount Account
@@ -113,11 +106,6 @@ namespace CodeBucket.Core.ViewModels.App
         public MenuViewModel(IApplicationService application)
         {
             _application = application;
-        }
-
-        public ICommand GoToAccountsCommand
-        {
-            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>(requestedBy: new MvxRequestedBy(MvxRequestedByType.Other, "menu"))); }
         }
 
 		[PotentialStartupViewAttribute("Profile")]
@@ -192,7 +180,7 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ICommand GoToFeedbackCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = "https://codebucket.uservoice.com/" }));}
+            get { return new MvxCommand(() => ShowMenuViewModel<IssuesViewModel>(new IssuesViewModel.NavObject { Repository = "CodeBucket", Username = "thedillonb" }));}
         }
 
 

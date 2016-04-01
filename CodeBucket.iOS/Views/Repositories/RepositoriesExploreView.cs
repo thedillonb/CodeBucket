@@ -1,63 +1,49 @@
 using System;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using UIKit;
-using CodeBucket.Utils;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.Cells;
 using CodeBucket.Core.Utils;
+using CodeBucket.Utilities;
 
 namespace CodeBucket.Views.Repositories
 {
     public sealed class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
-		private Hud _hud;
 		public RepositoriesExploreView()
         {
-            AutoHideSearch = false;
-            NoItemsText = "No Repositories";
             Title = "Explore";
-        }
-
-        protected override void SetUpSearchDelegates(UISearchBar searchBar)
-        {
-            // Do nothing...
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
         }
 
         public override void ViewDidLoad()
         {
-            TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
+            base.ViewDidLoad();
+
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;
 
-            base.ViewDidLoad();
-			_hud = new Hud(View);
 			var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
-
-            search.TextChanged += (sender, e) => vm.SearchText = search.Text;
-            vm.Bind(x => x.SearchText, x => search.Text = x);
-			search.SearchButtonClicked += (sender, e) =>
-			{
-				search.ResignFirstResponder();
-				vm.SearchCommand.Execute(null);
-			};
-
-			vm.Bind(x => x.IsSearching, x =>
-			{
-				if (x)
-					_hud.Show("Searching...");
-				else
-					_hud.Hide();
-			});
 
 			BindCollection(vm.Repositories, repo =>
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var avatarUrl = new Avatar(repo.Logo).ToUrl();
-                var sse = new RepositoryElement(repo.Name, description, repo.Owner, avatarUrl, Images.RepoPlaceholder);
+                var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Avatar(repo.Logo));
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;
+            });
+
+            OnActivation(d =>
+            {
+                d(vm.Bind(x => x.IsSearching).SubscribeStatus("Searching..."));
+                d(vm.Bind(x => x.SearchText).Subscribe(x => search.Text = x));
+                d(search.GetChangedObservable().Subscribe(x => vm.SearchText = x));
+                d(search.GetSearchObservable().Subscribe(_ => {
+                    search.ResignFirstResponder();
+                    vm.SearchCommand.Execute(null);
+                }));
             });
         }
     }

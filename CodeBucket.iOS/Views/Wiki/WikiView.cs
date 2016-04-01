@@ -6,6 +6,9 @@ using Foundation;
 using CodeBucket.ViewControllers;
 using CodeBucket.Utils;
 using System.Threading.Tasks;
+using WebKit;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.Views.Wiki
 {
@@ -33,7 +36,7 @@ namespace CodeBucket.Views.Wiki
         {
             try
             {
-                var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
+                var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
                 var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
                 var composer = new Composer { Title = "Edit" + Title, Text = wiki.Data };
                 composer.NewComment(this, async (text) => {
@@ -45,14 +48,14 @@ namespace CodeBucket.Views.Wiki
                     }
                     catch (Exception ex)
                     {
-                        MonoTouch.Utilities.ShowAlert("Unable to update page!", ex.Message);
+                        AlertDialogService.ShowAlert("Unable to update page!", ex.Message);
                         composer.EnableSendButton = true;
                     };
                 });
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                AlertDialogService.ShowAlert("Error", e.Message);
             }
         }
 
@@ -70,15 +73,15 @@ namespace CodeBucket.Views.Wiki
 		}
 
 
-        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             try 
             {
-                if (navigationType == UIWebViewNavigationType.LinkClicked) 
+                if (navigationAction.NavigationType == WKNavigationType.LinkActivated) 
                 {
-                    if (request.Url.ToString().Substring(0, 7).Equals("wiki://"))
+                    if (navigationAction.Request.Url.ToString().Substring(0, 7).Equals("wiki://"))
                     {
-                        GoToPage(request.Url.ToString().Substring(7));
+                        GoToPage(navigationAction.Request.Url.ToString().Substring(7));
                         return false;
                     }
                 }
@@ -87,12 +90,12 @@ namespace CodeBucket.Views.Wiki
             {
             }
 
-            return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
         }
 
         protected async override void Refresh()
 		{
-            var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
+            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
             if (page != null)
             {
                 try
@@ -101,7 +104,7 @@ namespace CodeBucket.Views.Wiki
                 }
                 catch (Exception e)
                 {
-                    MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                    AlertDialogService.ShowAlert("Error", e.Message);
                 }
             }
      
@@ -114,8 +117,8 @@ namespace CodeBucket.Views.Wiki
             if (repoModel == null)
                 return null;
 
-            var page = ViewModel.CurrentWikiPage(Web.Request.Url.AbsoluteString);
-            var sheet = MonoTouch.Utilities.GetSheet();
+            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
+            var sheet = new UIActionSheet();
             var editButton = page != null ? sheet.AddButton("Edit") : -1;
             var gotoButton = sheet.AddButton("Goto Wiki Page");
             var showButton = page != null ? sheet.AddButton("Show in Bitbucket") : -1;
@@ -133,6 +136,8 @@ namespace CodeBucket.Views.Wiki
                 else if (e.ButtonIndex == showButton)
                     ViewModel.GoToWebCommand.Execute(page);
                 });
+
+                sheet.Dispose();
             };
 
             return sheet;
@@ -147,7 +152,7 @@ namespace CodeBucket.Views.Wiki
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                AlertDialogService.ShowAlert("Error", e.Message);
             }
         }
 

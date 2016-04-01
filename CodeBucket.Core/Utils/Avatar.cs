@@ -5,20 +5,36 @@ namespace CodeBucket.Core.Utils
 {
     public class Avatar
     {
-        private readonly string _url;
+        public string Url { get; }
 
         public Avatar(string url)
         {
-            _url = url;
+            Url = url;
         }
+    }
 
-        public string ToUrl(int size = 64)
+    public static class AvatarExtensions
+    {
+        public static string ToUrl(this Avatar @this, int? size = null)
         {
-            if (_url == null)
+            if (@this.Url == null)
                 return null;
 
-            var ret = Regex.Replace(_url, "/avatar/(\\d+)", "/avatar/" + size);
-            return ret;
+            if (!size.HasValue)
+                return @this.Url;
+
+            return Regex.Replace(@this.Url, "/avatar/(\\d+)", "/avatar/" + size.Value);
+        }
+
+        public static Uri ToUri(this Avatar @this, int? size = null)
+        {
+            var url = @this.ToUrl(size);
+            if (url == null)
+                return null;
+
+            Uri uri;
+            Uri.TryCreate(url, UriKind.Absolute, out uri);
+            return uri;
         }
     }
 }

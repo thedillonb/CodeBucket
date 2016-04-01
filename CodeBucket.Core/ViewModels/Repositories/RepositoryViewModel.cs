@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.ViewModels.Events;
 using BitbucketSharp.Models;
@@ -57,6 +57,16 @@ namespace CodeBucket.Core.ViewModels.Repositories
             {
                 _branches = value;
                 RaisePropertyChanged(() => Branches);
+            }
+        }
+
+        private int _issues;
+        public int Issues
+        {
+            get { return _issues; }
+            private set {
+                _issues = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -165,12 +175,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
 				response => Branches = response.Values.ToList()).FireAndForget();
 
             LoadReadme().FireAndForget();
-//
-//			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-//				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
-//         
-//			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-//				forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
+
+            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
+                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             return t1;
         }

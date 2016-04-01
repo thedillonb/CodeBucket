@@ -1,31 +1,36 @@
 using System;
 using CodeBucket.Core.Services;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Data;
 using BitbucketSharp;
-using CodeBucket.Core.ViewModels.App;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive;
+using CodeBucket.Core.Messages;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
-	public class LoginViewModel : BaseViewModel
+    public class LoginViewModel : ReactiveObject
     {
 		public const string ClientId = "gtAAHvjnAp9W45Gk6P";
 		public const string ClientSecret = "bRYpfaTt7ZwsCkpu2DPehfDNPLKGNJ5z";
         private readonly IAccountsService _accountsService;
+        private readonly IApplicationService _applicationService;
 
 		private bool _isLoggingIn;
 		public bool IsLoggingIn
 		{
 			get { return _isLoggingIn; }
-			set
-			{
-				_isLoggingIn = value;
-				RaisePropertyChanged(() => IsLoggingIn);
-			}
+            set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
 		}
+
+        private string _code;
+        public string Code
+        {
+            get { return _code; }
+            set { this.RaiseAndSetIfChanged(ref _code, value); }
+        }
 
 		public string LoginUrl
 		{
@@ -35,22 +40,26 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			}
 		}
 
-		public ICommand GoBackCommand
-		{
-			get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
-		}
+        public ReactiveCommand<Unit> LoginCommand { get; }
 
-        public LoginViewModel(IAccountsService accountsService)
+        public LoginViewModel(IApplicationService applicationService, IAccountsService accountsService)
 		{
+            _applicationService = applicationService;
             _accountsService = accountsService;
+
+            LoginCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Code).Select(x => x != null),
+                t => Login());
+
+            LoginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
 		}
 
-		public async void Login(string code)
+        private async Task Login()
 		{
 			try
 			{
 				IsLoggingIn = true;
-                var ret = await Task.Run(() => Client.GetAuthorizationCode(ClientId, ClientSecret, code));
+                var ret = await Task.Run(() => Client.GetAuthorizationCode(ClientId, ClientSecret, Code));
                 var data = await Task.Run(() => {
                     UsersModel u;
                     var c = Client.BearerLogin(ret.AccessToken, out u);
@@ -63,7 +72,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
                 var account = _accountsService.Find(usersModel.User.Username);
                 if (account == null)
                 {
-                    account = new BitbucketAccount()
+                    account = new BitbucketAccount
                     {
                         Username = usersModel.User.Username,
                         AvatarUrl = usersModel.User.Avatar,
@@ -80,12 +89,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
                     _accountsService.Update(account);
                 }
 
-                this.GetApplication().ActivateUser(account, bitbucketClient);
-                ShowViewModel<StartupViewModel>();
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to login: " + e.Message);
+                _applicationService.ActivateUser(account, bitbucketClient);
 			}
 			finally
 			{

@@ -1,33 +1,35 @@
 using System;
 using System.Linq;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
-using CodeBucket.Core.ViewModels;
-using Cirrious.MvvmCross.ViewModels;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Views.Issues
 {
     public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public IssueAssignedToView()
         {
             Title = "Assignees";
-            NoItemsText = "No Assignees";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
 			var vm = (IssueAssignedToViewModel)ViewModel;
 			BindCollection(vm.Users, x =>
 			{
-				var el = new UserElement(x.Username, string.Empty, string.Empty, x.Avatar);
-				el.Tapped += () => {
+                var avatar = new Avatar(x.Avatar);
+                var el = new UserElement(x.Username, string.Empty, string.Empty, avatar);
+                el.Clicked.Subscribe(_ => {
 					if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Username, x.Username))
 						vm.SelectedUser = null;
 					else
 						vm.SelectedUser = x;
-				};
+                });
 				if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Username, x.Username, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UITableViewCellAccessory.Checkmark;
 				else
@@ -35,14 +37,12 @@ namespace CodeBucket.Views.Issues
 				return el;
 			});
 
-			vm.Bind(x => x.SelectedUser, x =>
+            vm.Bind(x => x.SelectedUser).Subscribe(x =>
 			{
-				if (Root.Count == 0)
-					return;
-				foreach (var m in Root[0].Elements.Cast<UserElement>())
+                var elements = Root.FirstOrDefault()?.Elements ?? Enumerable.Empty<Element>();
+                foreach (var m in elements.Cast<UserElement>())
 					m.Accessory = (x != null && string.Equals(vm.SelectedUser.Username, x.Username, StringComparison.OrdinalIgnoreCase)) ? 
 					          UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});
         }
     }

@@ -88,12 +88,11 @@
     <BuildIpa>True</BuildIpa>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseSGen>true</MtouchUseSGen>
-    <MtouchI18n>
-    </MtouchI18n>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <IpaPackageName>
     </IpaPackageName>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -115,17 +114,12 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Accounts\AddAccountView.designer.cs" />
-    <Compile Include="Views\Accounts\LoginView.cs" />
-    <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Events\RepositoryEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
-    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
@@ -172,98 +166,105 @@
     <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <Compile Include="Views\Repositories\RepositoriesSharedView.cs" />
     <InterfaceDefinition Include="LaunchThis.storyboard" />
-    <Compile Include="Cells\IssueCellView.cs" />
-    <Compile Include="Cells\IssueCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
-    <Compile Include="Cells\NewsCellView.cs" />
-    <Compile Include="Cells\NewsCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\NewsCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
-    <Compile Include="Cells\RepositoryCellView.cs" />
-    <Compile Include="Cells\RepositoryCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\RepositoryCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
-    <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\IssueElement.cs" />
-    <Compile Include="Elements\NewsFeedElement.cs" />
-    <Compile Include="Elements\RepositoryElement.cs" />
-    <Compile Include="Elements\UserElement.cs" />
-    <Compile Include="Elements\WebElement.cs" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
-    <Compile Include="Services\EnvironmentService.cs" />
     <Compile Include="Services\ShareService.cs" />
-    <Compile Include="Utils\Hud.cs" />
-    <Compile Include="Utils\UIImageExtensions.cs" />
-    <Compile Include="Utils\Util.cs" />
-    <Compile Include="Utils\ViewControllerExtensions.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
-    <Compile Include="ViewControllers\MenuBaseViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
-    <Compile Include="Views\StartupView.cs" />
-    <Compile Include="Views\ToolbarButton.cs" />
-    <Compile Include="Views\WebBrowserView.cs" />
     <Compile Include="Views\WebView.cs" />
     <Compile Include="Views\App\DefaultStartupView.cs" />
-    <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
-    <Compile Include="Elements\CustomElement.cs" />
-    <Compile Include="Elements\InputElement.cs" />
-    <Compile Include="Elements\MultilinedElement.cs" />
-    <Compile Include="Elements\MultiLineEditElement.cs" />
-    <Compile Include="Elements\NameTimeStringElement.cs" />
-    <Compile Include="Elements\NoItemsElement.cs" />
-    <Compile Include="Elements\OwnerDrawnElement.cs" />
-    <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SplitElement.cs" />
-    <Compile Include="Elements\TrueFalseElement.cs" />
-    <Compile Include="Elements\LoadMoreElement.cs" />
-    <Compile Include="Utils\Graphics.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
-    <Compile Include="Elements\Elements.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="Cells\MultiLineTableCell.cs" />
-    <Compile Include="Views\Accounts\AccountsView.cs" />
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
-    <Compile Include="Elements\SplitButtonElement.cs" />
-    <Compile Include="Cells\CommitCellView.cs" />
-    <Compile Include="Cells\CommitCellView.designer.cs">
-      <DependentUpon>CommitCellView.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
-    <Compile Include="Elements\CommitElement.cs" />
     <Compile Include="Views\Commits\BaseCommitsView.cs" />
     <Compile Include="Views\Commits\CommitsView.cs" />
     <Compile Include="Views\Commits\CommitView.cs" />
-    <Compile Include="Cells\PullRequestCellView.cs" />
-    <Compile Include="Cells\PullRequestCellView.designer.cs">
+    <Compile Include="Views\ExtendedUITextView.cs" />
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="AtlassianIcons.cs" />
+    <Compile Include="AtlassianIconsExtensions.cs" />
+    <Compile Include="ViewControllers\TableViewController.cs" />
+    <Compile Include="ViewControllers\BaseViewController.cs" />
+    <Compile Include="DialogElements\SplitButtonElement.cs" />
+    <Compile Include="DialogElements\UserElement.cs" />
+    <Compile Include="DialogElements\EntryElement.cs" />
+    <Compile Include="DialogElements\ChangesetElement.cs" />
+    <Compile Include="DialogElements\ExpandingInputElement.cs" />
+    <Compile Include="DialogElements\DummyInputElement.cs" />
+    <Compile Include="DialogElements\BooleanElement.cs" />
+    <Compile Include="DialogElements\CommentElement.cs" />
+    <Compile Include="DialogElements\CommitElement.cs" />
+    <Compile Include="DialogElements\Element.cs" />
+    <Compile Include="DialogElements\HtmlElement.cs" />
+    <Compile Include="DialogElements\IElementSizing.cs" />
+    <Compile Include="DialogElements\IssueElement.cs" />
+    <Compile Include="DialogElements\LabelElement.cs" />
+    <Compile Include="DialogElements\LoadMoreElement.cs" />
+    <Compile Include="DialogElements\MenuElement.cs" />
+    <Compile Include="DialogElements\MultilinedElement.cs" />
+    <Compile Include="DialogElements\NewsFeedElement.cs" />
+    <Compile Include="DialogElements\OwnerDrawnElement.cs" />
+    <Compile Include="DialogElements\PaginateElement.cs" />
+    <Compile Include="DialogElements\PullRequestElement.cs" />
+    <Compile Include="DialogElements\RepositoryElement.cs" />
+    <Compile Include="DialogElements\RootElement.cs" />
+    <Compile Include="DialogElements\Section.cs" />
+    <Compile Include="DialogElements\SplitViewElement.cs" />
+    <Compile Include="DialogElements\StringElement.cs" />
+    <Compile Include="TableViewCells\IssueCellView.cs" />
+    <Compile Include="TableViewCells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\IssueCellView.xib" />
+    <Compile Include="TableViewCells\NewsCellView.cs" />
+    <Compile Include="TableViewCells\NewsCellView.designer.cs">
+      <DependentUpon>NewsCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\NewsCellView.xib" />
+    <Compile Include="TableViewCells\RepositoryCellView.cs" />
+    <Compile Include="TableViewCells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\RepositoryCellView.xib" />
+    <Compile Include="TableViewCells\CommitCellView.cs" />
+    <Compile Include="TableViewCells\CommitCellView.designer.cs">
+      <DependentUpon>CommitCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
+    <Compile Include="TableViewCells\PullRequestCellView.cs" />
+    <Compile Include="TableViewCells\PullRequestCellView.designer.cs">
       <DependentUpon>PullRequestCellView.cs</DependentUpon>
     </Compile>
-    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
-    <Compile Include="Elements\PullRequestElement.cs" />
-    <Compile Include="WebCell\CommentsRazorView.cs">
-      <DependentUpon>CommentsRazorView.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="WebCell\CommentViewModel.cs" />
-    <Compile Include="WebCell\MarkdownRazorView.cs">
-      <DependentUpon>MarkdownRazorView.cshtml</DependentUpon>
-    </Compile>
+    <InterfaceDefinition Include="TableViewCells\PullRequestCellView.xib" />
+    <Compile Include="TableViewCells\MultilinedCellView.cs" />
+    <InterfaceDefinition Include="TableViewCells\MultilinedCellView.xib" />
+    <Compile Include="TableViewCells\MultilinedCellView.designer.cs" />
+    <Compile Include="Utilities\Hud.cs" />
+    <Compile Include="Utilities\UIImageExtensions.cs" />
+    <Compile Include="Utilities\ViewControllerExtensions.cs" />
+    <Compile Include="Utilities\Graphics.cs" />
+    <Compile Include="Utilities\UIKitExtensions.cs" />
+    <Compile Include="Utilities\UIImageViewExtensions.cs" />
+    <Compile Include="Utilities\NetworkActivity.cs" />
+    <Compile Include="Utilities\UIWindowExtensions.cs" />
+    <Compile Include="Views\EmptyListView.cs" />
+    <Compile Include="ViewControllers\WebBrowserViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\StartupViewController.cs" />
+    <Compile Include="ViewControllers\ThemedNavigationController.cs" />
+    <Compile Include="ViewControllers\Application\MenuViewController.cs" />
+    <Compile Include="ViewControllers\BasicWebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -276,116 +277,68 @@
       <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="Cirrious.CrossCore.Touch">
-      <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.CrossCore.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
-      <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.CrossCore">
-      <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.CrossCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding">
-      <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Localization">
-      <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Localization.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Touch">
-      <HintPath>..\packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross">
-      <HintPath>..\packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.HotTuna.Plugin.Messenger.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="BTProgressHUD">
       <HintPath>..\packages\BTProgressHUD.1.0.0\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Services" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform.iOS">
+      <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform">
+      <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.iOS">
+      <HintPath>..\packages\MvvmCross.Core.4.0.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core">
+      <HintPath>..\packages\MvvmCross.Core.4.0.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Messenger">
+      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.0.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding.iOS">
+      <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding">
+      <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Localization">
+      <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <BundleResource Include="Images\bin_closed.png" />
-    <BundleResource Include="Images\bin_closed%402x.png" />
-    <BundleResource Include="Images\branch.png" />
-    <BundleResource Include="Images\branch%402x.png" />
-    <BundleResource Include="Images\cog.png" />
-    <BundleResource Include="Images\cog%402x.png" />
-    <BundleResource Include="Images\comments.png" />
-    <BundleResource Include="Images\comments%402x.png" />
-    <BundleResource Include="Images\commit.png" />
-    <BundleResource Include="Images\commit%402x.png" />
-    <BundleResource Include="Images\create.png" />
-    <BundleResource Include="Images\create%402x.png" />
-    <BundleResource Include="Images\events.png" />
-    <BundleResource Include="Images\events%402x.png" />
-    <BundleResource Include="Images\explore.png" />
-    <BundleResource Include="Images\explore%402x.png" />
-    <BundleResource Include="Images\file.png" />
-    <BundleResource Include="Images\file%402x.png" />
-    <BundleResource Include="Images\flag.png" />
-    <BundleResource Include="Images\flag%402x.png" />
-    <BundleResource Include="Images\folder.png" />
-    <BundleResource Include="Images\folder%402x.png" />
-    <BundleResource Include="Images\following.png" />
-    <BundleResource Include="Images\following%402x.png" />
-    <BundleResource Include="Images\fork.png" />
-    <BundleResource Include="Images\fork%402x.png" />
-    <BundleResource Include="Images\group.png" />
-    <BundleResource Include="Images\group%402x.png" />
-    <BundleResource Include="Images\hand.png" />
-    <BundleResource Include="Images\hand%402x.png" />
-    <BundleResource Include="Images\heart.png" />
-    <BundleResource Include="Images\heart%402x.png" />
-    <BundleResource Include="Images\info.png" />
-    <BundleResource Include="Images\info%402x.png" />
-    <BundleResource Include="Images\language.png" />
-    <BundleResource Include="Images\language%402x.png" />
-    <BundleResource Include="Images\locked.png" />
-    <BundleResource Include="Images\locked%402x.png" />
-    <BundleResource Include="Images\merge.png" />
-    <BundleResource Include="Images\merge%402x.png" />
-    <BundleResource Include="Images\milestone.png" />
-    <BundleResource Include="Images\milestone%402x.png" />
-    <BundleResource Include="Images\notifications.png" />
-    <BundleResource Include="Images\notifications%402x.png" />
-    <BundleResource Include="Images\pencil.png" />
-    <BundleResource Include="Images\pencil%402x.png" />
-    <BundleResource Include="Images\person.png" />
-    <BundleResource Include="Images\person%402x.png" />
-    <BundleResource Include="Images\priority.png" />
-    <BundleResource Include="Images\priority%402x.png" />
-    <BundleResource Include="Images\repo.png" />
-    <BundleResource Include="Images\repo%402x.png" />
-    <BundleResource Include="Images\script.png" />
-    <BundleResource Include="Images\script%402x.png" />
-    <BundleResource Include="Images\size.png" />
-    <BundleResource Include="Images\size%402x.png" />
-    <BundleResource Include="Images\tag.png" />
-    <BundleResource Include="Images\tag%402x.png" />
-    <BundleResource Include="Images\team.png" />
-    <BundleResource Include="Images\team%402x.png" />
-    <BundleResource Include="Images\unlocked.png" />
-    <BundleResource Include="Images\unlocked%402x.png" />
-    <BundleResource Include="Images\user.png" />
-    <BundleResource Include="Images\user%402x.png" />
-    <BundleResource Include="Images\webpage.png" />
-    <BundleResource Include="Images\webpage%402x.png" />
     <BundleResource Include="Images\Buttons\back.png" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
     <BundleResource Include="Images\Buttons\cancel.png" />
@@ -409,74 +362,27 @@
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
     <BundleResource Include="Images\Logos\bitbucket.png" />
-    <BundleResource Include="Images\cancel.png" />
-    <BundleResource Include="Images\accept.png" />
-    <BundleResource Include="Images\cancel%402x.png" />
-    <BundleResource Include="Images\accept%402x.png" />
-    <BundleResource Include="Images\sitemap_color%402x.png" />
-    <BundleResource Include="Images\sitemap_color.png" />
-    <BundleResource Include="Images\server_components%402x.png" />
-    <BundleResource Include="Images\server_components.png" />
-    <BundleResource Include="Images\book_link%402x.png" />
-    <BundleResource Include="Images\book_link.png" />
-    <BundleResource Include="Images\star.png" />
-    <BundleResource Include="Images\star%402x.png" />
     <BundleResource Include="CodeBucketIcon.png" />
-    <None Include="SourceBrowser\css\arta.css" />
-    <None Include="SourceBrowser\css\ascetic.css" />
-    <None Include="SourceBrowser\css\brown_paper.css" />
-    <None Include="SourceBrowser\css\brown_papersq.png" />
-    <None Include="SourceBrowser\css\dark.css" />
-    <None Include="SourceBrowser\css\default.css" />
-    <None Include="SourceBrowser\css\docco.css" />
-    <None Include="SourceBrowser\css\far.css" />
-    <None Include="SourceBrowser\css\foundation.css" />
-    <None Include="SourceBrowser\css\github.css" />
-    <None Include="SourceBrowser\css\googlecode.css" />
-    <None Include="SourceBrowser\css\idea.css" />
-    <None Include="SourceBrowser\css\ir_black.css" />
-    <None Include="SourceBrowser\css\magula.css" />
-    <None Include="SourceBrowser\css\mono-blue.css" />
-    <None Include="SourceBrowser\css\monokai.css" />
-    <None Include="SourceBrowser\css\monokai_sublime.css" />
-    <None Include="SourceBrowser\css\obsidian.css" />
-    <None Include="SourceBrowser\css\pojoaque.css" />
-    <None Include="SourceBrowser\css\pojoaque.jpg" />
-    <None Include="SourceBrowser\css\railscasts.css" />
-    <None Include="SourceBrowser\css\rainbow.css" />
-    <None Include="SourceBrowser\css\school_book.css" />
-    <None Include="SourceBrowser\css\school_book.png" />
-    <None Include="SourceBrowser\css\solarized_dark.css" />
-    <None Include="SourceBrowser\css\solarized_light.css" />
-    <None Include="SourceBrowser\css\sunburst.css" />
-    <None Include="SourceBrowser\css\tomorrow.css" />
-    <None Include="SourceBrowser\css\tomorrow-night.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-blue.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-bright.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-eighties.css" />
-    <None Include="SourceBrowser\css\xcode.css" />
-    <None Include="SourceBrowser\css\zenburn.css" />
     <None Include="packages.config" />
     <BundleResource Include="Images\repository_placeholder%402x.png" />
     <BundleResource Include="Images\avatar%402x.png" />
-    <None Include="WebCell\CommentsRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommentsRazorView.cs</LastGenOutput>
-    </None>
-    <None Include="WebCell\MarkdownRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>MarkdownRazorView.cs</LastGenOutput>
-    </None>
+    <BundleResource Include="Atlassian-icons.ttf" />
+    <None Include="WebResources\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Images\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="Services\" />
-    <Folder Include="WebCell\" />
     <Folder Include="Views\Wiki\" />
     <Folder Include="Views\Teams\" />
     <Folder Include="Views\Commits\" />
+    <Folder Include="Markdown\" />
+    <Folder Include="WebResources\" />
+    <Folder Include="WebResources\styles\" />
+    <Folder Include="DialogElements\" />
+    <Folder Include="ViewControllers\Accounts\" />
+    <Folder Include="ViewControllers\Application\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
@@ -499,10 +405,62 @@
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
     <Content Include="Diff\jquery.min.js" />
-    <Content Include="SourceBrowser\css\line-numbers.css" />
-    <Content Include="SourceBrowser\css\vs.css" />
-    <Content Include="SourceBrowser\highlight.pack.js" />
-    <Content Include="SourceBrowser\file-loader.js" />
+    <Content Include="Markdown\markdown.html" />
+    <Content Include="Markdown\marked.js" />
+    <Content Include="Markdown\textile.js" />
+    <Content Include="WebResources\highlight.pack.js" />
+    <Content Include="WebResources\styles\arta.css" />
+    <Content Include="WebResources\styles\ascetic.css" />
+    <Content Include="WebResources\styles\atelier-dune.dark.css" />
+    <Content Include="WebResources\styles\atelier-dune.light.css" />
+    <Content Include="WebResources\styles\atelier-forest.dark.css" />
+    <Content Include="WebResources\styles\atelier-forest.light.css" />
+    <Content Include="WebResources\styles\atelier-heath.dark.css" />
+    <Content Include="WebResources\styles\atelier-heath.light.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
+    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
+    <Content Include="WebResources\styles\atelier-seaside.light.css" />
+    <Content Include="WebResources\styles\brown_paper.css" />
+    <Content Include="WebResources\styles\brown_papersq.png" />
+    <Content Include="WebResources\styles\codepen-embed.css" />
+    <Content Include="WebResources\styles\color-brewer.css" />
+    <Content Include="WebResources\styles\dark.css" />
+    <Content Include="WebResources\styles\default.css" />
+    <Content Include="WebResources\styles\docco.css" />
+    <Content Include="WebResources\styles\far.css" />
+    <Content Include="WebResources\styles\foundation.css" />
+    <Content Include="WebResources\styles\github.css" />
+    <Content Include="WebResources\styles\googlecode.css" />
+    <Content Include="WebResources\styles\hybrid.css" />
+    <Content Include="WebResources\styles\idea.css" />
+    <Content Include="WebResources\styles\ir_black.css" />
+    <Content Include="WebResources\styles\kimbie.dark.css" />
+    <Content Include="WebResources\styles\kimbie.light.css" />
+    <Content Include="WebResources\styles\magula.css" />
+    <Content Include="WebResources\styles\mono-blue.css" />
+    <Content Include="WebResources\styles\monokai_sublime.css" />
+    <Content Include="WebResources\styles\monokai.css" />
+    <Content Include="WebResources\styles\obsidian.css" />
+    <Content Include="WebResources\styles\paraiso.dark.css" />
+    <Content Include="WebResources\styles\paraiso.light.css" />
+    <Content Include="WebResources\styles\pojoaque.css" />
+    <Content Include="WebResources\styles\pojoaque.jpg" />
+    <Content Include="WebResources\styles\railscasts.css" />
+    <Content Include="WebResources\styles\rainbow.css" />
+    <Content Include="WebResources\styles\school_book.css" />
+    <Content Include="WebResources\styles\school_book.png" />
+    <Content Include="WebResources\styles\solarized_dark.css" />
+    <Content Include="WebResources\styles\solarized_light.css" />
+    <Content Include="WebResources\styles\sunburst.css" />
+    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
+    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
+    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <Content Include="WebResources\styles\tomorrow-night.css" />
+    <Content Include="WebResources\styles\tomorrow.css" />
+    <Content Include="WebResources\styles\vs.css" />
+    <Content Include="WebResources\styles\xcode.css" />
+    <Content Include="WebResources\styles\zenburn.css" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

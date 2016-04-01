@@ -3,20 +3,21 @@ using System.Linq;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
-using CodeBucket.Utils;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using CodeBucket.WebCell;
-using CodeBucket.Core.Services;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using CodeBucket.Utilities;
+using CodeBucket.Services;
 
 namespace CodeBucket.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
-        private readonly SplitElement _split1;
-        private WebElement _descriptionElement;
-        private WebElement _commentsElement;
+        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
+        private HtmlElement _descriptionElement = new HtmlElement("description");
+        private HtmlElement _commentsElement = new HtmlElement("comments");
 
         public new PullRequestViewModel ViewModel
         {
@@ -26,8 +27,11 @@ namespace CodeBucket.Views.PullRequests
 
         public PullRequestView()
         {
-            Root.UnevenRows = true;
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Create, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
+            OnActivation(d =>
+            {
+                d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+            });
         }
 
         public override void ViewDidLoad()
@@ -38,8 +42,8 @@ namespace CodeBucket.Views.PullRequests
 
             HeaderView.SetImage(null, Images.Avatar);
 
-            ViewModel.Bind(x => x.PullRequest, Render);
-            ViewModel.BindCollection(x => x.Comments, e => Render());
+            ViewModel.Bind(x => x.PullRequest).Subscribe(_ => Render());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
         }
 
         public void Render()
@@ -58,48 +62,33 @@ namespace CodeBucket.Views.PullRequests
             split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
             split.AddButton("Participants", ViewModel.PullRequest.Participants.Count.ToString());
 
-            var root = new RootElement(Title);
+            ICollection<Section> root = new LinkedList<Section>();
             root.Add(new Section { split });
 
             var secDetails = new Section();
             if (!string.IsNullOrWhiteSpace(ViewModel.Description))
             {
-                if (_descriptionElement == null)
-                {
-                    _descriptionElement = new WebElement("description");
-                    _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
-                }
-
-                _descriptionElement.LoadContent(new MarkdownRazorView { Model = ViewModel.Description }.GenerateString());
+                var content = new MarkdownRazorView { Model = ViewModel.Description }.GenerateString();
+                _descriptionElement.SetValue(content);
                 secDetails.Add(_descriptionElement);
             }
 
+            var commitsElement = new StringElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
+            commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
+
 			var merged = ViewModel.Merged;
 
-            _split1.Value.Text1 = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
-            _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
+            _split1.Button1.Text = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
+            _split1.Button2.Text = merged ? "Merged" : "Not Merged";
             secDetails.Add(_split1);
+            secDetails.Add(commitsElement);
             root.Add(secDetails);
-
-            root.Add(new Section {
-				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-            });
 
             if (!merged)
             {
-                Action mergeAction = async () =>
-                {
-                    try
-                    {
-						await this.DoWorkAsync("Merging...", ViewModel.Merge);
-                    }
-                    catch (Exception e)
-                    {
-                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
-                    }
-                };
- 
-                root.Add(new Section { new StyledStringElement("Merge", mergeAction, Images.Fork) });
+                var mergeElement = new StringElement("Merge", AtlassianIcon.Approve.ToImage());
+                mergeElement.Clicked.Subscribe(_ => MergeClick());
+                root.Add(new Section { mergeElement });
             }
 
             var comments = ViewModel.Comments
@@ -109,26 +98,33 @@ namespace CodeBucket.Views.PullRequests
                 {
                     var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
                     var avatar = new Avatar(x.User.Links?.Avatar?.Href);
-                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn, avatar.ToUrl());
+                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn.Humanize(), avatar.ToUrl());
                 }).ToList();
 
             if (comments.Count > 0)
             {
-                if (_commentsElement == null)
-                {
-                    _commentsElement = new WebElement("comments");
-                    _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
-                }
-
-                _commentsElement.LoadContent(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
+                var content = new CommentsRazorView { Model = comments.ToList() }.GenerateString();
+                _commentsElement.SetValue(content);
                 root.Add(new Section { _commentsElement });
             }
 
 
-            var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-            addComment.Tapped += AddCommentTapped;
+            var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
+            addComment.Clicked.Subscribe(_ => AddCommentTapped());
             root.Add(new Section { addComment });
-            Root = root;
+            Root.Reset(root);
+        }
+
+        private async Task MergeClick()
+        {
+            try
+            {
+                await this.DoWorkAsync("Merging...", ViewModel.Merge);
+            }
+            catch (Exception e)
+            {
+                AlertDialogService.ShowAlert("Unable to Merge", e.Message);
+            }
         }
 
         void AddCommentTapped()
@@ -142,7 +138,7 @@ namespace CodeBucket.Views.PullRequests
                 }
                 catch (Exception ex)
                 {
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", ex.Message);
+					AlertDialogService.ShowAlert("Unable to post comment!", ex.Message);
                 }
                 finally
                 {

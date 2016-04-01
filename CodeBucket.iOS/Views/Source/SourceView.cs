@@ -1,5 +1,6 @@
 using System;
-using Foundation;
+using UIKit;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Source
 {
@@ -9,12 +10,15 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.FilePath, x =>
+            ViewModel.Bind(x => x.FilePath, true).IsNotNull().Subscribe(x =>
             {
                 if (ViewModel.IsText)
                 {
-                    var v = new SourceFileRazorView() { Model = x };
-                    LoadContent(v.GenerateString(), System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
+                    var content = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
+                    var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+                    var model = new SourceBrowserModel(content, "idea", fontSize);
+                    var v = new SyntaxHighlighterView { Model = model };
+                    LoadContent(v.GenerateString());
                 }
                 else
                 {

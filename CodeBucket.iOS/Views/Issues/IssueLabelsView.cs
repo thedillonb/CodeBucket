@@ -55,7 +55,7 @@
 //			}, true);
 //        }
 //
-//		private class LabelElement : StyledStringElement
+//		private class LabelElement : StringElement
 //		{
 //			public LabelModel Label { get; private set; }
 //			public LabelElement(LabelModel m)

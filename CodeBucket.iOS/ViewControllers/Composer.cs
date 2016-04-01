@@ -1,16 +1,16 @@
 using System;
 using CoreGraphics;
-using CodeBucket.Views;
 using Foundation;
 using UIKit;
 using System.Collections.Generic;
+using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers
 {
-	public class Composer : UIViewController
-	{
+    public class Composer : BaseViewController
+    {
         protected UIBarButtonItem SendItem;
-		UIViewController _previousController;
+        UIViewController _previousController;
         public Action<string> ReturnAction;
         protected readonly UITextView TextView;
         protected UIView ScrollingToolbarView;
@@ -23,18 +23,18 @@ namespace CodeBucket.ViewControllers
             set { SendItem.Enabled = value; }
         }
 
-		public Composer () : base (null, null)
-		{
+        public Composer () : base (null, null)
+        {
             Title = "New Comment";
-			EdgesForExtendedLayout = UIRectEdge.None;
+            EdgesForExtendedLayout = UIRectEdge.None;
 
-			var close = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
+            var close = new UIBarButtonItem { Image = Images.Buttons.Cancel };
             NavigationItem.LeftBarButtonItem = close;
-			SendItem = new UIBarButtonItem (Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => PostCallback());
+            SendItem = new UIBarButtonItem { Image = Images.Buttons.Save };
             NavigationItem.RightBarButtonItem = SendItem;
 
             TextView = new UITextView(ComputeComposerSize(CGRect.Empty));
-            TextView.Font = UIFont.SystemFontOfSize(18);
+            TextView.Font = UIFont.PreferredBody;
             TextView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
 
             // Work around an Apple bug in the UITextView that crashes
@@ -45,7 +45,13 @@ namespace CodeBucket.ViewControllers
 
             _normalButtonImage = ImageFromColor(UIColor.White);
             _pressedButtonImage = ImageFromColor(UIColor.FromWhiteAlpha(0.0f, 0.4f));
-		}
+
+            OnActivation(d =>
+            {
+                d(close.GetClickedObservable().Subscribe(_ => CloseComposer()));
+                d(SendItem.GetClickedObservable().Subscribe(_ => PostCallback()));
+            });
+        }
 
         private UIImage ImageFromColor(UIColor color)
         {
@@ -61,15 +67,15 @@ namespace CodeBucket.ViewControllers
         public static UIButton CreateAccessoryButton(UIImage image, Action action)
         {
             var btn = CreateAccessoryButton(string.Empty, action);
-//            btn.AutosizesSubviews = true;
+            //            btn.AutosizesSubviews = true;
             btn.SetImage(image, UIControlState.Normal);
             btn.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
             btn.ImageEdgeInsets = new UIEdgeInsets(6, 6, 6, 6);
 
-//            var imageView = new UIImageView(image);
-//            imageView.Frame = new RectangleF(4, 4, 24, 24);
-//            imageView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-//            btn.Add(imageView);
+            //            var imageView = new UIImageView(image);
+            //            imageView.Frame = new RectangleF(4, 4, 24, 24);
+            //            imageView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+            //            btn.Add(imageView);
             return btn;
         }
 
@@ -77,7 +83,7 @@ namespace CodeBucket.ViewControllers
         {
             var fontSize = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 22 : 28f;
 
-            var btn = new UIButton();
+            var btn = new UIButton(UIButtonType.System);
             btn.Frame = new CGRect(0, 0, 32, 32);
             btn.SetTitle(title, UIControlState.Normal);
             btn.BackgroundColor = UIColor.White;
@@ -85,7 +91,7 @@ namespace CodeBucket.ViewControllers
             btn.Layer.CornerRadius = 7f;
             btn.Layer.MasksToBounds = true;
             btn.AdjustsImageWhenHighlighted = false;
-            btn.TouchUpInside += (object sender, System.EventArgs e) => action();
+            btn.TouchUpInside += (sender, e) => action();
             return btn;
         }
 
@@ -135,15 +141,15 @@ namespace CodeBucket.ViewControllers
             set { TextView.Text = value; }
         }
 
-		public void CloseComposer ()
-		{
-			SendItem.Enabled = true;
-			_previousController.DismissViewController(true, null);
+        public void CloseComposer ()
+        {
+            SendItem.Enabled = true;
+            _previousController.DismissViewController(true, null);
         }
 
-		void PostCallback ()
-		{
-			SendItem.Enabled = false;
+        void PostCallback ()
+        {
+            SendItem.Enabled = false;
             TextView.ResignFirstResponder();
 
             try
@@ -155,55 +161,53 @@ namespace CodeBucket.ViewControllers
             {
                 System.Diagnostics.Debug.WriteLine(e.Message + " - " + e.StackTrace);
             }
-		}
-		
-		void KeyboardWillShow (NSNotification notification)
-		{
-		    var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
-		    if (nsValue == null) return;
-		    var kbdBounds = nsValue.RectangleFValue;
+        }
+
+        void KeyboardWillShow (NSNotification notification)
+        {
+            var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
+            if (nsValue == null) return;
+            var kbdBounds = nsValue.RectangleFValue;
             UIView.Animate(1.0f, 0, UIViewAnimationOptions.CurveEaseIn, () => TextView.Frame = ComputeComposerSize (kbdBounds), null);
-		}
+        }
 
         void KeyboardWillHide (NSNotification notification)
         {
             TextView.Frame = ComputeComposerSize(new CGRect(0, 0, 0, 0));
         }
 
-	    CGRect ComputeComposerSize (CGRect kbdBounds)
-		{
-			var view = View.Bounds;
-            return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
-		}
-
-        [Obsolete]
-        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        CGRect ComputeComposerSize (CGRect kbdBounds)
         {
-            return true;
+            var view = View.Bounds;
+            return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
-		
+
+        NSObject _hideNotification, _showNotification;
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
             TextView.BecomeFirstResponder ();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+            if (_hideNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_hideNotification);
+            if (_showNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
-		
-		public void NewComment (UIViewController parent, Action<string> action)
-		{
+
+        public void NewComment (UIViewController parent, Action<string> action)
+        {
             Title = Title;
             ReturnAction = action;
             _previousController = parent;
             TextView.BecomeFirstResponder ();
             var nav = new UINavigationController(this);
             parent.PresentViewController(nav, true, null);
-		}
-	}
+        }
+    }
 }

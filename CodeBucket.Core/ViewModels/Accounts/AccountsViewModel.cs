@@ -1,50 +1,34 @@
+using System;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeBucket.Core.Utils;
+using System.Reactive.Linq;
+using CodeBucket.Core.Messages;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
-    public class AccountsViewModel : BaseViewModel
+    public class AccountsViewModel : ReactiveObject
     {
-        private readonly IAccountsService _accountsService;
-        private readonly CustomObservableCollection<IAccount> _accounts = new CustomObservableCollection<IAccount>();
+        public IReactiveCommand<object> AddAccountCommand { get; } = ReactiveCommand.Create();
 
-        public CustomObservableCollection<IAccount> Accounts
-        {
-            get { return _accounts; }
-        }
+        public IReactiveCommand<object> SelectAccountCommand { get; } = ReactiveCommand.Create();
 
-        public ICommand AddAccountCommand
-        {
-            get { return new MvxCommand(AddAccount); }
-        }
-
-        public ICommand SelectAccountCommand
-        {
-            get { return new MvxCommand<BitbucketAccount>(SelectAccount); }
-        }
-
-        public void Init()
-        {
-            _accounts.Reset(_accountsService);
-        }
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public AccountsViewModel(IAccountsService accountsService) 
         {
-            _accountsService = accountsService;
-        }
-
-        private void AddAccount()
-        {
-            this.ShowViewModel<LoginViewModel>();
-        }
-
-        private void SelectAccount(BitbucketAccount account)
-        {
-            _accountsService.SetActiveAccount(account);
-            ShowViewModel<CodeBucket.Core.ViewModels.App.StartupViewModel>();
+            SelectAccountCommand.OfType<BitbucketAccount>().Subscribe(x =>
+            {
+                if (accountsService.ActiveAccount?.Id == x.Id)
+                {
+                    DismissCommand.ExecuteIfCan();
+                }
+                else
+                {
+                    accountsService.SetActiveAccount(x);
+                    MessageBus.Current.SendMessage(new LogoutMessage());
+                }
+            });
         }
     }
 }

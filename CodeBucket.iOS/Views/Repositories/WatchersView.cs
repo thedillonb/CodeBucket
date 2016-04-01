@@ -5,9 +5,9 @@ namespace CodeBucket.Views.Repositories
     public class WatchersView : BaseUserCollectionView
     {
         public WatchersView()
+            : base("There are no watchers.")
 		{
 			Title = "Watchers";
-			NoItemsText = "No Watchers";
 		}
     }
 }

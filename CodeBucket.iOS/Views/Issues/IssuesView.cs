@@ -3,10 +3,10 @@ using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeBucket.Core.Filters;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
+using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Issues
 {
@@ -23,7 +23,6 @@ namespace CodeBucket.Views.Issues
 
 		public IssuesView()
 		{
-			Root.UnevenRows = true;
 			Title = "Issues";
 		}
 
@@ -36,7 +35,6 @@ namespace CodeBucket.Views.Issues
 
 			var commentString = x.CommentCount == 1 ? "1 comment" : x.CommentCount + " comments";
 			var el = new IssueElement(x.LocalId.ToString(), x.Title, assigned, x.Status, commentString, kind, x.UtcLastUpdated);
-			el.Tag = x;
 
 			el.Tapped += () => {
 				//Make sure the first responder is gone.

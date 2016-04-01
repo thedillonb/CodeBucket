@@ -1,10 +1,10 @@
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeBucket.ViewControllers;
-using CodeBucket.Elements;
-using CodeBucket.Core.Utils;
-using CodeBucket.Cells;
+using CodeBucket.DialogElements;
+using CodeBucket.TableViewCells;
+using MvvmCross.Binding.BindingContext;
+using System;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -15,9 +15,9 @@ namespace CodeBucket.Views.PullRequests
  
 		public PullRequestsView()
 		{
-			Root.UnevenRows = true;
 			Title = "Pull Requests";
-			NoItemsText = "No Pull Requests";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolspullrequest.ToImage(64f), "There are no pull requests.")); 
 
 			_viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
@@ -38,12 +38,7 @@ namespace CodeBucket.Views.PullRequests
 			set.Bind(_viewSegment).To(x => x.SelectedFilter);
 			set.Apply();
 
-            BindCollection(vm.PullRequests, s => {
-                var avatar = new Avatar(s.Author?.Links?.Avatar?.Href);
-                var sse = new PullRequestElement(s.Title, s.UpdatedOn, avatar, Images.Avatar);
-				sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
-                return sse;
-            });
+            BindCollection(vm.PullRequests, s => new PullRequestElement(s, () => vm.GoToPullRequestCommand.Execute(s)));
         }
 
         public override void ViewWillAppear(bool animated)

@@ -37,7 +37,7 @@ namespace CodeBucket.Core.Services
         public void SetDefault(BitbucketAccount account)
         {
             if (account == null)
-                _defaults.Set("DEFAULT_ACCOUNT", null);
+                _defaults.Clear("DEFAULT_ACCOUNT");
             else
                 _defaults.Set("DEFAULT_ACCOUNT", account.Id);
         }
