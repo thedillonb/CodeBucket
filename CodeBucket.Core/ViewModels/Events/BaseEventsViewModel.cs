@@ -207,12 +207,12 @@ namespace CodeBucket.Core.ViewModels.Events
             });
         }
 
-		private void GoToChangeset(string owner, string name, string sha)
+		private void GoToChangeset(string owner, string slug, string sha)
         {
 			ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject
             {
 				Username = owner,
-				Repository = name,
+				Repository = slug,
 				Node = sha
             });
         }
@@ -260,7 +260,7 @@ namespace CodeBucket.Core.ViewModels.Events
 						if (shortSha.Length > 6)
 							shortSha = shortSha.Substring(0, 6);
 
-						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, sha)));
+                        eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, sha)));
 						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
 					}
 
@@ -275,7 +275,7 @@ namespace CodeBucket.Core.ViewModels.Events
                     return null;
 
 				var node = eventModel.Node.Substring(0, eventModel.Node.Length > 6 ? 6 : eventModel.Node.Length);
-				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, eventModel.Node);
+				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, eventModel.Node);
 				eventBlock.Header.Add(new TextBlock(" commited "));
 				eventBlock.Header.Add(new AnchorBlock(node, eventBlock.Tapped));
 
