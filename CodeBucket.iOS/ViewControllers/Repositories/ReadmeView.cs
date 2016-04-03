@@ -33,7 +33,7 @@ namespace CodeBucket.ViewControllers.Repositories
                 .Select(x => new MarkdownView { Model = x }.GenerateString())
                 .Subscribe(LoadContent);
 
-            ViewModel.LoadCommand.Execute(false);
+            ViewModel.LoadCommand.Execute(null);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -52,7 +52,7 @@ namespace CodeBucket.ViewControllers.Repositories
         {
             if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
             {
-                ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
+                ViewModel.GoToUrlCommand.Execute(navigationAction.Request.Url.AbsoluteString);
                 return false;
             }
 
@@ -61,25 +61,8 @@ namespace CodeBucket.ViewControllers.Repositories
 
         private void ShareButtonPress(object o, EventArgs args)
         {
-            var sheet = new UIActionSheet();
-            var shareButton = sheet.AddButton("Share");
-            var showButton = sheet.AddButton("Show in Bitbucket");
-            var cancelButton = sheet.AddButton("Cancel");
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) => {
-                BeginInvokeOnMainThread(() =>
-                {
-                    if (e.ButtonIndex == showButton)
-                        ViewModel.GoToGitHubCommand.Execute(null);
-                    else if (e.ButtonIndex == shareButton)
-                        ViewModel.ShareCommand.Execute(null);
-                });
-
-                sheet.Dispose();
-            };
-
-            sheet.ShowFrom(_actionButton, true);
+            if (ViewModel.ShowMenuCommand.CanExecute(_actionButton))
+                ViewModel.ShowMenuCommand.Execute(_actionButton);
         }
     }
 }

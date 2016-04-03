@@ -1,10 +1,10 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -12,7 +12,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
     {
         private readonly IMarkdownService _markdownService;
         private readonly IApplicationService _applicationService;
-        private string _path;
         private string _htmlUrl;
 
         public string Username { get; private set; }
@@ -20,12 +19,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public string Repository { get; private set; }
 
         public string Filename { get; private set; }
-
-        public string Path
-        {
-            get { return _path; }
-            set { this.RaiseAndSetIfChanged(ref _path, value); }
-        }
 
         private FileModel _contentModel;
         public FileModel ContentModel
@@ -41,28 +34,30 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public ICommand GoToGitHubCommand
-        {
-            get { return new MvxCommand(() => GoToUrlCommand.Execute(_htmlUrl), () => _htmlUrl != null); }
-        }
+        public ReactiveUI.IReactiveCommand ShowMenuCommand { get; }
 
-        public ICommand GoToLinkCommand
-        {
-            get { return GoToUrlCommand; }
-        }
-
-        public new ICommand ShareCommand
-        {
-            get
-            {
-                return new MvxCommand(() => GetService<IShareService>().ShareUrl(_htmlUrl), () => _htmlUrl != null);
-            }
-        }
-
-        public ReadmeViewModel(IApplicationService applicationService, IMarkdownService markdownService)
+        public ReadmeViewModel(
+            IApplicationService applicationService, 
+            IMarkdownService markdownService,
+            IActionMenuService actionMenuService)
         {
             _applicationService = applicationService;
             _markdownService = markdownService;
+
+            var canShowMenu = this.Bind(x => x.ContentModel, true).Select(x => x != null);
+
+            var gotoCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
+            gotoCommand.Subscribe(_ => GoToUrlCommand.Execute(_htmlUrl));
+
+            var shareCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
+            shareCommand.Subscribe(_ => GetService<IShareService>().ShareUrl(_htmlUrl));
+
+            ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
+                var menu = actionMenuService.Create();
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in Bitbucket", gotoCommand);
+                return menu.Show(sender);
+            });
         }
 
         protected override async Task Load()

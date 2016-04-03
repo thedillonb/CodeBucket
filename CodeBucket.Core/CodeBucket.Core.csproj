@@ -142,6 +142,7 @@
     <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesViewModel.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="Services\IActionMenuService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

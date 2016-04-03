@@ -265,6 +265,8 @@
     <Compile Include="Views\Source\BranchesView.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="ViewControllers\Repositories\ReadmeView.cs" />
+    <Compile Include="Services\ActionMenuService.cs" />
+    <Compile Include="Views\PickerAlertView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

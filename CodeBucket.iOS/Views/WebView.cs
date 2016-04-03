@@ -21,7 +21,7 @@ namespace CodeBucket.Views
 
         ~WebView()
         {
-            Console.WriteLine("All done with " + GetType().Name);
+            System.Diagnostics.Debug.WriteLine("All done with " + GetType().Name);
         }
   
         protected virtual void GoBack()

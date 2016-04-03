@@ -2,7 +2,6 @@ using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.ViewControllers;
-using CodeBucket.Utils;
 using CodeBucket.DialogElements;
 using System.Linq;
 using Humanizer;
