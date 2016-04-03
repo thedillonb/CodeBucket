@@ -23,7 +23,7 @@ namespace CodeBucket.Core.ViewModels.Events
             Repository = navObject.Repository;
         }
 
-        protected override async Task Load(bool forceDataRefresh)
+        protected override async Task Load()
         {
             var events = await _applicationService.Client.Repositories.GetEvents(Username, Repository);
             Events.Items.Reset(CreateDataFromLoad(events.Events));

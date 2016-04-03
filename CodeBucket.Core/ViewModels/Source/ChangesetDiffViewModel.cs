@@ -48,7 +48,7 @@ namespace CodeBucket.Core.ViewModels.Source
 			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as ChangesetDiffModel;
         }
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
 			//Make sure we have this information. If not, go get it
 //			if (_commitFileModel == null)

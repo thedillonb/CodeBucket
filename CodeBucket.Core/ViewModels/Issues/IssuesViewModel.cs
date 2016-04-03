@@ -130,7 +130,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			return null;
 		}
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
 
 //            LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();

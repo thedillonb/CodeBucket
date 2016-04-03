@@ -12,7 +12,7 @@ namespace CodeBucket.Core.ViewModels.Source
 		private string _path;
 		private string _name;
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
         {
             var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
             var file = await this.GetApplication().Client.Repositories.GetFile(_user, _repository, _branch, filePath);

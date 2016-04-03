@@ -94,7 +94,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
 		}
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
 //			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
 //

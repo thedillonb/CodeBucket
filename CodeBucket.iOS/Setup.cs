@@ -1,34 +1,17 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <summary>
-//    Defines the Setup type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UIKit;
 using CodeBucket.Core.ViewModels.App;
-using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels;
 using MvvmCross.iOS.Platform;
 using MvvmCross.iOS.Views.Presenters;
 using MvvmCross.Platform.IoC;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket
 {
-	using MvvmCross.Core.ViewModels;
 
-	/// <summary>
-	///    Defines the Setup type.
-	/// </summary>
 	public class Setup : MvxIosSetup
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Setup"/> class.
-		/// </summary>
-		/// <param name="applicationDelegate">The application delegate.</param>
-		/// <param name="presenter">The presenter.</param>
 		public Setup(MvxApplicationDelegate applicationDelegate, IMvxIosViewPresenter presenter)
 			: base(applicationDelegate, presenter)
 		{
@@ -42,10 +25,6 @@ namespace CodeBucket
 			return list.ToArray();
 		}
 
-		/// <summary>
-		/// Creates the app.
-		/// </summary>
-		/// <returns>An instance of IMvxApplication</returns>
 		protected override IMvxApplication CreateApp()
 		{
 			this.CreatableTypes(typeof(BaseViewModel).Assembly)

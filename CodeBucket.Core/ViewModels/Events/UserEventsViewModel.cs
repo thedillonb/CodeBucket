@@ -20,7 +20,7 @@ namespace CodeBucket.Core.ViewModels.Events
             Username = navObject.Username;
         }
 
-        protected override async Task Load(bool forceDataRefresh)
+        protected override async Task Load()
         {
             var events = await _applicationService.Client.Users.GetEvents(Username);
             Events.Items.Reset(CreateDataFromLoad(events.Events));

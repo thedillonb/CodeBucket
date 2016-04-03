@@ -118,7 +118,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 //            }
         }
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override Task Load()
 		{
 //			if (forceCacheInvalidation || Issue == null)
 //				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);

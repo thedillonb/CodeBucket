@@ -57,7 +57,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             _markdownService = markdownService;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
             var file = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, Branch, Filename);

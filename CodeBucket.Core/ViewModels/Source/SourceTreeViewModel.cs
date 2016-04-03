@@ -71,7 +71,7 @@ namespace CodeBucket.Core.ViewModels.Source
             Path = navObject.Path ?? "";
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var data = await this.GetApplication().Client.Repositories.GetSource(Username, Repository, Branch, Path);
 			var source = new List<SourceModel>();

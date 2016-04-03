@@ -42,7 +42,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 //			}
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override Task Load()
 		{
 			return Task.FromResult(false);
 		}

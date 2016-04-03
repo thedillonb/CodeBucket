@@ -14,9 +14,9 @@ namespace CodeBucket.Core.ViewModels
     {
         public IReactiveCommand LoadCommand { get; }
 
-        protected abstract Task Load(bool forceCacheInvalidation);
+        protected abstract Task Load();
 
-        private async Task LoadResource(bool forceCacheInvalidation)
+        private async Task LoadResource()
         {
             var retry = false;
             while (true)
@@ -26,7 +26,7 @@ namespace CodeBucket.Core.ViewModels
 
                 try
                 {
-                    await Load(forceCacheInvalidation);
+                    await Load();
                     return;
                 }
                 catch (WebException)
@@ -41,7 +41,7 @@ namespace CodeBucket.Core.ViewModels
 
         protected LoadableViewModel()
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => LoadResource(false));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => LoadResource());
         }
 
     }

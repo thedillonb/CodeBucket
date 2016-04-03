@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			});
 		}
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
 //			var owner = await Task.Run(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation));
 //			if (owner.User.IsTeam)
