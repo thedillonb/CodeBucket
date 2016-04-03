@@ -18,7 +18,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
     public class RepositoryViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
-        private string _primaryBranch;
         private string _readmeFilename;
 
 		public string Username { get; private set; }
@@ -117,9 +116,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
                     new ReadmeViewModel.NavObject { 
                         Username = Username, 
                         Repository = RepositorySlug, 
-                        Branch = _primaryBranch, 
                         Filename = _readmeFilename 
-                    }), () => !string.IsNullOrEmpty(_primaryBranch) && !string.IsNullOrEmpty(_readmeFilename)); 
+                    }), () => !string.IsNullOrEmpty(_readmeFilename)); 
             }
         }
 
@@ -205,8 +203,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var mainBranch = await _applicationService.Client.Repositories.GetMainBranch(Username, RepositorySlug);
             var sources = await _applicationService.Client.Repositories.GetSource(Username, RepositorySlug, mainBranch.Name);
             var readme = sources.Files.FirstOrDefault(x => x.Path.StartsWith("readme", StringComparison.OrdinalIgnoreCase));
-            HasReadme = readme != null;
             _readmeFilename = readme.Path;
+            HasReadme = readme != null;
         }
 
         public bool IsPinned

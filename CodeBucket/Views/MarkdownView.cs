@@ -18,13 +18,13 @@ using System.Text;
 
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "2.6.0.0")]
-public partial class CommentsRazorView : CommentsRazorViewBase
+public partial class MarkdownView : MarkdownViewBase
 {
 
 #line hidden
 
-#line 1 "CommentsRazorView.cshtml"
-public List<CommentViewModel> Model { get; set; }
+#line 1 "MarkdownView.cshtml"
+public DescriptionModel Model { get; set; }
 
 #line default
 #line hidden
@@ -39,123 +39,137 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<script");
-
-WriteLiteral(" type=\"text/javascript\"");
-
-WriteLiteral(">\nfunction size() { return document.getElementById(\'main\').scrollHeight + 0; }\nfu" +
-"nction rs() { document.location.href = \'app://resize\'; }; window.onsize = rs;\nva" +
-"r h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100)" +
-";\n</script>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\n" +
-"\n}\n\nhtml {\n    -webkit-text-size-adjust: none;\n}\n\nbody{\n    font-family: Helveti" +
-"ca; \n    font-size: 12px; \n    margin: 0px;\n    word-wrap: break-word;\n}\n\na {\n  " +
-"  color: #406fb9;\n    text-decoration: none;\n}\n\n#main {\n    padding: 0 0 10px 0;" +
-"\n}\n\n#main > .comment:first-child {\nborder-top: none;\n}\n\n#main > .comment {\n    b" +
-"order-top: 1px solid #c8c8c8;\n    padding: 8px 0 0 0;\n}\n\n#main > .comment > img " +
-"{\n    position: absolute;\n    border-radius: 16px;\n    margin-left: 8px;\n    mar" +
-"gin-top: 1px;\n    margin-bottom: 8px;\n    width: 32px;\n    height: 32px;\n}\n\n#mai" +
-"n > .comment > div {\nmargin-left: 48px;\nmargin-right: 8px;\n}\n\n#main > .comment >" +
-" div > h1 {\nfont-size: 1.6em;\nmargin: 0;\ncolor: #406fb9;\nwhite-space: nowrap;\nov" +
-"erflow: hidden;\n}\n\n#main > .comment > div > h2 {\nfont-size: 1.2em;\nmargin: 0 0 4" +
-"px 0;\nfont-weight: normal;\ncolor: #404040;\nwhite-space: nowrap;\noverflow: hidden" +
-";\n}\n\n#main > .comment > div > div {\nmargin: 0;\nword-wrap: break-word;\n}\n\n#main >" +
-" .comment > div > .mark {\n    margin-top: 8px;\n    margin-bottom: 8px;\n    margi" +
-"n-right: 8px;\n}\n\n#main > .comment > div > div img {\nmax-width: 100%;\n}\n\n#main { " +
-"width: 100%; }\n\nimg { max-width: 100%; } \np { margin: 10px 0; white-space: pre-w" +
-"rap; } \npre, li, ul { word-wrap: break-word; } \n\n.mark h1, .mark h2, .mark h3, ." +
-"mark h4, .mark h5, .mark h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;" +
-"\nline-height: 1.7;\ncursor: text;\nposition: relative;\n}\n\nul, ol {\npadding: 0;\nmar" +
-"gin-top: 0;\nmargin-bottom: 0;\npadding-left: 20px;\n}\n\npre {\nbackground-color: #f8" +
-"f8f8;\nborder: 1px solid #ddd;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10" +
-"px;\nborder-radius: 3px;\nword-wrap: normal;\n}\ndl dt {\nfont-weight: bold;\nfont-sty" +
-"le: italic;\npadding: 0;\nmargin-top: 15px;\n}\nblockquote {\nborder-left: 4px solid " +
-"#DDD;\npadding: 0 15px;\ncolor: #777;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndispl" +
-"ay: block;\n}\ntable tr {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\nta" +
-"ble th {\nfont-weight: bold;\n}\ntable th, table td {\nborder: 1px solid #d9d9e0;\nbo" +
-"rder: 0.5px solid #d9d9d9;\npadding: 4px 11px;\n}\ntable tr:nth-child(2n) {\nbackgro" +
-"und-color: #f8f8f8;\n}\n.mark h2 {\nfont-size: 1.2em;\nborder-bottom: 1px solid #eee" +
-";\n}\n.mark h1 {\nfont-size: 1.6em;\nborder-bottom: 1px solid #ddd;\n}\n\n.mark .label " +
-"{\ndisplay: inline;\npadding: .2em .6em .2em;\nfont-size: 85%;\nfont-weight: 700;\nli" +
-"ne-height: 1;\ncolor: #fff;\ntext-align: center;\nwhite-space: nowrap;\nvertical-ali" +
-"gn: baseline;\nborder-radius: .25em;\n}\n.label-danger {\nbackground-color: #d9534f;" +
-"\n}\n.label-success {\nbackground-color: #5cb85c;\n}\n.label-info {\nbackground-color:" +
-" #6e5494;\n}\n.label-default {\nbackground-color: #999;\n}\nul.task-list > li.task-li" +
-"st-item {\n  list-style-type: none;\n}\n.task-list-item-checkbox {\n  margin-left: -" +
-"20px;\n  vertical-align: middle;\n}\n</style>\n</head>\n    <body>\n        <div");
-
-WriteLiteral(" id=\"main\"");
-
-WriteLiteral(">\n");
+WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -webkit-text-size-adjust" +
+": none;\n}\n\nbody {\n    color: #333;\n    font-family: Helvetica, Arial, sans-serif" +
+";\n    line-height: 1.42;\n    font-size: ");
 
 
-#line 198 "CommentsRazorView.cshtml"
-            
-
-#line default
-#line hidden
-
-#line 198 "CommentsRazorView.cshtml"
-             foreach (var x in Model)
-            {
+#line 17 "MarkdownView.cshtml"
+           Write(Model.FontSize);
 
 
 #line default
 #line hidden
-WriteLiteral("                <div");
+WriteLiteral(@"px;
+    line-height: 1.7;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 20px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+</style>
+");
 
-WriteLiteral(" class=\'comment\'");
 
-WriteLiteral("><img");
+#line 105 "MarkdownView.cshtml"
+ if (Model.ContinuousResize) {
 
-WriteAttribute ("src", " src=\"", "\""
-
-#line 200 "CommentsRazorView.cshtml"
-        , Tuple.Create<string,object,bool> ("", x.AvatarUrl
 
 #line default
 #line hidden
-, false)
-);
-WriteLiteral("><div><h1>");
+WriteLiteral(@"    <script>
+    function size() { return document.body.scrollHeight; }
+    function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
+    var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
+    </script>
+");
 
 
-#line 200 "CommentsRazorView.cshtml"
-                                                                 Write(x.Title);
-
-
-#line default
-#line hidden
-WriteLiteral("</h1><span>");
-
-
-#line 200 "CommentsRazorView.cshtml"
-                                                                                    Write(x.Created);
+#line 111 "MarkdownView.cshtml"
+}
 
 
 #line default
 #line hidden
-WriteLiteral("</span>\n                <div");
-
-WriteLiteral(" class=\'mark\'");
-
-WriteLiteral(">");
+WriteLiteral("<title>Readme</title></head>\n<body>");
 
 
-#line 201 "CommentsRazorView.cshtml"
-                                    WriteLiteral(x.Content);
+#line 113 "MarkdownView.cshtml"
+        WriteLiteral(Model.Body);
 
 #line default
 #line hidden
-WriteLiteral("</div></div></div>\n");
-
-
-#line 202 "CommentsRazorView.cshtml"
-            }
-
-
-#line default
-#line hidden
-WriteLiteral("        </div>\n    </body>\n</html>\n\n\n");
+WriteLiteral("</body>\n</html>\n");
 
 }
 }
@@ -163,7 +177,7 @@ WriteLiteral("        </div>\n    </body>\n</html>\n\n\n");
 // NOTE: this is the default generated helper class. You may choose to extract it to a separate file 
 // in order to customize it or share it between multiple templates, and specify the template's base 
 // class via the @inherits directive.
-public abstract class CommentsRazorViewBase
+public abstract class MarkdownViewBase
 {
 
 		// This field is OPTIONAL, but used by the default implementation of Generate, Write, WriteAttribute and WriteLiteral

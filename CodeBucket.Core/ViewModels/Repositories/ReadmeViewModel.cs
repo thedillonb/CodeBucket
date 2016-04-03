@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class ReadmeViewModel : LoadableViewModel
     {
         private readonly IMarkdownService _markdownService;
-        private string _data;
+        private readonly IApplicationService _applicationService;
         private string _path;
         private string _htmlUrl;
 
@@ -18,20 +19,26 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public string Repository { get; private set; }
 
-        public string Branch { get; private set; }
-
         public string Filename { get; private set; }
-
-        public string Data
-        {
-            get { return _data; }
-            set { _data = value; RaisePropertyChanged(() => Data); }
-        }
 
         public string Path
         {
             get { return _path; }
-            set { _path = value; RaisePropertyChanged(() => Path); }
+            set { this.RaiseAndSetIfChanged(ref _path, value); }
+        }
+
+        private FileModel _contentModel;
+        public FileModel ContentModel
+        {
+            get { return _contentModel; }
+            private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
+        }
+
+        private string _contentText;
+        public string ContentText
+        {
+            get { return _contentText; }
+            private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
         public ICommand GoToGitHubCommand
@@ -52,48 +59,31 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
         }
 
-        public ReadmeViewModel(IMarkdownService markdownService)
+        public ReadmeViewModel(IApplicationService applicationService, IMarkdownService markdownService)
         {
+            _applicationService = applicationService;
             _markdownService = markdownService;
         }
 
         protected override async Task Load()
         {
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
-            var file = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, Branch, Filename);
-//            _htmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + Filename;
-            string readme = file.Data;
-            string data;
+            var mainBranch = (await _applicationService.Client.Repositories.GetMainBranch(Username, Repository)).Name;
+            ContentModel = await _applicationService.Client.Repositories.GetFile(Username, Repository, mainBranch, Filename);
+
+            var readme = ContentModel.Data;
+            _htmlUrl = "http://bitbucket.org/" + Username + "/" + Repository + "/src/" + mainBranch + "/" + Filename;
+
             if (filepath.EndsWith("textile", StringComparison.Ordinal))
-                data = _markdownService.ConvertTextile(readme);
+                ContentText = _markdownService.ConvertTextile(readme);
             else
-                data = _markdownService.ConvertMarkdown(readme);
-            Path = CreateHtmlFile(data);
-        }
-
-        private string CreateHtmlFile(string data)
-        {
-            //Generate the markup
-            var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
-
-            var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-            using (var tmpStream = new System.IO.FileStream(tmp, System.IO.FileMode.Create))
-            {
-                var fs = new System.IO.StreamWriter(tmpStream, Encoding.UTF8);
-                var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
-                fs.Write(markup.Substring(0, dataIndex));
-                fs.Write(data);
-                fs.Write(markup.Substring(dataIndex + 8));
-                fs.Flush();
-            }
-            return tmp;
+                ContentText = _markdownService.ConvertMarkdown(readme);
         }
 
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
             Repository = navObject.Repository;
-            Branch = navObject.Branch;
             Filename = navObject.Filename;
         }
 
@@ -101,7 +91,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public string Branch { get; set; }
             public string Filename { get; set; }
         }
     }

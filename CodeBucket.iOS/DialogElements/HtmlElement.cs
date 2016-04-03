@@ -49,18 +49,21 @@ namespace CodeBucket.DialogElements
 
         private async Task<nfloat> GetSize()
         {
-            try
+            if (HasValue)
             {
-                var size = await WebView.EvaluateJavaScriptAsync("size();");
-                if (size != null)
+                try
                 {
-                    nfloat newsize;
-                    if (nfloat.TryParse(size.ToString(), out newsize))
-                        return newsize;
+                    var size = await WebView.EvaluateJavaScriptAsync("size();");
+                    if (size != null)
+                    {
+                        nfloat newsize;
+                        if (nfloat.TryParse(size.ToString(), out newsize))
+                            return newsize;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             return _height;
@@ -110,11 +113,11 @@ namespace CodeBucket.DialogElements
 
         public void CheckHeight()
         {
-//            var f = WebView.Frame;
-//            f.Height = 1;
-//            WebView.Frame = f;
-//            f.Height = _height = await GetSize();
-//            WebView.Frame = f;
+            //            var f = WebView.Frame;
+            //            f.Height = 1;
+            //            WebView.Frame = f;
+            //            f.Height = _height = await GetSize();
+            //            WebView.Frame = f;
             Reload();
         }
 

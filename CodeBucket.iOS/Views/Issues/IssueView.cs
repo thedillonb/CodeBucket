@@ -51,9 +51,10 @@ namespace CodeBucket.Views.Issues
 		{
             var comments = ViewModel.Comments
                 .Where(x => !string.IsNullOrEmpty(x.Content))
-                .Select(x => new CommentViewModel(x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn.Humanize(), x.AuthorInfo.Avatar));
+                .Select(x => new Comment(x.AuthorInfo.Avatar, x.AuthorInfo.Username, ViewModel.ConvertToMarkdown(x.Content), x.UtcCreatedOn));
 
-            _commentsElement.SetValue(new CommentsRazorView { Model = comments.ToList() }.GenerateString());
+            var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            _commentsElement.SetValue(new CommentsView { Model = commentModel }.GenerateString());
             InvokeOnMainThread(RenderIssue);
 		}
 
@@ -86,7 +87,8 @@ namespace CodeBucket.Views.Issues
 
 			if (!string.IsNullOrEmpty(ViewModel.Issue.Content))
 			{
-                _descriptionElement.SetValue(new MarkdownRazorView { Model = ViewModel.Issue.Content }.GenerateString());
+                var model = new DescriptionModel(ViewModel.Issue.Content, (int)UIFont.PreferredSubheadline.PointSize, true);
+                _descriptionElement.SetValue(new MarkdownView { Model = model }.GenerateString());
 				secDetails.Add(_descriptionElement);
 			}
 

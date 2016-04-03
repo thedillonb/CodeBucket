@@ -69,7 +69,8 @@ namespace CodeBucket.Views.PullRequests
             var secDetails = new Section();
             if (!string.IsNullOrWhiteSpace(ViewModel.Description))
             {
-                var content = new MarkdownRazorView { Model = ViewModel.Description }.GenerateString();
+                var model = new DescriptionModel(ViewModel.Description, (int)UIFont.PreferredSubheadline.PointSize, true);
+                var content = new MarkdownView { Model = model }.GenerateString();
                 _descriptionElement.SetValue(content);
                 secDetails.Add(_descriptionElement);
             }
@@ -99,12 +100,13 @@ namespace CodeBucket.Views.PullRequests
                 {
                     var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
                     var avatar = new Avatar(x.User.Links?.Avatar?.Href);
-                    return new CommentViewModel(name, x.Content.Html, x.CreatedOn.Humanize(), avatar.ToUrl());
+                    return new Comment(avatar.ToUrl(), name, x.Content.Html, x.CreatedOn);
                 }).ToList();
 
             if (comments.Count > 0)
             {
-                var content = new CommentsRazorView { Model = comments.ToList() }.GenerateString();
+                var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                var content = new CommentsView { Model = commentModel }.GenerateString();
                 _commentsElement.SetValue(content);
                 root.Add(new Section { _commentsElement });
             }

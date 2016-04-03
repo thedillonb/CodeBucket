@@ -35,12 +35,13 @@
     <Compile Include="Views\SyntaxHighlighterView.cs">
       <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CommentsRazorView.cs">
-      <DependentUpon>CommentsRazorView.cshtml</DependentUpon>
+    <Compile Include="Views\MarkdownView.cs">
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CommentViewModel.cs" />
-    <Compile Include="Views\MarkdownRazorView.cs">
-      <DependentUpon>MarkdownRazorView.cshtml</DependentUpon>
+    <Compile Include="Views\DescriptionModel.cs" />
+    <Compile Include="Views\CommentModel.cs" />
+    <Compile Include="Views\CommentsView.cs">
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
@@ -52,13 +53,19 @@
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
     </None>
-    <None Include="Views\CommentsRazorView.cshtml">
+    <None Include="Views\MarkdownView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommentsRazorView.cs</LastGenOutput>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
     </None>
-    <None Include="Views\MarkdownRazorView.cshtml">
+    <None Include="Views\CommentsView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>MarkdownRazorView.cs</LastGenOutput>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
