@@ -15,8 +15,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public WatchersViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
                 Users.Items.Clear();
                 return applicationService.Client.ForAllItems(x => x.Repositories.GetWatchers(User, Repository), Users.Items.AddRange);
             });

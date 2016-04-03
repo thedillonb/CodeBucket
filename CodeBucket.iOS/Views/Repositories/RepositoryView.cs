@@ -42,14 +42,14 @@ namespace CodeBucket.Views.Repositories
             ViewModel.Bind(x => x.Issues).Subscribe(_ => Render(ViewModel.Repository));
             ViewModel.Bind(x => x.HasReadme).Subscribe(_ => Render(ViewModel.Repository));
 
-            OnActivation(d =>
-            {
+            OnActivation(d => {
                 d(watchers.Clicked.BindCommand(ViewModel.GoToStargazersCommand));
-                d(ViewModel.Bind(x => x.Branches, true).Subscribe(x => branches.Text = x?.Count.ToString() ?? "-"));
+                d(ViewModel.Bind(x => x.Branches, true).Subscribe(x => branches.Text = x?.ToString() ?? "-"));
+                d(ViewModel.Bind(x => x.Watchers, true).Subscribe(x => watchers.Text = x.HasValue ? x.ToString() : "-"));
+                d(ViewModel.Bind(x => x.Forks, true).Subscribe(x => forks.Text = x.HasValue ? x.ToString() : "-"));
+
                 d(ViewModel.Bind(x => x.Repository, true).Subscribe(x =>
                 {
-//                    watchers.Text = x?.FollowersCount.ToString();
-//                    forks.Text = x?.ForkCount.ToString();
                     NavigationItem.RightBarButtonItem.Enabled = true;
                     Render(x);
                 }));
@@ -127,7 +127,7 @@ namespace CodeBucket.Views.Repositories
             sec1.Add(_split1);
 
             _split3.Button1.Text = model.Scm.ApplyCase(LetterCasing.Title);
-            _split3.Button2.Text = "Issues".ToQuantity(ViewModel.Issues);
+            _split3.Button2.Text = "Issues".ToQuantity(ViewModel.Issues.GetValueOrDefault());
             sec1.Add(_split3);
 
             _split2.Button1.Text = (model.UpdatedOn).ToString("MM/dd/yy");

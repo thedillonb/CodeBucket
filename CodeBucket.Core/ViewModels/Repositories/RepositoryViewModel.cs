@@ -43,15 +43,29 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
-        private List<BranchModel> _branches;
-        public List<BranchModel> Branches
+        private int? _watchers;
+        public int? Watchers
+        {
+            get { return _watchers; }
+            private set { this.RaiseAndSetIfChanged(ref _watchers, value); }
+        }
+
+        private int? _forks;
+        public int? Forks
+        {
+            get { return _forks; }
+            private set { this.RaiseAndSetIfChanged(ref _forks, value); }
+        }
+
+        private int? _branches;
+        public int? Branches
         {
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
-        private int _issues;
-        public int Issues
+        private int? _issues;
+        public int? Issues
         {
             get { return _issues; }
             private set { this.RaiseAndSetIfChanged(ref _issues, value); }
@@ -124,7 +138,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         private void ShowCommits()
         {
-            if (Branches != null && Branches.Count == 1)
+            if (Branches.GetValueOrDefault() == 1)
                 ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject {Username = Username, Repository = RepositorySlug});
             else
 				ShowViewModel<Source.BranchesViewModel>(new Source.BranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
@@ -141,16 +155,30 @@ namespace CodeBucket.Core.ViewModels.Repositories
         {
             _applicationService = applicationService;
 
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ => {
                 Repository = await applicationService.Client.Repositories.GetRepository(Username, RepositorySlug);
 
+                _applicationService.Client.Repositories.GetWatchers(Username, RepositorySlug, pagelen: 0)
+                    .ToBackground(x => Watchers = x.Size);
+
+                _applicationService.Client.Repositories.GetForks(Username, RepositorySlug, pagelen: 0)
+                    .ToBackground(x => Forks = x.Size);
+
+                _applicationService.Client.Repositories.GetBranches(Username, RepositorySlug)
+                    .ToBackground(x => Branches = x.Count);
+
+                if (!Repository.HasIssues)
+                    Issues = 0;
+                else
+                {
+                    _applicationService.Client.Repositories.Issues.GetIssues(Username, RepositorySlug, pagelen: 0)
+                        .ToBackground(x => Issues = x.Count);
+                }
+
                 LoadReadme().ToBackground();
-                LoadBranches().ToBackground();
             });
 
-            ForkCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            ForkCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ => {
                 var fork = await applicationService.Client.Repositories.Fork(Username, RepositorySlug);
                 ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
             });
@@ -176,26 +204,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
             else
 				this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
-        }
-
-//
-//        protected override Task Load(bool forceCacheInvalidation)
-//        {
-//            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
-//                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
-//
-//            return t1;
-//        }
-//
-        private async Task LoadBranches()
-        {
-            var branches = await _applicationService.Client.Repositories.GetBranches(Username, RepositorySlug);
-            Branches = branches.Values.ToList();
-        }
-
-        private async Task LoadIssues()
-        {
-            
         }
 
         private async Task LoadReadme()

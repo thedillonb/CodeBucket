@@ -20,8 +20,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             ShowRepositoryDescription = applicationService.Account.RepositoryDescriptionInList;
 
             GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.OfType<Repository>().Subscribe(x =>
-            {
+            GoToRepositoryCommand.OfType<Repository>().Subscribe(x => {
                 var id = new RepositoryIdentifier(x.FullName);
                 var obj = new RepositoryViewModel.NavObject { Username = id.Owner, RepositorySlug = id.Name };
                 ShowViewModel<RepositoryViewModel>(obj);

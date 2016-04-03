@@ -14,8 +14,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public UserRepositoriesViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
                 Repositories.Items.Clear();
                 return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(Username), Repositories.Items.AddRange);
             });

@@ -29,9 +29,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IssueVersionsViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                Versions = await applicationService.Client.Issues.GetVersions(Username, Repository);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                Versions = await applicationService.Client.Repositories.Issues.GetVersions(Username, Repository);
             });
         }
 

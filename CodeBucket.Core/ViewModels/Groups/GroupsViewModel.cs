@@ -24,8 +24,7 @@ namespace CodeBucket.Core.ViewModels.Groups
                 .Select(x => new GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name })
                 .Subscribe(x => ShowViewModel<GroupViewModel>(x));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 Groups.Items.Reset(await applicationService.Client.Groups.GetGroups(Username));
             });
         }

@@ -15,8 +15,7 @@ namespace CodeBucket.Core.ViewModels.Groups
 
         public GroupViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 var members = await applicationService.Client.Groups.GetMembers(Username, GroupName);
                 var memberUsers = members.Select(x => new BitbucketSharp.Models.V2.User {
                     Username = x.Username,

@@ -29,9 +29,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IssueMilestonesViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                Milestones = await applicationService.Client.Issues.GetMilestones(Username, Repository);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                Milestones = await applicationService.Client.Repositories.Issues.GetMilestones(Username, Repository);
             });
         }
 

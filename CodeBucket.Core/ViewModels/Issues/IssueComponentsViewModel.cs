@@ -29,9 +29,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IssueComponentsViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                Components = await applicationService.Client.Issues.GetComponents(Username, Repository);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                Components = await applicationService.Client.Repositories.Issues.GetComponents(Username, Repository);
             });
         }
 
