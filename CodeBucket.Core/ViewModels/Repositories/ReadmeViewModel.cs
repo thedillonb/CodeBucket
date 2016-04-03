@@ -49,10 +49,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var gotoCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
             gotoCommand.Subscribe(_ => GoToUrlCommand.Execute(_htmlUrl));
 
-            var shareCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
-            shareCommand.Subscribe(_ => GetService<IShareService>().ShareUrl(_htmlUrl));
-
             ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
+                var shareCommand = ReactiveUI.ReactiveCommand.Create();
+                shareCommand.Subscribe(_ => actionMenuService.ShareUrl(sender, new Uri(_htmlUrl)));
+
                 var menu = actionMenuService.Create();
                 menu.AddButton("Share", shareCommand);
                 menu.AddButton("Show in Bitbucket", gotoCommand);

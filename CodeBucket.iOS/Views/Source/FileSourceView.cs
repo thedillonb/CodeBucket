@@ -54,22 +54,21 @@ namespace CodeBucket.Views.Source
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) => {
-                BeginInvokeOnMainThread(() =>
-                {
-				if (e.ButtonIndex == openButton)
-				{
-					var ctrl = new UIDocumentInteractionController();
-					ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
-					ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
-				}
-				else if (e.ButtonIndex == shareButton)
-				{
-                    Mvx.Resolve<IShareService>().ShareUrl(ViewModel.HtmlUrl);
-				}
-				else if (e.ButtonIndex == showButton)
-				{
-					ViewModel.GoToHtmlUrlCommand.Execute(null);
-				}
+                BeginInvokeOnMainThread(() => {
+    				if (e.ButtonIndex == openButton)
+    				{
+    					var ctrl = new UIDocumentInteractionController();
+    					ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
+    					ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+    				}
+    				else if (e.ButtonIndex == shareButton)
+    				{
+                        Mvx.Resolve<IActionMenuService>().ShareUrl(NavigationItem.RightBarButtonItem, ViewModel.HtmlUrl);
+    				}
+    				else if (e.ButtonIndex == showButton)
+    				{
+    					ViewModel.GoToHtmlUrlCommand.Execute(null);
+    				}
                 });
 
                 sheet.Dispose();
