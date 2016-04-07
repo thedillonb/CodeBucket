@@ -211,7 +211,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var mainBranch = await _applicationService.Client.Repositories.GetMainBranch(Username, RepositorySlug);
             var sources = await _applicationService.Client.Repositories.GetSource(Username, RepositorySlug, mainBranch.Name);
             var readme = sources.Files.FirstOrDefault(x => x.Path.StartsWith("readme", StringComparison.OrdinalIgnoreCase));
-            _readmeFilename = readme.Path;
+            _readmeFilename = readme?.Path;
             HasReadme = readme != null;
         }
 

@@ -15,22 +15,15 @@ namespace CodeBucket.Core.ViewModels.Source
 		protected override async Task Load()
         {
             var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
-            var file = await this.GetApplication().Client.Repositories.GetFile(_user, _repository, _branch, filePath);
-            HtmlUrl = "http://bitbucket.org/" + Uri.EscapeDataString(_user) + "/" + Uri.EscapeDataString(_repository) + "/src/" + Uri.EscapeDataString(_branch) + "/" + _path;
-            IsText = file.Encoding == null;
+            var file = await this.GetApplication().Client.Repositories.GetFileRaw(_user, _repository, _branch, _path);
+            HtmlUrl = file.HtmlUrl;
+            IsText = true;
+
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            using (var writer = new StreamWriter(stream))
             {
-                if (IsText)
-                {
-                    await writer.WriteAsync(file.Data);
-                }
-                else if (string.Equals(file.Encoding, "base64", StringComparison.OrdinalIgnoreCase))
-                {
-                    var data = Convert.FromBase64String(file.Data);
-                    await stream.WriteAsync(data, 0, data.Length);
-                }
+                
+                await file.Stream.CopyToAsync(stream);
             }
 
             FilePath = filePath;

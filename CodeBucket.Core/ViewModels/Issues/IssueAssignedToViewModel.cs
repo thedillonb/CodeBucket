@@ -10,39 +10,18 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssueAssignedToViewModel : LoadableViewModel
     {
-		private readonly CollectionViewModel<UserModel> _users = new CollectionViewModel<UserModel>();
-
 		private UserModel _selectedUser;
-
 		public UserModel SelectedUser
 		{
-			get
-			{
-				return _selectedUser;
-			}
-			set
-			{
-				_selectedUser = value;
-				RaisePropertyChanged(() => SelectedUser);
-			}
+            get { return _selectedUser; }
+            set { this.RaiseAndSetIfChanged(ref _selectedUser, value); }
 		}
 
-		public CollectionViewModel<UserModel> Users
-		{
-			get { return _users; }
-		}
+        public CollectionViewModel<UserModel> Users { get; } = new CollectionViewModel<UserModel>();
 
-		public string Username 
-		{ 
-			get; 
-			private set; 
-		}
+        public string Username { get; private set; }
 
-		public string Repository 
-		{ 
-			get; 
-			private set; 
-		}
+        public string Repository { get; private set; }
 
 		public void Init(NavObject navObject) 
 		{

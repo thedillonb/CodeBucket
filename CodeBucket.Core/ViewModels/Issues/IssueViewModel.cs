@@ -7,102 +7,73 @@ using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
 using System.Linq;
+using System;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssueViewModel : LoadableViewModel
+    public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly IApplicationService _applicationService;
         private MvxSubscriptionToken _editToken, _deleteToken;
 
-		public int Id 
-        { 
-            get; 
-            private set; 
-        }
+        public int Id { get; private set; }
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; private set; }
 
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
+        public string Repository { get; private set; }
 
-		public string MarkdownDescription
-		{
-			get
-			{
-				if (Issue == null)
-					return string.Empty;
-				return (GetService<IMarkdownService>().ConvertMarkdown(Issue.Content));
-			}
-		}
+        private string _markdownDescription;
+        public string MarkdownDescription
+        {
+            get { return _markdownDescription; }
+            private set { this.RaiseAndSetIfChanged(ref _markdownDescription, value); }
+        }
 
 		private IssueModel _issueModel;
         public IssueModel Issue
         {
             get { return _issueModel; }
-            set
-            {
-                _issueModel = value;
-                RaisePropertyChanged(() => Issue);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
-		public ICommand GoToAssigneeCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null); }
-		}
+        public ICommand GoToAssigneeCommand { get; }
 
+        public ICommand GoToMilestoneCommand { get; }
 
-		public ICommand GoToMilestoneCommand
-		{
-			get 
-			{ 
-//				return new MvxCommand(() => {
-//					if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
-//						GetService<IViewModelTxService>().Add(new IssueVersion { Name = Issue.Metadata.Milestone });
-//					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-//				}); 
-                return null;
-			}
-		}
+        public ICommand GoToEditCommand { get; }
 
-		public ICommand GoToEditCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Issue);
-					ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
-				}, () => Issue != null); 
-			}
-		}
+        public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
-		private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
-		public CollectionViewModel<CommentModel> Comments
+        public CollectionViewModel<CommentModel> Comments { get; } = new CollectionViewModel<CommentModel>();
+
+        public ICommand GoToWeb { get; }
+
+        public IssueViewModel(IApplicationService applicationService, IMarkdownService markdownService)
         {
-            get { return _comments; }
-        }
+            _applicationService = applicationService;
 
-		public ICommand GoToWeb
-		{
-			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
-		}
+            GoToWeb = new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x }));
+            GoToAssigneeCommand = new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null);
+            GoToEditCommand = new MvxCommand(() => {
+                GetService<IViewModelTxService>().Add(Issue);
+                ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
+            }, () => Issue != null);
+            GoToMilestoneCommand = null;
+            //              return new MvxCommand(() => {
+            //                  if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
+            //                      GetService<IViewModelTxService>().Add(new IssueVersion { Name = Issue.Metadata.Milestone });
+            //                  ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+            //              }); 
 
-        protected override async Task Load()
-        {
-//			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
-//
-//			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.GetComments(forceCacheInvalidation), response => {
-//                Comments.Items.Reset(response);
-//			}).FireAndForget();
-//
-//            return t1;
+            this.Bind(x => x.Issue)
+                .Subscribe(x => MarkdownDescription = x != null ? markdownService.ConvertMarkdown(x.Content) : null);
+
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => {
+                var issueTask = applicationService.Client.Repositories.Issues.GetIssue(Username, Repository, Id);
+                applicationService.Client.Repositories.Issues.GetComments(Username, Repository, Id)
+                    .ToBackground(Comments.Items.Reset);
+                Issue = await issueTask;
+            });
         }
 
         public string ConvertToMarkdown(string str)
@@ -129,8 +100,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public async Task AddComment(string text)
         {
-//			var comment = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.Create(text));
-//			Comments.Items.Add(comment);
+            var comment = await _applicationService.Client.Repositories.Issues.AddComment(Username, Repository, Id, text);
+            Comments.Items.Add(comment);
         }
 
         public class NavObject

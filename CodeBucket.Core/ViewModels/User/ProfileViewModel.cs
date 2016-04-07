@@ -47,8 +47,7 @@ namespace CodeBucket.Core.ViewModels.User
 
         public ProfileViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => {
                 User = await applicationService.Client.Users.GetUser();
             });
         }

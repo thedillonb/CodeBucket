@@ -22,8 +22,7 @@ namespace CodeBucket.Core.ViewModels.Teams
                 .Select(x => new TeamViewModel.NavObject { Name = x.Username })
                 .Subscribe(x => ShowViewModel<TeamViewModel>(x));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
                 Teams.Items.Clear();
                 return applicationService.Client.ForAllItems(x => x.Teams.GetTeams(TeamRole.Member), Teams.Items.AddRange);
             });

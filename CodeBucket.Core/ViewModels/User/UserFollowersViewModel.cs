@@ -8,12 +8,11 @@ namespace CodeBucket.Core.ViewModels.User
     {
         public string Name { get; private set; }
 
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand LoadCommand { get; }
 
         public UserFollowersViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => {
                 Users.Items.Clear();
                 return applicationService.Client.ForAllItems(x => x.Users.GetFollowers(Name), Users.Items.AddRange);
             });
