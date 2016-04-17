@@ -1,10 +1,14 @@
-using System.Threading.Tasks;
 using System;
 using System.IO;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive;
+using BitbucketSharp.Models;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-	public class SourceViewModel : FileSourceViewModel
+    public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
     {
 		private string _user;
 		private string _repository;
@@ -12,21 +16,58 @@ namespace CodeBucket.Core.ViewModels.Source
 		private string _path;
 		private string _name;
 
-		protected override async Task Load()
+        private RawFileModel _file;
+        public RawFileModel File
         {
-            var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
-            var file = await this.GetApplication().Client.Repositories.GetFileRaw(_user, _repository, _branch, _path);
-            HtmlUrl = file.HtmlUrl;
-            IsText = true;
-
-
-            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            get { return _file; }
+            private set
             {
+                if (_file != value)
+                    return;
                 
-                await file.Stream.CopyToAsync(stream);
+                _file = value;
+                RaisePropertyChanged();
             }
+        }
 
-            FilePath = filePath;
+        public IReactiveCommand LoadCommand { get; }
+
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
+        public SourceViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
+        {
+            var canExecute = this.Bind(x => x.File).Select(x => x != null);
+
+            var openInCommand = ReactiveCommand.Create()
+                .WithSubscription(x => actionMenuService.OpenIn(x, null));
+
+            var shareCommand = ReactiveCommand.Create(canExecute)
+                .WithSubscription(x => actionMenuService.ShareUrl(x, File.HtmlUrl));
+
+            var showInCommand = ReactiveCommand.Create();
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canExecute, sender =>
+            {
+                var menu = actionMenuService.Create();
+                menu.AddButton("Open In", openInCommand);
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in Bitbucket", showInCommand);
+                return menu.Show(sender);
+            });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
+                var file = await applicationService.Client.Repositories.GetFileRaw(_user, _repository, _branch, _path);
+                IsText = true;
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await file.Stream.CopyToAsync(stream);
+                }
+
+                FilePath = filePath;
+            });
         }
 
 		public void Init(NavObject navObject)

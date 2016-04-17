@@ -12,12 +12,15 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public RepositoriesSharedViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
+            {
                 var username = applicationService.Account.Username;
-                Repositories.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(applicationService.Account.Username), repos => {
+                RepositoryList.Clear();
+
+                return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(applicationService.Account.Username), repos => 
+                {
                     var shared = repos.Where(x => !string.Equals(x.Owner?.Username, username, System.StringComparison.OrdinalIgnoreCase));
-                    Repositories.Items.AddRange(shared);
+                    RepositoryList.AddRange(shared);
                 });
             });
         }

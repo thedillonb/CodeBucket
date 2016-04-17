@@ -24,6 +24,13 @@ namespace CodeBucket.Services
             return new PickerMenu();
         }
 
+        public void OpenIn(object sender, string file)
+        {
+            var ctrl = new UIDocumentInteractionController();
+            ctrl.Url = NSUrl.FromFilename(file);
+            ctrl.PresentOpenInMenu(sender as UIBarButtonItem, true);
+        }
+
         public void ShareUrl(object sender, Uri uri)
         {
             var item = new NSUrl(uri.AbsoluteUri);

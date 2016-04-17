@@ -16,9 +16,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public RepositoriesForkedViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
-                Repositories.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Repositories.GetForks(Username, Repository), Repositories.Items.AddRange);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
+            {
+                RepositoryList.Clear();
+                return applicationService.Client.ForAllItems(x => 
+                    x.Repositories.GetForks(Username, Repository), RepositoryList.AddRange);
             });
         }
 

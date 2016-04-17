@@ -1,12 +1,11 @@
 using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Repositories;
-using BitbucketSharp.Models;
 using System;
 using CodeBucket.ViewControllers;
 using UIKit;
 using CodeBucket.TableViewCells;
-using CodeBucket.Core.Utils;
-using BitbucketSharp.Models.V2;
+using System.Reactive.Linq;
+using System.Linq;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -33,7 +32,9 @@ namespace CodeBucket.Views.Repositories
 
             base.ViewDidLoad();
 
-            BindCollection(ViewModel.Repositories, CreateElement);
+            ViewModel.Repositories.Changed
+                .Select(_ => ViewModel.Repositories.Select(ToElement))
+                .Subscribe(x => Root.Reset(new Section { x }));
         }
 
         public override Source CreateSizingSource()
@@ -41,10 +42,9 @@ namespace CodeBucket.Views.Repositories
             return new DialogViewController.Source(this);
         }
 
-        protected Element CreateElement(Repository repo)
+        private Element ToElement(RepositoryItemViewModel repo)
         {
-            var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var sse = new RepositoryElement(repo.Name, description, repo.Owner.Username, new Avatar(repo.Links.Avatar.Href));
+            var sse = new RepositoryElement(repo.Name, repo.Description, repo.Owner, repo.Avatar);
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

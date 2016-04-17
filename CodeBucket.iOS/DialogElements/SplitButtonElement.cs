@@ -36,6 +36,9 @@ namespace CodeBucket.DialogElements
                 get { return _text; }
                 set
                 {
+                    if (value == _text)
+                        return;
+                    
                     _text = value;
                     _element.GetRootElement()?.Reload(_element);
                 }
@@ -45,6 +48,9 @@ namespace CodeBucket.DialogElements
                 get { return _caption; }
                 set
                 {
+                    if (value == _caption)
+                        return;
+                    
                     _caption = value;
                     _element.GetRootElement()?.Reload(_element);
                 }

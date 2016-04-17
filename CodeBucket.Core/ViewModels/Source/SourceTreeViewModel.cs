@@ -3,13 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class SourceTreeViewModel : LoadableViewModel
+    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel
     {
-        public CollectionViewModel<SourceModel> Content { get; } = new CollectionViewModel<SourceModel>();
-
 		public string Username { get; private set; }
 
 		public string Path { get; private set; }
@@ -18,7 +17,11 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		public string Repository { get; private set; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
+        public CollectionViewModel<SourceModel> Content { get; } = new CollectionViewModel<SourceModel>();
+
+        public IReactiveCommand<object> GoToSourceCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand LoadCommand { get; }
 
 
 //        public ICommand GoToSubmoduleCommand
@@ -36,7 +39,6 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public SourceTreeViewModel()
         {
-            GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
             GoToSourceCommand.OfType<SourceModel>().Subscribe(x =>
             {
                 if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
@@ -61,6 +63,14 @@ namespace CodeBucket.Core.ViewModels.Source
                     });
                 }
             });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var data = await this.GetApplication().Client.Repositories.GetSource(Username, Repository, Branch, Path);
+                var dirs = data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x });
+                var files = data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path });
+                Content.Items.Reset(dirs.Concat(files));
+            });
         }
 
         public void Init(NavObject navObject)
@@ -69,15 +79,6 @@ namespace CodeBucket.Core.ViewModels.Source
             Repository = navObject.Repository;
             Branch = navObject.Branch ?? "master";
             Path = navObject.Path ?? "";
-        }
-
-        protected override async Task Load()
-        {
-            var data = await this.GetApplication().Client.Repositories.GetSource(Username, Repository, Branch, Path);
-			var source = new List<SourceModel>();
-			source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
-			source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
-            Content.Items.Reset(source);
         }
 
 		public class SourceModel

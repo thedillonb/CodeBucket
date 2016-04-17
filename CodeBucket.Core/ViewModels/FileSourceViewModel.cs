@@ -3,7 +3,7 @@ using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels
 {
-	public abstract class FileSourceViewModel : LoadableViewModel
+    public abstract class FileSourceViewModel : BaseViewModel
     {
 		private string _filePath;
 		public string FilePath

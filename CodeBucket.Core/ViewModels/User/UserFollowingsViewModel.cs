@@ -12,7 +12,8 @@ namespace CodeBucket.Core.ViewModels.User
 
         public UserFollowingsViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
+            {
                 Users.Items.Clear();
                 return applicationService.Client.ForAllItems(x => x.Users.GetFollowing(Name), Users.Items.AddRange);
             });

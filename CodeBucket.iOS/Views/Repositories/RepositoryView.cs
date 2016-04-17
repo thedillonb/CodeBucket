@@ -2,7 +2,6 @@ using System;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
 using UIKit;
-using BitbucketSharp.Models;
 using CodeBucket.DialogElements;
 using Humanizer;
 using CodeBucket.Core.Utils;
@@ -22,7 +21,7 @@ namespace CodeBucket.Views.Repositories
         public new RepositoryViewModel ViewModel
         {
             get { return (RepositoryViewModel)base.ViewModel; }
-            protected set { base.ViewModel = value; }
+            set { base.ViewModel = value; }
         }
 
         public override void ViewDidLoad()

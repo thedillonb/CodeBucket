@@ -7,17 +7,21 @@ namespace CodeBucket.Core.ViewModels.Groups
 {
     public class GroupViewModel : BaseUserCollectionViewModel, ILoadableViewModel
 	{
-		public string Username { get; private set; }
+        private string _slug;
 
-		public string GroupName { get; private set; }
+        public string Owner { get; private set; }
+
+		public string Name { get; private set; }
 
         public IReactiveCommand LoadCommand { get; }
 
         public GroupViewModel(IApplicationService applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                var members = await applicationService.Client.Groups.GetMembers(Username, GroupName);
-                var memberUsers = members.Select(x => new BitbucketSharp.Models.V2.User {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var members = await applicationService.Client.Groups.GetMembers(Owner, _slug);
+                var memberUsers = members.Select(x => new BitbucketSharp.Models.V2.User
+                {
                     Username = x.Username,
                     Links = new BitbucketSharp.Models.V2.User.LinksModel { Avatar = new BitbucketSharp.Models.V2.LinkModel { Href = x.Avatar } }
                 });
@@ -28,14 +32,16 @@ namespace CodeBucket.Core.ViewModels.Groups
 
 		public void Init(NavObject navObject) 
 		{
-			Username = navObject.Username;
-			GroupName = navObject.GroupName;
+			Owner = navObject.Owner;
+			Name = navObject.Name;
+            _slug = navObject.Slug;
 		}
 
         public class NavObject
         {
-			public string Username { get; set; }
-			public string GroupName { get; set; }
+			public string Owner { get; set; }
+			public string Name { get; set; }
+            public string Slug { get; set; }
         }
 	}
 }

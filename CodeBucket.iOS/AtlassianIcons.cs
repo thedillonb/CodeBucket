@@ -268,10 +268,10 @@
         public static AtlassianIcon Likesmall = (char)0xf174;
         public static AtlassianIcon Weblink = (char)0xf175;
         public static AtlassianIcon Link = (char)0xf176;
-        public static AtlassianIcon Listadd = (char)0xf177;
+        public static AtlassianIcon ListAdd = (char)0xf177;
 
 
-        public static AtlassianIcon Listremove = (char)0xf178;
+        public static AtlassianIcon ListRemove = (char)0xf178;
 
 
         public static AtlassianIcon Locked = (char)0xf179;

@@ -83,7 +83,7 @@ namespace CodeBucket.Core.ViewModels.Events
         {
             if (string.IsNullOrEmpty(username))
                 return;
-            ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject {Username = username});
+            ShowViewModel<UserViewModel>(new UserViewModel.NavObject {Username = username});
         }
 
 		private void GoToRepositoryWiki(RepositoryDetailedModel repository, string page)

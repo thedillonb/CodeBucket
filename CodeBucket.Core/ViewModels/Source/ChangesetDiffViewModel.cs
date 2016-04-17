@@ -48,8 +48,8 @@ namespace CodeBucket.Core.ViewModels.Source
 			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as ChangesetDiffModel;
         }
 
-		protected override async Task Load()
-		{
+		//protected override async Task Load()
+		//{
 			//Make sure we have this information. If not, go get it
 //			if (_commitFileModel == null)
 //			{
@@ -126,7 +126,7 @@ namespace CodeBucket.Core.ViewModels.Source
 //				FilePath = File2;
 //
 //			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
-		}
+		//}
 
 		public async Task PostComment(string comment, int? lineFrom, int? lineTo)
 		{

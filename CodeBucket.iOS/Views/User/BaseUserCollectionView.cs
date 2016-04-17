@@ -21,9 +21,8 @@ namespace CodeBucket.Views.User
 
             var vm = (BaseUserCollectionViewModel)ViewModel;
             var weakVm = new WeakReference<BaseUserCollectionViewModel>(vm);
-            BindCollection(vm.Users, x =>
-            {
-                var e = new UserElement(x.Username, string.Empty, string.Empty, new Avatar(x.Links.Avatar.Href));
+            BindCollection(vm.Users, x => {
+                var e = new UserElement(x.Username, string.Empty, string.Empty, new Avatar(x.Links?.Avatar?.Href));
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToUserCommand.Execute(x));
                 return e;
             });

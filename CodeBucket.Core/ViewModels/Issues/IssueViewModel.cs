@@ -53,7 +53,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             _applicationService = applicationService;
 
             GoToWeb = new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x }));
-            GoToAssigneeCommand = new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null);
+            GoToAssigneeCommand = new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null);
             GoToEditCommand = new MvxCommand(() => {
                 GetService<IViewModelTxService>().Add(Issue);
                 ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });

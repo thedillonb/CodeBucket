@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
-using System.Windows.Input;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
 using System.Reactive.Linq;
@@ -49,7 +48,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var gotoCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
             gotoCommand.Subscribe(_ => GoToUrlCommand.Execute(_htmlUrl));
 
-            ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
+            ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canShowMenu, sender => 
+            {
                 var shareCommand = ReactiveUI.ReactiveCommand.Create();
                 shareCommand.Subscribe(_ => actionMenuService.ShareUrl(sender, new Uri(_htmlUrl)));
 

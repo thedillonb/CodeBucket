@@ -3,6 +3,7 @@ using UIKit;
 using CoreGraphics;
 using Foundation;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CodeBucket.DialogElements
 {
@@ -162,30 +163,6 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        public int Insert (int idx, UITableViewRowAnimation anim, IEnumerable<Element> newElements)
-        {
-            if (newElements == null)
-                return 0;
-
-            int pos = idx;
-            int count = 0;
-            foreach (var e in newElements)
-            {
-                _elements.Insert (pos++, e);
-                e.SetSection(this);
-                count++;
-            }
-
-            if (Root != null && Root.TableView != null)
-            {                
-                if (anim == UITableViewRowAnimation.None)
-                    Root.TableView.ReloadData ();
-                else
-                    InsertVisual (idx, anim, pos-idx);
-            }
-            return count;
-        }
-
         void InsertVisual (int idx, UITableViewRowAnimation anim, int count)
         {
             if (Root == null || Root.TableView == null)
@@ -196,11 +173,6 @@ namespace CodeBucket.DialogElements
             for (int i = 0; i < count; i++)
                 paths [i] = NSIndexPath.FromRowSection (idx+i, sidx);
             Root.TableView.InsertRows (paths, anim);
-        }
-
-        public void Insert (int index, params Element [] newElements)
-        {
-            Insert (index, UITableViewRowAnimation.None, newElements);
         }
 
         public void Remove (Element e, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
@@ -220,23 +192,6 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        public void Remove (int idx)
-        {
-            RemoveRange (idx, 1);
-        }
-
-        /// <summary>
-        /// Remove a range of elements from the section with the given animation
-        /// </summary>
-        /// <param name="start">
-        /// Starting position
-        /// </param>
-        /// <param name="count">
-        /// Number of elements to remove form the section
-        /// </param>
-        /// <param name="anim">
-        /// The animation to use while removing the elements
-        /// </param>
         public void RemoveRange (int start, int count, UITableViewRowAnimation anim = UITableViewRowAnimation.Fade)
         {
             if (start < 0 || start >= _elements.Count)
@@ -256,8 +211,6 @@ namespace CodeBucket.DialogElements
                 for (int i = 0; i < count; i++)
                     paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
                 Root.TableView.DeleteRows(paths, anim);
-
-                //Root.TableView.ReloadData();
             }
         }
 
@@ -285,19 +238,23 @@ namespace CodeBucket.DialogElements
         {
             foreach (var e in _elements)
                 e.SetSection(null);
+            
             _elements.Clear();
-            if (Root != null && Root.TableView != null)
-                Root.TableView.ReloadData ();
+            Root?.TableView?.ReloadData ();
         }
 
-        public void Reset(IEnumerable<Element> elements, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+        public void Reset(IEnumerable<Element> elements)
         {
+            foreach (var e in _elements)
+                e.SetSection(null);
+            
             _elements.Clear();
             _elements.AddRange(elements);
+
             foreach (var e in _elements)
                 e.SetSection(this);
-            if (Root != null && Root.TableView != null)
-                Root.TableView.ReloadData();
+
+            Root?.TableView?.ReloadData();
         }
     }
 }

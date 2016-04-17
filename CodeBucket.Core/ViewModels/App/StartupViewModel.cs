@@ -18,33 +18,33 @@ namespace CodeBucket.Core.ViewModels.App
         private readonly IApplicationService _applicationService;
         private readonly IAccountsService _accountsService;
         private readonly IAlertDialogService _alertDialogService;
-        private bool _isLoggingIn;
-        private string _status;
-        private Avatar _avatar;
 
+        private bool _isLoggingIn;
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
             private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
+        private string _status;
         public string Status
         {
             get { return _status; }
             private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
+        private Avatar _avatar;
         public Avatar Avatar
         {
             get { return _avatar; }
             private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
 
-        public ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveCommand.Create();
 
         public ReactiveCommand<Unit> StartupCommand { get; }
 

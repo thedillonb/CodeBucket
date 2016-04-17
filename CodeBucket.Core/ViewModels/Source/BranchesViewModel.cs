@@ -15,13 +15,12 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public CollectionViewModel<BranchModel> Branches { get; } = new CollectionViewModel<BranchModel>();
 
-        public IReactiveCommand<object> GoToBranchCommand { get; }
+        public IReactiveCommand<object> GoToBranchCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand LoadCommand { get; }
 
         public BranchesViewModel(IApplicationService applicationService)
         {
-            GoToBranchCommand = ReactiveCommand.Create();
             GoToBranchCommand.OfType<BranchModel>()
                 .Select(x => new CommitsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node })
                 .Subscribe(x => ShowViewModel<CommitsViewModel>(x));

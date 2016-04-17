@@ -24,14 +24,13 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
+        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
         public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
             this.Bind(x => x.SelectedFilter).Subscribe(x => LoadCommand.Execute(false));
 
-            GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
-            GoToSourceCommand.OfType<ViewObject>().Subscribe(obj =>
+            GoToSourceCommand.OfType<ViewObject>().Subscribe(obj => 
             {
                 var branch = obj.Object as BranchModel;
                 var tag = obj.Object as TagModel;

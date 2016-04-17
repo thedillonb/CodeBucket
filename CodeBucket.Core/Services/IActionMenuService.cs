@@ -13,6 +13,8 @@ namespace CodeBucket.Core.Services
 
         void ShareUrl(object sender, Uri uri);
 
+        void OpenIn(object sender, string file);
+
         void SendToPasteBoard(string str);
     }
 

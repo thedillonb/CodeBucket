@@ -1,58 +1,41 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.Repositories;
 using BitbucketSharp.Models;
-using System;
-using System.Linq;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
+using CodeBucket.Core.Services;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesExploreViewModel : BaseViewModel
+    public class RepositoriesExploreViewModel : ReactiveObject
     {
-        public bool ShowRepositoryDescription
-        {
-			get { return this.GetApplication().Account.RepositoryDescriptionInList; }
-        }
-
-		private readonly CollectionViewModel<RepositoryDetailedModel> _repositories = new CollectionViewModel<RepositoryDetailedModel>();
-		public CollectionViewModel<RepositoryDetailedModel> Repositories
-        {
-            get { return _repositories; }
-        }
+        public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; }
 
 		private string _searchText;
         public string SearchText
         {
             get { return _searchText; }
-            set { _searchText = value; RaisePropertyChanged(() => SearchText); }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-		private bool _isSearching;
-		public bool IsSearching
-		{
-			get { return _isSearching; }
-			private set
-			{
-				_isSearching = value;
-				RaisePropertyChanged(() => IsSearching);
-			}
-		}
+        public IReactiveCommand<Unit> SearchCommand { get; }
 
-		public ICommand GoToRepositoryCommand
-		{
-			get { return new MvxCommand<RepositoryDetailedModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Slug })); }
-		}
+        public IReactiveCommand<object> GoToRepositoryCommand { get; } = ReactiveCommand.Create();
 
-        public ICommand SearchCommand
+		public RepositoriesExploreViewModel(IApplicationService applicationService)
         {
-            get { return new MvxCommand(() => Search(), () => !string.IsNullOrEmpty(SearchText)); }
-        }
+            var canSearch = this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x));
+            SearchCommand = ReactiveCommand.CreateAsyncTask(canSearch, _ => Search());
+            var showDescription = applicationService.Account.RepositoryDescriptionInList;
 
-		public RepositoriesExploreViewModel()
-		{
-			_repositories.SortingFunction = x => x.OrderByDescending(y => y.FollowersCount);
-		}
+            var repositories = new ReactiveList<RepositoryDetailedModel>();
+            Repositories = repositories.CreateDerivedCollection(x =>
+            {
+                var description = showDescription ? x.Description : string.Empty;
+                return new RepositoryItemViewModel(x.Name, description, x.Owner, new Avatar(x.Logo));
+            });
+        }
 
         private async Task Search()
         {

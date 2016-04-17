@@ -22,6 +22,48 @@ namespace CodeBucket.DialogElements
         }
     }
 
+    public class LoaderButtonElement : StringElement
+    {
+        private UIActivityIndicatorView _activityView;
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                if (value == _isLoading)
+                    return;
+                
+                _isLoading = value;
+                _activityView = _isLoading ? new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray) : null;
+                _activityView?.StartAnimating();
+
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.AccessoryView = _activityView;
+            }
+        }
+
+        public LoaderButtonElement(string caption, UIImage image) 
+            : base (caption, image) 
+        {
+        }
+
+        protected override string GetKey(int style)
+        {
+            return "loader-button";
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = base.GetCell(tv);
+            _activityView?.StartAnimating();
+            cell.AccessoryView = _activityView;
+            return cell;
+        }
+    }
+
     public class StringElement : Element 
     {
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
@@ -44,6 +86,20 @@ namespace CodeBucket.DialogElements
         public IObservable<object> Clicked
         {
             get { return _tapped.AsObservable(); }
+        }
+
+        private bool _enabled = true;
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (value == _enabled)
+                    return;
+
+                _enabled = value;
+                SelectionStyle = _enabled ? UITableViewCellSelectionStyle.Default : UITableViewCellSelectionStyle.None;
+            }
         }
 
         public UITableViewCellSelectionStyle SelectionStyle
@@ -148,6 +204,12 @@ namespace CodeBucket.DialogElements
             TextColor = DefaultTitleColor;
         }
 
+
+        public StringElement (UIImage image)
+            : this(null, image)
+        {
+        }
+
         public StringElement (string caption)
             : this()
         {
@@ -242,7 +304,9 @@ namespace CodeBucket.DialogElements
         public override void Selected (UITableView tableView, NSIndexPath indexPath)
         {
             base.Selected(tableView, indexPath);
-            _tapped.OnNext(this);
+
+            if (Enabled)
+                _tapped.OnNext(this);
         }
 
         public override bool Matches (string text)

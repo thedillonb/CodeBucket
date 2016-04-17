@@ -1,11 +1,15 @@
 using System;
 using UIKit;
 using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Source;
+using ReactiveUI;
 
 namespace CodeBucket.Views.Source
 {
 	public class SourceView : FileSourceView
     {
+        private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
@@ -13,7 +17,23 @@ namespace CodeBucket.Views.Source
             ViewModel.Bind(x => x.FilePath, true)
                 .IsNotNull()
                 .Subscribe(Load);
-		}
+
+            var sourceViewModel = ViewModel as SourceViewModel;
+            if (sourceViewModel != null)
+                _actionButton.GetClickedObservable().InvokeCommand(sourceViewModel.ShowMenuCommand);
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _actionButton;
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
 
         private void Load(string path)
         {

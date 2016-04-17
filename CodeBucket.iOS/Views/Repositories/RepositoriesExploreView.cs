@@ -5,6 +5,9 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.Utils;
 using CodeBucket.Utilities;
+using System.Reactive.Linq;
+using System.Linq;
+using BitbucketSharp.Models;
 
 namespace CodeBucket.Views.Repositories
 {
@@ -27,17 +30,22 @@ namespace CodeBucket.Views.Repositories
 			var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
 
-			BindCollection(vm.Repositories, repo =>
-            {
-				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Avatar(repo.Logo));
-				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
-                return sse;
-            });
+            vm.GoToRepositoryCommand
+                .OfType<RepositoryDetailedModel>()
+                .Subscribe(x =>
+                {
+                    var view = new RepositoryView();
+                    view.ViewModel = new RepositoryViewModel(null);
+                    NavigationController.PushViewController(view, true);
+                });
+
+            vm.Repositories.Changed
+                .Select(_ => vm.Repositories.Select(ToElement))
+                .Subscribe(x => Root.Reset(new Section { x }));
 
             OnActivation(d =>
             {
-                d(vm.Bind(x => x.IsSearching).SubscribeStatus("Searching..."));
+                d(vm.SearchCommand.IsExecuting.SubscribeStatus("Searching..."));
                 d(vm.Bind(x => x.SearchText).Subscribe(x => search.Text = x));
                 d(search.GetChangedObservable().Subscribe(x => vm.SearchText = x));
                 d(search.GetSearchObservable().Subscribe(_ => {
@@ -45,6 +53,14 @@ namespace CodeBucket.Views.Repositories
                     vm.SearchCommand.Execute(null);
                 }));
             });
+        }
+
+        private RepositoryElement ToElement(RepositoryItemViewModel repo)
+        {
+            var vm = (RepositoriesExploreViewModel)ViewModel;
+            var sse = new RepositoryElement(repo.Name, repo.Description, repo.Owner, repo.Avatar);
+            sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
+            return sse;
         }
     }
 }

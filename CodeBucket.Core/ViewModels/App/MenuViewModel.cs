@@ -132,7 +132,7 @@ namespace CodeBucket.Core.ViewModels.App
 		[PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
+            get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _application.Account.Username })); }
         }
 
 		[DefaultStartupViewAttribute]
@@ -161,10 +161,7 @@ namespace CodeBucket.Core.ViewModels.App
         }
 
 		[PotentialStartupViewAttribute("Explore Repositories")]
-		public ICommand GoToExploreRepositoriesCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
-		}
+        public ReactiveUI.IReactiveCommand<object> GoToExploreRepositoriesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
 		public ICommand GoToTeamEventsCommand
 		{
@@ -173,7 +170,7 @@ namespace CodeBucket.Core.ViewModels.App
 
 		public ICommand GoToGroupCommand
 		{
-			get { return new MvxCommand<GroupModel>(x => ShowMenuViewModel<Groups.GroupViewModel>(new Groups.GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name }));}
+			get { return new MvxCommand<GroupModel>(x => ShowMenuViewModel<Groups.GroupViewModel>(new Groups.GroupViewModel.NavObject { Owner = x.Owner.Username, Name = x.Name }));}
 		}
 
 		[PotentialStartupViewAttribute("Organizations")]

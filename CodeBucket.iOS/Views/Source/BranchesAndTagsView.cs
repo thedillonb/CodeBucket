@@ -30,8 +30,7 @@ namespace CodeBucket.Views.Source
                 return e;
             });
 		
-            OnActivation(d =>
-            {
+            OnActivation(d => {
                 d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => viewSegment.SelectedSegment = x));
                 d(viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = x));
             });

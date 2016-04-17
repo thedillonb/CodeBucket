@@ -81,14 +81,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public ICommand GoToOwnerCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Username })); }
+			get { return new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Username })); }
 		}
 
         public ReactiveUI.IReactiveCommand<object> GoToForkParentCommand { get; }
 
 		public ICommand GoToStargazersCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<WatchersViewModel>(new WatchersViewModel.NavObject { User = Username, Repository = RepositorySlug })); }
+			get { return new MvxCommand(() => ShowViewModel<RepositoryWatchersViewModel>(new RepositoryWatchersViewModel.NavObject { User = Username, Repository = RepositorySlug })); }
 		}
 
 		public ICommand GoToEventsCommand

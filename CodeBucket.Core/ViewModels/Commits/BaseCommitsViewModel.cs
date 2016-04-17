@@ -21,7 +21,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         protected IApplicationService ApplicationService { get; }
 
-        public IReactiveCommand<object> GoToCommitCommand { get; }
+        public IReactiveCommand<object> GoToCommitCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand LoadCommand { get; }
 
@@ -29,7 +29,6 @@ namespace CodeBucket.Core.ViewModels.Commits
         {
             ApplicationService = applicationService;
 
-            GoToCommitCommand = ReactiveCommand.Create();
             GoToCommitCommand.OfType<Commit>().Subscribe(x =>
             {
                 var repo = new RepositoryIdentifier(x.Repository.FullName);

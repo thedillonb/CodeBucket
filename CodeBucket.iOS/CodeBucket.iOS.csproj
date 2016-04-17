@@ -142,7 +142,6 @@
     <Compile Include="Views\Source\SourceView.cs" />
     <Compile Include="Views\User\BaseUserCollectionView.cs" />
     <Compile Include="Views\User\OrganizationMembersView.cs" />
-    <Compile Include="Views\User\ProfileView.cs" />
     <Compile Include="Views\User\UserFollowersView.cs" />
     <Compile Include="Views\User\UserFollowingsView.cs" />
     <Compile Include="Setup.cs" />
@@ -150,7 +149,6 @@
     <Compile Include="Theme.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Views\Groups\GroupsView.cs" />
-    <Compile Include="Views\Repositories\WatchersView.cs" />
     <Compile Include="Views\Groups\GroupView.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Views\Issues\IssueModifyView.cs" />
@@ -266,6 +264,9 @@
     <Compile Include="ViewControllers\Repositories\ReadmeView.cs" />
     <Compile Include="Services\ActionMenuService.cs" />
     <Compile Include="Views\PickerAlertView.cs" />
+    <Compile Include="DialogElements\ElementExtensions.cs" />
+    <Compile Include="ViewControllers\Users\UserViewController.cs" />
+    <Compile Include="Views\Repositories\RepositoryWatchersView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -385,6 +386,7 @@
     <Folder Include="ViewControllers\Accounts\" />
     <Folder Include="ViewControllers\Application\" />
     <Folder Include="ViewControllers\Repositories\" />
+    <Folder Include="ViewControllers\Users\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">
