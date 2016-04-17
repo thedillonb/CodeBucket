@@ -5,6 +5,7 @@ using UIKit;
 using CoreGraphics;
 using CodeBucket.Core.Utils;
 using System;
+using System.Reactive.Linq;
 
 namespace CodeBucket.ViewControllers.Users
 {
@@ -29,8 +30,8 @@ namespace CodeBucket.ViewControllers.Users
             var events = new StringElement("Events", AtlassianIcon.Blogroll.ToImage());
             events.BindClick(ViewModel.GoToEventsCommand);
 
-            var organizations = new StringElement("Groups", AtlassianIcon.Group.ToImage());
-            organizations.BindClick(ViewModel.GoToGroupsCommand);
+            var groups = new StringElement("Groups", AtlassianIcon.Group.ToImage()) { Hidden = true };
+            groups.BindClick(ViewModel.GoToGroupsCommand);
 
             var repos = new StringElement("Repositories", AtlassianIcon.Devtoolsrepository.ToImage());
             repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand);
@@ -38,7 +39,7 @@ namespace CodeBucket.ViewControllers.Users
             var following = new StringElement("Following", AtlassianIcon.View.ToImage());
             following.Clicked.BindCommand(ViewModel.GoToFollowingCommand);
 
-            var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, organizations, followers, following };
+            var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, groups, followers, following };
             Root.Reset(midSec, new Section { repos });
 
             ViewModel.Bind(x => x.User, true).Subscribe(x => {
@@ -53,6 +54,9 @@ namespace CodeBucket.ViewControllers.Users
                     RefreshHeaderView();
                 }
             });
+
+            ViewModel.Bind(x => x.ShouldShowGroups, true)
+                     .Subscribe(x => groups.Hidden = !x);
 
 //			if (!ViewModel.IsLoggedInUser)
 //				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());

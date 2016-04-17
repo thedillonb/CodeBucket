@@ -5,12 +5,25 @@ using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.Services;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.User
 {
     public class UserViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string Username { get; private set; }
+        private string _username;
+        public string Username
+        {
+            get { return _username; }
+            private set { this.RaiseAndSetIfChanged(ref _username, value); }
+        }
+
+        private bool _showGroups;
+        public bool ShouldShowGroups
+        {
+            get { return _showGroups; }
+            private set { this.RaiseAndSetIfChanged(ref _showGroups, value); }
+        }
 
         private BitbucketSharp.Models.V2.User _user;
         public BitbucketSharp.Models.V2.User User
@@ -53,8 +66,21 @@ namespace CodeBucket.Core.ViewModels.User
                 .Select(_ => new UserRepositoriesViewModel.NavObject { Username = Username })
                 .Subscribe(x => ShowViewModel<UserRepositoriesViewModel>(x));
 
+            this.Bind(x => x.Username, true)
+                .Select(x => string.Equals(x, applicationService.Account.Username, StringComparison.OrdinalIgnoreCase))
+                .Subscribe(x => ShouldShowGroups = x);
+
             LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => 
             {
+                if (!string.Equals(applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase))
+                {
+                    applicationService.Client.Groups.GetGroups(Username)
+                                  .ToObservable()
+                                  .Select(_ => true)
+                                  .Catch(Observable.Return(false))
+                                  .Subscribe(x => ShouldShowGroups = x);
+                }
+
                 User = await applicationService.Client.Users.GetUser(Username);
             });
         }
