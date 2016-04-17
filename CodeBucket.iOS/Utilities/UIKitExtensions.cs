@@ -13,7 +13,7 @@ namespace UIKit
         public static IDisposable BindCommand<T>(this UIBarButtonItem @this, IReactiveCommand<T> cmd)
         {
             var invoke = @this.GetClickedObservable().InvokeCommand(cmd);
-            var canExecute = cmd.CanExecuteObservable.Subscribe(x => @this.Enabled = !x);
+            var canExecute = cmd.CanExecuteObservable.Subscribe(x => @this.Enabled = x);
             return new CompositeDisposable(invoke, canExecute);
         }
 

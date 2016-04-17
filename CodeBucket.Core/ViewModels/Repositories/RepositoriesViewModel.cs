@@ -11,8 +11,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
     {
         protected readonly IReactiveList<Repository> RepositoryList = new ReactiveList<Repository>();
 
-        public IReactiveCommand<object> GoToRepositoryCommand { get; }
-
         public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; }
 
         protected RepositoriesViewModel(IApplicationService applicationService)
@@ -21,15 +19,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
             Repositories = RepositoryList.CreateDerivedCollection(x =>
             {
                 var description = showDescription ? x.Description : string.Empty;
-                return new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
-            });
-
-            GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.OfType<Repository>().Subscribe(x =>
-            {
-                var id = new RepositoryIdentifier(x.FullName);
-                var obj = new RepositoryViewModel.NavObject { Username = id.Owner, RepositorySlug = id.Name };
-                ShowViewModel<RepositoryViewModel>(obj);
+                var viewModel = new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
+                viewModel.GoToCommand.Subscribe(_ =>
+                {
+                    var id = new RepositoryIdentifier(x.FullName);
+                    var obj = new RepositoryViewModel.NavObject { Username = id.Owner, RepositorySlug = id.Name };
+                    ShowViewModel<RepositoryViewModel>(obj);
+                });
+                return viewModel;
             });
         }
     }

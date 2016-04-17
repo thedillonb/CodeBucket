@@ -48,6 +48,8 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public ReactiveUI.IReactiveCommand<object> ShowMenuCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
+        public ReactiveUI.ReactiveList<CommitFileViewModel> CommitFiles { get; } = new ReactiveUI.ReactiveList<CommitFileViewModel>();
+
         private ChangesetModel _changeset;
         public ChangesetModel Changeset
         {
@@ -131,9 +133,17 @@ namespace CodeBucket.Core.ViewModels.Commits
                 .Subscribe(x => DisplayAlert("Unable to approve commit: " + x.Message).ToBackground());
 
             this.Bind(x => x.Changeset, true).Subscribe(x => {
-                DiffAdditions = x?.Files.Count(y => string.Equals(y.Type, "added", StringComparison.OrdinalIgnoreCase)) ?? 0;
-                DiffDeletions = x?.Files.Count(y => string.Equals(y.Type, "deleted", StringComparison.OrdinalIgnoreCase)) ?? 0;
-                DiffModifications = x?.Files.Count(y => string.Equals(y.Type, "modified", StringComparison.OrdinalIgnoreCase)) ?? 0;
+                DiffAdditions = x?.Files.Count(y => y.Type == ChangesetModel.FileType.Added) ?? 0;
+                DiffDeletions = x?.Files.Count(y => y.Type == ChangesetModel.FileType.Removed) ?? 0;
+                DiffModifications = x?.Files.Count(y => y.Type == ChangesetModel.FileType.Modified) ?? 0;
+
+                var files = (x?.Files ?? Enumerable.Empty<ChangesetModel.FileModel>()).Select(y =>
+                {
+                    var vm = new CommitFileViewModel(y.File, y.Type);
+                    return vm;
+                });
+
+                ReactiveUI.ReactiveListExtensions.Reset(CommitFiles, files);
             });
 
             this.Bind(x => x.Commit, true).Subscribe(x => {
@@ -148,7 +158,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                     .OnSuccess(x => Commit = x);
                 var changeset = applicationService.Client.Repositories.GetChangeset(User, Repository, Node)
                     .OnSuccess(x => Changeset = x);
-
+     
                 applicationService.Client.AllItems(x => x.Repositories.GetCommitComments(User, Repository, Node))
                     .ToBackground(x => Comments = x.ToList());
 

@@ -183,7 +183,6 @@
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\Commits\BaseCommitsView.cs" />
     <Compile Include="Views\Commits\CommitsView.cs" />
-    <Compile Include="Views\Commits\CommitView.cs" />
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="AtlassianIcons.cs" />
     <Compile Include="AtlassianIconsExtensions.cs" />
@@ -267,6 +266,8 @@
     <Compile Include="DialogElements\ElementExtensions.cs" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
     <Compile Include="Views\Repositories\RepositoryWatchersView.cs" />
+    <Compile Include="ViewControllers\Commits\CommitViewController.cs" />
+    <Compile Include="ViewControllers\Commits\CommitFileChangesViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -387,6 +388,7 @@
     <Folder Include="ViewControllers\Application\" />
     <Folder Include="ViewControllers\Repositories\" />
     <Folder Include="ViewControllers\Users\" />
+    <Folder Include="ViewControllers\Commits\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">

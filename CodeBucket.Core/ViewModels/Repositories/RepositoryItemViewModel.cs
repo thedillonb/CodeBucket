@@ -1,9 +1,12 @@
 ﻿using CodeBucket.Core.Utils;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoryItemViewModel
     {
+        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+
         public string Name { get; }
 
         public string Description { get; }

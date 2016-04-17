@@ -39,13 +39,13 @@ namespace CodeBucket.Views.Repositories
 
         public override Source CreateSizingSource()
         {
-            return new DialogViewController.Source(this);
+            return new Source(this);
         }
 
         private Element ToElement(RepositoryItemViewModel repo)
         {
             var sse = new RepositoryElement(repo.Name, repo.Description, repo.Owner, repo.Avatar);
-            sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
+            sse.Tapped += () => repo.GoToCommand.Execute(null);
             return sse;
         }
     }

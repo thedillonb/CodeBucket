@@ -59,7 +59,7 @@ namespace CodeBucket.Views.Repositories
         {
             var vm = (RepositoriesExploreViewModel)ViewModel;
             var sse = new RepositoryElement(repo.Name, repo.Description, repo.Owner, repo.Avatar);
-            sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
+            sse.Tapped += () => repo.GoToCommand.Execute(repo);
             return sse;
         }
     }

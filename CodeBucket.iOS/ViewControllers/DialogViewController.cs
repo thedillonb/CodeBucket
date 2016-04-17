@@ -218,7 +218,7 @@ namespace CodeBucket.ViewControllers
                 var section = Root?[indexPath.Section];
                 var element = section?[indexPath.Row];
                 var cell = element?.GetCell (tableView);
-                if (cell != null)
+                if (cell != null && cell.Hidden != element.Hidden)
                     cell.Hidden = element.Hidden;
                 return cell;
             }

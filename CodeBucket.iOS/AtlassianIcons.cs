@@ -304,7 +304,7 @@
         public static AtlassianIcon Pageblogpost = (char)0xf182;
 
 
-        public static AtlassianIcon Pagedefault = (char)0xf183;
+        public static AtlassianIcon PageDefault = (char)0xf183;
 
 
         public static AtlassianIcon Pagetemplate = (char)0xf184;

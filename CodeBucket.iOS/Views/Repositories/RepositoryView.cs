@@ -14,7 +14,7 @@ namespace CodeBucket.Views.Repositories
     public class RepositoryView : PrettyDialogViewController
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
-        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.Pagedefault.ToImage());
+        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.PageDefault.ToImage());
         private readonly SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
         private readonly SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
 
@@ -164,7 +164,7 @@ namespace CodeBucket.Views.Repositories
 
             if (ViewModel.HasReadme)
             {
-                var readme = new StringElement("Readme", AtlassianIcon.Pagedefault.ToImage());
+                var readme = new StringElement("Readme", AtlassianIcon.PageDefault.ToImage());
                 readme.Clicked.BindCommand(ViewModel.GoToReadmeCommand);
                 sec2.Add(readme);
             }
