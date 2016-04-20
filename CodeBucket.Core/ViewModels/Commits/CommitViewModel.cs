@@ -38,15 +38,17 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public ReactiveUI.IReactiveCommand<object> GoToFileCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToAddedFiles { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToAddedFiles { get; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToRemovedFiles { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToRemovedFiles { get; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToModifiedFiles { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> GoToModifiedFiles { get; }
 
         public ReactiveUI.IReactiveCommand<object> GoToAllFiles { get; } = ReactiveUI.ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> ShowMenuCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveUI.IReactiveCommand<object> ShowMenuCommand { get; }
+
+        public ReactiveUI.IReactiveCommand<object> AddCommentCommand { get; } = ReactiveUI.ReactiveCommand.Create();
 
         public ReactiveUI.ReactiveList<CommitFileViewModel> CommitFiles { get; } = new ReactiveUI.ReactiveList<CommitFileViewModel>();
 
@@ -99,7 +101,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             private set { this.RaiseAndSetIfChanged(ref _approved, value); }
         }
 
-        public CommitViewModel(IApplicationService applicationService)
+        public CommitViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
         {
             _applicationService = applicationService;
 
@@ -119,14 +121,37 @@ namespace CodeBucket.Core.ViewModels.Commits
                     ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = Node, Filename = x.File });
                 });
 
+            GoToAddedFiles = ReactiveUI.ReactiveCommand.Create(
+                this.Bind(x => x.DiffAdditions, true).Select(x => x > 0));
+
+            GoToRemovedFiles = ReactiveUI.ReactiveCommand.Create(
+                this.Bind(x => x.DiffDeletions, true).Select(x => x > 0));
+
+            GoToModifiedFiles = ReactiveUI.ReactiveCommand.Create(
+                this.Bind(x => x.DiffModifications, true).Select(x => x > 0));
+
+            var canShowMenu = this.Bind(x => x.Commit, true).Select(x => x != null);
+
+            ShowMenuCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
+            ShowMenuCommand.Subscribe(sender =>
+            {
+                var uri = new Uri($"https://bitbucket.org/{User}/{Repository}/commits/{Node}");
+                var menu = actionMenuService.Create();
+                menu.AddButton("Add Comment", AddCommentCommand);
+                menu.AddButton("Copy SHA", () => actionMenuService.SendToPasteBoard(Node));
+                menu.AddButton("Share", () => actionMenuService.ShareUrl(sender, uri));
+                menu.AddButton("Show In Bitbucket", () => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = uri.AbsoluteUri }));
+                menu.Show(sender);
+            });
+
             ToggleApproveButton = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ => 
             {
                 if (Approved)
-                    await _applicationService.Client.Repositories.UnapproveCommit(User, Repository, Node);
+                    await _applicationService.Client.Commits.UnapproveCommit(User, Repository, Node);
                 else
-                    await _applicationService.Client.Repositories.ApproveCommit(User, Repository, Node);
+                    await _applicationService.Client.Commits.ApproveCommit(User, Repository, Node);
 
-                Commit = await _applicationService.Client.Repositories.GetCommit(User, Repository, Node);
+                Commit = await _applicationService.Client.Commits.GetCommit(User, Repository, Node);
             });
 
             ToggleApproveButton.ThrownExceptions
@@ -154,13 +179,12 @@ namespace CodeBucket.Core.ViewModels.Commits
             });
 
             LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ => {
-                var commit = applicationService.Client.Repositories.GetCommit(User, Repository, Node)
+                var commit = applicationService.Client.Commits.GetCommit(User, Repository, Node)
                     .OnSuccess(x => Commit = x);
-                var changeset = applicationService.Client.Repositories.GetChangeset(User, Repository, Node)
+                var changeset = applicationService.Client.Commits.GetChangeset(User, Repository, Node)
                     .OnSuccess(x => Changeset = x);
      
-                applicationService.Client.AllItems(x => x.Repositories.GetCommitComments(User, Repository, Node))
-                    .ToBackground(x => Comments = x.ToList());
+                RetrieveAllComments().ToBackground();
 
                 return Task.WhenAll(commit, changeset);
             });
@@ -174,40 +198,24 @@ namespace CodeBucket.Core.ViewModels.Commits
             ShowRepository = navObject.ShowRepository;
         }
 
-//		protected override async Task Load(bool forceCacheInvalidation)
-//        {
-//			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
-//            var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit(), response => Commit = response);
-//			await Task.WhenAll(t1, t2);
-//            GetAllComments().FireAndForget();
-//        }
-
-        private async Task GetAllComments()
+        private async Task RetrieveAllComments()
         {
-//            var comments = new List<CommitComment>();
-//            var ret = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetComments());
-//            comments.AddRange(ret.Values);
-//
-//            while (ret.Next != null)
-//            {
-//                ret = await Task.Run(() => this.GetApplication().Client.Request2<Collection<CommitComment>>(ret.Next));
-//                comments.AddRange(ret.Values);
-//            }
-//
-//            Comments.Items.Reset(comments.OrderBy(x => x.CreatedOn));
+            var comments = await _applicationService.Client.AllItems(x => x.Commits.GetCommitComments(User, Repository, Node));
+            Comments = comments.ToList();
         }
 
         public async Task AddComment(string text)
         {
-//			try
-//			{
-//				await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
-//                await GetAllComments();
-//			}
-//			catch (Exception e)
-//			{
-//                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
-//			}
+			try
+			{
+                var model = new CreateChangesetCommentModel { Content = text };
+                await _applicationService.Client.Commits.AddComment(User, Repository, Node, model);
+                await RetrieveAllComments();
+			}
+			catch (Exception e)
+			{
+                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
+			}
         }
 
         public class NavObject

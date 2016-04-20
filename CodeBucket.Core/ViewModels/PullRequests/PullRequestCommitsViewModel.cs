@@ -19,7 +19,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         protected override System.Threading.Tasks.Task<Collection<Commit>> GetRequest()
         {
-            return ApplicationService.Client.Repositories.GetPullRequestCommits(Username, Repository, PullRequestId);
+            return ApplicationService.Client.Commits.GetPullRequestCommits(Username, Repository, PullRequestId);
         }
 
 		public void Init(NavObject navObject)

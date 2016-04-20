@@ -14,7 +14,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         protected override Task<Collection<Commit>> GetRequest()
         {
-            return this.GetApplication().Client.Repositories.GetCommits(Username, Repository, Branch);
+            return this.GetApplication().Client.Commits.GetCommits(Username, Repository, Branch);
         }
 
         public CommitsViewModel(IApplicationService applicationService)

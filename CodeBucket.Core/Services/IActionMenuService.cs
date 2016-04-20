@@ -41,5 +41,15 @@ namespace CodeBucket.Core.Services
             @this.ShareUrl(sender, new Uri(uri));
         }
     }
+
+    public static class ActionMenuExtensions
+    {
+        public static void AddButton(this IActionMenu @this, string title, Action action)
+        {
+            var command = ReactiveCommand.Create();
+            command.Subscribe(_ => action());
+            @this.AddButton(title, command);
+        }
+    }
 }
 
