@@ -1,7 +1,10 @@
-using CodeBucket.Core.ViewModels.User;
+using System;
+using CodeBucket.Core.ViewModels.Users;
 using System.Linq;
 using CodeBucket.Core.Services;
 using ReactiveUI;
+using CodeBucket.Core.Utils;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
@@ -20,10 +23,16 @@ namespace CodeBucket.Core.ViewModels.Groups
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 var members = await applicationService.Client.Groups.GetMembers(Owner, _slug);
-                var memberUsers = members.Select(x => new BitbucketSharp.Models.V2.User
+                var memberUsers = members.Select(x =>
                 {
-                    Username = x.Username,
-                    Links = new BitbucketSharp.Models.V2.User.LinksModel { Avatar = new BitbucketSharp.Models.V2.LinkModel { Href = x.Avatar } }
+                    var username = x.Username;
+                    var avatar = new Avatar(x.Avatar);
+                    var displayName = string.Join(" ", x.FirstName, x.LastName);
+                    var vm = new UserItemViewModel(username, displayName, avatar);
+                    vm.GoToCommand
+                      .Select(__ => new UserViewModel.NavObject { Username = username })
+                      .Subscribe(y => ShowViewModel<UserViewModel>(x));
+                    return vm;
                 });
 
                 Users.Items.Reset(memberUsers);

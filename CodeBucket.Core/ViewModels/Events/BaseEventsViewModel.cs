@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Source;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.PullRequests;
 using CodeBucket.Core.ViewModels.Commits;
@@ -152,7 +152,7 @@ namespace CodeBucket.Core.ViewModels.Events
             ShowViewModel<PullRequestsViewModel>(new PullRequestsViewModel.NavObject
             {
                 Username = repo.Owner,
-                Repository = repo.Name
+                Repository = repo.Slug
             });
         }
 
@@ -292,9 +292,9 @@ namespace CodeBucket.Core.ViewModels.Events
 				else if (eventModel.Event == EventModel.Type.PullRequestUpdated)
 					eventBlock.Header.Add(new TextBlock(" updated pull request"));
 				else if (eventModel.Event == EventModel.Type.PullRequestLike)
-					eventBlock.Header.Add(new TextBlock(" liked pull request"));
+					eventBlock.Header.Add(new TextBlock(" approved pull request"));
 				else if (eventModel.Event == EventModel.Type.PullRequestUnlike)
-					eventBlock.Header.Add(new TextBlock(" unliked pull request"));
+					eventBlock.Header.Add(new TextBlock(" unapproved pull request"));
 
 				if (ReportRepository)
 				{

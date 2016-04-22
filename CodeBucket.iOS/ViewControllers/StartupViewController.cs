@@ -87,8 +87,10 @@ namespace CodeBucket.ViewControllers
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            (UIApplication.SharedApplication.Delegate as AppDelegate).Do(y => y.Presenter.SlideoutNavigationController = slideoutController);
+            if (appDelegate != null)
+                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
             vc.ViewModel.GoToDefaultTopView.Execute(null);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);

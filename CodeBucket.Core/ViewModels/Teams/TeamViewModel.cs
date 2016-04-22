@@ -1,6 +1,6 @@
 using System;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.ViewModels.Events;

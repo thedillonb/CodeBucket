@@ -8,10 +8,6 @@ namespace CodeBucket.Core.ViewModels.Commits
     {
         public string Branch { get; private set; }
 
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
         protected override Task<Collection<Commit>> GetRequest()
         {
             return this.GetApplication().Client.Commits.GetCommits(Username, Repository, Branch);

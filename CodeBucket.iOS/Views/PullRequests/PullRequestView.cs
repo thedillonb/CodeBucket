@@ -6,11 +6,13 @@ using UIKit;
 using CodeBucket.DialogElements;
 using Humanizer;
 using CodeBucket.Core.Utils;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using CodeBucket.Utilities;
 using CodeBucket.Services;
 using ReactiveUI;
+using System.Reactive.Linq;
+using BitbucketSharp.Models.V2;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Views.PullRequests
 {
@@ -89,9 +91,29 @@ namespace CodeBucket.Views.PullRequests
             if (!merged)
             {
                 var mergeElement = new StringElement("Merge", AtlassianIcon.Approve.ToImage());
-                mergeElement.Clicked.Subscribe(_ => MergeClick());
+                mergeElement.Clicked.InvokeCommand(ViewModel.MergeCommand);
                 root.Add(new Section { mergeElement });
             }
+
+            var approvalSection = new Section("Approvals");
+            var approveElement = new LoaderButtonElement("Approve", AtlassianIcon.Approve.ToImage());
+            approveElement.Accessory = UITableViewCellAccessory.None;
+            approveElement.BindLoader(ViewModel.ToggleApproveButton);
+            approveElement.BindCaption(ViewModel.Bind(x => x.Approved, true).Select(x => x ? "Decline" : "Approve"));
+            root.Add(approvalSection);
+
+            var participantElements = (ViewModel.PullRequest.Participants ?? Enumerable.Empty<Participant>())
+                 .Where(y => y.Approved)
+                 .Select(l =>
+                 {
+                     var avatar = new Avatar(l.User?.Links?.Avatar?.Href);
+                     var vm = new UserItemViewModel(l.User.Username, l.User.DisplayName, avatar);
+                     vm.GoToCommand.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
+                     return new UserElement(vm);
+                 })
+                .OfType<Element>();
+
+            approvalSection.Reset(participantElements.Concat(new[] { approveElement }));
 
             var comments = ViewModel.Comments
                 .Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
@@ -103,32 +125,22 @@ namespace CodeBucket.Views.PullRequests
                     return new Comment(avatar.ToUrl(), name, x.Content.Html, x.CreatedOn);
                 }).ToList();
 
+            var commentsSection = new Section("Comments");
+            root.Add(commentsSection);
+
             if (comments.Count > 0)
             {
                 var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
                 var content = new CommentsView { Model = commentModel }.GenerateString();
                 _commentsElement.SetValue(content);
-                root.Add(new Section { _commentsElement });
+                commentsSection.Add(_commentsElement);
             }
-
 
             var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
             addComment.Clicked.Subscribe(_ => AddCommentTapped());
-            root.Add(new Section { addComment });
-            Root.Reset(root);
-        }
+            commentsSection.Add(addComment);
 
-        private async Task MergeClick()
-        {
-            try
-            {
-                ViewModel.MergeCommand.ExecuteIfCan();
-//                await this.DoWorkAsync("Merging...", ViewModel.Merge);
-            }
-            catch (Exception e)
-            {
-                AlertDialogService.ShowAlert("Unable to Merge", e.Message);
-            }
+            Root.Reset(root);
         }
 
         void AddCommentTapped()

@@ -104,8 +104,13 @@ namespace CodeBucket.Services
 
                 if (sheet.PopoverPresentationController != null)
                 {
-                    (sender as UIBarButtonItem).Do(x => sheet.PopoverPresentationController.BarButtonItem = x);
-                    (sender as UIView).Do(x => sheet.PopoverPresentationController.SourceView = x);
+                    var uiBarButton = sender as UIBarButtonItem;
+                    var view = sender as UIView;
+
+                    if (uiBarButton != null)
+                        sheet.PopoverPresentationController.BarButtonItem = uiBarButton;
+                    else if (view != null)
+                        sheet.PopoverPresentationController.SourceView = view;
 
                     // Last resort
                     if (sheet.PopoverPresentationController.SourceView == null

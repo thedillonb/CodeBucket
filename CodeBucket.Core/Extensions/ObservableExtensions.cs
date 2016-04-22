@@ -16,10 +16,9 @@ namespace System.Reactive.Linq
 // Analysis disable once CheckNamespace
 namespace System
 {
-    using System;
-    using System.Windows.Input;
-    using System.Reactive.Disposables;
-    using System.Reactive.Linq;
+    using Windows.Input;
+    using Reactive.Disposables;
+    using Reactive.Linq;
 
     public static class ObservableExtensions
     {

@@ -10,6 +10,7 @@ using CodeBucket.Utilities;
 using CodeBucket.Services;
 using BitbucketSharp.Models.V2;
 using BitbucketSharp.Models;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.ViewControllers.Commits
 {
@@ -117,9 +118,9 @@ namespace CodeBucket.ViewControllers.Commits
                     .Where(y => y.Approved)
                     .Select(l => {
                         var avatar = new Avatar(l.User?.Links?.Avatar?.Href);
-                        var el = new UserElement(l.User.DisplayName, string.Empty, string.Empty, avatar);
-                        el.Clicked.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
-                        return el;
+                        var vm = new UserItemViewModel(l.User.Username, l.User.DisplayName, avatar);
+                        vm.GoToCommand.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
+                        return new UserElement(vm);
                     })
                     .OfType<Element>();
 

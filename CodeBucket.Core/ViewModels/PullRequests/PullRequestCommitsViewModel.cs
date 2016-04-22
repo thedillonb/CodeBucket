@@ -6,10 +6,6 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : BaseCommitsViewModel
     {
-        public string Username { get; set; }
-
-        public string Repository { get; set; }
-
         public int PullRequestId { get; private set; }
 
         public PullRequestCommitsViewModel(IApplicationService applicationService)

@@ -6,22 +6,25 @@ using System;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Services;
+using Humanizer;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
     public interface ICommitsViewModel
     {
-        CollectionViewModel<Commit> Commits { get; }
-        IReactiveCommand<object> GoToCommitCommand { get; }
+        CollectionViewModel<CommitItemViewModel> Commits { get; }
     }
 
     public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, ICommitsViewModel
 	{
-        public CollectionViewModel<Commit> Commits { get; } = new CollectionViewModel<Commit>();
+        public CollectionViewModel<CommitItemViewModel> Commits { get; } = new CollectionViewModel<CommitItemViewModel>();
+
+        public string Username { get; protected set; }
+
+        public string Repository { get; protected set; }
 
         protected IApplicationService ApplicationService { get; }
-
-        public IReactiveCommand<object> GoToCommitCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand LoadCommand { get; }
 
@@ -29,16 +32,10 @@ namespace CodeBucket.Core.ViewModels.Commits
         {
             ApplicationService = applicationService;
 
-            GoToCommitCommand.OfType<Commit>().Subscribe(x =>
-            {
-                var repo = new RepositoryIdentifier(x.Repository.FullName);
-                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash });
-            });
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 var commits = await GetRequest();
-                Commits.Items.Reset(commits.Values);
+                Commits.Items.Reset(commits.Values.Select(ToViewModel));
                 SetMoreItems(commits);
             });
         }
@@ -54,10 +51,37 @@ namespace CodeBucket.Core.ViewModels.Commits
                 var uri = new Uri(c.Next);
                 Commits.MoreItems = async () => {
                     var items = await ApplicationService.Client.Get<Collection<Commit>>(uri);
-                    Commits.Items.AddRange(items.Values);
+                    Commits.Items.AddRange(items.Values.Select(ToViewModel));
                     SetMoreItems(items);
                 };
             }
+        }
+
+        private CommitItemViewModel ToViewModel(Commit commit)
+        {
+            var msg = commit.Message ?? string.Empty;
+            var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
+            var desc = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
+
+            string username;
+            if (commit?.Author?.User != null)
+            {
+                username = commit.Author.User.DisplayName ?? commit.Author.User.Username;
+            }
+            else
+            {
+                var bracketStart = commit.Author.Raw.IndexOf("<", StringComparison.Ordinal);
+                username = commit.Author.Raw.Substring(0, bracketStart > 0 ? bracketStart : commit.Author.Raw.Length);
+            }
+
+            var avatar = new Avatar(commit.Author?.User?.Links?.Avatar?.Href);
+            var vm = new CommitItemViewModel(username, desc, commit.Date.Humanize(), avatar);
+            vm.GoToCommand.Subscribe(_ =>
+            {
+                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = Username, Repository = Repository, Node = commit.Hash });
+            });
+
+            return vm;
         }
 
         protected abstract Task<Collection<Commit>> GetRequest();

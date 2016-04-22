@@ -6,6 +6,7 @@ using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Accounts;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.DialogElements;
 using CodeBucket.ViewControllers;
 using MvvmCross.Platform;
@@ -154,7 +155,7 @@ namespace CodeBucket.ViewControllers.Accounts
             public BitbucketAccount Account { get; private set; }
 
             public AccountElement(BitbucketAccount account)
-                : base(account.Username, string.Empty, string.Empty, new Avatar(account.AvatarUrl))
+                : base(new UserItemViewModel(account.Username, null, new Avatar(account.AvatarUrl)))
             {
                 Account = account;
             }

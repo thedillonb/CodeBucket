@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using MvvmCross.Plugins.Messenger;
 using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;

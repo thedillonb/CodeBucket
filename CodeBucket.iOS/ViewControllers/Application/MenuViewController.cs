@@ -154,7 +154,7 @@ namespace CodeBucket.ViewControllers.Application
 			}
     
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Slug }), Images.RepoPlaceholder)
+                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier(pinnedRepo.Owner, pinnedRepo.Slug)), Images.RepoPlaceholder)
 			{
 				PinnedRepo = pinnedRepo;
 				ImageUri = new System.Uri(PinnedRepo.ImageUri);

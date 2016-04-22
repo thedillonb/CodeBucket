@@ -1,5 +1,4 @@
-using CodeBucket.ViewControllers;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.DialogElements;
 using UIKit;
 using CoreGraphics;

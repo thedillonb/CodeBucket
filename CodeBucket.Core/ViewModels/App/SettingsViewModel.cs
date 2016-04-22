@@ -1,6 +1,4 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using System.Linq;
+using System;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -11,9 +9,11 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return this.GetApplication().Account.DefaultStartupView; }
 		}
 
-		public ICommand GoToDefaultStartupViewCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
-		}
+        public ReactiveUI.IReactiveCommand<object> GoToDefaultStartupViewCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+
+        public SettingsViewModel()
+        {
+            GoToDefaultStartupViewCommand.Subscribe(_ => ShowViewModel<DefaultStartupViewModel>());
+        }
     }
 }

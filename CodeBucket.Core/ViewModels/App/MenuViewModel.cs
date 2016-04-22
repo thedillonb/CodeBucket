@@ -6,7 +6,7 @@ using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using System.Threading.Tasks;
 using System.Linq;
 using BitbucketSharp.Models;

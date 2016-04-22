@@ -1,46 +1,35 @@
-﻿using System;
-using Foundation;
+﻿using Foundation;
 using UIKit;
-using BitbucketSharp.Models;
-using CodeBucket.Core.Utils;
 using CodeBucket.TableViewCells;
-using Humanizer;
+using CodeBucket.Core.ViewModels.Commits;
 
 namespace CodeBucket.DialogElements
 {
     public class CommitElement : Element
-    {   
-        private readonly Avatar _avatar;
-        private readonly string _name;
-        private readonly string _description;
-        private readonly string _date;
+    {
+        private readonly CommitItemViewModel _viewModel;
 
-        public event Action Clicked;
-
-        public CommitElement(string name, string description, DateTimeOffset date, Avatar avatar)
+        public CommitElement(CommitItemViewModel viewModel)
         {
-            _name = name;
-            _description = description;
-            _date = date.Humanize();
-            _avatar = avatar;
+            _viewModel = viewModel;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
             var c = tv.DequeueReusableCell(CommitCellView.Key) as CommitCellView ?? CommitCellView.Create();
-            c.Bind(_name, _description, _date, _avatar);
+            c.Bind(_viewModel.Name, _viewModel.Description, _viewModel.Date, _viewModel.Avatar);
             return c;
         }
 
         public override bool Matches(string text)
         {
-                return _description?.ToLower().Contains(text.ToLower()) ?? false;
+            return _viewModel.Description?.ToLower().Contains(text.ToLower()) ?? false;
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)
         {
             base.Selected(tableView, path);
-            Clicked?.Invoke();
+            _viewModel.GoToCommand.Execute(null);
         }
     }
 }

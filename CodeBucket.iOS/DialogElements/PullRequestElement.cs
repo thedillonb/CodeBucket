@@ -1,42 +1,35 @@
-﻿using System;
-using Foundation;
+﻿using Foundation;
 using UIKit;
 using CodeBucket.TableViewCells;
-using Humanizer;
-using CodeBucket.Core.Utils;
-using BitbucketSharp.Models.V2;
+using CodeBucket.Core.ViewModels.PullRequests;
 
 namespace CodeBucket.DialogElements
 {
     public class PullRequestElement : Element
-    {   
-        private readonly Action _action;    
-        private readonly PullRequest _model;
-        private readonly Avatar _avatar;
+    {
+        private readonly PullRequestItemViewModel _viewModel;
 
-        public PullRequestElement(PullRequest model, Action action)
+        public PullRequestElement(PullRequestItemViewModel viewModel)
         {
-            _model = model;
-            _action = action;
-            _avatar = new Avatar(_model.Author?.Links?.Avatar?.Href);
+            _viewModel = viewModel;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
             var c = tv.DequeueReusableCell(PullRequestCellView.Key) as PullRequestCellView ?? PullRequestCellView.Create();
-            c.Bind(_model.Title, _model.CreatedOn.Humanize(), _avatar);
+            c.Bind(_viewModel.Title, _viewModel.CreatedOn, _viewModel.Avatar);
             return c;
         }
 
         public override bool Matches(string text)
         {
-            return _model.Title.ToLower().Contains(text.ToLower());
+            return _viewModel.Title.ToLower().Contains(text.ToLower());
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)
         {
             base.Selected(tableView, path);
-            _action?.Invoke();
+            _viewModel.GoToCommand.Execute(null);
         }
     }
 }

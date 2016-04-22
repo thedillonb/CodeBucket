@@ -5,7 +5,7 @@ using CodeBucket.Core.ViewModels.Source;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models.V2;
 using MvvmCross.Platform;

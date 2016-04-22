@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Events;
 using BitbucketSharp.Models;
 using System.Linq;
@@ -186,14 +186,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var canGoToFork = this.Bind(x => x.Repository, true).Select(x => x.Parent != null);
             GoToForkParentCommand = ReactiveUI.ReactiveCommand.Create(canGoToFork);
             GoToForkParentCommand
-                .Select(_ => new RepositoryIdentifier(Repository.Parent.Fullname))
+                .Select(_ => RepositoryIdentifier.FromFullName(Repository.Parent.Fullname))
                 .Select(x => new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name })
                 .Subscribe(x => ShowViewModel<RepositoryViewModel>(x));
         }
 
         private void PinRepository()
         {
-            var repoInfo = new RepositoryIdentifier(Repository.FullName);
+            var repoInfo = RepositoryIdentifier.FromFullName(Repository.FullName);
 
             //Is it pinned already or not?
             var pinnedRepo = _applicationService.Account.PinnnedRepositories.GetPinnedRepository(repoInfo.Owner, repoInfo.Name);

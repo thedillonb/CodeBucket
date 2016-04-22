@@ -22,7 +22,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 var viewModel = new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
                 viewModel.GoToCommand.Subscribe(_ =>
                 {
-                    var id = new RepositoryIdentifier(x.FullName);
+                    var id = RepositoryIdentifier.FromFullName(x.FullName);
                     var obj = new RepositoryViewModel.NavObject { Username = id.Owner, RepositorySlug = id.Name };
                     ShowViewModel<RepositoryViewModel>(obj);
                 });

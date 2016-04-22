@@ -35,7 +35,7 @@ namespace CodeBucket.Views.Events
                 if (e.Item2 == null)
                     return null;
 
-                var img = ChooseImage(e.Item1);
+                var img = ChooseImage(e.Item1).ToImage();
 
                 var avatarUrl = e.Item1?.User?.Avatar;
                 var avatar =  new Avatar(avatarUrl);
@@ -62,37 +62,37 @@ namespace CodeBucket.Views.Events
 
                 return new NewsFeedElement(avatar.ToUrl(), e.Item1.UtcCreatedOn, headerBlocks, bodyBlocks, img, e.Item2.Tapped, e.Item2.Multilined);
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }
         }
 
-        private static UIImage ChooseImage(EventModel eventModel)
+        private static AtlassianIcon ChooseImage(EventModel eventModel)
         {
 			switch (eventModel.Event)
 			{
 				case EventModel.Type.ForkRepo:
-                    return AtlassianIcon.Devtoolsrepositoryforked.ToImage();
+                    return AtlassianIcon.Devtoolsrepositoryforked;
 				case EventModel.Type.CreateRepo:
-                    return AtlassianIcon.Devtoolsrepository.ToImage();
+                    return AtlassianIcon.Devtoolsrepository;
 				case EventModel.Type.Commit:
 				case EventModel.Type.Pushed:
 				case EventModel.Type.PullRequestFulfilled:
-                    return AtlassianIcon.Devtoolscommit.ToImage();
+                    return AtlassianIcon.Devtoolscommit;
 				case EventModel.Type.WikiUpdated:
 				case EventModel.Type.WikiCreated:
 				case EventModel.Type.PullRequestUpdated:
-                    return AtlassianIcon.Edit.ToImage();
+                    return AtlassianIcon.Edit;
                 case EventModel.Type.WikiDeleted:
                 case EventModel.Type.DeleteRepo:
-                    return AtlassianIcon.Delete.ToImage();
+                    return AtlassianIcon.Delete;
 				case EventModel.Type.StartFollowUser:
 				case EventModel.Type.StartFollowRepo:
 				case EventModel.Type.StopFollowRepo:
 				case EventModel.Type.StartFollowIssue:
 				case EventModel.Type.StopFollowIssue:
-                    return AtlassianIcon.Star.ToImage();
+                    return AtlassianIcon.Star;
 				case EventModel.Type.IssueComment:
 				case EventModel.Type.ChangeSetCommentCreated:
 				case EventModel.Type.ChangeSetCommentDeleted:
@@ -100,22 +100,23 @@ namespace CodeBucket.Views.Events
 				case EventModel.Type.PullRequestCommentCreated:
 				case EventModel.Type.PullRequestCommentUpdated:
 				case EventModel.Type.PullRequestCommentDeleted:
-                    return AtlassianIcon.Comment.ToImage();
+                    return AtlassianIcon.Comment;
 				case EventModel.Type.IssueUpdated:
 				case EventModel.Type.IssueReported:
-                    return AtlassianIcon.Flag.ToImage();
+                    return AtlassianIcon.Flag;
 				case EventModel.Type.ChangeSetLike:
 				case EventModel.Type.PullRequestLike:
-                    return AtlassianIcon.Like.ToImage();
+                    return AtlassianIcon.Like;
 				case EventModel.Type.PullRequestUnlike:
 				case EventModel.Type.PullRequestRejected:
 				case EventModel.Type.ChangeSetUnlike:
-                    return AtlassianIcon.Like.ToImage();
+                    return AtlassianIcon.Like;
                 case EventModel.Type.PullRequestCreated:
                 case EventModel.Type.PullRequestSuperseded:
-                    return AtlassianIcon.Devtoolspullrequest.ToImage();
-			}
-            return AtlassianIcon.Info.ToImage();
+                    return AtlassianIcon.Devtoolspullrequest;
+                default:
+                    return AtlassianIcon.Info;
+            }
         }
     }
 }

@@ -1,33 +1,25 @@
-using System;
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.Services;
 using BitbucketSharp;
-using BitbucketSharp.Models.V2;
 using ReactiveUI;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamMembersViewModel : BaseViewModel, ILoadableViewModel
+    public class TeamMembersViewModel : BaseUserCollectionViewModel, ILoadableViewModel
     {
-        public CollectionViewModel<TeamMember> Members { get; } = new CollectionViewModel<TeamMember>();
-
-        public ReactiveCommand<object> GoToMemberCommand { get; } = ReactiveCommand.Create();
-
         public string Name { get; private set; }
 
         public IReactiveCommand LoadCommand { get; }
 
         public TeamMembersViewModel(IApplicationService applicationService)
         {
-            GoToMemberCommand.OfType<TeamMember>()
-                .Select(x => new UserViewModel.NavObject { Username = x.Username })
-                .Subscribe(x => ShowViewModel<UserViewModel>(x));
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                Members.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Teams.GetMembers(Name), Members.Items.AddRange);
+                Users.Items.Clear();
+                return applicationService.Client.ForAllItems(x => x.Teams.GetMembers(Name), 
+                                                             x => Users.Items.AddRange(x.Select(ToViewModel)));
             });
         }
 

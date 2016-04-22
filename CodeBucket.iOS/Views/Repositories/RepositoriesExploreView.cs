@@ -3,7 +3,6 @@ using CodeBucket.DialogElements;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.Core.Utils;
 using CodeBucket.Utilities;
 using System.Reactive.Linq;
 using System.Linq;
@@ -40,7 +39,7 @@ namespace CodeBucket.Views.Repositories
                 });
 
             vm.Repositories.Changed
-                .Select(_ => vm.Repositories.Select(ToElement))
+                .Select(_ => vm.Repositories.Select(x => new RepositoryElement(x)))
                 .Subscribe(x => Root.Reset(new Section { x }));
 
             OnActivation(d =>
@@ -53,14 +52,6 @@ namespace CodeBucket.Views.Repositories
                     vm.SearchCommand.Execute(null);
                 }));
             });
-        }
-
-        private RepositoryElement ToElement(RepositoryItemViewModel repo)
-        {
-            var vm = (RepositoriesExploreViewModel)ViewModel;
-            var sse = new RepositoryElement(repo.Name, repo.Description, repo.Owner, repo.Avatar);
-            sse.Tapped += () => repo.GoToCommand.Execute(repo);
-            return sse;
         }
     }
 }

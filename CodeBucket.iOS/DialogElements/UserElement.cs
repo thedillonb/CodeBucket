@@ -1,20 +1,21 @@
-using System;
 using UIKit;
 using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Users;
+using ReactiveUI;
 
 namespace CodeBucket.DialogElements
 {
     public class UserElement : StringElement
     {
-        public UserElement(string username, string firstName, string lastName, Avatar avatar)
-            : base (username, string.Empty, UITableViewCellStyle.Subtitle)
+        public UserElement(UserItemViewModel viewModel)
+            : base (viewModel.Username, string.Empty, UITableViewCellStyle.Subtitle)
         {
-            var realName = firstName ?? "" + " " + (lastName ?? "");
-             if (!string.IsNullOrWhiteSpace(realName))
-                Value = realName;
+            if (!string.IsNullOrWhiteSpace(viewModel.DisplayName))
+                Value = viewModel.DisplayName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
             Image = Images.Avatar;
-            ImageUri = avatar.ToUri(64);
+            ImageUri = viewModel.Avatar.ToUri(64);
+            Clicked.InvokeCommand(viewModel.GoToCommand);
         }
         
         // We need to create our own cell so we can position the image view appropriately

@@ -1,7 +1,8 @@
-using CodeBucket.Core.ViewModels.User;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using BitbucketSharp;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -17,7 +18,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
         {
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
                 Users.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Repositories.GetWatchers(User, Repository), Users.Items.AddRange);
+                return applicationService.Client.ForAllItems(x => x.Repositories.GetWatchers(User, Repository), 
+                                                             x => Users.Items.AddRange(x.Select(ToViewModel)));
             });
         }
 
