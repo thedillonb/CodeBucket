@@ -3,6 +3,7 @@ using CodeBucket.DialogElements;
 using System;
 using UIKit;
 using CodeBucket.Views;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers.Teams
 {
@@ -20,13 +21,18 @@ namespace CodeBucket.ViewControllers.Teams
             base.ViewDidLoad();
 
             var vm = (TeamsViewModel) ViewModel;
-            var weakVm = new WeakReference<TeamsViewModel>(vm);
-            BindCollection(vm.Teams, x => 
-            {
-                var e = new StringElement(x.Username);
-                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToTeamCommand.Execute(x));
-                return e;
-            });
+            vm.Teams.ChangedObservable()
+              .Subscribe(x =>
+              {
+                  var elements = x.Select(y =>
+                  {
+                      var e = new StringElement(y.Name);
+                      e.BindClick(y.GoToCommand);
+                      return e;
+                  });
+
+                  Root.Reset(new Section { elements });
+              });
         }
     }
 }

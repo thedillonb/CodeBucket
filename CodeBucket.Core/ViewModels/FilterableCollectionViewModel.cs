@@ -1,6 +1,7 @@
 using MvvmCross.Platform;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Filters;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -12,11 +13,8 @@ namespace CodeBucket.Core.ViewModels
         public TF Filter
         {
             get { return _filter; }
-            set
-            {
-                _filter = value;
-                RaisePropertyChanged(() => Filter);
-            }
+            set { this.RaiseAndSetIfChanged(ref _filter, value); }
+
         }
 
         public FilterableCollectionViewModel(string filterKey)

@@ -23,7 +23,7 @@ namespace CodeBucket.DialogElements
 
         public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) : base(title)
         {
-            Clicked.Subscribe(_ => tapped?.Invoke());
+            Clicked.Subscribe(_ => tapped());
             TextColor = UIColor.FromRGB(213, 213, 213);
             Image = image;
             ImageUri = imageUrl;

@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using WebKit;
 using CodeBucket.Utilities;
 using CodeBucket.Services;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeBucket.Views.Source
 {
@@ -31,39 +33,48 @@ namespace CodeBucket.Views.Source
 		{
 			base.ViewDidLoad();
 
-//            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
-//			{
-//					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
-//					{
-//						var sb = new StringBuilder(2000);
-//						sb.Append("a=\"");
-//						if (ViewModel.File1 != null)
-//							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
-//						sb.Append("\";");
-//						sb.Append("b=\"");
-//						if (ViewModel.File2 != null)
-//							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
-//						sb.Append("\";");
-//						sb.Append("diff(b,a);");
-//						ExecuteJavascript(sb.ToString());
-//					}
-//					else if (ViewModel.FilePath != null)
-//					{
-//						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
-//					}
-//			});
+            //            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
+            //			{
+            //					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
+            //					{
+            //						var sb = new StringBuilder(2000);
+            //						sb.Append("a=\"");
+            //						if (ViewModel.File1 != null)
+            //							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
+            //						sb.Append("\";");
+            //						sb.Append("b=\"");
+            //						if (ViewModel.File2 != null)
+            //							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
+            //						sb.Append("\";");
+            //						sb.Append("diff(b,a);");
+            //						ExecuteJavascript(sb.ToString());
+            //					}
+            //					else if (ViewModel.FilePath != null)
+            //					{
+            //						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
+            //					}
+            //			});
 
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ =>
-			{
-				//Convert it to something light weight
-				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new { 
-					Id = x.CommentId, User = x.Username, Avatar = x.UserAvatarUrl, LineTo = x.LineTo, LineFrom = x.LineFrom,
-					Content = x.ContentRendered, Date = x.UtcLastUpdated
-				}).ToList();
+            ViewModel.Comments.Changed
+                     .Select(_ => Unit.Default)
+                     .StartWith(Unit.Default)
+                     .Select(_ => ViewModel.Comments)
+                     .Subscribe(comments =>
+                     {
+                         var slimComments = comments.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new
+                         {
+                             Id = x.CommentId,
+                             User = x.Username,
+                             Avatar = x.UserAvatarUrl,
+                             LineTo = x.LineTo,
+                             LineFrom = x.LineFrom,
+                             Content = x.ContentRendered,
+                             Date = x.UtcLastUpdated
+                         }).ToList();
 
-                var c = JsonConvert.SerializeObject(slimComments);
-				ExecuteJavascript("var a = " + c + "; setComments(a);");
-			});
+                         var c = JsonConvert.SerializeObject(slimComments);
+                         ExecuteJavascript("var a = " + c + "; setComments(a);");
+                     });
 		}
 
 		private bool _isLoaded;

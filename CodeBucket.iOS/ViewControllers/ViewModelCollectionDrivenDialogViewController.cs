@@ -22,8 +22,8 @@ namespace CodeBucket.ViewControllers
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
-        protected ViewModelCollectionDrivenDialogViewController(bool push = true)
-            : base(push, UITableViewStyle.Plain)
+        protected ViewModelCollectionDrivenDialogViewController()
+            : base(UITableViewStyle.Plain)
         {
             EnableSearch = true;
         }
@@ -72,7 +72,7 @@ namespace CodeBucket.ViewControllers
 
             //The CollectionViewModel binds all of the collection events from the observablecollection + more
             //So just listen to it.
-            viewModel.CollectionChanged += (sender, e) => _dumb.InvokeOnMainThread(updateDel);
+            viewModel.Items.CollectionChanged += (sender, e) => _dumb.InvokeOnMainThread(updateDel);
 
             if (activateNow)
                 updateDel();

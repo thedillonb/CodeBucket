@@ -4,36 +4,48 @@ using System.Linq;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using CodeBucket.DialogElements;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.App
 {
-	public class DefaultStartupView : ViewModelCollectionDrivenDialogViewController
+    public class DefaultStartupView : DialogViewController
     {
+        public DefaultStartupViewModel ViewModel { get; }
+
 		public DefaultStartupView()
+            : base(UITableViewStyle.Plain)
         {
 			Title = "Default Startup View";
 			EnableSearch = false;
+            ViewModel = new DefaultStartupViewModel(MvvmCross.Platform.Mvx.Resolve<IAccountsService>());
         }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			var vm = (DefaultStartupViewModel)ViewModel;
-			BindCollection(vm.StartupViews, x => {
-                var e = new StringElement(x);
-                e.Clicked.Subscribe(_ => vm.SelectedStartupView = x);
-				if (string.Equals(vm.SelectedStartupView, x))
-					e.Accessory = UITableViewCellAccessory.Checkmark;
-				return e;
-			}, true);
+            ViewModel.StartupViews.ChangedObservable().Subscribe(views =>
+            {
+                var elements = views.Select(x =>
+                {
+                    var e = new StringElement(x);
+                    e.Clicked.Subscribe(_ => ViewModel.SelectedStartupView = x);
+                    e.Accessory = string.Equals(ViewModel.SelectedStartupView, x)
+                        ? UITableViewCellAccessory.Checkmark
+                        : UITableViewCellAccessory.None;
+                    return e;  
+                });
 
-            vm.Bind(x => x.SelectedStartupView, true).Subscribe(x =>
+                Root.Reset(new Section { elements });
+            });
+
+            ViewModel.WhenAnyValue(x => x.SelectedStartupView).Skip(1).Subscribe(x =>
 			{
-				if (Root.Count == 0)
-					return;
                 foreach (var m in Root[0].Elements.Cast<StringElement>())
 					m.Accessory = (string.Equals(m.Caption, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                NavigationController.PopViewController(true);
 			});
 		}
     }

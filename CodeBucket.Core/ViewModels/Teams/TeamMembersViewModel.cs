@@ -15,11 +15,14 @@ namespace CodeBucket.Core.ViewModels.Teams
 
         public TeamMembersViewModel(IApplicationService applicationService)
         {
+            Title = "Members";
+            EmptyMessage = "There are no members.";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                Users.Items.Clear();
+                Users.Clear();
                 return applicationService.Client.ForAllItems(x => x.Teams.GetMembers(Name), 
-                                                             x => Users.Items.AddRange(x.Select(ToViewModel)));
+                                                             x => Users.AddRange(x.Select(ToViewModel)));
             });
         }
 

@@ -65,7 +65,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
 				var index = Issues.Items.IndexOf(item);
 
-				using (Issues.DeferRefresh())
+                using (Issues.Items.SuppressChangeNotifications())
 				{
 					Issues.Items.RemoveAt(index);
 					Issues.Items.Insert(index, x.Issue);

@@ -8,7 +8,6 @@ using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.DialogElements;
-using CodeBucket.ViewControllers;
 using MvvmCross.Platform;
 using UIKit;
 

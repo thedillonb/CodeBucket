@@ -14,12 +14,13 @@ namespace CodeBucket.Core.ViewModels.Groups
 
         public string Owner { get; private set; }
 
-		public string Name { get; private set; }
-
         public IReactiveCommand LoadCommand { get; }
 
         public GroupViewModel(IApplicationService applicationService)
         {
+            Title = "Members";
+            EmptyMessage = "There are no members.";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 var members = await applicationService.Client.Groups.GetMembers(Owner, _slug);
@@ -35,14 +36,14 @@ namespace CodeBucket.Core.ViewModels.Groups
                     return vm;
                 });
 
-                Users.Items.Reset(memberUsers);
+                Users.Reset(memberUsers);
             });
         }
 
 		public void Init(NavObject navObject) 
 		{
 			Owner = navObject.Owner;
-			Name = navObject.Name;
+			Title = navObject.Name;
             _slug = navObject.Slug;
 		}
 

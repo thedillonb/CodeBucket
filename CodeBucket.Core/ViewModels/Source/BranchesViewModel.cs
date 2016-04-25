@@ -13,7 +13,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public string Repository { get; private set; }
 
-        public CollectionViewModel<BranchModel> Branches { get; } = new CollectionViewModel<BranchModel>();
+        public ReactiveList<BranchModel> Branches { get; } = new ReactiveList<BranchModel>();
 
         public IReactiveCommand<object> GoToBranchCommand { get; } = ReactiveCommand.Create();
 
@@ -28,7 +28,7 @@ namespace CodeBucket.Core.ViewModels.Source
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 var branches = await applicationService.Client.Repositories.GetBranches(Username, Repository);
-                Branches.Items.Reset(branches.Values);
+                Branches.Reset(branches.Values);
             });
         }
 

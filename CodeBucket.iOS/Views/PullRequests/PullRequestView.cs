@@ -41,30 +41,53 @@ namespace CodeBucket.Views.PullRequests
         {
             base.ViewDidLoad();
 
-            Title = "Pull Request #" + ViewModel.PullRequestId;
+            var split = new SplitButtonElement();
+            var comments = split.AddButton("Comments", "-");
+            var participants = split.AddButton("Participants", "-");
+            var approvals = split.AddButton("Approvals", "-");
 
-            HeaderView.SetImage(null, Images.Avatar);
+            ViewModel.Bind(x => x.ParticipantCount, true).Subscribe(x =>
+            {
+                participants.Text = x?.ToString() ?? "-";
+            });
 
-            ViewModel.Bind(x => x.PullRequest).Subscribe(_ => Render());
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
+            ViewModel.Bind(x => x.ApprovalCount, true).Subscribe(x =>
+            {
+                approvals.Text = x?.ToString() ?? "-";
+            });
+
+            ViewModel.Bind(x => x.CommentCount, true).Subscribe(x =>
+            {
+                comments.Text = x?.ToString() ?? "-";
+            });
+
+            ViewModel.Bind(x => x.PullRequest, true).Subscribe(x =>
+            {
+                if (x != null)
+                {
+                    var avatarUrl = x?.Author?.Links?.Avatar?.Href;
+                    HeaderView.SubText = "Updated " + ViewModel.PullRequest.UpdatedOn.Humanize();
+                    HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
+                }
+                else
+                {
+                    HeaderView.SetImage(null, Images.Avatar);
+                    HeaderView.SubText = null;
+                }
+
+                HeaderView.Text = x?.Title ?? ("Pull Request #" + ViewModel.PullRequestId);
+                RefreshHeaderView();
+            });
+
+            ViewModel.Bind(x => x.PullRequest).Subscribe(_ => Render(split));
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render(split));
         }
 
-        public void Render()
+        public void Render(SplitButtonElement split)
         {
             if (ViewModel.PullRequest == null)
                 return;
-
-            var avatarUrl = ViewModel.PullRequest.Author?.Links?.Avatar?.Href;
-
-            HeaderView.Text = ViewModel.PullRequest.Title;
-            HeaderView.SubText = "Updated " + ViewModel.PullRequest.UpdatedOn.Humanize();
-            HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
-            RefreshHeaderView();
-
-            var split = new SplitButtonElement();
-            split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
-            split.AddButton("Participants", ViewModel.PullRequest.Participants.Count.ToString());
-
+  
             ICollection<Section> root = new LinkedList<Section>();
             root.Add(new Section { split });
 
@@ -99,7 +122,7 @@ namespace CodeBucket.Views.PullRequests
             var approveElement = new LoaderButtonElement("Approve", AtlassianIcon.Approve.ToImage());
             approveElement.Accessory = UITableViewCellAccessory.None;
             approveElement.BindLoader(ViewModel.ToggleApproveButton);
-            approveElement.BindCaption(ViewModel.Bind(x => x.Approved, true).Select(x => x ? "Decline" : "Approve"));
+            approveElement.BindCaption(ViewModel.Bind(x => x.Approved, true).Select(x => x ? "Unapprove" : "Approve"));
             root.Add(approvalSection);
 
             var participantElements = (ViewModel.PullRequest.Participants ?? Enumerable.Empty<Participant>())

@@ -16,6 +16,9 @@ using System.Collections.Generic;
 using Foundation;
 using CodeBucket.DialogElements;
 using System.Linq;
+using System.Reactive.Subjects;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeBucket.ViewControllers
 {
@@ -25,9 +28,9 @@ namespace CodeBucket.ViewControllers
     /// </summary>
     public class DialogViewController : TableViewController
     {
+        private readonly ISubject<Unit> _endSubject = new Subject<Unit>();
         private readonly Lazy<RootElement> _rootElement;
         private UISearchBar _searchBar;
-        bool pushing;
 
         /// <summary>
         /// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
@@ -42,6 +45,11 @@ namespace CodeBucket.ViewControllers
         public bool EnableSearch { get; set; }
 
         public string SearchPlaceholder { get; set; }
+
+        public IObservable<Unit> EndOfList
+        {
+            get { return _endSubject.AsObservable(); }
+        }
 
         public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
         {
@@ -262,6 +270,14 @@ namespace CodeBucket.ViewControllers
                 _container.Get()?.DidScroll(Root?.TableView?.ContentOffset ?? CGPoint.Empty);
             }
 
+            public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+            {
+                var s = tableView.NumberOfSections() - 1;
+                var r = tableView.NumberOfRowsInSection(s) - 1;
+                if (indexPath.Section == s && indexPath.Row == r)
+                    _container.Get()?._endSubject.OnNext(Unit.Default);
+            }
+
             public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
             {
                 var section = Root?[indexPath.Section];
@@ -329,19 +345,7 @@ namespace CodeBucket.ViewControllers
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NavigationItem.HidesBackButton = !pushing;
             TableView.ReloadData ();
-        }
-
-        public bool Pushing {
-            get {
-                return pushing;
-            }
-            set {
-                pushing = value;
-                if (NavigationItem != null)
-                    NavigationItem.HidesBackButton = !pushing;
-            }
         }
 
         public void ReloadData ()
@@ -349,7 +353,7 @@ namespace CodeBucket.ViewControllers
             TableView.ReloadData();
         }
 
-        public DialogViewController (UITableViewStyle style, bool pushing = true) 
+        public DialogViewController (UITableViewStyle style) 
             : base (style)
         {
             _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
@@ -357,7 +361,6 @@ namespace CodeBucket.ViewControllers
             EdgesForExtendedLayout = UIRectEdge.None;
             SearchPlaceholder = "Search";
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
-            this.pushing = pushing;
         }
     }
 }

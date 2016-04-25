@@ -22,7 +22,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public int PullRequestId { get; private set; }
 
-        public CollectionViewModel<PullRequestComment> Comments { get; } = new CollectionViewModel<PullRequestComment>();
+        public ReactiveUI.ReactiveList<PullRequestComment> Comments { get; } = new ReactiveUI.ReactiveList<PullRequestComment>();
 
         public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
@@ -45,6 +45,27 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         {
             get { return _description; }
             private set { this.RaiseAndSetIfChanged(ref _description, value); }
+        }
+
+        private int? _approvals;
+        public int? ApprovalCount
+        {
+            get { return _approvals; }
+            private set { this.RaiseAndSetIfChanged(ref _approvals, value); }
+        }
+
+        private int? _comments;
+        public int? CommentCount
+        {
+            get { return _comments; }
+            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
+        }
+
+        private int? _participants;
+        public int? ParticipantCount
+        {
+            get { return _participants; }
+            private set { this.RaiseAndSetIfChanged(ref _participants, value); }
         }
 
         private PullRequest _pullRequest;
@@ -81,12 +102,14 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         {
             _applicationService = applicationService;
 
+            Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
+
             LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 PullRequest = await applicationService.Client.Repositories.PullRequests.GetPullRequest(Username, Repository, PullRequestId);
-                Comments.Items.Clear();
-                await applicationService.Client.ForAllItems(x => 
-                    x.Repositories.PullRequests.GetPullRequestComments(Username, Repository, PullRequestId), Comments.Items.AddRange);
+                Comments.Clear();
+                await applicationService.Client.ForAllItems(x =>
+                    x.Repositories.PullRequests.GetPullRequestComments(Username, Repository, PullRequestId), Comments.AddRange);
             });
 
             var canMerge = this.Bind(x => x.PullRequest, true).Select(x => string.Equals(x?.State, "open"));
@@ -120,6 +143,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                     .FirstOrDefault(y => string.Equals(y.User.Username, username, StringComparison.OrdinalIgnoreCase))
                     ?.Approved ?? false;
 
+                ApprovalCount = x?.Participants.Select(y => y.Approved).Count() ?? 0;
+                ParticipantCount = x?.Participants.Count ?? 0;
                 Description = string.IsNullOrEmpty(x?.Description) ? null : markdownService.ConvertMarkdown(x.Description);
             });
         }
@@ -135,7 +160,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         {
             var res = await _applicationService.Client.Repositories.PullRequests.CommentPullRequest(Username, Repository, PullRequestId, text);
             var comment = await _applicationService.Client.Repositories.PullRequests.GetPullRequestComment(Username, Repository, PullRequestId, res.CommentId);
-            Comments.Items.Add(comment);
+            Comments.Add(comment);
         }
 
         public class NavObject

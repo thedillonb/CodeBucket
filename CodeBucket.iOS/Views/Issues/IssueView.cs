@@ -76,7 +76,7 @@ namespace CodeBucket.Views.Issues
             RefreshHeaderView();
 
             var split = new SplitButtonElement();
-            split.AddButton("Comments", ViewModel.Comments.Items.Count.ToString());
+            split.AddButton("Comments", ViewModel.Comments.Count.ToString());
             split.AddButton("Watches", ViewModel.Issue.FollowerCount.ToString());
 
             ICollection<Section> root = new LinkedList<Section>();

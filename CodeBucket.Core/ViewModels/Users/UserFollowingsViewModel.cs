@@ -13,11 +13,14 @@ namespace CodeBucket.Core.ViewModels.Users
 
         public UserFollowingsViewModel(IApplicationService applicationService)
         {
+            Title = "Following";
+            EmptyMessage = "There are no followers.";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
             {
-                Users.Items.Clear();
+                Users.Clear();
                 return applicationService.Client.ForAllItems(x => x.Users.GetFollowing(Name), 
-                                                             x => Users.Items.AddRange(x.Select(ToViewModel)));
+                                                             x => Users.AddRange(x.Select(ToViewModel)));
             });
         }
 

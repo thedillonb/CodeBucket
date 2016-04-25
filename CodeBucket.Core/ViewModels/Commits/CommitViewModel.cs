@@ -168,7 +168,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                     return vm;
                 });
 
-                ReactiveUI.ReactiveListExtensions.Reset(CommitFiles, files);
+                CommitFiles.Reset(files);
             });
 
             this.Bind(x => x.Commit, true).Subscribe(x => {

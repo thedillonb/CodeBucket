@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Events;
-using BitbucketSharp.Models;
 using System.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.Core.Services;
@@ -121,6 +119,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositorySlug })); }
 		}
 
+        public ReactiveUI.IReactiveCommand<Unit> ShowMenuCommand { get; }
 
         public ICommand GoToReadmeCommand
         {
@@ -135,7 +134,6 @@ namespace CodeBucket.Core.ViewModels.Repositories
             }
         }
 
-
         private void ShowCommits()
         {
             if (Branches.GetValueOrDefault() == 1)
@@ -143,15 +141,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
             else
 				ShowViewModel<Source.BranchesViewModel>(new Source.BranchesViewModel.NavObject {Username = Username, Repository = RepositorySlug});
         }
-		
-        public ICommand PinCommand
-        {
-            get { return new MvxCommand(PinRepository, () => Repository != null); }
-        }
 
         public ReactiveUI.IReactiveCommand<Unit> ForkCommand { get; }
 
-        public RepositoryViewModel(IApplicationService applicationService)
+        public RepositoryViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
         {
             _applicationService = applicationService;
 
@@ -187,8 +180,18 @@ namespace CodeBucket.Core.ViewModels.Repositories
             GoToForkParentCommand = ReactiveUI.ReactiveCommand.Create(canGoToFork);
             GoToForkParentCommand
                 .Select(_ => RepositoryIdentifier.FromFullName(Repository.Parent.Fullname))
-                .Select(x => new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name })
+                .Select(x => new NavObject { Username = x.Owner, RepositorySlug = x.Name })
                 .Subscribe(x => ShowViewModel<RepositoryViewModel>(x));
+
+            ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(sender =>
+            {
+                var menu = actionMenuService.Create();
+                var isPinned = IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu";
+                menu.AddButton(isPinned, PinRepository);
+                menu.AddButton("Fork Repository", ForkCommand);
+                menu.AddButton("Show in Bitbucket", () => ShowBrowser(HtmlUrl));
+                return menu.Show(sender);
+            });
         }
 
         private void PinRepository()

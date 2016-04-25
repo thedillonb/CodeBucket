@@ -1,26 +1,26 @@
-using CodeBucket.Core.Services;
+﻿using CodeBucket.Core.Services;
 using ReactiveUI;
 using BitbucketSharp;
 using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class UserFollowersViewModel : BaseUserCollectionViewModel, ILoadableViewModel
+    public class TeamFollowingsViewModel : BaseUserCollectionViewModel, ILoadableViewModel
     {
         public string Name { get; private set; }
 
         public IReactiveCommand LoadCommand { get; }
 
-        public UserFollowersViewModel(IApplicationService applicationService)
+        public TeamFollowingsViewModel(IApplicationService applicationService)
         {
-            Title = "Followers";
+            Title = "Following";
             EmptyMessage = "There are no followers.";
-            
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 Users.Clear();
                 return applicationService.Client
-                    .ForAllItems(x => x.Users.GetFollowers(Name),
+                    .ForAllItems(x => x.Teams.GetFollowing(Name),
                                  x => Users.AddRange(x.Select(ToViewModel)));
             });
         }
@@ -36,4 +36,3 @@ namespace CodeBucket.Core.ViewModels.Users
         }
     }
 }
-

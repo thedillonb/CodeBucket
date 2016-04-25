@@ -30,8 +30,8 @@ namespace CodeBucket.Views.Repositories
 
             HeaderView.SetImage(null, Images.RepoPlaceholder);
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action);
-            NavigationItem.RightBarButtonItem.Enabled = false;
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
+            NavigationItem.RightBarButtonItem = actionButton;
 
             var watchers = _split.AddButton("Watchers", "-");
             var forks = _split.AddButton("Forks", "-");
@@ -52,58 +52,10 @@ namespace CodeBucket.Views.Repositories
                     NavigationItem.RightBarButtonItem.Enabled = true;
                     Render(x);
                 }));
+
+                d(actionButton.BindCommand(ViewModel.ShowMenuCommand));
             });
         }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem.Clicked += ShowExtraMenu;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem.Clicked -= ShowExtraMenu;
-        }
-		
-        private void ShowExtraMenu(object o, EventArgs args)
-        {
-            var repoModel = ViewModel.Repository;
-            if (repoModel == null)
-                return;
-
-            var sheet = new UIActionSheet();
-			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
-            var forkButton = sheet.AddButton("Fork Repository");
-			var showButton = sheet.AddButton("Show in Bitbucket");
-            var cancelButton = sheet.AddButton("Cancel");
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) => {
-                BeginInvokeOnMainThread(() => {
-                // Pin to menu
-                if (e.ButtonIndex == pinButton)
-                {
-                    ViewModel.PinCommand.Execute(null);
-                }
-                else if (e.ButtonIndex == forkButton)
-                {
-                    ViewModel.ForkCommand.Execute(null);
-                }
-                // Show in Bitbucket
-                else if (e.ButtonIndex == showButton)
-                {
-					ViewModel.GoToUrlCommand.Execute(ViewModel.HtmlUrl);
-                }
-                });
-
-                sheet.Dispose();
-            };
-
-            sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
-        }
-
 
         public void Render(Repository model)
         {
@@ -133,13 +85,13 @@ namespace CodeBucket.Views.Repositories
             _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 
-            var owner = new StringElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StringElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage() };
             owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
             sec1.Add(owner);
 
             if (model.Parent != null)
             {
-                var parent = new StringElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                var parent = new StringElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage() };
                 parent.Clicked.BindCommand(ViewModel.GoToForkParentCommand);
                 sec1.Add(parent);
             }

@@ -18,7 +18,12 @@ namespace CodeBucket.Core.ViewModels
         /// <value>The go to URL command.</value>
         public ICommand GoToUrlCommand
         {
-            get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+            get { return new MvxCommand<string>(ShowBrowser); }
+        }
+
+        protected void ShowBrowser(string url)
+        {
+            ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = url });
         }
 
         /// <summary>

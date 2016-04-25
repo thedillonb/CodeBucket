@@ -9,13 +9,15 @@ using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Users;
 using System.Threading.Tasks;
 using System.Linq;
+using BitbucketSharp;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
 using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Issues;
-using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Groups;
+using BitbucketSharp.Models.V2;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -86,19 +88,9 @@ namespace CodeBucket.Core.ViewModels.App
 
         private readonly IApplicationService _application;
 
-		private List<GroupModel> _groups;
-		public List<GroupModel> Groups
-		{
-			get { return _groups; }
-            set { this.RaiseAndSetIfChanged(ref _groups, value); }
-		}
+        public ReactiveUI.ReactiveList<GroupItemViewModel> Groups { get; } = new ReactiveUI.ReactiveList<GroupItemViewModel>();
 
-		private List<string> _teams;
-		public List<string> Teams
-		{
-			get { return _teams; }
-            set { this.RaiseAndSetIfChanged(ref _teams, value); }
-		}
+        public ReactiveUI.ReactiveList<TeamItemViewModel> Teams { get; } = new ReactiveUI.ReactiveList<TeamItemViewModel>();
 
 		public BitbucketAccount Account
         {
@@ -109,24 +101,36 @@ namespace CodeBucket.Core.ViewModels.App
         {
             _application = application;
 
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ =>
+            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(t =>
             {
-                application.Client.Users.GetPrivileges()
-                    .ToObservable()
-                    .Where(x => x.Teams != null)
-                    .Subscribe(x =>
-                    {
-                        var teams = x.Teams.Keys.ToList();
-                        teams.Remove(Account.Username);
-                        Teams = teams;
-                    });
+                application.Client
+                           .AllItems(x => x.Teams.GetTeams(BitbucketSharp.Controllers.TeamRole.Member))
+                           .ToBackground(x => Teams.Reset(x.Select(ToViewModel)));
 
-                application.Client.Groups.GetGroups(Account.Username)
-                    .ToObservable()
-                    .Subscribe(x => Groups = x);
+                application.Client.Groups
+                           .GetGroups(Account.Username)
+                           .ToBackground(groups => Groups.Reset(groups.Select(ToViewModel)));
 
                 return Task.FromResult(0);
             });
+        }
+
+        private TeamItemViewModel ToViewModel(Team team)
+        {
+            var viewModel = new TeamItemViewModel(team.Username);
+            viewModel.GoToCommand
+                     .Select(_ => new TeamViewModel.NavObject { Name = team.Username })
+                     .Subscribe(y => ShowMenuViewModel<TeamViewModel>(y));
+            return viewModel;
+        }
+
+        private GroupItemViewModel ToViewModel(GroupModel group)
+        {
+            var viewModel = new GroupItemViewModel(group.Name);
+            viewModel.GoToCommand
+                     .Select(_ => new GroupViewModel.NavObject { Slug = group.Slug, Owner = group.Owner.Username, Name = group.Name })
+                     .Subscribe(y => ShowMenuViewModel<GroupViewModel>(y));
+            return viewModel;
         }
 
 		[PotentialStartupViewAttribute("Profile")]
@@ -168,11 +172,6 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
 		}
 
-		public ICommand GoToGroupCommand
-		{
-			get { return new MvxCommand<GroupModel>(x => ShowMenuViewModel<Groups.GroupViewModel>(new Groups.GroupViewModel.NavObject { Owner = x.Owner.Username, Name = x.Name }));}
-		}
-
 		[PotentialStartupViewAttribute("Organizations")]
 		public ICommand GoToGroupsCommand
 		{
@@ -185,12 +184,6 @@ namespace CodeBucket.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<TeamsViewModel>(null)); }
 		}
 
-		public ICommand GoToTeamCommand
-		{
-            get { return new MvxCommand<string>(x => ShowMenuViewModel<TeamViewModel>(new TeamViewModel.NavObject { Name = x })); }
-		}
-
-	
 		public ICommand GoToSettingsCommand
 		{
 			get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}

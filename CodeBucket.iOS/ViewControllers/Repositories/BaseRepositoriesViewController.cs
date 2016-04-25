@@ -33,13 +33,8 @@ namespace CodeBucket.ViewControllers.Repositories
             base.ViewDidLoad();
 
             ViewModel.Repositories.Changed
-                 .Select(_ => ViewModel.Repositories.Select(x => new RepositoryElement(x)))
+                .Select(_ => ViewModel.Repositories.Select(x => new RepositoryElement(x)))
                 .Subscribe(x => Root.Reset(new Section { x }));
-        }
-
-        public override Source CreateSizingSource()
-        {
-            return new Source(this);
         }
     }
 }

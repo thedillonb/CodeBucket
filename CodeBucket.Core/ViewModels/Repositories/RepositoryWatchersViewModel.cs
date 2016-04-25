@@ -16,10 +16,13 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public RepositoryWatchersViewModel(IApplicationService applicationService)
         {
+            Title = "Watchers";
+            EmptyMessage = "There are no watchers.";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
-                Users.Items.Clear();
+                Users.Clear();
                 return applicationService.Client.ForAllItems(x => x.Repositories.GetWatchers(User, Repository), 
-                                                             x => Users.Items.AddRange(x.Select(ToViewModel)));
+                                                             x => Users.AddRange(x.Select(ToViewModel)));
             });
         }
 

@@ -18,7 +18,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 		private string _title;
 		private string _content;
 		private UserModel _assignedTo;
-        private MvxSubscriptionToken _versionToken, _componentToken, _milestoneToken, _assignedToken;
 		private bool _isSaving;
 
 		public string Title
@@ -122,10 +121,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 			Repository = repository;
 
 			var messenger = GetService<IMvxMessenger>();
-            _milestoneToken = messenger.SubscribeOnMainThread<SelectedMilestoneMessage>(x => Milestone = x.Value);
-            _versionToken = messenger.SubscribeOnMainThread<SelectedVersionMessage>(x => Version = x.Value);
-            _componentToken = messenger.SubscribeOnMainThread<SelectedComponentMessage>(x => Component = x.Value);
-			_assignedToken = messenger.SubscribeOnMainThread<SelectedAssignedToMessage>(x => AssignedTo = x.User);
 		}
 
 		protected override Task Load()

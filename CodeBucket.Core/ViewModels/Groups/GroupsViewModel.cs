@@ -9,7 +9,7 @@ namespace CodeBucket.Core.ViewModels.Groups
 {
     public class GroupsViewModel : BaseViewModel, ILoadableViewModel
 	{
-        public CollectionViewModel<GroupItemViewModel> Groups { get; } = new CollectionViewModel<GroupItemViewModel>();
+        public IReadOnlyReactiveList<GroupItemViewModel> Groups { get; }
 
         public string Username { get; private set; }
 
@@ -17,9 +17,11 @@ namespace CodeBucket.Core.ViewModels.Groups
 
         public GroupsViewModel(IApplicationService applicationService)
         {
+            var groups = new ReactiveList<GroupModel>();
+            Groups = groups.CreateDerivedCollection(ToViewModel);
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                var groups = await applicationService.Client.Groups.GetGroups(Username);
-                Groups.Items.Reset(groups.Select(ToViewModel));
+                groups.Reset(await applicationService.Client.Groups.GetGroups(Username));
             });
         }
 

@@ -40,8 +40,6 @@
     <Compile Include="App.cs" />
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
-    <Compile Include="Messages\SelectedAssignedToMessage.cs" />
-    <Compile Include="Messages\SelectedMilestoneMessage.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
@@ -83,8 +81,6 @@
     <Compile Include="ViewModels\Issues\IssueAttributesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueVersionsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueComponentsViewModel.cs" />
-    <Compile Include="Messages\SelectedComponentMessage.cs" />
-    <Compile Include="Messages\SelectedVersionMessage.cs" />
     <Compile Include="Messages\IssueDeleteMessage.cs" />
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamMembersViewModel.cs" />
@@ -106,7 +102,6 @@
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
-    <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
@@ -137,7 +132,6 @@
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesViewModel.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Services\IActionMenuService.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryWatchersViewModel.cs" />
@@ -151,6 +145,12 @@
     <Compile Include="ViewModels\Commits\CommitItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupItemViewModel.cs" />
+    <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamItemViewModel.cs" />
+    <Compile Include="Extensions\BitbucketClientExtensions.cs" />
+    <Compile Include="ViewModels\Teams\TeamFollowersViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamFollowingsViewModel.cs" />
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -180,26 +180,23 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\lib\BitbucketSharp\lib\RestSharp.MonoTouch.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
+      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
     </Reference>
     <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
+      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
     </Reference>
     <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.1.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
+      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.1.4\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
     <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.1.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
+      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
     </Reference>
     <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.1.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
+      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

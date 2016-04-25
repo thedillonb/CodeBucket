@@ -47,10 +47,10 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        public NewsFeedElement(string imageUrl, DateTimeOffset time, IEnumerable<TextBlock> headerBlocks, IEnumerable<TextBlock> bodyBlocks, UIImage littleImage, Action tapped, bool multilined)
+        public NewsFeedElement(string imageUrl, string time, IEnumerable<TextBlock> headerBlocks, IEnumerable<TextBlock> bodyBlocks, UIImage littleImage, Action tapped, bool multilined)
         {
             Uri.TryCreate(imageUrl, UriKind.Absolute, out _imageUri);
-            _time = time.Humanize();
+            _time = time;
             _actionImage = littleImage;
             _tapped = tapped;
             _multilined = multilined;

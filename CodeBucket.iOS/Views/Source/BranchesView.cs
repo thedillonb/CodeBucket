@@ -3,6 +3,7 @@ using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 using System;
 using UIKit;
+using System.Linq;
 
 namespace CodeBucket.Views.Source
 {
@@ -20,11 +21,17 @@ namespace CodeBucket.Views.Source
             base.ViewDidLoad();
             var vm = (BranchesViewModel) ViewModel;
             var weakVm = new WeakReference<BranchesViewModel>(vm);
-            BindCollection(vm.Branches, x => 
+            vm.Branches.ChangedObservable().Subscribe(x =>
             {
-                var e = new StringElement(x.Branch);
-                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToBranchCommand.Execute(x));
-                return e;
+                Root.Reset(new Section
+                {
+                    x.Select(y =>
+                    {
+                        var e = new StringElement(y.Branch);
+                        e.Clicked.Subscribe(_ => weakVm.Get()?.GoToBranchCommand.Execute(y));
+                        return e;
+                    })
+                });
             });
         }
     }

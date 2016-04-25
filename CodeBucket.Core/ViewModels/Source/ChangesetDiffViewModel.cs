@@ -11,7 +11,6 @@ namespace CodeBucket.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
-		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
 		private ChangesetDiffModel _commitFileModel;
 		private string _actualFilename;
 
@@ -27,11 +26,8 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		public string Filename { get; private set; }
 
-		public CollectionViewModel<ChangesetCommentModel> Comments
-		{
-			get { return _comments; }
-		}
-
+        public ReactiveUI.ReactiveList<ChangesetCommentModel> Comments { get; } = new ReactiveUI.ReactiveList<ChangesetCommentModel>();
+		
 		public void Init(NavObject navObject)
         {
 			Username = navObject.Username;

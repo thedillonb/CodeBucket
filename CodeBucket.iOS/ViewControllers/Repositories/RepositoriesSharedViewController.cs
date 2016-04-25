@@ -4,7 +4,7 @@ namespace CodeBucket.ViewControllers.Repositories
     {
         public RepositoriesSharedViewController()
         {
-            Title = "Shared Repositories";
+            Title = "Shared";
         }
     }
 }

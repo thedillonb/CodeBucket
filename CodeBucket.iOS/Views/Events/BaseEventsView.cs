@@ -6,12 +6,15 @@ using CodeBucket.ViewControllers;
 using CodeBucket.Core.Utils;
 using CodeBucket.TableViewCells;
 using BitbucketSharp.Models;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Events
 {
-    public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseEventsView : ViewModelDrivenDialogViewController
     {
         protected BaseEventsView()
+            : base(style: UITableViewStyle.Plain)
         {
             Title = "Events";
             EnableSearch = false;
@@ -25,42 +28,61 @@ namespace CodeBucket.Views.Events
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;
 
-            BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
+            var itemSection = new Section();
+            Root.Reset(itemSection);
+
+            var vm = (BaseEventsViewModel)ViewModel;
+
+            vm.Events
+              .ChangedObservable()
+              .Subscribe(x => itemSection.Reset(x.Select(CreateElement)));
+
+            EndOfList.BindCommand(vm.LoadMoreCommand);
+
+            vm.LoadMoreCommand.IsExecuting.Subscribe(x =>
+            {
+                if (x)
+                {
+                    var activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
+                    activity.Frame = new CoreGraphics.CGRect(0, 0, 320, 64f);
+                    activity.StartAnimating();
+                    TableView.TableFooterView = activity;
+                }
+                else
+                {
+                    TableView.TableFooterView = null;
+                }
+            });
         }
 
-        private static Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
+        private static Element CreateElement(EventItemViewModel e)
         {
             try
             {
-                if (e.Item2 == null)
-                    return null;
+                var img = ChooseImage(e.EventType).ToImage();
 
-                var img = ChooseImage(e.Item1).ToImage();
-
-                var avatarUrl = e.Item1?.User?.Avatar;
-                var avatar =  new Avatar(avatarUrl);
 				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
-				foreach (var h in e.Item2.Header)
+				foreach (var h in e.Header)
 				{
 					Action act = null;
-					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+					var anchorBlock = h as EventAnchorBlock;
 					if (anchorBlock != null)
 						act = anchorBlock.Tapped;
 					headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
 				}
 
 				var bodyBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
-				foreach (var h in e.Item2.Body)
+				foreach (var h in e.Body)
 				{
 					Action act = null;
-					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+					var anchorBlock = h as EventAnchorBlock;
 					if (anchorBlock != null)
 						act = anchorBlock.Tapped;
 					var block = new NewsFeedElement.TextBlock(h.Text, act);
 					bodyBlocks.Add(block);
 				}
 
-                return new NewsFeedElement(avatar.ToUrl(), e.Item1.UtcCreatedOn, headerBlocks, bodyBlocks, img, e.Item2.Tapped, e.Item2.Multilined);
+                return new NewsFeedElement(e.Avatar.ToUrl(), e.CreatedOn, headerBlocks, bodyBlocks, img, e.Tapped, e.Multilined);
             }
             catch
             {
@@ -68,9 +90,9 @@ namespace CodeBucket.Views.Events
             }
         }
 
-        private static AtlassianIcon ChooseImage(EventModel eventModel)
+        private static AtlassianIcon ChooseImage(string eventName)
         {
-			switch (eventModel.Event)
+			switch (eventName)
 			{
 				case EventModel.Type.ForkRepo:
                     return AtlassianIcon.Devtoolsrepositoryforked;

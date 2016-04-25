@@ -1,4 +1,3 @@
-using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
 
@@ -20,10 +19,9 @@ namespace CodeBucket.Core.ViewModels.Events
             Username = navObject.Username;
         }
 
-        protected override async Task Load()
+        protected override Task<BitbucketSharp.Models.EventsModel> GetEvents(int start, int limit)
         {
-            var events = await _applicationService.Client.Users.GetEvents(Username);
-            Events.Items.Reset(CreateDataFromLoad(events.Events));
+            return _applicationService.Client.Users.GetEvents(Username, start, limit);
         }
 
         public class NavObject

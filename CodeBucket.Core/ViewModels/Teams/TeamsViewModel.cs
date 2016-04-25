@@ -10,22 +10,27 @@ namespace CodeBucket.Core.ViewModels.Teams
 {
     public class TeamsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public CollectionViewModel<Team> Teams { get; } = new CollectionViewModel<Team>();
-
-        public ReactiveCommand<object> GoToTeamCommand { get; } = ReactiveCommand.Create();
+        public IReadOnlyReactiveList<TeamItemViewModel> Teams { get; }
 
         public IReactiveCommand LoadCommand { get; }
 
         public TeamsViewModel(IApplicationService applicationService)
         {
-            GoToTeamCommand.OfType<Team>()
-                .Select(x => new TeamViewModel.NavObject { Name = x.Username })
-                .Subscribe(x => ShowViewModel<TeamViewModel>(x));
+            var teams = new ReactiveList<Team>();
+            Teams = teams.CreateDerivedCollection(team =>
+            {
+                var username = team.Username;
+                var vm = new TeamItemViewModel(username);
+                vm.GoToCommand
+                  .Select(x => new TeamViewModel.NavObject { Name = username })
+                  .Subscribe(x => ShowViewModel<TeamViewModel>(x));
+                return vm;
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                Teams.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Teams.GetTeams(TeamRole.Member), Teams.Items.AddRange);
+                teams.Reset();
+                return applicationService.Client.ForAllItems(x => x.Teams.GetTeams(TeamRole.Member), teams.AddRange);
             });
         }
     }

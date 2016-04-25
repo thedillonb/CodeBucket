@@ -9,6 +9,7 @@ using System.Linq;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels;
 using CodeBucket.Utilities;
+using System.Reactive.Linq;
 
 namespace CodeBucket.ViewControllers
 {
@@ -171,33 +172,30 @@ namespace CodeBucket.ViewControllers
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        protected ViewModelDrivenDialogViewController(bool push = true, UITableViewStyle style = UITableViewStyle.Grouped)
-            : base(style, push)
+        protected ViewModelDrivenDialogViewController(UITableViewStyle style = UITableViewStyle.Grouped)
+            : base(style)
         {
             this.AdaptForBinding();
+
+            Appearing.Take(1)
+                     .Select(_ => ViewModel)
+                     .OfType<ILoadableViewModel>()
+                     .Select(x => x.LoadCommand)
+                     .Where(x => x.CanExecute(null))
+                     .Subscribe(x => x.Execute(null));
         }
 
         private void HandleRefreshRequested(object sender, EventArgs e)
         {
             var loadableViewModel = ViewModel as ILoadableViewModel;
-            if (loadableViewModel != null)
-            {
-                _manualRefreshRequested = true;
-                loadableViewModel.LoadCommand.Execute(true);
-            }
+            _manualRefreshRequested = true;
+            loadableViewModel?.LoadCommand.Execute(true);
         }
 
-        bool _isLoaded = false;
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             ViewWillAppearCalled.Raise(this, animated);
-
-            if (!_isLoaded)
-            {
-                (ViewModel as ILoadableViewModel)?.LoadCommand.Execute(false);
-                _isLoaded = true;
-            }
 
             if (RefreshControl != null)
                 RefreshControl.ValueChanged += HandleRefreshRequested;

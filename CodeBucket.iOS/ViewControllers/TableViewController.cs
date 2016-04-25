@@ -1,16 +1,16 @@
 ﻿using System;
 using UIKit;
-using CoreGraphics;
 using Foundation;
+using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers
 {
     public class TableViewController : BaseViewController
     {
-        private readonly Lazy<UITableView> _tableView;
+        private readonly Lazy<EnhancedTableView> _tableView;
         private UIRefreshControl _refreshControl;
 
-        public UITableView TableView { get { return _tableView.Value; } }
+        public EnhancedTableView TableView { get { return _tableView.Value; } }
 
         public virtual UIRefreshControl RefreshControl
         {
@@ -27,7 +27,7 @@ namespace CodeBucket.ViewControllers
 
         public TableViewController(UITableViewStyle style)
         {
-            _tableView = new Lazy<UITableView>(() => new UITableView(CGRect.Empty, style));
+            _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(style));
         }
 
         public override void ViewDidLoad()

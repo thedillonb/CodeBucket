@@ -3,6 +3,7 @@ using System;
 using UIKit;
 using CodeBucket.DialogElements;
 using CodeBucket.Views;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers.Groups
 {
@@ -20,11 +21,17 @@ namespace CodeBucket.ViewControllers.Groups
             base.ViewDidLoad();
 
 			var vm = (GroupsViewModel) ViewModel;
-			BindCollection(vm.Groups, x => {
-                var e = new StringElement(x.Name);
-                e.Clicked.BindCommand(x.GoToCommand);
-				return e;
-			});
+            vm.Groups.ChangedObservable().Subscribe(groups =>
+            {
+                var elements = groups.Select(x =>
+                {
+                    var e = new StringElement(x.Name);
+                    e.Clicked.BindCommand(x.GoToCommand);
+                    return e;
+                });
+
+                Root.Reset(new Section { elements });
+            });
         }
 	}
 }

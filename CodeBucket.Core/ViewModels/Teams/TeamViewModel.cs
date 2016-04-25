@@ -38,12 +38,12 @@ namespace CodeBucket.Core.ViewModels.Teams
         public TeamViewModel(IApplicationService applicationService)
         {
             GoToFollowersCommand
-                .Select(_ => new UserFollowersViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<UserFollowersViewModel>(x));
+                .Select(_ => new TeamFollowersViewModel.NavObject { Username = Name })
+                .Subscribe(x => ShowViewModel<TeamFollowersViewModel>(x));
 
             GoToFollowingCommand
-                .Select(_ => new UserFollowingsViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<UserFollowingsViewModel>(x));
+                .Select(_ => new TeamFollowingsViewModel.NavObject { Username = Name })
+                .Subscribe(x => ShowViewModel<TeamFollowingsViewModel>(x));
 
             GoToEventsCommand
                 .Select(_ => new UserEventsViewModel.NavObject { Username = Name })

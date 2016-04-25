@@ -34,7 +34,7 @@ namespace CodeBucket.Views.Repositories
                 .Subscribe(x =>
                 {
                     var view = new RepositoryView();
-                    view.ViewModel = new RepositoryViewModel(null);
+                    view.ViewModel = new RepositoryViewModel(null, null);
                     NavigationController.PushViewController(view, true);
                 });
 

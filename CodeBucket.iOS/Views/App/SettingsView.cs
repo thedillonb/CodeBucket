@@ -58,7 +58,8 @@ namespace CodeBucket.Views.App
 			});
 
             var startupView = new ButtonElement("Startup View", vm.DefaultStartupViewName);
-            startupView.Clicked.BindCommand(vm.GoToDefaultStartupViewCommand);
+            startupView.Clicked.Subscribe(_ =>
+                NavigationController.PushViewController(new DefaultStartupView(), true));
 
             var sourceCommand = new ButtonElement("Source Code");
             sourceCommand.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")));

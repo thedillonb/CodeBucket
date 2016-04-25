@@ -44,7 +44,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public ReactiveUI.IReactiveCommand LoadCommand { get; }
 
-        public CollectionViewModel<CommentModel> Comments { get; } = new CollectionViewModel<CommentModel>();
+        public ReactiveUI.ReactiveList<CommentModel> Comments { get; } = new ReactiveUI.ReactiveList<CommentModel>();
 
         public ICommand GoToWeb { get; }
 
@@ -71,7 +71,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => {
                 var issueTask = applicationService.Client.Repositories.Issues.GetIssue(Username, Repository, Id);
                 applicationService.Client.Repositories.Issues.GetComments(Username, Repository, Id)
-                    .ToBackground(Comments.Items.Reset);
+                                  .ToBackground(x => Comments.Reset(x));
                 Issue = await issueTask;
             });
         }
@@ -86,7 +86,6 @@ namespace CodeBucket.Core.ViewModels.Issues
             Username = navObject.Username;
             Repository = navObject.Repository;
             Id = navObject.Id;
-			Comments.SortingFunction = x => x.OrderBy(y => y.UtcCreatedOn);
 
 			_editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
 			{
@@ -101,7 +100,7 @@ namespace CodeBucket.Core.ViewModels.Issues
         public async Task AddComment(string text)
         {
             var comment = await _applicationService.Client.Repositories.Issues.AddComment(Username, Repository, Id, text);
-            Comments.Items.Add(comment);
+            Comments.Add(comment);
         }
 
         public class NavObject
