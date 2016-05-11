@@ -1,23 +1,15 @@
 using System;
 using BitbucketSharp.Models;
-using MvvmCross.Core.ViewModels;
-using System.Windows.Input;
 using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Wiki
 {
     public class WikiViewModel : BaseViewModel, ILoadableViewModel
     {
-		public string Username { get; set; }
-		public string Repository { get; set; }
-
-        private string _page;
-        public string Page 
-        {
-            get { return _page; }
-            set { this.RaiseAndSetIfChanged(ref _page, value); }
-        }
-
 		private WikiModel _wiki;
         private WikiModel Wiki
 		{
@@ -39,45 +31,47 @@ namespace CodeBucket.Core.ViewModels.Wiki
             set { this.RaiseAndSetIfChanged(ref _canEdit, value); }
         }
 
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        private ICommand GoToPageCommand
-		{
-			get 
-			{ 
-				return new MvxCommand<string>(x => 
-				{
-					Page = x;
-					LoadCommand.Execute(true);
-				}); 
-			}
-		}
+        private IReactiveCommand<object> GoToPageCommand { get; } = ReactiveCommand.Create();
 
-        public ICommand GoToWebCommand
+        public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
+
+        public WikiViewModel(
+            string username, string repository, string page = null,
+            IMarkdownService markdownService = null, IApplicationService applicationService = null)
         {
-            get
-            {
-                return new MvxCommand<string>(x =>
-                {
-                    var url = string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", Username, Repository, x);
-                    GoToUrlCommand.Execute(url);
-                });
-            }
-        }
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
-        public WikiViewModel(IApplicationService applicationService)
-        {
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            page = page ?? "Home";
+            CanEdit = true;
+
+            if (page.StartsWith("/", StringComparison.Ordinal))
+                page = page.Substring(1);
+
+            GoToWebCommand
+                .OfType<string>()
+                .Select(x => string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", username, repository, x))
+                .Select(x => new WebBrowserViewModel(x))
+                .Subscribe(NavigateTo);
+
+            GoToPageCommand
+                .OfType<string>()
+                .Do(x => page = x)
+                .InvokeCommand(LoadCommand);
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                Wiki = await applicationService.Client.Repositories.GetWiki(Username, Repository, Page);
+                Wiki = await applicationService.Client.Repositories.GetWiki(username, repository, page);
 
                 string content = string.Empty;
                 if (string.Equals(Wiki.Markup, "markdown"))
-                    content = GetService<IMarkdownService>().ConvertMarkdown(Wiki.Data);
+                    content = markdownService.ConvertMarkdown(Wiki.Data);
                 else if (string.Equals(Wiki.Markup, "creole"))
-                    content = GetService<IMarkdownService>().ConvertCreole(Wiki.Data);
+                    content = markdownService.ConvertCreole(Wiki.Data);
                 else if (string.Equals(Wiki.Markup, "textile"))
-                    content = GetService<IMarkdownService>().ConvertTextile(Wiki.Data);
+                    content = markdownService.ConvertTextile(Wiki.Data);
                 else if (string.Equals(Wiki.Markup, "rest"))
                 {
                     content = Wiki.Data;
@@ -86,25 +80,6 @@ namespace CodeBucket.Core.ViewModels.Wiki
                 Content = content;
             });
         }
-
-		public void Init(NavObject navObject)
-        {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Page = navObject.Page ?? "Home";
-
-			if (Page.StartsWith("/", StringComparison.Ordinal))
-				Page = Page.Substring(1);
-
-            CanEdit = true;
-        }
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public string Page { get; set; }
-		}
     }
 }
 

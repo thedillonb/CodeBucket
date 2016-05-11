@@ -7,11 +7,10 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.Groups
 {
-    public class GroupsViewController : ViewModelCollectionDrivenDialogViewController
+    public class GroupsViewController : ViewModelCollectionDrivenDialogViewController<GroupsViewModel>
 	{
         public GroupsViewController()
         {
-            Title = "Groups";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Group.ToEmptyListImage(), "There are no groups."));
         }
@@ -20,18 +19,20 @@ namespace CodeBucket.ViewControllers.Groups
         {
             base.ViewDidLoad();
 
-			var vm = (GroupsViewModel) ViewModel;
-            vm.Groups.ChangedObservable().Subscribe(groups =>
-            {
-                var elements = groups.Select(x =>
+            ViewModel
+                .Groups
+                .ChangedObservable()
+                .Subscribe(groups =>
                 {
-                    var e = new StringElement(x.Name);
-                    e.Clicked.BindCommand(x.GoToCommand);
-                    return e;
-                });
+                    var elements = groups.Select(x =>
+                    {
+                        var e = new StringElement(x.Name);
+                        e.BindClick(x.GoToCommand);
+                        return e;
+                    });
 
-                Root.Reset(new Section { elements });
-            });
+                    Root.Reset(new Section { elements });
+                });
         }
 	}
 }

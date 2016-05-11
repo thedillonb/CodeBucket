@@ -4,22 +4,15 @@ using UIKit;
 using CoreGraphics;
 using CodeBucket.Core.Utils;
 using System;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Teams
 {
-    public class TeamViewController : PrettyDialogViewController
+    public class TeamViewController : PrettyDialogViewController<TeamViewModel>
     {
-        public new TeamViewModel ViewModel
-        {
-            get { return (TeamViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            Title = ViewModel.Name;
 
             var followers = new StringElement("Followers", AtlassianIcon.Star.ToImage());
             var events = new StringElement("Events", AtlassianIcon.Blogroll.ToImage());
@@ -35,7 +28,7 @@ namespace CodeBucket.ViewControllers.Teams
             repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand);
             members.Clicked.BindCommand(ViewModel.GoToMembersCommand);
 
-            ViewModel.Bind(x => x.Team, true).Subscribe(x =>
+            this.WhenAnyValue(x => x.ViewModel.Team).Subscribe(x =>
             {
                 if (x == null)
                 {

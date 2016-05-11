@@ -1,15 +1,13 @@
 using System;
 using UIKit;
-using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using Foundation;
 using SDWebImage;
 using CodeBucket.Core.Utils;
-using CodeBucket.Core.Services;
-using MvvmCross.Platform;
 using CodeBucket.ViewControllers.Accounts;
 using CodeBucket.ViewControllers.Application;
 using MonoTouch.SlideoutNavigation;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers
 {
@@ -20,15 +18,7 @@ namespace CodeBucket.ViewControllers
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
 
-        public StartupViewModel ViewModel { get; }
-
-        public StartupViewController()
-        {
-            ViewModel = new StartupViewModel(
-                Mvx.Resolve<IAccountsService>(),
-                Mvx.Resolve<IApplicationService>(),
-                Mvx.Resolve<IAlertDialogService>());
-        }
+        public StartupViewModel ViewModel { get; } = new StartupViewModel();
 
         public override void ViewWillLayoutSubviews()
         {
@@ -66,12 +56,12 @@ namespace CodeBucket.ViewControllers
 
             OnActivation(d =>
             {
-                d(ViewModel.Bind(x => x.Avatar).Subscribe(UpdatedImage));
-                d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
+                d(ViewModel.WhenAnyValue(x => x.Avatar).Subscribe(UpdatedImage));
+                d(ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x));
                 d(ViewModel.GoToMenuCommand.Subscribe(GoToMenu));
                 d(ViewModel.GoToAccountsCommand.Subscribe(GoToAccounts));
                 d(ViewModel.GoToLoginCommand.Subscribe(GoToNewAccount));
-                d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
+                d(ViewModel.WhenAnyValue(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
                         _activityView.StartAnimating();
@@ -89,8 +79,6 @@ namespace CodeBucket.ViewControllers
             var slideoutController = new SlideoutNavigationController();
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            if (appDelegate != null)
-                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
             vc.ViewModel.GoToDefaultTopView.Execute(null);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);

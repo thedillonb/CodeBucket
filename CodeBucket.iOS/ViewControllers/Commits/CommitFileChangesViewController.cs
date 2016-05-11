@@ -9,10 +9,10 @@ namespace CodeBucket.ViewControllers.Commits
 {
     public class CommitFileChangesViewController : DialogViewController
     {
-        private readonly IList<CommitFileViewModel> _files;
+        private readonly IList<CommitFileItemViewModel> _files;
         private readonly bool _showDetails;
 
-        public CommitFileChangesViewController(IEnumerable<CommitFileViewModel> files)
+        public CommitFileChangesViewController(IEnumerable<CommitFileItemViewModel> files)
             : base(UIKit.UITableViewStyle.Plain)
         {
             _files = files.ToList();

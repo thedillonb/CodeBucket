@@ -4,44 +4,40 @@ using CodeBucket.Core.ViewModels.Commits;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Services;
+using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
     public class BranchesViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string Username { get; private set; }
+        public IReadOnlyReactiveList<ReferenceItemViewModel> Branches { get; }
 
-        public string Repository { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public ReactiveList<BranchModel> Branches { get; } = new ReactiveList<BranchModel>();
-
-        public IReactiveCommand<object> GoToBranchCommand { get; } = ReactiveCommand.Create();
-
-        public IReactiveCommand LoadCommand { get; }
-
-        public BranchesViewModel(IApplicationService applicationService)
+        public BranchesViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
-            GoToBranchCommand.OfType<BranchModel>()
-                .Select(x => new CommitsViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Node })
-                .Subscribe(x => ShowViewModel<CommitsViewModel>(x));
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Branches";
+
+            var branches = new ReactiveList<ReferenceModel>();
+            Branches = branches.CreateDerivedCollection(branch =>
+            {
+                var vm = new ReferenceItemViewModel(branch.Branch);
+                vm.GoToCommand
+                  .Select(_ => new CommitsViewModel(username, repository, branch.Node))
+                  .Subscribe(NavigateTo);
+                return vm;
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var branches = await applicationService.Client.Repositories.GetBranches(Username, Repository);
-                Branches.Reset(branches.Values);
+                var items = await applicationService.Client.Repositories.GetBranches(username, repository);
+                branches.Reset(items.Values);
             });
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace CodeBucket.ViewControllers.User
+﻿using CodeBucket.Core.ViewModels.Teams;
+
+namespace CodeBucket.ViewControllers.User
 {
-    public class TeamFollowersViewController : BaseUserCollectionViewController
+    public class TeamFollowersViewController : BaseUserCollectionViewController<TeamFollowersViewModel>
     {
     }
 }

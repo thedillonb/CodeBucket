@@ -10,7 +10,7 @@ namespace CodeBucket.Services
 
         public string AccountsDir
         {
-            get { return System.IO.Path.Combine(BaseDir, "Documents/accounts"); }
+            get { return Path.Combine(BaseDir, "Documents/accounts"); }
         }
     }
 }

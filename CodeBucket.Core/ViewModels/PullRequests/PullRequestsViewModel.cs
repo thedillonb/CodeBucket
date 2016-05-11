@@ -1,4 +1,3 @@
-using MvvmCross.Core.ViewModels;
 using System;
 using BitbucketSharp.Models.V2;
 using CodeBucket.Core.Services;
@@ -7,18 +6,17 @@ using System.Reactive.Linq;
 using CodeBucket.Core.Utils;
 using Humanizer;
 using System.Linq;
+using Splat;
+using ReactiveUI;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public CollectionViewModel<PullRequestItemViewModel> PullRequests { get; } = new CollectionViewModel<PullRequestItemViewModel>();
+        public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; }
 
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
 		private PullRequestState _selectedFilter;
 		public PullRequestState SelectedFilter
@@ -27,38 +25,35 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
 
-        public PullRequestsViewModel(IApplicationService applicationService)
+        public PullRequestsViewModel(string username, string repository,
+                                     IApplicationService applicationService = null)
 		{
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ =>
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Pull Requests";
+
+            var pullRequests = new ReactiveList<PullRequest>();
+            PullRequests = pullRequests.CreateDerivedCollection(pullRequest =>
             {
-                PullRequests.Items.Clear();
-                return applicationService.Client.ForAllItems(x => x.Repositories.PullRequests.GetPullRequests(Username, Repository, SelectedFilter), 
-                                                             x => PullRequests.Items.AddRange(x.Select(ToViewModel)));
+                var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
+                var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
+                vm.GoToCommand
+                  .Select(_ => new PullRequestViewModel(username, repository, pullRequest))
+                  .Subscribe(NavigateTo);
+                return vm;
             });
 
-            this.Bind(x => x.SelectedFilter).BindCommand(LoadCommand);
-        }
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                PullRequests.Reset();
+                return applicationService.Client.ForAllItems(x => 
+                    x.Repositories.PullRequests.GetPullRequests(username, repository, SelectedFilter), 
+                    pullRequests.AddRange);
+            });
 
-        private PullRequestItemViewModel ToViewModel(PullRequest pullRequest)
-        {
-            var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
-            var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
-            vm.GoToCommand
-              .Select(x => new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = pullRequest.Id })
-              .Subscribe(x => ShowViewModel<PullRequestViewModel>(x));
-            return vm;
-        }
-
-		public void Init(NavObject navObject) 
-        {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            this.WhenAnyValue(x => x.SelectedFilter)
+                .Skip(1)
+                .InvokeCommand(LoadCommand);
         }
     }
 }

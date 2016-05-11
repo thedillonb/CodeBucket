@@ -198,7 +198,7 @@ var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 30
                 <img src="@comment.AvatarUrl">
                 <div>
                     <h1>@comment.Name</h1>
-                    <h2>@comment.Date.Humanize()</h2>
+                    <h2>@comment.Date</h2>
                     <div class="mark">@{WriteLiteral(comment.Body);}</div>
                 </div>
             </div>

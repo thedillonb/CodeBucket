@@ -1,19 +1,15 @@
 using System;
-using MvvmCross.Core.ViewModels;
 using UIKit;
-using MvvmCross.Platform.iOS.Views;
-using MvvmCross.iOS.Views;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Platform.Core;
 using System.Linq;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels;
 using CodeBucket.Utilities;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class PrettyDialogViewController : ViewModelDrivenDialogViewController
+    public abstract class PrettyDialogViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel> where TViewModel : class
     {
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
@@ -70,8 +66,9 @@ namespace CodeBucket.ViewControllers
                 NavigationController.NavigationBar.ShadowImage = null;
         }
 
-        protected void RefreshHeaderView()
+        protected void RefreshHeaderView(string text = null)
         {
+            HeaderView.Text = text ?? HeaderView.Text;
             TableView.TableHeaderView = HeaderView;
             TableView.ReloadData();
         }
@@ -112,15 +109,34 @@ namespace CodeBucket.ViewControllers
         }
     }
 
-    public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
+    public abstract class ViewModelDrivenDialogViewController<TViewModel> : DialogViewController, IViewFor<TViewModel> where TViewModel : class
     {
         private bool _manualRefreshRequested;
         private readonly LoadingIndicator _loadingIndicator = new LoadingIndicator();
 
+        private TViewModel _viewModel;
+        public TViewModel ViewModel
+        {
+            get { return _viewModel; }
+            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+        }
+
+        object IViewFor.ViewModel
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewDidLoadCalled.Raise(this);
 
             var loadableViewModel = ViewModel as ILoadableViewModel;
             if (loadableViewModel != null)
@@ -175,14 +191,19 @@ namespace CodeBucket.ViewControllers
         protected ViewModelDrivenDialogViewController(UITableViewStyle style = UITableViewStyle.Grouped)
             : base(style)
         {
-            this.AdaptForBinding();
-
             Appearing.Take(1)
                      .Select(_ => ViewModel)
                      .OfType<ILoadableViewModel>()
                      .Select(x => x.LoadCommand)
                      .Where(x => x.CanExecute(null))
                      .Subscribe(x => x.Execute(null));
+
+            Appearing.Take(1)
+                     .Select(_ => ViewModel)
+                     .OfType<IProvidesTitle>()
+                     .Select(x => x.WhenAnyValue(y => y.Title))
+                     .Switch()
+                     .Subscribe(x => Title = x);
         }
 
         private void HandleRefreshRequested(object sender, EventArgs e)
@@ -195,64 +216,17 @@ namespace CodeBucket.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            ViewWillAppearCalled.Raise(this, animated);
 
             if (RefreshControl != null)
                 RefreshControl.ValueChanged += HandleRefreshRequested;
         }
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            ViewWillDisappearCalled.Raise(this, animated);
-        }
-
-        public object DataContext
-        {
-            get { return BindingContext.DataContext; }
-            set { BindingContext.DataContext = value; }
-        }
-
-        public IMvxViewModel ViewModel
-        {
-            get { return DataContext as IMvxViewModel;  }
-            set { DataContext = value; }
-        }
-
-        public IMvxBindingContext BindingContext { get; set; }
-
-        public MvxViewModelRequest Request { get; set; }
-
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            ViewDidDisappearCalled.Raise(this, animated);
-
             if (RefreshControl != null)
                 RefreshControl.ValueChanged -= HandleRefreshRequested;
         }
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            ViewDidAppearCalled.Raise(this, animated);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DisposeCalled.Raise(this);
-            }
-            base.Dispose(disposing);
-        }
-
-        public event EventHandler DisposeCalled;
-        public event EventHandler ViewDidLoadCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewWillAppearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewDidAppearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewDidDisappearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewWillDisappearCalled;
     }
 }
 

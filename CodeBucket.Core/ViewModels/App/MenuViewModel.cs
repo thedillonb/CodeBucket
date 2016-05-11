@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
@@ -12,194 +8,205 @@ using System.Linq;
 using BitbucketSharp;
 using BitbucketSharp.Models;
 using CodeBucket.Core.ViewModels.Teams;
-using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Issues;
 using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Groups;
 using BitbucketSharp.Models.V2;
+using Splat;
+using ReactiveUI;
+using System.Reactive;
+using CodeFramework.Core.Data;
 
 namespace CodeBucket.Core.ViewModels.App
 {
     public class MenuViewModel : BaseViewModel, ILoadableViewModel
     {
-        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.SlideoutRootPresentation, string.Empty}};  
+        public IReactiveCommand<object> GoToDefaultTopView { get; } = ReactiveCommand.Create();
 
-        private static IAccountsService Accounts
-        {
-            get { return Mvx.Resolve<IAccountsService>(); }
-        }
+        public ReactiveList<GroupItemViewModel> Groups { get; } = new ReactiveList<GroupItemViewModel>();
 
-        public void Init()
-        {
-            GoToDefaultTopView.Execute(null);
-        }
+        public IReadOnlyReactiveList<TeamItemViewModel> Teams { get; }
 
-        public ICommand GoToDefaultTopView
+        public IReadOnlyReactiveList<TeamItemViewModel> TeamEvents { get; }
+
+        public IReadOnlyReactiveList<PinnedRepositoryItemViewModel> PinnedRepositories { get; }
+
+        public bool ExpandTeamsAndGroups { get; }
+
+        public bool ShowTeamEvents { get; }
+
+        public string Username { get; }
+
+        public Avatar Avatar { get; }
+
+        public MenuViewModel(
+            IApplicationService applicationService = null, 
+            IAccountsService accountsService = null)
         {
-            get
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+
+            Avatar = new Avatar(applicationService.Account.AvatarUrl);
+            Username = applicationService.Account.Username;
+            var username = Username;
+
+            ExpandTeamsAndGroups = applicationService.Account.ExpandTeamsAndGroups;
+            Title = username;
+
+            var teams = new ReactiveList<Team>();
+            var repos = new ReactiveList<PinnedRepository>();
+
+            PinnedRepositories = repos.CreateDerivedCollection(x =>
             {
-                var startupViewName = Accounts.ActiveAccount.DefaultStartupView;
+                var vm = new PinnedRepositoryItemViewModel(x.Name, new Avatar(x.ImageUri));
+                vm.DeleteCommand
+                  .Do(_ => accountsService.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id))
+                  .Subscribe(_ => repos.Remove(x));
+                vm.GoToCommand
+                  .Select(_ => new RepositoryViewModel(x.Owner, x.Slug))
+                  .Subscribe(NavigateTo);
+                return vm;
+            });
+
+            this.WhenActivated(d => 
+                repos.Reset(accountsService.ActiveAccount.PinnnedRepositories));
+
+            Teams = teams.CreateDerivedCollection(x =>
+            {
+                var viewModel = new TeamItemViewModel(x.Username);
+                viewModel.GoToCommand
+                         .Select(_ => new TeamViewModel(x))
+                         .Subscribe(NavigateTo);
+                return viewModel;
+            });
+
+            TeamEvents = teams.CreateDerivedCollection(x =>
+            {
+                var viewModel = new TeamItemViewModel(x.Username);
+                viewModel.GoToCommand
+                         .Select(_ => new UserEventsViewModel(x.Username))
+                         .Subscribe(NavigateTo);
+                return viewModel;
+            });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            {
+                applicationService.Client
+                                  .AllItems(x => x.Teams.GetTeams(BitbucketSharp.Controllers.TeamRole.Member))
+                                  .ToBackground(teams.Reset);
+
+                applicationService.Client.Groups
+                                  .GetGroups(username)
+                                  .ToBackground(groups => Groups.Reset(groups.Select(ToViewModel)));
+
+                return Task.FromResult(Unit.Default);
+            });
+
+            GoToProfileCommand
+                .Select(_ => new UserViewModel(username))
+                .Subscribe(NavigateTo);
+
+            GoToMyEvents
+                .Select(_ => new UserEventsViewModel(username))
+                .Subscribe(NavigateTo);
+
+            GoToStarredRepositoriesCommand
+                .Select(_ => new RepositoriesStarredViewModel())
+                .Subscribe(NavigateTo);
+
+            GoToOwnedRepositoriesCommand
+                .Select(_ => new UserRepositoriesViewModel(username))
+                .Subscribe(NavigateTo);
+
+            GoToSharedRepositoriesCommand
+                .Select(_ => new RepositoriesSharedViewModel())
+                .Subscribe(NavigateTo);
+
+            GoToTeamsCommand
+                .Select(_ => new TeamsViewModel())
+                .Subscribe(NavigateTo);
+
+            GoToSettingsCommand
+                .Select(_ => new SettingsViewModel())
+                .Subscribe(NavigateTo);
+
+            GoToFeedbackCommand
+                .Select(_ => new IssuesViewModel("thedillonb", "codebucket"))
+                .Subscribe(NavigateTo);
+
+            GoToGroupsCommand
+                .Select(_ => new GroupsViewModel(username))
+                .Subscribe(NavigateTo);
+
+            GoToDefaultTopView.Subscribe(_ =>
+            {
+                var startupViewName = accountsService.ActiveAccount.DefaultStartupView;
                 if (!string.IsNullOrEmpty(startupViewName))
                 {
                     var props = from p in GetType().GetProperties()
-                        let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
-                            where attr.Length == 1
-                        select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute};
+                                let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
+                                where attr.Length == 1
+                                select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute };
 
-                    foreach (var p in props)
-                    {
-                        if (string.Equals(startupViewName, p.Attribute.Name))
-                            return p.Property.GetValue(this) as ICommand;
-                    }
+
+                    var match = props.FirstOrDefault(x => string.Equals(startupViewName, x.Attribute.Name));
+                    var cmd = match?.Property.GetValue(this) as IReactiveCommand;
+                    if (cmd != null)
+                        cmd.ExecuteIfCan();
                 }
 
                 //Oh no... Look for the last resort DefaultStartupViewAttribute
                 var deprop = (from p in GetType().GetProperties()
-                    let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true)
-                    where attr.Length == 1
-                    select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
+                              let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true)
+                              where attr.Length == 1
+                              select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
 
                 //That shouldn't happen...
-                if (deprop == null)
-                    return null;
-                var val = deprop.Property.GetValue(this);
-                return val as ICommand;
-            }
-        }
-
-        public ICommand DeletePinnedRepositoryCommand
-        {
-            get 
-            {
-                return new MvxCommand<CodeFramework.Core.Data.PinnedRepository>(x => Accounts.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id), x => x != null);
-            }
-        }
-
-        protected bool ShowMenuViewModel<T>(object data) where T : IMvxViewModel
-        {
-            return this.ShowViewModel<T>(data, new MvxBundle(Presentation));
-        }
-
-        public IEnumerable<CodeFramework.Core.Data.PinnedRepository> PinnedRepositories
-        {
-            get { return Accounts.ActiveAccount.PinnnedRepositories; }
-        }
-
-        private readonly IApplicationService _application;
-
-        public ReactiveUI.ReactiveList<GroupItemViewModel> Groups { get; } = new ReactiveUI.ReactiveList<GroupItemViewModel>();
-
-        public ReactiveUI.ReactiveList<TeamItemViewModel> Teams { get; } = new ReactiveUI.ReactiveList<TeamItemViewModel>();
-
-		public BitbucketAccount Account
-        {
-            get { return _application.Account; }
-        }
-		
-        public MenuViewModel(IApplicationService application)
-        {
-            _application = application;
-
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(t =>
-            {
-                application.Client
-                           .AllItems(x => x.Teams.GetTeams(BitbucketSharp.Controllers.TeamRole.Member))
-                           .ToBackground(x => Teams.Reset(x.Select(ToViewModel)));
-
-                application.Client.Groups
-                           .GetGroups(Account.Username)
-                           .ToBackground(groups => Groups.Reset(groups.Select(ToViewModel)));
-
-                return Task.FromResult(0);
+                var bCmd = deprop?.Property.GetValue(this) as IReactiveCommand;
+                if (bCmd != null)
+                    bCmd.ExecuteIfCan();
             });
-        }
-
-        private TeamItemViewModel ToViewModel(Team team)
-        {
-            var viewModel = new TeamItemViewModel(team.Username);
-            viewModel.GoToCommand
-                     .Select(_ => new TeamViewModel.NavObject { Name = team.Username })
-                     .Subscribe(y => ShowMenuViewModel<TeamViewModel>(y));
-            return viewModel;
         }
 
         private GroupItemViewModel ToViewModel(GroupModel group)
         {
             var viewModel = new GroupItemViewModel(group.Name);
             viewModel.GoToCommand
-                     .Select(_ => new GroupViewModel.NavObject { Slug = group.Slug, Owner = group.Owner.Username, Name = group.Name })
-                     .Subscribe(y => ShowMenuViewModel<GroupViewModel>(y));
+                     .Select(_ => new GroupViewModel(group))
+                     .Subscribe(NavigateTo);
             return viewModel;
         }
 
-		[PotentialStartupViewAttribute("Profile")]
-        public ICommand GoToProfileCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _application.Account.Username })); }
-        }
+        [PotentialStartupView("Profile")]
+        public IReactiveCommand<object> GoToProfileCommand { get; } = ReactiveCommand.Create();
 
-		[DefaultStartupViewAttribute]
-		[PotentialStartupViewAttribute("My Events")]
-        public ICommand GoToMyEvents
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Account.Username })); }
-        }
+		[DefaultStartupView]
+		[PotentialStartupView("My Events")]
+        public IReactiveCommand<object> GoToMyEvents { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupViewAttribute("Starred Repositories")]
-        public ICommand GoToStarredRepositoriesCommand
-        {
-			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
-        }
+		[PotentialStartupView("Starred Repositories")]
+        public IReactiveCommand<object> GoToStarredRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-        [PotentialStartupViewAttribute("My Repositories")]
-		public ICommand GoToOwnedRepositoriesCommand
-		{
-            get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username })); }
-		}
+        [PotentialStartupView("My Repositories")]
+		public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-        [PotentialStartupViewAttribute("Shared Repositories")]
-        public ICommand GoToSharedRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesSharedViewModel>(null)); }
-        }
+        [PotentialStartupView("Shared Repositories")]
+        public IReactiveCommand<object> GoToSharedRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupViewAttribute("Explore Repositories")]
-        public ReactiveUI.IReactiveCommand<object> GoToExploreRepositoriesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+		[PotentialStartupView("Explore Repositories")]
+        public IReactiveCommand<object> GoToExploreRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-		public ICommand GoToTeamEventsCommand
-		{
-			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
-		}
+		[PotentialStartupView("Organizations")]
+		public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupViewAttribute("Organizations")]
-		public ICommand GoToGroupsCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<Groups.GroupsViewModel>(new Groups.GroupsViewModel.NavObject { Username = Account.Username }));}
-		}
+		[PotentialStartupView("Teams")]
+		public IReactiveCommand<object> GoToTeamsCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupViewAttribute("Teams")]
-		public ICommand GoToTeamsCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<TeamsViewModel>(null)); }
-		}
+		public IReactiveCommand<object> GoToSettingsCommand { get; } = ReactiveCommand.Create();
 
-		public ICommand GoToSettingsCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
-		}
+        public IReactiveCommand<object> GoToFeedbackCommand { get; } = ReactiveCommand.Create();
 
-        public ICommand GoToFeedbackCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<IssuesViewModel>(new IssuesViewModel.NavObject { Repository = "CodeBucket", Username = "thedillonb" }));}
-        }
-
-
-		public ICommand GoToRepositoryCommand
-		{
-			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, RepositorySlug = x.Name }));}
-		}
-
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
     }
 }

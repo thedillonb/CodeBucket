@@ -4,7 +4,7 @@ using System.IO;
 using System;
 using CodeBucket.Core.Services;
 using System.Globalization;
-using MvvmCross.Platform;
+using Splat;
 
 namespace CodeBucket.Core.Data
 {
@@ -69,7 +69,7 @@ namespace CodeBucket.Core.Data
         {
             get
             {
-                var accountsDir = Mvx.Resolve<IAccountPreferencesService>().AccountsDir;
+                var accountsDir = Locator.Current.GetService<IAccountPreferencesService>().AccountsDir;
                 return Path.Combine(accountsDir, Id.ToString(CultureInfo.InvariantCulture));
             }
         }

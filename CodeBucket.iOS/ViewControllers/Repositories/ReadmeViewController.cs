@@ -4,18 +4,13 @@ using CodeBucket.Views;
 using UIKit;
 using WebKit;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public class ReadmeViewController : WebView
+    public class ReadmeViewController : WebViewController<ReadmeViewModel>
     {
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
-
-        public new ReadmeViewModel ViewModel
-        {
-            get { return (ReadmeViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
 
         public ReadmeViewController() : base(false)
         {
@@ -27,7 +22,7 @@ namespace CodeBucket.ViewControllers.Repositories
         {
             base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.ContentText, true)
+            this.WhenAnyValue(x => x.ViewModel.ContentText)
                 .IsNotNull()
                 .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
                 .Select(x => new MarkdownView { Model = x }.GenerateString())
@@ -50,9 +45,10 @@ namespace CodeBucket.ViewControllers.Repositories
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
+            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
             {
-                ViewModel.GoToUrlCommand.Execute(navigationAction.Request.Url.AbsoluteString);
+                var webBrowser = new WebBrowserViewController();
+                NavigationController.PushViewController(webBrowser, true);
                 return false;
             }
 

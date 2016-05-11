@@ -9,7 +9,8 @@ using CodeBucket.Core.ViewModels;
 
 namespace CodeBucket.ViewControllers.User
 {
-    public abstract class BaseUserCollectionViewController : ViewModelDrivenDialogViewController
+    public abstract class BaseUserCollectionViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel> 
+        where TViewModel : BaseUserCollectionViewModel
     {
         protected BaseUserCollectionViewController()
             : base(UITableViewStyle.Plain)
@@ -20,17 +21,12 @@ namespace CodeBucket.ViewControllers.User
         {
             base.ViewDidLoad();
 
-            var vm = (BaseUserCollectionViewModel)ViewModel;
-
             TableView.EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.User.ToEmptyListImage(), vm.EmptyMessage ?? "There are no users."));
+                new EmptyListView(AtlassianIcon.User.ToEmptyListImage(), ViewModel.EmptyMessage ?? "There are no users."));
 
-            vm.Users.ChangedObservable()
+            ViewModel.Users.ChangedObservable()
               .Select(users => users.Select(y => new UserElement(y)))
               .Subscribe(elements => Root.Reset(new Section { elements }));
-
-            vm.Bind(x => x.Title, true)
-              .Subscribe(x => Title = x);
 
             Appeared.Take(1)
                     .Select(_ => ViewModel)
@@ -38,7 +34,7 @@ namespace CodeBucket.ViewControllers.User
                     .Select(x => x.LoadCommand.IsExecuting)
                     .Switch()
                     .Where(x => x == false)
-                    .Select(_ => !vm.Users.Any())
+                    .Select(_ => !ViewModel.Users.Any())
                     .DistinctUntilChanged()
                     .Subscribe(TableView.SetEmpty);
         }

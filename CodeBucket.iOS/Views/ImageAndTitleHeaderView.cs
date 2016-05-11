@@ -43,7 +43,10 @@ namespace CodeBucket.Views
         {
             get { return _label.Text; }
             set 
-            { 
+            {
+                if (_label.Text == value)
+                    return;
+                
                 _label.Text = value; 
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();
@@ -66,6 +69,8 @@ namespace CodeBucket.Views
             {
                 if (!string.IsNullOrEmpty(value))
                     _label2.Hidden = false;
+                if (_label2.Text == value)
+                    return;
                 _label2.Text = value;
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();

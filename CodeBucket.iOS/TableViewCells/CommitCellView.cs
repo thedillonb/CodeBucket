@@ -2,12 +2,11 @@ using System;
 using Foundation;
 using UIKit;
 using SDWebImage;
-using MvvmCross.Binding.iOS.Views;
 using CodeBucket.Core.Utils;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class CommitCellView : MvxTableViewCell
+    public partial class CommitCellView : UITableViewCell
     {
         public static readonly UINib Nib = UINib.FromName("CommitCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("CommitCellView");

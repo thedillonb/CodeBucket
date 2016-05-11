@@ -3,12 +3,11 @@ using Foundation;
 using UIKit;
 using SDWebImage;
 using CodeBucket.Core.Utils;
-using MvvmCross.Binding.iOS.Views;
 using ObjCRuntime;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class PullRequestCellView : MvxTableViewCell
+    public partial class PullRequestCellView : UITableViewCell
     {
         public static readonly UINib Nib = UINib.FromName("PullRequestCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("PullRequestCellView");

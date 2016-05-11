@@ -1,33 +1,24 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Users;
-using MvvmCross.Plugins.Messenger;
-using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
-using System.Linq;
 using System;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
+using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Comments;
+using Humanizer;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private MvxSubscriptionToken _editToken, _deleteToken;
+        private readonly Func<string, Task<CommentModel>> _addCommentFunc;
 
-        public int Id { get; private set; }
-
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-        private string _markdownDescription;
-        public string MarkdownDescription
-        {
-            get { return _markdownDescription; }
-            private set { this.RaiseAndSetIfChanged(ref _markdownDescription, value); }
-        }
+        private readonly ObservableAsPropertyHelper<string> _markdownDescription;
+        public string MarkdownDescription => _markdownDescription.Value;
 
 		private IssueModel _issueModel;
         public IssueModel Issue
@@ -36,28 +27,57 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
-        public ICommand GoToAssigneeCommand { get; }
+        public IReactiveCommand<object> GoToAssigneeCommand { get; }
 
-        public ICommand GoToMilestoneCommand { get; }
+        public IReactiveCommand<object> GoToMilestoneCommand { get; }
 
-        public ICommand GoToEditCommand { get; }
+        public IReactiveCommand<object> GoToEditCommand { get; }
 
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public ReactiveUI.ReactiveList<CommentModel> Comments { get; } = new ReactiveUI.ReactiveList<CommentModel>();
+        public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
-        public ICommand GoToWeb { get; }
+        public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
 
-        public IssueViewModel(IApplicationService applicationService, IMarkdownService markdownService)
+        public IssueViewModel(
+            string username, string repository, IssueModel issue,
+            IApplicationService applicationService = null, IMarkdownService markdownService = null)
+            : this(username, repository, issue.LocalId, applicationService, markdownService)
         {
-            _applicationService = applicationService;
+            Issue = issue;
+        }
 
-            GoToWeb = new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x }));
-            GoToAssigneeCommand = new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue.Responsible.Username }), () => Issue != null && Issue.Responsible != null);
-            GoToEditCommand = new MvxCommand(() => {
-                GetService<IViewModelTxService>().Add(Issue);
-                ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
-            }, () => Issue != null);
+        public IssueViewModel(
+            string username, string repository, int issueId,
+            IApplicationService applicationService = null, IMarkdownService markdownService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+
+            _addCommentFunc = text => 
+                applicationService.Client.Repositories.Issues.AddComment(username, repository, issueId, text);
+
+            Title = "Issue #" + issueId;
+
+            GoToWebCommand
+                .OfType<string>()
+                .Select(x => new WebBrowserViewModel(x))
+                .Subscribe(NavigateTo);
+
+            GoToAssigneeCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.Issue.Responsible.Username).Select(x => x != null));
+            
+            GoToAssigneeCommand
+                .Select(_ => new UserViewModel(Issue.Responsible.Username))
+                .Subscribe(NavigateTo);
+
+            GoToEditCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.Issue).Select(x => x != null));
+
+            GoToEditCommand
+                .Select(_ => new IssueEditViewModel(username, repository, Issue))
+                .Subscribe(NavigateTo);
+
             GoToMilestoneCommand = null;
             //              return new MvxCommand(() => {
             //                  if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
@@ -65,49 +85,31 @@ namespace CodeBucket.Core.ViewModels.Issues
             //                  ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
             //              }); 
 
-            this.Bind(x => x.Issue)
-                .Subscribe(x => MarkdownDescription = x != null ? markdownService.ConvertMarkdown(x.Content) : null);
+            GoToEditCommand.Subscribe(_ =>
+            {
 
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => {
-                var issueTask = applicationService.Client.Repositories.Issues.GetIssue(Username, Repository, Id);
-                applicationService.Client.Repositories.Issues.GetComments(Username, Repository, Id)
-                                  .ToBackground(x => Comments.Reset(x));
+            });
+
+            this.WhenAnyValue(x => x.Issue.Content)
+                .Select(markdownService.ConvertMarkdown)
+                .ToProperty(this, x => x.MarkdownDescription, out _markdownDescription);
+
+            var comments = new ReactiveList<CommentModel>();
+            Comments = comments.CreateDerivedCollection(x =>
+            {
+                return new CommentItemViewModel(x.AuthorInfo.Username,
+                                                new Utils.Avatar(x.AuthorInfo.Avatar),
+                                                x.UtcCreatedOn.Humanize(),
+                                                markdownService.ConvertMarkdown(x.Content));
+
+            });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                var issueTask = applicationService.Client.Repositories.Issues.GetIssue(username, repository, issueId);
+                applicationService.Client.Repositories.Issues.GetComments(username, repository, issueId)
+                                  .ToBackground(x => comments.Reset(x.Where(y => !string.IsNullOrEmpty(y.Content))));
                 Issue = await issueTask;
             });
-        }
-
-        public string ConvertToMarkdown(string str)
-        {
-			return (GetService<IMarkdownService>().ConvertMarkdown(str));
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Id = navObject.Id;
-
-			_editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
-			{
-                if (x.Issue == null || x.Issue.LocalId != Issue.LocalId)
-					return;
-				Issue = x.Issue;
-			});
-
-            _deleteToken = Messenger.SubscribeOnMainThread<IssueDeleteMessage>(x => ChangePresentation(new MvxClosePresentationHint(this)));
-        }
-
-        public async Task AddComment(string text)
-        {
-            var comment = await _applicationService.Client.Repositories.Issues.AddComment(Username, Repository, Id, text);
-            Comments.Add(comment);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-			public int Id { get; set; }
         }
     }
 }

@@ -3,6 +3,8 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -17,14 +19,14 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
 		}
 
-		public string Username  { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-		public string Repository { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; }
-
-        public IssueMilestonesViewModel(IApplicationService applicationService)
+        public IssueMilestonesViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             var milestones = new ReactiveList<IssueMilestone>();
             Milestones = milestones.CreateDerivedCollection(CreateItemViewModel);
 
@@ -33,7 +35,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                milestones.Reset(await applicationService.Client.Repositories.Issues.GetMilestones(Username, Repository));
+                milestones.Reset(await applicationService.Client.Repositories.Issues.GetMilestones(username, repository));
             });
         }
 
@@ -43,12 +45,6 @@ namespace CodeBucket.Core.ViewModels.Issues
             vm.WhenAnyValue(y => y.IsSelected).Skip(1).Subscribe(y => SelectedValue = y ? component.Name : null);
             return vm;
         }
-
-        public void Init(string username, string repository)
-		{
-            Username = username;
-            Repository = repository;
-		}
 	}
 }
 

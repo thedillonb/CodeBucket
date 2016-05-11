@@ -8,7 +8,8 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.Commits
 {
-	public abstract class BaseCommitsViewController : ViewModelDrivenDialogViewController
+    public abstract class BaseCommitsViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
+        where TViewModel : class
 	{
         protected BaseCommitsViewController()
             : base(style: UITableViewStyle.Plain)
@@ -17,8 +18,6 @@ namespace CodeBucket.ViewControllers.Commits
 
 		public override void ViewDidLoad()
 		{
-			Title = "Commits";
-
 			base.ViewDidLoad();
 
             TableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);

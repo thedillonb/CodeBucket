@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System;
 using System.Linq;
 
 namespace CodeBucket.Views
@@ -10,11 +9,11 @@ namespace CodeBucket.Views
 
         public string Name { get; set; }
 
-        public DateTimeOffset Date { get; set; }
+        public string Date { get; set; }
 
         public string Body { get; set; }
 
-        public Comment(string avatar, string name, string body, DateTimeOffset date)
+        public Comment(string avatar, string name, string body, string date)
         {
             AvatarUrl = avatar;
             Name = name;

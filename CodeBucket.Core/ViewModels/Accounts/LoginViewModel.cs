@@ -8,6 +8,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeBucket.Core.Messages;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
@@ -36,16 +37,18 @@ namespace CodeBucket.Core.ViewModels.Accounts
 		{
 			get
 			{
-                return string.Format("https://bitbucket.org/site/oauth2/authorize?client_id={0}&response_type=code", LoginViewModel.ClientId);
+                return string.Format("https://bitbucket.org/site/oauth2/authorize?client_id={0}&response_type=code", ClientId);
 			}
 		}
 
         public ReactiveCommand<Unit> LoginCommand { get; }
 
-        public LoginViewModel(IApplicationService applicationService, IAccountsService accountsService)
+        public LoginViewModel(
+            IApplicationService applicationService = null, 
+            IAccountsService accountsService = null)
 		{
-            _applicationService = applicationService;
-            _accountsService = accountsService;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
 
             LoginCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Code).Select(x => x != null),

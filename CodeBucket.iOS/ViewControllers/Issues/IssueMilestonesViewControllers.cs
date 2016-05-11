@@ -3,24 +3,20 @@ using System.Linq;
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.DialogElements;
-using BitbucketSharp.Models;
-using CodeBucket.Core.Services;
 using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Issues
 {
     public class IssueMilestonesViewControllers : DialogViewController
 	{
-        private IssueComponentsViewModel ViewModel { get; }
+        private IssueComponentsViewModel ViewModel { get; } 
      
         public IssueMilestonesViewControllers(string username, string repository)
             : base(UITableViewStyle.Plain)
         {
-			Title = "Milestones";
+            ViewModel = new IssueComponentsViewModel(username, repository);
+            Title = "Milestones";
 			EnableSearch = false;
-
-            ViewModel = new IssueComponentsViewModel(MvvmCross.Platform.Mvx.Resolve<IApplicationService>());
-            ViewModel.Init(username, repository);
 		}
 
 		public override void ViewDidLoad()

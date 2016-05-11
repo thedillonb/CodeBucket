@@ -2,6 +2,8 @@ using BitbucketSharp.Models;
 using System.Collections.Generic;
 using CodeBucket.Core.Services;
 using ReactiveUI;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -21,23 +23,17 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
-		public string Username  { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-		public string Repository { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; }
-
-        public IssueVersionsViewModel(IApplicationService applicationService)
+        public IssueVersionsViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                Versions = await applicationService.Client.Repositories.Issues.GetVersions(Username, Repository);
+                Versions = await applicationService.Client.Repositories.Issues.GetVersions(username, repository);
             });
-        }
-
-        public void Init(string username, string repository)
-        {
-            Username = username;
-            Repository = repository;
         }
 	}
 }

@@ -1,15 +1,14 @@
-using System;
-using MvvmCross.Plugins.Messenger;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeBucket.Core.Messages;
 using BitbucketSharp.Models;
+using ReactiveUI;
+using System.Reactive;
+using System;
 using CodeBucket.Core.Services;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-	public abstract class IssueModifyViewModel : LoadableViewModel
+    public abstract class IssueModifyViewModel : BaseViewModel, ILoadableViewModel
     {
 		public static readonly string[] Priorities = { "Trivial", "Minor", "Major", "Critical", "Blocker" };
 		public static readonly string[] Statuses = { "New", "Open", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
@@ -20,7 +19,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 		private UserModel _assignedTo;
 		private bool _isSaving;
 
-		public string Title
+		public string IssueTitle
 		{
 			get { return _title; }
             set { this.RaiseAndSetIfChanged(ref _title, value); }
@@ -100,30 +99,30 @@ namespace CodeBucket.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _isSaving, value); }
 		}
 
-		public string Username { get; private set; }
-
-		public string Repository { get; private set; }
-
-        public ReactiveUI.IReactiveCommand<object> GoToMilestonesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
-        public ReactiveUI.IReactiveCommand<object> GoToVersionsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
-        public ReactiveUI.IReactiveCommand<object> GoToComponentsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
-        public ReactiveUI.IReactiveCommand<object> GoToAssigneeCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToMilestonesCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToVersionsCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToComponentsCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToAssigneeCommand { get; } = ReactiveCommand.Create();
 
 
-		public ICommand SaveCommand
-		{
-			get { return new MvxCommand(() => Save()); }
-		}
+        public IReactiveCommand<Unit> SaveCommand { get; }
 
-		protected void Init(string username, string repository)
-		{
-			Username = username;
-			Repository = repository;
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-			var messenger = GetService<IMvxMessenger>();
-		}
+        protected IssueModifyViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-		protected override Task Load()
+            SaveCommand = ReactiveCommand.CreateAsyncTask(t => Save());
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+            });
+        }
+
+		protected Task Load()
 		{
 			return Task.FromResult(false);
 //			Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetMilestones(

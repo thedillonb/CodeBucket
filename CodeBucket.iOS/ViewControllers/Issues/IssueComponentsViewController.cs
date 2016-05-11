@@ -3,7 +3,6 @@ using System.Linq;
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.DialogElements;
-using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
 
@@ -16,11 +15,9 @@ namespace CodeBucket.ViewControllers.Issues
         public IssueComponentsViewController(string username, string repository)
             : base(UITableViewStyle.Plain)
 		{
+            ViewModel = new IssueComponentsViewModel(username, repository);
             Title = "Components";
 			EnableSearch = false;
-
-            ViewModel = new IssueComponentsViewModel(MvvmCross.Platform.Mvx.Resolve<IApplicationService>());
-            ViewModel.Init(username, repository);
 		}
 
 		public override void ViewDidLoad()

@@ -1,13 +1,19 @@
 using System;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeBucket.Core.Messages;
-using BitbucketSharp.Models;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssueAddViewModel : IssueModifyViewModel
     {
+        public IssueAddViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
+            : base(username, repository, applicationService)
+        {
+            Title = "New Issue";
+        }
+
 		protected override async Task Save()
 		{
 //			try
@@ -40,22 +46,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 //			{
 //				IsSaving = false;
 //			}
-		}
-
-		protected override Task Load()
-		{
-			return Task.FromResult(false);
-		}
-
-		public void Init(NavObject navObject)
-		{
-			base.Init(navObject.Username, navObject.Repository);
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
 		}
     }
 }

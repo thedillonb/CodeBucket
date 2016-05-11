@@ -2,7 +2,6 @@ using System;
 using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
-using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Linq;
 using CodeBucket.Core.Utils;
@@ -16,11 +15,9 @@ namespace CodeBucket.ViewControllers.Issues
         public IssueAssigneeViewController(string username, string repository)
             : base(UITableViewStyle.Plain)
         {
+            ViewModel = new IssueAssigneeViewModel(username, repository);
             Title = "Components";
             EnableSearch = false;
-
-            ViewModel = new IssueAssigneeViewModel(MvvmCross.Platform.Mvx.Resolve<IApplicationService>());
-            ViewModel.Init(username, repository);
         }
 
         public override void ViewDidLoad()

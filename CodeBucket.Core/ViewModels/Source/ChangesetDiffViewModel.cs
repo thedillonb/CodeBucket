@@ -1,47 +1,33 @@
-using System;
 using System.Threading.Tasks;
-using MvvmCross.Platform;
-using System.Collections.Generic;
-using System.Linq;
 using BitbucketSharp.Models;
-using CodeBucket.Core.Services;
-using System.IO;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
 		private ChangesetDiffModel _commitFileModel;
-		private string _actualFilename;
 
 		public string File1 { get; private set; }
 
 		public string File2 { get; private set; }
 
-		public string Username { get; private set; }
-
-		public string Repository { get; private set; }
-
-		public string Branch { get; private set; }
-
-		public string Filename { get; private set; }
-
         public ReactiveUI.ReactiveList<ChangesetCommentModel> Comments { get; } = new ReactiveUI.ReactiveList<ChangesetCommentModel>();
-		
-		public void Init(NavObject navObject)
+
+        public ChangesetDiffViewModel(
+            string username, string repository, string branch, ChangesetDiffModel model)
+            : this(username, repository, branch, model.File)
         {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Branch = navObject.Branch;
-			Filename = navObject.Filename;
+            _commitFileModel = model;
+        }
 
-			_actualFilename = System.IO.Path.GetFileName(Filename);
-			if (_actualFilename == null)
-				_actualFilename = Filename.Substring(Filename.LastIndexOf('/') + 1);
+        public ChangesetDiffViewModel(
+            string username, string repository, string branch, string filename)
+        {
+            var actualFilename = System.IO.Path.GetFileName(filename);
+            if (actualFilename == null)
+                actualFilename = filename.Substring(filename.LastIndexOf('/') + 1);
 
-			Title = _actualFilename;
-
-			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as ChangesetDiffModel;
+            Title = actualFilename;
         }
 
 		//protected override async Task Load()

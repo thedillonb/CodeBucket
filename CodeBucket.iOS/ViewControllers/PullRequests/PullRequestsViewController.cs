@@ -4,38 +4,42 @@ using CodeBucket.DialogElements;
 using CodeBucket.TableViewCells;
 using System;
 using CodeBucket.Views;
+using ReactiveUI;
+using System.Linq;
 
 namespace CodeBucket.ViewControllers.PullRequests
 {
-    public class PullRequestsViewController : ViewModelCollectionDrivenDialogViewController
+    public class PullRequestsViewController : ViewModelCollectionDrivenDialogViewController<PullRequestsViewModel>
     {
-		private readonly UISegmentedControl _viewSegment;
- 
 		public PullRequestsViewController()
 		{
-			Title = "Pull Requests";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Devtoolspullrequest.ToImage(64f), "There are no pull requests.")); 
-
-			_viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
-            NavigationItem.TitleView = _viewSegment;
 		}
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            var viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
+            NavigationItem.TitleView = viewSegment;
+
             TableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;
 
-			var vm = (PullRequestsViewModel)ViewModel;
-            BindCollection(vm.PullRequests, s => new PullRequestElement(s));
+            var section = new Section();
+            Root.Reset(section);
+
+            ViewModel
+                .PullRequests
+                .ChangedObservable()
+                .Subscribe(x => section.Reset(x.Select(y => new PullRequestElement(y))));
 
             OnActivation(d =>
             {
-                d(_viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = (BitbucketSharp.Models.V2.PullRequestState)x));
-                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (int)x));
+                d(viewSegment.GetChangedObservable().Subscribe(x => ViewModel.SelectedFilter = (BitbucketSharp.Models.V2.PullRequestState)x));
+                d(ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => viewSegment.SelectedSegment = (int)x));
             });
 
         }

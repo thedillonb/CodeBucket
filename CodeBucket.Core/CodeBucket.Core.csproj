@@ -37,13 +37,9 @@
     <Compile Include="Data\BitbucketAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="App.cs" />
-    <Compile Include="Messages\IssueAddMessage.cs" />
-    <Compile Include="Messages\IssueEditMessage.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
-    <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
@@ -81,13 +77,11 @@
     <Compile Include="ViewModels\Issues\IssueAttributesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueVersionsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueComponentsViewModel.cs" />
-    <Compile Include="Messages\IssueDeleteMessage.cs" />
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamMembersViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamViewModel.cs" />
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssuesFiltersViewModel.cs" />
-    <Compile Include="Messages\IssuesFilterMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesSharedViewModel.cs" />
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
@@ -100,21 +94,15 @@
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
-    <Compile Include="Services\IViewModelTxService.cs" />
-    <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\CollectionViewModel.cs" />
     <Compile Include="ViewModels\FileSourceViewModel.cs" />
-    <Compile Include="ViewModels\FilterableCollectionViewModel.cs" />
     <Compile Include="ViewModels\FilterGroup.cs" />
     <Compile Include="ViewModels\IFilterableViewModel.cs" />
-    <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
-    <Compile Include="PresentationValues.cs" />
     <Compile Include="Filters\FilterModel.cs" />
     <Compile Include="ViewModels\Commits\BaseCommitsViewModel.cs" />
     <Compile Include="ViewModels\Commits\CommitsViewModel.cs" />
@@ -128,7 +116,6 @@
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\WeakReferenceExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesViewModel.cs" />
@@ -137,7 +124,6 @@
     <Compile Include="ViewModels\Repositories\RepositoryWatchersViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
     <Compile Include="ViewModels\IProvidesTitle.cs" />
-    <Compile Include="ViewModels\Commits\CommitFileViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueComponentItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueMilestoneItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeItemViewModel.cs" />
@@ -150,7 +136,15 @@
     <Compile Include="Extensions\BitbucketClientExtensions.cs" />
     <Compile Include="ViewModels\Teams\TeamFollowersViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamFollowingsViewModel.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="ViewModels\Source\SourceTreeItemViewModel.cs" />
+    <Compile Include="ViewModels\Source\ReferenceItemViewModel.cs" />
+    <Compile Include="ViewModels\IRoutingViewModel.cs" />
+    <Compile Include="ViewModels\IBaseViewModel.cs" />
+    <Compile Include="ViewModels\ILoadableViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
+    <Compile Include="ViewModels\App\PinnedRepositoryItemViewModel.cs" />
+    <Compile Include="ViewModels\Commits\CommitFileItemViewModel.cs" />
+    <Compile Include="ViewModels\Comments\CommentItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -183,21 +177,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.1.4\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -208,6 +187,7 @@
     <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Commits\" />
     <Folder Include="Extensions\" />
+    <Folder Include="ViewModels\Comments\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -1,23 +1,18 @@
 using System;
-using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.Services;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using Splat;
+using ReactiveUI;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
     public class UserViewModel : BaseViewModel, ILoadableViewModel
     {
-        private string _username;
-        public string Username
-        {
-            get { return _username; }
-            private set { this.RaiseAndSetIfChanged(ref _username, value); }
-        }
-
         private bool _showGroups;
         public bool ShouldShowGroups
         {
@@ -32,67 +27,43 @@ namespace CodeBucket.Core.ViewModels.Users
             private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-        public UserViewModel(IApplicationService applicationService)
+        public UserViewModel(string username, IApplicationService applicationService = null)
         {
-            GoToFollowersCommand
-                .Select(_ => new UserFollowersViewModel.NavObject { Username = Username })
-                .Subscribe(x => ShowViewModel<UserFollowersViewModel>(x));
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-            GoToFollowingCommand
-                .Select(_ => new UserFollowingsViewModel.NavObject { Username = Username })
-                .Subscribe(x => ShowViewModel<UserFollowingsViewModel>(x));
+            GoToFollowersCommand.Subscribe(_ => NavigateTo(new UserFollowersViewModel(username)));
+            GoToFollowingCommand.Subscribe(_ => NavigateTo(new UserFollowingsViewModel(username)));
+            GoToEventsCommand.Subscribe(_ => NavigateTo(new UserEventsViewModel(username)));
+            GoToGroupsCommand.Subscribe(_ => NavigateTo(new GroupsViewModel(username)));
+            GoToRepositoriesCommand.Subscribe(_ => NavigateTo(new UserRepositoriesViewModel(username)));
 
-            GoToEventsCommand
-                .Select(_ => new UserEventsViewModel.NavObject { Username = Username })
-                .Subscribe(x => ShowViewModel<UserEventsViewModel>(x));
+            ShouldShowGroups = string.Equals(username, applicationService.Account.Username, StringComparison.OrdinalIgnoreCase);
 
-            GoToGroupsCommand
-                .Select(_ => new GroupsViewModel.NavObject { Username = Username })
-                .Subscribe(x => ShowViewModel<GroupsViewModel>(x));
-
-            GoToRepositoriesCommand
-                .Select(_ => new UserRepositoriesViewModel.NavObject { Username = Username })
-                .Subscribe(x => ShowViewModel<UserRepositoriesViewModel>(x));
-
-            this.Bind(x => x.Username, true)
-                .Select(x => string.Equals(x, applicationService.Account.Username, StringComparison.OrdinalIgnoreCase))
-                .Subscribe(x => ShouldShowGroups = x);
-
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async t => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => 
             {
-                if (!string.Equals(applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase))
                 {
-                    applicationService.Client.Groups.GetGroups(Username)
+                    applicationService.Client.Groups.GetGroups(username)
                                   .ToObservable()
                                   .Select(_ => true)
                                   .Catch(Observable.Return(false))
                                   .Subscribe(x => ShouldShowGroups = x);
                 }
 
-                User = await applicationService.Client.Users.GetUser(Username);
+                User = await applicationService.Client.Users.GetUser(username);
             });
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
         }
     }
 }

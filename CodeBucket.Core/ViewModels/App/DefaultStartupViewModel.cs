@@ -4,10 +4,11 @@ using CodeBucket.Core.Utils;
 using System.Linq;
 using ReactiveUI;
 using System.Reactive.Linq;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.App
 {
-    public class DefaultStartupViewModel : ReactiveObject
+    public class DefaultStartupViewModel : BaseViewModel
     {
         public IReadOnlyReactiveList<string> StartupViews { get; }
 
@@ -18,8 +19,10 @@ namespace CodeBucket.Core.ViewModels.App
             set { this.RaiseAndSetIfChanged(ref _selectedStartupView, value); }
         }
 
-		public DefaultStartupViewModel(IAccountsService accountsService)
+		public DefaultStartupViewModel(IAccountsService accountsService = null)
 		{
+            accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+
             var props = from p in typeof(MenuViewModel).GetProperties()
                         let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
                         where attr.Length == 1

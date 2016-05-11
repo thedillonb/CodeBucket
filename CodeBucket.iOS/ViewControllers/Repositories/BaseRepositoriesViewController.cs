@@ -9,17 +9,11 @@ using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public abstract class BaseRepositoriesViewController : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseRepositoriesViewController<TViewModel> : ViewModelCollectionDrivenDialogViewController<TViewModel>
+        where TViewModel : RepositoriesViewModel
     {
-        public new RepositoriesViewModel ViewModel
-        {  
-            get { return (RepositoriesViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         protected BaseRepositoriesViewController()
         {
-            Title = "Repositories";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
         }

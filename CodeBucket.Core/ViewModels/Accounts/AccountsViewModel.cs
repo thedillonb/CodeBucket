@@ -4,10 +4,11 @@ using CodeBucket.Core.Services;
 using System.Reactive.Linq;
 using CodeBucket.Core.Messages;
 using ReactiveUI;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
-    public class AccountsViewModel : ReactiveObject
+    public class AccountsViewModel : BaseViewModel
     {
         public IReactiveCommand<object> AddAccountCommand { get; } = ReactiveCommand.Create();
 
@@ -15,8 +16,12 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
-        public AccountsViewModel(IAccountsService accountsService) 
+        public AccountsViewModel(IAccountsService accountsService = null) 
         {
+            accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+
+            Title = "Accounts";
+
             SelectAccountCommand.OfType<BitbucketAccount>().Subscribe(x =>
             {
                 if (accountsService.ActiveAccount?.Id == x.Id)

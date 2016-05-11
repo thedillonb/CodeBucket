@@ -2,17 +2,12 @@ namespace CodeBucket.Core.ViewModels
 {
 	public class WebBrowserViewModel : BaseViewModel
     {
-		public string Url { get; private set; }
+		public string Url { get; }
 
-		public void Init(NavObject navObject)
+        public WebBrowserViewModel(string url)
         {
-			Url = navObject.Url;
+            Url = url;
         }
-
-		public class NavObject
-		{
-			public string Url { get; set; }
-		}
     }
 }
 

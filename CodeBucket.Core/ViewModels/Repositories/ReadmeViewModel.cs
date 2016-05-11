@@ -1,23 +1,16 @@
 using System;
-using System.Threading.Tasks;
-using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
 using System.Reactive.Linq;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class ReadmeViewModel : LoadableViewModel
+    public class ReadmeViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IMarkdownService _markdownService;
-        private readonly IApplicationService _applicationService;
         private string _htmlUrl;
-
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-        public string Filename { get; private set; }
 
         private FileModel _contentModel;
         public FileModel ContentModel
@@ -33,24 +26,30 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public ReactiveUI.IReactiveCommand ShowMenuCommand { get; }
+        public IReactiveCommand ShowMenuCommand { get; }
+
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public ReadmeViewModel(
-            IApplicationService applicationService, 
-            IMarkdownService markdownService,
-            IActionMenuService actionMenuService)
+            string username, string repository, string filename,
+            IApplicationService applicationService = null, 
+            IMarkdownService markdownService = null,
+            IActionMenuService actionMenuService = null)
         {
-            _applicationService = applicationService;
-            _markdownService = markdownService;
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
-            var canShowMenu = this.Bind(x => x.ContentModel, true).Select(x => x != null);
+            var canShowMenu = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
 
-            var gotoCommand = ReactiveUI.ReactiveCommand.Create(canShowMenu);
-            gotoCommand.Subscribe(_ => GoToUrlCommand.Execute(_htmlUrl));
+            var gotoCommand = ReactiveCommand.Create(canShowMenu);
+            gotoCommand
+                .Select(_ => new WebBrowserViewModel(_htmlUrl))
+                .Subscribe(NavigateTo);
 
-            ShowMenuCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(canShowMenu, sender => 
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => 
             {
-                var shareCommand = ReactiveUI.ReactiveCommand.Create();
+                var shareCommand = ReactiveCommand.Create();
                 shareCommand.Subscribe(_ => actionMenuService.ShareUrl(sender, new Uri(_htmlUrl)));
 
                 var menu = actionMenuService.Create();
@@ -58,35 +57,21 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 menu.AddButton("Show in Bitbucket", gotoCommand);
                 return menu.Show(sender);
             });
-        }
 
-        protected override async Task Load()
-        {
-            var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
-            var mainBranch = (await _applicationService.Client.Repositories.GetMainBranch(Username, Repository)).Name;
-            ContentModel = await _applicationService.Client.Repositories.GetFile(Username, Repository, mainBranch, Filename);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
+                var mainBranch = (await applicationService.Client.Repositories.GetMainBranch(username, repository)).Name;
+                ContentModel = await applicationService.Client.Repositories.GetFile(username, repository, mainBranch, filename);
 
-            var readme = ContentModel.Data;
-            _htmlUrl = "http://bitbucket.org/" + Username + "/" + Repository + "/src/" + mainBranch + "/" + Filename;
+                var readme = ContentModel.Data;
+                _htmlUrl = "http://bitbucket.org/" + username + "/" + repository + "/src/" + mainBranch + "/" + filename;
 
-            if (filepath.EndsWith("textile", StringComparison.Ordinal))
-                ContentText = _markdownService.ConvertTextile(readme);
-            else
-                ContentText = _markdownService.ConvertMarkdown(readme);
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Filename = navObject.Filename;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Filename { get; set; }
+                if (filepath.EndsWith("textile", StringComparison.Ordinal))
+                    ContentText = markdownService.ConvertTextile(readme);
+                else
+                    ContentText = markdownService.ConvertMarkdown(readme);
+            });
         }
     }
 }

@@ -4,6 +4,8 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
@@ -11,17 +13,21 @@ namespace CodeBucket.Core.ViewModels.Groups
 	{
         public IReadOnlyReactiveList<GroupItemViewModel> Groups { get; }
 
-        public string Username { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand LoadCommand { get; }
-
-        public GroupsViewModel(IApplicationService applicationService)
+        public GroupsViewModel(
+            string username, 
+            IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Groups";
+
             var groups = new ReactiveList<GroupModel>();
             Groups = groups.CreateDerivedCollection(ToViewModel);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                groups.Reset(await applicationService.Client.Groups.GetGroups(Username));
+                groups.Reset(await applicationService.Client.Groups.GetGroups(username));
             });
         }
 
@@ -29,19 +35,9 @@ namespace CodeBucket.Core.ViewModels.Groups
         {
             var vm = new GroupItemViewModel(model.Name);
             vm.GoToCommand
-              .Select(x => new GroupViewModel.NavObject { Owner = model.Owner.Username, Name = model.Name, Slug = model.Slug })
-              .Subscribe(x => ShowViewModel<GroupViewModel>(x));
+              .Select(x => new GroupViewModel(model.Owner.Username, model.Slug, model.Name))
+              .Subscribe(NavigateTo);
             return vm;
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
         }
 	}
 }

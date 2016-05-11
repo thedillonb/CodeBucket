@@ -1,5 +1,4 @@
 using System;
-using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
@@ -7,6 +6,9 @@ using CodeBucket.Core.ViewModels.Events;
 using BitbucketSharp.Models.V2;
 using CodeBucket.Core.Services;
 using System.Reactive.Linq;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
@@ -21,60 +23,47 @@ namespace CodeBucket.Core.ViewModels.Teams
             private set { this.RaiseAndSetIfChanged(ref _team, value); }
         }
 
-        public ReactiveUI.IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public ReactiveUI.IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.IReactiveCommand<object> GoToMembersCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToMembersCommand { get; } = ReactiveCommand.Create();
 
-        public TeamViewModel(IApplicationService applicationService)
+        public TeamViewModel(
+            Team team,
+            IApplicationService applicationService = null)
+            : this(team.Username, applicationService)
         {
-            GoToFollowersCommand
-                .Select(_ => new TeamFollowersViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<TeamFollowersViewModel>(x));
+            Team = team;
+        }
 
-            GoToFollowingCommand
-                .Select(_ => new TeamFollowingsViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<TeamFollowingsViewModel>(x));
+        public TeamViewModel(
+            string name, 
+            IApplicationService applicationService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-            GoToEventsCommand
-                .Select(_ => new UserEventsViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<UserEventsViewModel>(x));
+            Title = name;
 
-            GoToGroupsCommand
-                .Select(_ => new GroupsViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<GroupsViewModel>(x));
+            GoToFollowersCommand.Subscribe(_ => NavigateTo(new TeamFollowersViewModel(name)));
+            GoToFollowingCommand.Subscribe(_ => NavigateTo(new TeamFollowingsViewModel(name)));
+            GoToMembersCommand.Subscribe(_ => NavigateTo(new TeamMembersViewModel(name)));
+            GoToGroupsCommand.Subscribe(_ => NavigateTo(new GroupsViewModel(name)));
+            GoToEventsCommand.Subscribe(_ => NavigateTo(new UserEventsViewModel(name)));
+            GoToRepositoriesCommand.Subscribe(_ => NavigateTo(new UserRepositoriesViewModel(name)));
 
-            GoToRepositoriesCommand
-                .Select(_ => new UserRepositoriesViewModel.NavObject { Username = Name })
-                .Subscribe(x => ShowViewModel<UserRepositoriesViewModel>(x));
-
-            GoToMembersCommand
-                .Select(_ => new TeamMembersViewModel.NavObject { Name = Name })
-                .Subscribe(x => ShowViewModel<TeamMembersViewModel>(x));
-
-            LoadCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 Team = await applicationService.Client.Teams.GetTeam(Name);
             });
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Name = navObject.Name;
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
         }
     }
 }

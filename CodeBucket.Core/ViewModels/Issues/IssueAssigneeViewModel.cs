@@ -5,6 +5,8 @@ using CodeBucket.Core.Services;
 using BitbucketSharp;
 using System.Reactive.Linq;
 using BitbucketSharp.Models.V2;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -19,20 +21,14 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
-        public string Username { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public string Repository { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; }
-
-        public void Init(string username, string repository) 
-		{
-			Username = username;
-            Repository = repository;
-		}
-
-        public IssueAssigneeViewModel(IApplicationService applicationService)
+        public IssueAssigneeViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             var assignees = new ReactiveList<User>();
             Assignees = assignees.CreateDerivedCollection(CreateItemViewModel);
 
@@ -42,18 +38,18 @@ namespace CodeBucket.Core.ViewModels.Issues
             
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var repository = await applicationService.Client.Repositories.GetRepository(Username, Repository);
+                var repo = await applicationService.Client.Repositories.GetRepository(username, repository);
 
                 try
                 {
-                    if (repository.Owner.Type == "team")
+                    if (repo.Owner.Type == "team")
                     {
-                        var members = await applicationService.Client.AllItems(x => x.Teams.GetMembers(Username));
+                        var members = await applicationService.Client.AllItems(x => x.Teams.GetMembers(username));
                         assignees.Reset(members);
                     }
                     else
                     {
-                        var privileges = await applicationService.Client.Repositories.GetPrivileges(Username, Repository);
+                        var privileges = await applicationService.Client.Repositories.GetPrivileges(username, repository);
                         assignees.Reset(privileges.Select(x => ConvertUserModel(x.User)));
                     }
                 }

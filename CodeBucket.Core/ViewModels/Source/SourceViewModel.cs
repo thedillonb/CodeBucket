@@ -1,42 +1,42 @@
-using System;
 using System.IO;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive;
 using BitbucketSharp.Models;
 using System.Reactive.Linq;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
     public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
     {
-		private string _user;
-		private string _repository;
-		private string _branch;
-		private string _path;
-		private string _name;
-
         private RawFileModel _file;
         public RawFileModel File
         {
             get { return _file; }
-            private set
-            {
-                if (_file != value)
-                    return;
-                
-                _file = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _file, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; }
 
-        public SourceViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
+        public SourceViewModel(
+            string username, string repository, string branch, string path, string name,
+            IApplicationService applicationService = null, IActionMenuService actionMenuService = null)
         {
-            var canExecute = this.Bind(x => x.File).Select(x => x != null);
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
+
+            //Create the filename
+            var fileName = Path.GetFileName(path);
+            if (fileName == null)
+                fileName = path.Substring(path.LastIndexOf('/') + 1);
+
+            //Create the temp file path
+            Title = fileName;
+
+            var canExecute = this.WhenAnyValue(x => x.File).Select(x => x != null);
 
             var openInCommand = ReactiveCommand.Create()
                 .WithSubscription(x => actionMenuService.OpenIn(x, null));
@@ -57,8 +57,8 @@ namespace CodeBucket.Core.ViewModels.Source
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
-                var file = await applicationService.Client.Repositories.GetFileRaw(_user, _repository, _branch, _path);
+                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(name));
+                var file = await applicationService.Client.Repositories.GetFileRaw(username, repository, branch, path);
                 IsText = true;
 
                 using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
@@ -69,31 +69,5 @@ namespace CodeBucket.Core.ViewModels.Source
                 FilePath = filePath;
             });
         }
-
-		public void Init(NavObject navObject)
-		{
-			_path = navObject.Path;
-			_name = navObject.Name;
-			_user = navObject.User;
-			_repository = navObject.Repository;
-			_branch = navObject.Branch;
-
-			//Create the filename
-			var fileName = System.IO.Path.GetFileName(_path);
-			if (fileName == null)
-				fileName = _path.Substring(_path.LastIndexOf('/') + 1);
-
-			//Create the temp file path
-			Title = fileName;
-		}
-
-		public class NavObject
-		{
-			public string Path { get; set; }
-			public string Name { get; set; }
-			public string User { get; set; }
-			public string Repository { get; set; }
-			public string Branch { get; set; }
-		}
     }
 }

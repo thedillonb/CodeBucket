@@ -5,23 +5,15 @@ using CoreGraphics;
 using CodeBucket.Core.Utils;
 using System;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Users
 {
-    public class UserViewController : PrettyDialogViewController
+    public class UserViewController : PrettyDialogViewController<UserViewModel>
     {
-		public new UserViewModel ViewModel
-		{
-			get { return (UserViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.Text = ViewModel.Username;
-            Title = ViewModel.Username;
 
             var followers = new StringElement("Followers", AtlassianIcon.Star.ToImage());
             followers.BindClick(ViewModel.GoToFollowersCommand);
@@ -41,7 +33,10 @@ namespace CodeBucket.ViewControllers.Users
             var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, groups, followers, following };
             Root.Reset(midSec, new Section { repos });
 
-            ViewModel.Bind(x => x.User, true).Subscribe(x => {
+            this.WhenAnyValue(x => x.ViewModel.Title)
+                .Subscribe(x => HeaderView.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.User).Subscribe(x => {
                 if (x == null)
                 {
                     HeaderView.SetImage(null, Images.Avatar);
@@ -54,7 +49,7 @@ namespace CodeBucket.ViewControllers.Users
                 }
             });
 
-            ViewModel.Bind(x => x.ShouldShowGroups, true)
+            this.WhenAnyValue(x => x.ViewModel.ShouldShowGroups)
                      .Subscribe(x => groups.Hidden = !x);
 
 //			if (!ViewModel.IsLoggedInUser)

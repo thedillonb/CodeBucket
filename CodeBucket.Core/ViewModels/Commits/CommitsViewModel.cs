@@ -1,35 +1,29 @@
 using BitbucketSharp.Models.V2;
 using System.Threading.Tasks;
 using CodeBucket.Core.Services;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
     public class CommitsViewModel : BaseCommitsViewModel
     {
-        public string Branch { get; private set; }
+        private readonly IApplicationService _applicationService;
+        private readonly string _username, _repository, _branch;
 
         protected override Task<Collection<Commit>> GetRequest()
         {
-            return this.GetApplication().Client.Commits.GetCommits(Username, Repository, Branch);
+            return _applicationService.Client.Commits.GetCommits(_username, _repository, _branch);
         }
 
-        public CommitsViewModel(IApplicationService applicationService)
-            : base(applicationService)
+        public CommitsViewModel(
+            string username, string repository, string branch,
+            IApplicationService applicationService = null)
+            : base(username, repository, applicationService)
         {
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Branch = navObject.Branch;
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-        }
-
-		public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Branch { get; set; }
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username;
+            _repository = repository;
+            _branch = branch;
         }
     }
 }

@@ -4,6 +4,7 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Utils;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -15,6 +16,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         protected RepositoriesViewModel(IApplicationService applicationService)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Repositories";
+
             var showDescription = applicationService.Account.RepositoryDescriptionInList;
             Repositories = RepositoryList.CreateDerivedCollection(x =>
             {
@@ -23,8 +28,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 viewModel.GoToCommand.Subscribe(_ =>
                 {
                     var id = RepositoryIdentifier.FromFullName(x.FullName);
-                    var obj = new RepositoryViewModel.NavObject { Username = id.Owner, RepositorySlug = id.Name };
-                    ShowViewModel<RepositoryViewModel>(obj);
+                    NavigateTo(new RepositoryViewModel(id.Owner, id.Name));
                 });
                 return viewModel;
             });

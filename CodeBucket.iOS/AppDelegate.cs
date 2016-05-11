@@ -1,7 +1,5 @@
-using CodeBucket;
 using System;
 using Security;
-using MvvmCross.iOS.Platform;
 using ReactiveUI;
 using CodeBucket.Core.Messages;
 using CodeBucket.Services;
@@ -12,11 +10,9 @@ using UIKit;
 namespace CodeBucket
 {
 	[Register("AppDelegate")]
-	public class AppDelegate : MvxApplicationDelegate
+    public class AppDelegate : UIApplicationDelegate
 	{
         public override UIWindow Window { get; set; }
-
-        public IosViewPresenter Presenter { get; private set; }
 
 		public static void Main(string[] args)
 		{
@@ -33,8 +29,6 @@ namespace CodeBucket
             exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));
             
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            Presenter = new IosViewPresenter(Window);
-            new Setup(this, Presenter).Initialize();
 
 			// Setup theme
 			Theme.Setup();

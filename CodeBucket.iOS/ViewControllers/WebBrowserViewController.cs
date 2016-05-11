@@ -5,12 +5,18 @@ using CodeBucket.Core.ViewModels;
 
 namespace CodeBucket.ViewControllers
 {
-    public class WebBrowserViewController : WebView
+    public class WebBrowserViewController : WebViewController<WebBrowserViewModel>
     {
         public WebBrowserViewController()
             : base(true, true)
         {
             Title = "Web";
+        }
+
+        public WebBrowserViewController(string url)
+            : this()
+        {
+            ViewModel = new WebBrowserViewModel(url);
         }
 
         public override void ViewDidLoad()
@@ -19,9 +25,8 @@ namespace CodeBucket.ViewControllers
 
             try
             {
-                var vm = ViewModel as WebBrowserViewModel;
-                if (!string.IsNullOrEmpty(vm.Url))
-                    Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(vm.Url)));
+                if (!string.IsNullOrEmpty(ViewModel.Url))
+                    Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(ViewModel.Url)));
             }
             catch (Exception e)
             {

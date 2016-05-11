@@ -1,11 +1,9 @@
+using CodeBucket.Core.ViewModels.Repositories;
+
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public class RepositoriesSharedViewController : BaseRepositoriesViewController
+    public class RepositoriesSharedViewController : BaseRepositoriesViewController<RepositoriesSharedViewModel>
     {
-        public RepositoriesSharedViewController()
-        {
-            Title = "Shared";
-        }
     }
 }
 

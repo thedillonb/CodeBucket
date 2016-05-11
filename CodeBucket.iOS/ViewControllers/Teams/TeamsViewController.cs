@@ -7,11 +7,10 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.Teams
 {
-    public class TeamsViewController : ViewModelCollectionDrivenDialogViewController
+    public class TeamsViewController : ViewModelCollectionDrivenDialogViewController<TeamsViewModel>
     {
         public TeamsViewController()
         {
-            Title = "Teams";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Userstatus.ToEmptyListImage(), "There are no teams."));
         }
@@ -20,8 +19,7 @@ namespace CodeBucket.ViewControllers.Teams
         {
             base.ViewDidLoad();
 
-            var vm = (TeamsViewModel) ViewModel;
-            vm.Teams.ChangedObservable()
+            ViewModel.Teams.ChangedObservable()
               .Subscribe(x =>
               {
                   var elements = x.Select(y =>

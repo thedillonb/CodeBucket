@@ -2,24 +2,17 @@ using System.Linq;
 using System;
 using System.Reactive.Linq;
 using ReactiveUI;
+using CodeBucket.Core.Services;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel
     {
-		public string Username { get; private set; }
+        public IReadOnlyReactiveList<SourceTreeItemViewModel> Content { get; }
 
-		public string Path { get; private set; }
-
-		public string Branch { get; private set; }
-
-		public string Repository { get; private set; }
-
-        public CollectionViewModel<SourceModel> Content { get; } = new CollectionViewModel<SourceModel>();
-
-        public IReactiveCommand<object> GoToSourceCommand { get; } = ReactiveCommand.Create();
-
-        public IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
 
 //        public ICommand GoToSubmoduleCommand
@@ -35,63 +28,43 @@ namespace CodeBucket.Core.ViewModels.Source
 //            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
 //        }
 
-        public SourceTreeViewModel()
+        public SourceTreeViewModel(
+            string username, string repository, string branch, string path = null,
+            IApplicationService applicationService = null)
         {
-            GoToSourceCommand.OfType<SourceModel>().Subscribe(x =>
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            branch = branch ?? "master";
+            path = path ?? "";
+
+            Title = string.IsNullOrEmpty(path) ? repository : path.Substring(path.LastIndexOf('/') + 1);
+
+            var content = new ReactiveList<SourceTreeItemViewModel>();
+            Content = content;
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
+                var data = await applicationService.Client.Repositories.GetSource(username, repository, branch, path);
+                var dirs = data.Directories.Select(x =>
                 {
-                    ShowViewModel<SourceTreeViewModel>(new NavObject
-                    {
-                        Username = Username,
-                        Branch = Branch,
-                        Repository = Repository,
-                        Path = x.Path
-                    });
-                }
-                else if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
+                    var vm = new SourceTreeItemViewModel(x, SourceTreeItemViewModel.SourceTreeItemType.Directory);
+                    vm.GoToCommand
+                      .Select(_ => new SourceTreeViewModel(username, repository, branch, path + "/" + x))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                });
+
+                var files = data.Files.Select(x =>
                 {
-                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject 
-                    { 
-                        Name = x.Name, 
-                        User = Username,
-                        Repository = Repository, 
-                        Branch = Branch, 
-                        Path = x.Path 
-                    });
-                }
+                    var name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                    var vm = new SourceTreeItemViewModel(name, SourceTreeItemViewModel.SourceTreeItemType.File);
+                    vm.GoToCommand
+                      .Select(_ => new SourceViewModel(username, repository, branch, x.Path, name))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                });
+
+                content.Reset(dirs.Concat(files));
             });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                var data = await this.GetApplication().Client.Repositories.GetSource(Username, Repository, Branch, Path);
-                var dirs = data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x });
-                var files = data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path });
-                Content.Items.Reset(dirs.Concat(files));
-            });
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Branch = navObject.Branch ?? "master";
-            Path = navObject.Path ?? "";
-        }
-
-		public class SourceModel
-		{
-			public string Name { get; set; }
-			public string Type { get; set; }
-			public string Path { get; set; }
-		}
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Branch { get; set; }
-            public string Path { get; set; }
         }
     }
 }

@@ -1,5 +1,6 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
+using System;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -19,14 +20,25 @@ namespace CodeBucket.Core.ViewModels
             protected set { this.RaiseAndSetIfChanged(ref _isText, value); }
 		}
 
-		public string Title { get; protected set; }
+        private string _htmlUrl;
+        public string HtmlUrl
+        {
+            get { return _htmlUrl; }
+            protected set { this.RaiseAndSetIfChanged(ref _htmlUrl, value); }
+        }
 
-		public string HtmlUrl { get; protected set; }
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
 
-		public ICommand GoToHtmlUrlCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = HtmlUrl }), () => !string.IsNullOrEmpty(HtmlUrl)); }
-		}
+        protected FileSourceViewModel()
+        {
+            GoToHtmlUrlCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.HtmlUrl)
+                .Select(x => !string.IsNullOrEmpty(x)));
+
+            GoToHtmlUrlCommand
+                .Select(_ => new WebBrowserViewModel(HtmlUrl))
+                .Subscribe(NavigateTo);
+        }
     }
 }
 

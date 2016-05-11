@@ -10,6 +10,7 @@ using CodeBucket.Core.Utils;
 using System.Reactive.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -58,11 +59,14 @@ namespace CodeBucket.Core.ViewModels.App
             return _accountsService.GetDefault();
         }
 
-        public StartupViewModel(IAccountsService accountsService, IApplicationService applicationService, IAlertDialogService alertDialogService)
+        public StartupViewModel(
+            IAccountsService accountsService = null, 
+            IApplicationService applicationService = null, 
+            IAlertDialogService alertDialogService = null)
 		{
-            _accountsService = accountsService;
-			_applicationService = applicationService;
-            _alertDialogService = alertDialogService;
+            _accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+			_applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
             StartupCommand = ReactiveCommand.CreateAsyncTask(_ => Startup());
 		}

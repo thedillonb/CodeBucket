@@ -1,36 +1,25 @@
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
     public class RepositoryEventsViewModel : BaseEventsViewModel
     {
         private readonly IApplicationService _applicationService;
+        private readonly string _username, _repository;
 
-        public string Repository { get; private set; }
-
-        public string Username { get; private set; }
-
-        public RepositoryEventsViewModel(IApplicationService applicationService)
+        public RepositoryEventsViewModel(string username, string repository, 
+                                         IApplicationService applicationService = null)
         {
-            _applicationService = applicationService;
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
+            _username = username;
+            _repository = repository;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
         }
 
         protected override Task<BitbucketSharp.Models.EventsModel> GetEvents(int start, int limit)
         {
-            return _applicationService.Client.Repositories.GetEvents(Username, Repository, start, limit);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            return _applicationService.Client.Repositories.GetEvents(_username, _repository, start, limit);
         }
     }
 }

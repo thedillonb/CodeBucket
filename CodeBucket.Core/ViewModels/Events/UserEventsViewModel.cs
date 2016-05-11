@@ -1,32 +1,23 @@
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
     public class UserEventsViewModel : BaseEventsViewModel
     {
         private readonly IApplicationService _applicationService;
+        private readonly string _username;
 
-        public string Username { get; private set; }
-
-        public UserEventsViewModel(IApplicationService applicationService)
+        public UserEventsViewModel(string username, IApplicationService applicationService = null)
         {
-            _applicationService = applicationService;
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
+            _username = username;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
         }
 
         protected override Task<BitbucketSharp.Models.EventsModel> GetEvents(int start, int limit)
         {
-            return _applicationService.Client.Users.GetEvents(Username, start, limit);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            return _applicationService.Client.Users.GetEvents(_username, start, limit);
         }
     }
 }

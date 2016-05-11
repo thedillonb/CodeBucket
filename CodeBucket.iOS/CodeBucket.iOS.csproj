@@ -116,35 +116,9 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\App\SettingsView.cs" />
-    <Compile Include="Views\Events\BaseEventsView.cs" />
-    <Compile Include="Views\Events\RepositoryEventsView.cs" />
-    <Compile Include="Views\Events\UserEventsView.cs" />
-    <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
-    <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Issues\IssueAddView.cs" />
-    <Compile Include="Views\Issues\IssueEditView.cs" />
-    <Compile Include="Views\Issues\IssueLabelsView.cs" />
-    <Compile Include="Views\Issues\IssueView.cs" />
-    <Compile Include="Views\Issues\IssuesView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
-    <Compile Include="Views\Repositories\RepositoryView.cs" />
-    <Compile Include="Views\Source\BranchesAndTagsView.cs" />
-    <Compile Include="Views\Source\ChangesetDiffView.cs" />
-    <Compile Include="Views\Source\FileSourceView.cs" />
-    <Compile Include="Views\Source\SourceTreeView.cs" />
-    <Compile Include="Views\Source\SourceView.cs" />
-    <Compile Include="Setup.cs" />
-    <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Services\MarkdownService.cs" />
-    <Compile Include="Views\Issues\IssueModifyView.cs" />
-    <Compile Include="Views\Wiki\WikiView.cs" />
-    <Compile Include="Views\Issues\IssueAttributesView.cs" />
-    <Compile Include="Views\Issues\IssueVersionsView.cs" />
-    <Compile Include="Views\Issues\IssuesFiltersView.cs" />
     <InterfaceDefinition Include="LaunchThis.storyboard" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
@@ -159,9 +133,6 @@
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
-    <Compile Include="Views\WebView.cs" />
-    <Compile Include="Views\App\DefaultStartupView.cs" />
-    <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
@@ -240,7 +211,6 @@
     <Compile Include="ViewControllers\ThemedNavigationController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
     <Compile Include="ViewControllers\BasicWebViewController.cs" />
-    <Compile Include="Views\Source\BranchesView.cs" />
     <Compile Include="ViewControllers\Repositories\ReadmeViewController.cs" />
     <Compile Include="Services\ActionMenuService.cs" />
     <Compile Include="Views\PickerAlertView.cs" />
@@ -271,7 +241,33 @@
     <Compile Include="ViewControllers\Teams\TeamFollowersViewController.cs" />
     <Compile Include="ViewControllers\Teams\TeamFollowingsViewController.cs" />
     <Compile Include="Views\EnhancedTableView.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="ViewControllers\Source\BranchesViewController.cs" />
+    <Compile Include="ViewControllers\Source\SourceTreeViewController.cs" />
+    <Compile Include="ViewControllers\Source\SourceViewController.cs" />
+    <Compile Include="ViewControllers\Source\FileSourceViewController.cs" />
+    <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestViewController.cs" />
+    <Compile Include="ViewControllers\Application\SettingsViewController.cs" />
+    <Compile Include="ViewControllers\Application\DefaultStartupViewController.cs" />
+    <Compile Include="ViewControllers\Source\BranchesAndTagsViewController.cs" />
+    <Compile Include="ViewControllers\Source\ChangesetDiffViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoryViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoriesExploreViewController.cs" />
+    <Compile Include="ViewControllers\Wikis\WikiViewController.cs" />
+    <Compile Include="ViewControllers\Issues\IssueAddView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueAttributesView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueEditView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueLabelsView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueModifyView.cs" />
+    <Compile Include="ViewControllers\Issues\IssuesFiltersView.cs" />
+    <Compile Include="ViewControllers\Issues\IssuesView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueVersionsView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueView.cs" />
+    <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
+    <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
+    <Compile Include="ViewControllers\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -316,30 +312,6 @@
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.4\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.1.4\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.1.4\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding.iOS">
-      <HintPath>..\packages\MvvmCross.Binding.4.1.4\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding">
-      <HintPath>..\packages\MvvmCross.Binding.4.1.4\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Localization">
-      <HintPath>..\packages\MvvmCross.Binding.4.1.4\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
-    </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>..\packages\BTProgressHUD.1.2.0.2\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
     </Reference>
@@ -381,7 +353,6 @@
     <Folder Include="Images\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="Services\" />
-    <Folder Include="Views\Wiki\" />
     <Folder Include="Markdown\" />
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
@@ -395,6 +366,10 @@
     <Folder Include="ViewControllers\PullRequests\" />
     <Folder Include="ViewControllers\Groups\" />
     <Folder Include="ViewControllers\Teams\" />
+    <Folder Include="ViewControllers\Source\" />
+    <Folder Include="ViewControllers\Events\" />
+    <Folder Include="ViewControllers\Wikis\" />
+    <Folder Include="ViewControllers\Filters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">

@@ -4,6 +4,8 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -18,14 +20,14 @@ namespace CodeBucket.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
-		public string Username  { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-		public string Repository { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; }
-
-        public IssueComponentsViewModel(IApplicationService applicationService)
+        public IssueComponentsViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             var components = new ReactiveList<IssueComponent>();
             Components = components.CreateDerivedCollection(CreateItemViewModel);
 
@@ -34,7 +36,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                components.Reset(await applicationService.Client.Repositories.Issues.GetComponents(Username, Repository));
+                components.Reset(await applicationService.Client.Repositories.Issues.GetComponents(username, repository));
             });
         }
 
@@ -43,12 +45,6 @@ namespace CodeBucket.Core.ViewModels.Issues
             var vm = new IssueComponentItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
             vm.WhenAnyValue(y => y.IsSelected).Skip(1).Subscribe(y => SelectedValue = y ? component.Name : null);
             return vm;
-        }
-
-        public void Init(string username, string repository)
-        {
-            Username = username;
-            Repository = repository;
         }
 	}
 }

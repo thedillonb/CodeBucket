@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using BitbucketSharp.Models;
 using System;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.Messages;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -14,20 +14,16 @@ namespace CodeBucket.Core.ViewModels.Issues
         public string Status
         {
             get { return _status; }
-            set
-            {
-                _status = value;
-                RaisePropertyChanged(() => Status);
-            }
+            set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
         private IssueModel _issue;
 		public IssueModel Issue
 		{
 			get { return _issue; }
-			set {
-				_issue = value;
-				RaisePropertyChanged(() => Issue);
+			set 
+            {
+                this.RaiseAndSetIfChanged(ref _issue, value);
 
 				AssignedTo = _issue.Responsible;
 				Title = _issue.Title;
@@ -43,26 +39,38 @@ namespace CodeBucket.Core.ViewModels.Issues
 
 		public int Id { get; private set; }
 
-        public ICommand DeleteCommand
+        public IReactiveCommand<Unit> DeleteCommand { get; }
+
+        public IssueEditViewModel(
+            string username, string repository, IssueModel issue,
+            IAlertDialogService alertDialogService = null, IApplicationService applicationService = null)
+            : this(username, repository, issue.LocalId, alertDialogService, applicationService)
         {
-            get 
-            { 
-                return new MvxCommand(() => PromptDelete()); 
-            }
+            Issue = issue;
         }
 
-        private async Task PromptDelete()
+        public IssueEditViewModel(
+            string username, string repository, int id,
+            IAlertDialogService alertDialogService = null, IApplicationService applicationService = null)
+            : base(username, repository, applicationService)
         {
-            try
+            Title = "Edit Issue";
+
+            DeleteCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var alert = GetService<IAlertDialogService>();
-                if (await alert.PromptYesNo("Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + "."))
-                    await Delete();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error deleting issue: " + e.Message);
-            }
+                try
+                {
+                    var prompt = alertDialogService.PromptYesNo(
+                        "Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + ".");
+                    
+                    if (await prompt)
+                        await Delete();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error deleting issue: " + e.Message);
+                }
+            });
         }
 
 		protected override async Task Save()
@@ -118,26 +126,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 //            }
         }
 
-		protected override Task Load()
-		{
-//			if (forceCacheInvalidation || Issue == null)
-//				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
-			return Task.FromResult(false);
-		}
-
-		public void Init(NavObject navObject)
-		{
-			base.Init(navObject.Username, navObject.Repository);
-			Id = navObject.Id;
-			Issue = GetService<IViewModelTxService>().Get() as IssueModel;
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public int Id { get; set; }
-		}
+//		protected override Task Load()
+//		{
+////			if (forceCacheInvalidation || Issue == null)
+////				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
+//			return Task.FromResult(false);
+//		}
     }
 }
 

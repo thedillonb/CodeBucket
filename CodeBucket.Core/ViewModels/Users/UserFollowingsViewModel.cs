@@ -2,6 +2,8 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using BitbucketSharp;
 using System.Linq;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
@@ -9,29 +11,21 @@ namespace CodeBucket.Core.ViewModels.Users
     {
         public string Name { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public UserFollowingsViewModel(IApplicationService applicationService)
+        public UserFollowingsViewModel(string username, IApplicationService applicationService = null)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             Title = "Following";
             EmptyMessage = "There are no followers.";
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
             {
                 Users.Clear();
-                return applicationService.Client.ForAllItems(x => x.Users.GetFollowing(Name), 
+                return applicationService.Client.ForAllItems(x => x.Users.GetFollowing(username), 
                                                              x => Users.AddRange(x.Select(ToViewModel)));
             });
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Name = navObject.Username;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
         }
     }
 }

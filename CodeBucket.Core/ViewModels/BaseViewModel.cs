@@ -1,75 +1,48 @@
-using MvvmCross.Platform;
-using MvvmCross.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
-using System.Windows.Input;
-using CodeBucket.Core.Services;
-using System.Threading.Tasks;
+using ReactiveUI;
+using System.Reactive.Subjects;
+using System.Reactive;
+using System;
 
 namespace CodeBucket.Core.ViewModels
 {
-    /// <summary>
-    ///    Defines the BaseViewModel type.
-    /// </summary>
-    public abstract class BaseViewModel : MvxViewModel
+    public abstract class BaseViewModel : ReactiveObject, IBaseViewModel
     {
-        /// <summary>
-        /// Gets the go to URL command.
-        /// </summary>
-        /// <value>The go to URL command.</value>
-        public ICommand GoToUrlCommand
+        private readonly ViewModelActivator _viewModelActivator = new ViewModelActivator();
+        private readonly ISubject<IBaseViewModel> _requestNavigationSubject = new Subject<IBaseViewModel>();
+        private readonly ISubject<Unit> _requestDismissSubject = new Subject<Unit>();
+
+        private string _title;
+        public string Title
         {
-            get { return new MvxCommand<string>(ShowBrowser); }
+            get { return _title; }
+            protected set { this.RaiseAndSetIfChanged(ref _title, value); }
         }
 
-        protected void ShowBrowser(string url)
+        protected void NavigateTo(IBaseViewModel viewModel)
         {
-            ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = url });
+            var loadableViewModel = viewModel as ILoadableViewModel;
+            _requestNavigationSubject.OnNext(viewModel);
+            loadableViewModel?.LoadCommand.ExecuteIfCan();
         }
 
-        /// <summary>
-        /// Gets the ViewModelTxService
-        /// </summary>
-        /// <value>The tx sevice.</value>
-        protected IViewModelTxService TxSevice
+        protected void Dismiss()
         {
-            get { return GetService<IViewModelTxService>(); }
+            _requestDismissSubject.OnNext(Unit.Default);
         }
 
-        /// <summary>
-        /// Gets the messenger service
-        /// </summary>
-        /// <value>The messenger.</value>
-        protected IMvxMessenger Messenger
+        ViewModelActivator ISupportsActivation.Activator
         {
-            get { return GetService<IMvxMessenger>(); }
+            get { return _viewModelActivator; }
         }
 
-        /// <summary>
-        /// Gets the alert service
-        /// </summary>
-        /// <value>The alert service.</value>
-        protected IAlertDialogService AlertService
+        IObservable<IBaseViewModel> IRoutingViewModel.RequestNavigation
         {
-            get { return GetService<IAlertDialogService>(); }
+            get { return _requestNavigationSubject; }
         }
 
-        /// <summary>
-        /// Gets the service.
-        /// </summary>
-        /// <typeparam name="TService">The type of the service.</typeparam>
-        /// <returns>An instance of the service.</returns>
-        protected TService GetService<TService>() where TService : class
+        IObservable<Unit> IRoutingViewModel.RequestDismiss
         {
-            return Mvx.Resolve<TService>();
-        }
-
-        /// <summary>
-        /// Display an error message to the user
-        /// </summary>
-        /// <param name="message">Message.</param>
-        protected Task DisplayAlert(string message)
-        {
-            return AlertService.Alert("Error!", message);
+            get { return _requestDismissSubject; }
         }
     }
 }

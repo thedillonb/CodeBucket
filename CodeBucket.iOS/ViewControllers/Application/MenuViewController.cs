@@ -1,5 +1,4 @@
 using System;
-using CodeBucket.ViewControllers;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.App;
 using UIKit;
@@ -8,9 +7,9 @@ using CodeBucket.Core.Utils;
 using CodeBucket.DialogElements;
 using System.Collections.Generic;
 using CodeBucket.ViewControllers.Accounts;
-using MvvmCross.Platform;
 using CodeBucket.Core.Services;
 using CoreGraphics;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Application
 {
@@ -20,7 +19,7 @@ namespace CodeBucket.ViewControllers.Application
         private readonly UILabel _title;
 		private Section _favoriteRepoSection;
 
-        public MenuViewModel ViewModel { get; }
+        public MenuViewModel ViewModel { get; } = new MenuViewModel();
 
         /// <summary>
         /// Gets or sets the title.
@@ -40,8 +39,6 @@ namespace CodeBucket.ViewControllers.Application
         public MenuViewController()
             : base(UITableViewStyle.Plain)
         {
-            ViewModel = new MenuViewModel(Mvx.Resolve<IApplicationService>());
-
             _title = new UILabel(new CGRect(0, 40, 320, 40));
             _title.TextAlignment = UITextAlignment.Left;
             _title.BackgroundColor = UIColor.Clear;
@@ -54,8 +51,6 @@ namespace CodeBucket.ViewControllers.Application
 
 	    private void CreateMenuRoot()
 		{
-            var username = ViewModel.Account.Username;
-			Title = username;
             ICollection<Section> root = new LinkedList<Section>();
 
             root.Add(new Section
@@ -63,14 +58,12 @@ namespace CodeBucket.ViewControllers.Application
                 new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), AtlassianIcon.User.ToImage()),
             });
 
-            var teamEvents = 
-                ViewModel.Teams
-                         .Where(_ => ViewModel.Account.ShowTeamEvents)
-                         .Select(team => team.Name)
-                         .Select(team => new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), AtlassianIcon.Blogroll.ToImage()));
+            var teamEvents = ViewModel.Teams
+                .Where(_ => ViewModel.ShowTeamEvents)
+                .Select(team => new MenuElement(team.Name, team.GoToCommand.ExecuteIfCan, AtlassianIcon.Blogroll.ToImage()));
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), AtlassianIcon.Blogroll.ToImage()));
+            eventsSection.Add(new MenuElement(ViewModel.Username, () => ViewModel.GoToMyEvents.Execute(null), AtlassianIcon.Blogroll.ToImage()));
             eventsSection.AddAll(teamEvents);
             root.Add(eventsSection);
 
@@ -83,9 +76,8 @@ namespace CodeBucket.ViewControllers.Application
             
 			if (ViewModel.PinnedRepositories.Any())
 			{
-				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
-				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
+				_favoriteRepoSection = new Section { HeaderView = new MenuSectionView("Favorite Repositories") };
+                _favoriteRepoSection.AddAll(ViewModel.PinnedRepositories.Select(x => new PinnedRepoElement(x)));
 				root.Add(_favoriteRepoSection);
 			}
 			else
@@ -93,7 +85,7 @@ namespace CodeBucket.ViewControllers.Application
 				_favoriteRepoSection = null;
 			}
 
-			if (ViewModel.Account.ExpandTeamsAndGroups)
+			if (ViewModel.ExpandTeamsAndGroups)
 			{
                 if (ViewModel.Groups.Count > 0)
                 {
@@ -146,31 +138,27 @@ namespace CodeBucket.ViewControllers.Application
             TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
             TableView.ScrollsToTop = false;
 
-            _profileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
-            ViewModel.Bind(x => x.Groups).Subscribe(_ => CreateMenuRoot());
-            ViewModel.Bind(x => x.Teams).Subscribe(_ => CreateMenuRoot());
+            _profileButton.Uri = ViewModel.Avatar.ToUri();
+            ViewModel.WhenAnyValue(x => x.Groups).Subscribe(_ => CreateMenuRoot());
+            ViewModel.WhenAnyValue(x => x.Teams).Subscribe(_ => CreateMenuRoot());
             ViewModel.LoadCommand.Execute(null);
         }
 
 		private class PinnedRepoElement : MenuElement
 		{
-			public CodeFramework.Core.Data.PinnedRepository PinnedRepo
+            public IReactiveCommand<object> DeleteCommand { get; }
+
+            public PinnedRepoElement(PinnedRepositoryItemViewModel viewModel)
+                : base(viewModel.Name, Images.RepoPlaceholder, viewModel.Avatar.ToUri())
 			{
-				get;
-				private set; 
-			}
-    
-			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier(pinnedRepo.Owner, pinnedRepo.Slug)), Images.RepoPlaceholder)
-			{
-				PinnedRepo = pinnedRepo;
-				ImageUri = new System.Uri(PinnedRepo.ImageUri);
+                Clicked.InvokeCommand(viewModel.GoToCommand);
+                DeleteCommand = viewModel.DeleteCommand;
 			}
 		}
 
 		private void DeletePinnedRepo(PinnedRepoElement el)
 		{
-			ViewModel.DeletePinnedRepositoryCommand.Execute(el.PinnedRepo);
+            el.DeleteCommand.ExecuteIfCan();
 
 			if (_favoriteRepoSection.Elements.Count == 1)
 			{
@@ -183,7 +171,7 @@ namespace CodeBucket.ViewControllers.Application
 			}
 		}
 
-        public override DialogViewController.Source CreateSizingSource()
+        public override Source CreateSizingSource()
 		{
 			return new EditSource(this);
 		}

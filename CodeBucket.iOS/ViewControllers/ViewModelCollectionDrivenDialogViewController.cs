@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Foundation;
 using CoreGraphics;
-using CodeBucket.Core.ViewModels;
 using CodeBucket.DialogElements;
 using CodeBucket.Utilities;
 using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class ViewModelCollectionDrivenDialogViewController : ViewModelDrivenDialogViewController
+    public abstract class ViewModelCollectionDrivenDialogViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
+        where TViewModel : class
     {
         private static NSObject _dumb = new NSObject();
 
@@ -26,56 +26,6 @@ namespace CodeBucket.ViewControllers
             : base(UITableViewStyle.Plain)
         {
             EnableSearch = true;
-        }
-
-        protected void BindCollection<TElement>(CollectionViewModel<TElement> viewModel, 
-            Func<TElement, Element> element, bool activateNow = false)
-        {
-            var weakVm = new WeakReference<CollectionViewModel<TElement>>(viewModel);
-            var weakRoot = new WeakReference<RootElement>(Root);
-
-            Action updateDel = () =>
-            {
-                try
-                {
-                    IEnumerable<TElement> items = viewModel.Items;
-                    var filterFn = viewModel.FilteringFunction;
-                    if (filterFn != null)
-                        items = filterFn(items);
-
-                    var sortFn = viewModel.SortingFunction;
-                    if (sortFn != null)
-                        items = sortFn(items);
-
-                    var groupingFn = viewModel.GroupingFunction;
-                    IEnumerable<IGrouping<string, TElement>> groupedItems = null;
-                    if (groupingFn != null)
-                        groupedItems = groupingFn(items);
-
-                    ICollection<Section> newSections;
-                    if (groupedItems == null)
-                        newSections = RenderList(items, element, weakVm.Get()?.MoreItems);
-                    else
-                        newSections = RenderGroupedItems(groupedItems, element, weakVm.Get()?.MoreItems);
-
-                    CreateEmptyHandler(newSections.Sum(s => s.Elements.Count) == 0);
-                    weakRoot.Get()?.Reset(newSections);
-                }
-                catch
-                {
-                }
-            };
-
-            viewModel.Bind(x => x.GroupingFunction).Subscribe(_ => updateDel());
-            viewModel.Bind(x => x.FilteringFunction).Subscribe(_ => updateDel());
-            viewModel.Bind(x => x.SortingFunction).Subscribe(_ => updateDel());
-
-            //The CollectionViewModel binds all of the collection events from the observablecollection + more
-            //So just listen to it.
-            viewModel.Items.CollectionChanged += (sender, e) => _dumb.InvokeOnMainThread(updateDel);
-
-            if (activateNow)
-                updateDel();
         }
 
         private void CreateEmptyHandler(bool x)

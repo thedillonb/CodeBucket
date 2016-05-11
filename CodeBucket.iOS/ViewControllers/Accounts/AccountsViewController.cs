@@ -8,20 +8,25 @@ using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.DialogElements;
-using MvvmCross.Platform;
+using ReactiveUI;
+using Splat;
 using UIKit;
 
 namespace CodeBucket.ViewControllers.Accounts
 {
     public class AccountsViewController : DialogViewController
     {
+        private readonly IAccountsService _accountsService = Locator.Current.GetService<IAccountsService>();
+
         public AccountsViewModel ViewModel { get; }
 
         public AccountsViewController()
             : base(style: UITableViewStyle.Plain)
         {
-            ViewModel = new AccountsViewModel(Mvx.Resolve<IAccountsService>());
-            Title = "Accounts";
+            ViewModel = new AccountsViewModel();
+
+            this.WhenAnyValue(x => x.ViewModel.Title)
+                .Subscribe(x => Title = x);
 
             var add = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add);
             var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
@@ -42,9 +47,8 @@ namespace CodeBucket.ViewControllers.Accounts
         protected List<AccountElement> PopulateAccounts()
         {
             var accounts = new List<AccountElement>();
-            var accountsService = Mvx.Resolve<IAccountsService>();
 
-            foreach (var account in accountsService)
+            foreach (var account in _accountsService)
             {
                 var thisAccount = account;
                 var t = new AccountElement(thisAccount);
@@ -52,7 +56,7 @@ namespace CodeBucket.ViewControllers.Accounts
 
                 //Check to see if this account is the active account. Application.Account could be null 
                 //so make it the target of the equals, not the source.
-                if (thisAccount.Equals(accountsService.ActiveAccount))
+                if (thisAccount.Equals(_accountsService.ActiveAccount))
                     t.Accessory = UITableViewCellAccessory.Checkmark;
                 accounts.Add(t);
             }
@@ -67,13 +71,12 @@ namespace CodeBucket.ViewControllers.Accounts
         {
             //Remove the designated username
             var thisAccount = account;
-            var accountsService = Mvx.Resolve<IAccountsService>();
 
-            accountsService.Remove(thisAccount);
+            _accountsService.Remove(thisAccount);
 
-            if (accountsService.ActiveAccount != null && accountsService.ActiveAccount.Equals(thisAccount))
+            if (_accountsService.ActiveAccount != null && _accountsService.ActiveAccount.Equals(thisAccount))
             {
-                accountsService.SetActiveAccount(null);
+                _accountsService.SetActiveAccount(null);
             }
         }
 
@@ -88,8 +91,7 @@ namespace CodeBucket.ViewControllers.Accounts
         {
             if (NavigationItem.LeftBarButtonItem != null)
             {
-                var accountsService = Mvx.Resolve<IAccountsService>();
-                NavigationItem.LeftBarButtonItem.Enabled = accountsService.ActiveAccount != null;
+                NavigationItem.LeftBarButtonItem.Enabled = _accountsService.ActiveAccount != null;
             }
         }
 

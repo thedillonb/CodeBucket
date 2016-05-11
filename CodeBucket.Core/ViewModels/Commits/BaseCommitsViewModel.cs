@@ -1,4 +1,3 @@
-
 using System.Threading.Tasks;
 using BitbucketSharp.Models.V2;
 using CodeBucket.Core.Utils;
@@ -9,10 +8,11 @@ using CodeBucket.Core.Services;
 using Humanizer;
 using System.Linq;
 using System.Reactive;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public interface ICommitsViewModel
+    public interface ICommitsViewModel : IProvidesTitle
     {
         ReactiveList<CommitItemViewModel> Commits { get; }
 
@@ -21,17 +21,11 @@ namespace CodeBucket.Core.ViewModels.Commits
 
     public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, ICommitsViewModel
 	{
-        private string _nextUrl;
+        private string _nextUrl, _username, _repository;
 
         public ReactiveList<CommitItemViewModel> Commits { get; } = new ReactiveList<CommitItemViewModel>();
 
-        public string Username { get; protected set; }
-
-        public string Repository { get; protected set; }
-
-        protected IApplicationService ApplicationService { get; }
-
-        public IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> LoadMoreCommand { get; }
 
@@ -39,18 +33,18 @@ namespace CodeBucket.Core.ViewModels.Commits
         public bool HasMore
         {
             get { return _hasMore; }
-            private set
-            {
-                if (_hasMore == value)
-                    return;
-                _hasMore = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _hasMore, value); }
         }
 
-        protected BaseCommitsViewModel(IApplicationService applicationService)
+        protected BaseCommitsViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
         {
-            ApplicationService = applicationService;
+            _username = username;
+            _repository = repository;
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Commits";
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
@@ -61,12 +55,12 @@ namespace CodeBucket.Core.ViewModels.Commits
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
             });
 
-            var hasMoreObs = this.Bind(x => x.HasMore, true);
+            var hasMoreObs = this.WhenAnyValue(x => x.HasMore);
             LoadMoreCommand = ReactiveCommand.CreateAsyncTask(hasMoreObs, async _ =>
             {
                 HasMore = false;
                 var uri = new Uri(_nextUrl);
-                var commits = await ApplicationService.Client.Get<Collection<Commit>>(uri);
+                var commits = await applicationService.Client.Get<Collection<Commit>>(uri);
                 Commits.AddRange(commits.Values.Select(ToViewModel));
                 _nextUrl = commits.Next;
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
@@ -92,11 +86,9 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             var avatar = new Avatar(commit.Author?.User?.Links?.Avatar?.Href);
             var vm = new CommitItemViewModel(username, desc, commit.Date.Humanize(), avatar);
-            vm.GoToCommand.Subscribe(_ =>
-            {
-                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = Username, Repository = Repository, Node = commit.Hash });
-            });
-
+            vm.GoToCommand
+              .Select(_ => new CommitViewModel(_username, _repository, commit))
+              .Subscribe(NavigateTo);
             return vm;
         }
 

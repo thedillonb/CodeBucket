@@ -2,13 +2,12 @@ using System;
 using Foundation;
 using UIKit;
 using SDWebImage;
-using MvvmCross.Binding.iOS.Views;
 using ObjCRuntime;
 using CodeBucket.Core.Utils;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class RepositoryCellView : MvxTableViewCell
+    public partial class RepositoryCellView : UITableViewCell
     {
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("RepositoryCellView");

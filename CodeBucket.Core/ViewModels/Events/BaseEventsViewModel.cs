@@ -12,6 +12,7 @@ using ReactiveUI;
 using System.Reactive;
 using CodeBucket.Core.Utils;
 using Humanizer;
+using CodeBucket.Core.ViewModels.Wiki;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -23,25 +24,21 @@ namespace CodeBucket.Core.ViewModels.Events
         public bool HasMore
         {
             get { return _hasMore; }
-            private set
-            {
-                if (_hasMore == value)
-                    return;
-                _hasMore = value;
-                this.RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _hasMore, value); }
         }
 
         public ReactiveList<EventItemViewModel> Events { get; } = new ReactiveList<EventItemViewModel>();
 
         public bool ReportRepository { get; private set; } = true;
 
-        public IReactiveCommand LoadCommand { get; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> LoadMoreCommand { get; }
 
         protected BaseEventsViewModel()
         {
+            Title = "Events";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 HasMore = false;
@@ -52,7 +49,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 HasMore = nextPage < events.Count;
             });
 
-            var hasMoreObs = this.Bind(x => x.HasMore, true);
+            var hasMoreObs = this.WhenAnyValue(x => x.HasMore);
             LoadMoreCommand = ReactiveCommand.CreateAsyncTask(hasMoreObs, async _ =>
             {
                 HasMore = false;
@@ -68,66 +65,37 @@ namespace CodeBucket.Core.ViewModels.Events
 		private void GoToCommits(RepositoryDetailedModel repoModel, string branch)
         {
 			if (branch != null)
-			{
-				ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject
-				{
-					Username = repoModel.Owner,
-					Repository = repoModel.Name,
-					Branch = branch
-				});
-			}
+                NavigateTo(new CommitsViewModel(repoModel.Owner, repoModel.Name, branch));
 			else
-			{
-				ShowViewModel<BranchesViewModel>(new BranchesViewModel.NavObject
-				{
-					Username = repoModel.Owner,
-					Repository = repoModel.Name
-				});
-			}
+                NavigateTo(new BranchesViewModel(repoModel.Owner, repoModel.Name));
         }
 
 		private void GoToRepository(RepositoryDetailedModel eventModel)
         {
 			if (eventModel == null)
 				return;
-
-            ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
-            {
-				Username = eventModel.Owner,
-				RepositorySlug = eventModel.Slug
-            });
+            NavigateTo(new RepositoryViewModel(eventModel.Owner, eventModel.Slug));
         }
 
 		private void GoToRepositoryIssues(RepositoryDetailedModel eventModel)
 		{
 			if (eventModel == null)
 				return;
-
-			ShowViewModel<IssuesViewModel>(new IssuesViewModel.NavObject
-				{
-					Username = eventModel.Owner,
-					Repository = eventModel.Slug
-				});
+            NavigateTo(new IssuesViewModel(eventModel.Owner, eventModel.Slug));
 		}
 
         private void GoToUser(string username)
         {
             if (string.IsNullOrEmpty(username))
                 return;
-            ShowViewModel<UserViewModel>(new UserViewModel.NavObject {Username = username});
+            NavigateTo(new UserViewModel(username));
         }
 
 		private void GoToRepositoryWiki(RepositoryDetailedModel repository, string page)
 		{
 			if (repository == null)
 				return;
-
-			ShowViewModel<Wiki.WikiViewModel>(new Wiki.WikiViewModel.NavObject
-			{
-				Username = repository.Owner,
-				Repository = repository.Slug,
-				Page = page
-			});
+            NavigateTo(new WikiViewModel(repository.Owner, repository.Slug, page));
 		}
 
 //
@@ -180,21 +148,12 @@ namespace CodeBucket.Core.ViewModels.Events
         {
 			if (repo == null)
 				return;
-            ShowViewModel<PullRequestsViewModel>(new PullRequestsViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Slug
-            });
+            NavigateTo(new PullRequestsViewModel(repo.Owner, repo.Slug));
         }
 
 		private void GoToChangeset(string owner, string name, string sha)
         {
-			ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject
-            {
-				Username = owner,
-				Repository = name,
-				Node = sha
-            });
+            NavigateTo(new CommitViewModel(owner, name, sha));
         }
 
         private EventItemViewModel CreateEventEventTextBlocks(EventModel eventModel)

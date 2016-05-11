@@ -5,8 +5,6 @@ using System.Linq;
 using WebKit;
 using Foundation;
 using CodeBucket.Utilities;
-using MvvmCross.Platform;
-using CodeBucket.Core.Services;
 using CodeBucket.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -21,7 +19,7 @@ namespace CodeBucket.ViewControllers.Accounts
             "https://bitbucket.org/features",
             "https://bitbucket.org/account/signup",
             "https://bitbucket.org/plans",
-            "https://bitbucket.org/product/pricing",
+            "https://bitbucket.org/product/pricing"
         };
 
         public LoginViewModel ViewModel { get; }
@@ -29,11 +27,11 @@ namespace CodeBucket.ViewControllers.Accounts
         public LoginViewController()
             : base(true)
         {
-            ViewModel = new LoginViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<IAccountsService>());
+            ViewModel = new LoginViewModel();
             Title = "Login";
 
             Appearing.Take(1).Subscribe(_ => LoadRequest());
-            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
+            OnActivation(d => d(ViewModel.WhenAnyValue(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
         }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
