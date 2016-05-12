@@ -1,15 +1,12 @@
-using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using BitbucketSharp.Models;
-using CodeBucket.Core.Services;
-using CodeBucket.Core.Filters;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssuesView : ViewModelCollectionDrivenDialogViewController<IssuesViewModel>
+    public class IssuesView : ViewModelDrivenDialogViewController<IssuesViewModel>
     {
         private UISegmentedControl _viewSegment;
         private UIBarButtonItem _segmentBarButton;

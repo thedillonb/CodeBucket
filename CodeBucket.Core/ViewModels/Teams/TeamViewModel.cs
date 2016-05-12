@@ -14,7 +14,7 @@ namespace CodeBucket.Core.ViewModels.Teams
 {
     public class TeamViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
         private Team _team;
         public Team Team

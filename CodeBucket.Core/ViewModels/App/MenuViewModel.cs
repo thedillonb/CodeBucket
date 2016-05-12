@@ -20,7 +20,7 @@ using CodeFramework.Core.Data;
 
 namespace CodeBucket.Core.ViewModels.App
 {
-    public class MenuViewModel : BaseViewModel, ILoadableViewModel
+    public class MenuViewModel : BaseViewModel, ILoadableViewModel, ISupportsActivation
     {
         public IReactiveCommand<object> GoToDefaultTopView { get; } = ReactiveCommand.Create();
 
@@ -41,14 +41,17 @@ namespace CodeBucket.Core.ViewModels.App
         public Avatar Avatar { get; }
 
         public MenuViewModel(
-            IApplicationService applicationService = null, 
+            IApplicationService applicationService = null,
             IAccountsService accountsService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
 
-            Avatar = new Avatar(applicationService.Account.AvatarUrl);
-            Username = applicationService.Account.Username;
+            var account = applicationService.Account;
+            Avatar = new Avatar(account.AvatarUrl);
+            ExpandTeamsAndGroups = account.ExpandTeamsAndGroups;
+            ShowTeamEvents = account.ShowTeamEvents;
+            Username = account.Username;
             var username = Username;
 
             ExpandTeamsAndGroups = applicationService.Account.ExpandTeamsAndGroups;
@@ -69,7 +72,7 @@ namespace CodeBucket.Core.ViewModels.App
                 return vm;
             });
 
-            this.WhenActivated(d => 
+            this.WhenActivated(d =>
                 repos.Reset(accountsService.ActiveAccount.PinnnedRepositories));
 
             Teams = teams.CreateDerivedCollection(x =>
@@ -153,7 +156,10 @@ namespace CodeBucket.Core.ViewModels.App
                     var match = props.FirstOrDefault(x => string.Equals(startupViewName, x.Attribute.Name));
                     var cmd = match?.Property.GetValue(this) as IReactiveCommand;
                     if (cmd != null)
+                    {
                         cmd.ExecuteIfCan();
+                        return;
+                    }
                 }
 
                 //Oh no... Look for the last resort DefaultStartupViewAttribute
@@ -181,32 +187,34 @@ namespace CodeBucket.Core.ViewModels.App
         [PotentialStartupView("Profile")]
         public IReactiveCommand<object> GoToProfileCommand { get; } = ReactiveCommand.Create();
 
-		[DefaultStartupView]
-		[PotentialStartupView("My Events")]
+        [DefaultStartupView]
+        [PotentialStartupView("My Events")]
         public IReactiveCommand<object> GoToMyEvents { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupView("Starred Repositories")]
+        [PotentialStartupView("Starred Repositories")]
         public IReactiveCommand<object> GoToStarredRepositoriesCommand { get; } = ReactiveCommand.Create();
 
         [PotentialStartupView("My Repositories")]
-		public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; } = ReactiveCommand.Create();
 
         [PotentialStartupView("Shared Repositories")]
         public IReactiveCommand<object> GoToSharedRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupView("Explore Repositories")]
+        [PotentialStartupView("Explore Repositories")]
         public IReactiveCommand<object> GoToExploreRepositoriesCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupView("Organizations")]
-		public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
+        [PotentialStartupView("Organizations")]
+        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupView("Teams")]
-		public IReactiveCommand<object> GoToTeamsCommand { get; } = ReactiveCommand.Create();
+        [PotentialStartupView("Teams")]
+        public IReactiveCommand<object> GoToTeamsCommand { get; } = ReactiveCommand.Create();
 
-		public IReactiveCommand<object> GoToSettingsCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> GoToSettingsCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand<object> GoToFeedbackCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        ViewModelActivator ISupportsActivation.Activator { get; } = new ViewModelActivator();
     }
 }

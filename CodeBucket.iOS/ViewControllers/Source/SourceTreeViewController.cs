@@ -7,7 +7,7 @@ using UIKit;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class SourceTreeViewController : ViewModelCollectionDrivenDialogViewController<SourceTreeViewModel>
+    public class SourceTreeViewController : ViewModelDrivenDialogViewController<SourceTreeViewModel>
     {
         public override void ViewDidLoad()
         {

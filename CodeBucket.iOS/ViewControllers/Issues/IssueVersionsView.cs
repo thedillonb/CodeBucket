@@ -4,19 +4,16 @@ using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
-using CodeBucket.Utilities;
-using CodeBucket.Core.Services;
 using BitbucketSharp.Models;
 using ReactiveUI;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssueVersionsView : ViewModelCollectionDrivenDialogViewController<IssueVersionsViewModel>
+    public class IssueVersionsView : ViewModelDrivenDialogViewController<IssueVersionsViewModel>
 	{
         public IssueVersionsView()
 		{
 			Title = "Versions";
-			EnableSearch = false;
 		}
 
 		public override void ViewDidLoad()

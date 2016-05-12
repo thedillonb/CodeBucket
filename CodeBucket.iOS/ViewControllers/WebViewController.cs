@@ -10,7 +10,7 @@ using System.Reactive.Linq;
 
 namespace CodeBucket.Views
 {
-    public class WebViewController<TViewModel> : WebViewController, IViewFor<TViewModel>
+    public abstract class WebViewController<TViewModel> : WebViewController, IViewFor<TViewModel>
         where TViewModel : class
     {
         private readonly LoadingIndicator _loadIndicator = new LoadingIndicator();
@@ -43,7 +43,7 @@ namespace CodeBucket.Views
         }
     }
 
-    public class WebViewController : BaseViewController
+    public abstract class WebViewController : BaseViewController
     {
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;

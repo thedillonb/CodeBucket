@@ -8,17 +8,14 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class BranchesAndTagsViewController : ViewModelCollectionDrivenDialogViewController<BranchesAndTagsViewModel>
+    public class BranchesAndTagsViewController : ViewModelDrivenDialogViewController<BranchesAndTagsViewModel>
 	{
-        public BranchesAndTagsViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Filecode.ToEmptyListImage(), "There are no items."));
-        }
-
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Filecode.ToEmptyListImage(), "There are no items."));
 
 			var viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
             NavigationItem.TitleView = viewSegment;

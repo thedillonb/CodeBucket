@@ -13,16 +13,10 @@ using System.Reactive;
 
 namespace CodeBucket.ViewControllers.Source
 {
-	public class ChangesetDiffViewController : FileSourceViewController
+	public class ChangesetDiffViewController : FileSourceViewController<ChangesetDiffViewModel>
     {
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
-
-		public new ChangesetDiffViewModel ViewModel
-		{
-			get { return (ChangesetDiffViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
 
 		public override void ViewDidLoad()
 		{

@@ -11,18 +11,14 @@ using ReactiveUI;
 
 namespace CodeBucket.Views.Repositories
 {
-    public sealed class RepositoriesExploreViewController : ViewModelCollectionDrivenDialogViewController<RepositoriesExploreViewModel>
+    public sealed class RepositoriesExploreViewController : ViewModelDrivenDialogViewController<RepositoriesExploreViewModel>
     {
-		public RepositoriesExploreViewController()
-        {
-            Title = "Explore";
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
 
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;

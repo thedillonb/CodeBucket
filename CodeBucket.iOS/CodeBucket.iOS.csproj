@@ -127,7 +127,6 @@
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
@@ -268,6 +267,8 @@
     <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\WebViewController.cs" />
+    <Compile Include="Services\ServiceRegistration.cs" />
+    <Compile Include="Services\ViewLocatorService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

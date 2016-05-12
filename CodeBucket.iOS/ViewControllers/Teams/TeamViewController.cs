@@ -22,11 +22,11 @@ namespace CodeBucket.ViewControllers.Teams
             var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, organizations, members, followers };
             Root.Reset(midSec, new Section { repos });
 
-            followers.Clicked.BindCommand(ViewModel.GoToFollowersCommand);
-            events.Clicked.BindCommand(ViewModel.GoToEventsCommand);
-            organizations.Clicked.BindCommand(ViewModel.GoToGroupsCommand);
-            repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand);
-            members.Clicked.BindCommand(ViewModel.GoToMembersCommand);
+            followers.Clicked.InvokeCommand(ViewModel.GoToFollowersCommand);
+            events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand);
+            organizations.Clicked.InvokeCommand(ViewModel.GoToGroupsCommand);
+            repos.Clicked.InvokeCommand(ViewModel.GoToRepositoriesCommand);
+            members.Clicked.InvokeCommand(ViewModel.GoToMembersCommand);
 
             this.WhenAnyValue(x => x.ViewModel.Team).Subscribe(x =>
             {

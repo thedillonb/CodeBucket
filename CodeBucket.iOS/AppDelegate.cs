@@ -24,6 +24,8 @@ namespace CodeBucket
             // Stamp the date this was installed (first run)
             StampInstallDate("CodeBucket");
 
+            ServiceRegistration.Register();
+
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;
             exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));

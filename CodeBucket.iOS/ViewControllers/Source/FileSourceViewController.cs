@@ -1,9 +1,9 @@
-using CodeBucket.Core.ViewModels;
 using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public abstract class FileSourceViewController : WebViewController<FileSourceViewModel>
+    public abstract class FileSourceViewController<TViewModel> : WebViewController<TViewModel>
+        where TViewModel : class
     {
 		protected FileSourceViewController()
 			: base(false, false)

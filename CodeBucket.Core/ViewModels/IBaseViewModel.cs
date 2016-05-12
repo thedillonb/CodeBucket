@@ -1,8 +1,6 @@
-﻿using ReactiveUI;
-
-namespace CodeBucket.Core.ViewModels
+﻿namespace CodeBucket.Core.ViewModels
 {
-    public interface IBaseViewModel : ISupportsActivation, IProvidesTitle, IRoutingViewModel
+    public interface IBaseViewModel : IProvidesTitle, IRoutingViewModel
     {
     }
 }

@@ -49,16 +49,6 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ReactiveCommand<Unit> StartupCommand { get; }
 
-        /// <summary>
-        /// Gets the default account. If there is not one assigned it will pick the first in the account list.
-        /// If there isn't one, it'll just return null.
-        /// </summary>
-        /// <returns>The default account.</returns>
-        protected BitbucketAccount GetDefaultAccount()
-        {
-            return _accountsService.GetDefault();
-        }
-
         public StartupViewModel(
             IAccountsService accountsService = null, 
             IApplicationService applicationService = null, 
@@ -79,7 +69,7 @@ namespace CodeBucket.Core.ViewModels.App
 				return;
 			}
 
-			var account = GetDefaultAccount();
+            var account = _accountsService.GetDefault();
 			if (account == null)
 			{
                 GoToAccountsCommand.Execute(null);

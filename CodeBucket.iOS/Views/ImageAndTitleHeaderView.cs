@@ -36,7 +36,12 @@ namespace CodeBucket.Views
         public UIImage Image
         {
             get { return _imageView.Image; }
-            set { _imageView.Image = value; }
+            set 
+            {
+                if (_imageView.Image == value)
+                    return;
+                _imageView.Image = value; 
+            }
         }
 
         public string Text

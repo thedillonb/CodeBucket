@@ -9,17 +9,16 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.PullRequests
 {
-    public class PullRequestsViewController : ViewModelCollectionDrivenDialogViewController<PullRequestsViewModel>
+    public class PullRequestsViewController : ViewModelDrivenDialogViewController<PullRequestsViewModel>
     {
-		public PullRequestsViewController()
-		{
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Devtoolspullrequest.ToImage(64f), "There are no pull requests.")); 
-		}
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            EnableSearch = true;
+
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolspullrequest.ToImage(64f), "There are no pull requests."));
 
             var viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
             NavigationItem.TitleView = viewSegment;

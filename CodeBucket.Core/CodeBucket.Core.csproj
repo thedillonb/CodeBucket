@@ -145,6 +145,7 @@
     <Compile Include="ViewModels\App\PinnedRepositoryItemViewModel.cs" />
     <Compile Include="ViewModels\Commits\CommitFileItemViewModel.cs" />
     <Compile Include="ViewModels\Comments\CommentItemViewModel.cs" />
+    <Compile Include="Services\ServiceRegistration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

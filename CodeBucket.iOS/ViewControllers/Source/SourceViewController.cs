@@ -7,7 +7,7 @@ using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Source
 {
-	public class SourceViewController : FileSourceViewController
+	public class SourceViewController : FileSourceViewController<SourceViewModel>
     {
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
 
@@ -19,7 +19,7 @@ namespace CodeBucket.ViewControllers.Source
                 .IsNotNull()
                 .Subscribe(Load);
 
-            var sourceViewModel = ViewModel as SourceViewModel;
+            var sourceViewModel = ViewModel;
             if (sourceViewModel != null)
                 _actionButton.GetClickedObservable().InvokeCommand(sourceViewModel.ShowMenuCommand);
         }

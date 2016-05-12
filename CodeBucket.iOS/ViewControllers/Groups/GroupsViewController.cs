@@ -7,17 +7,14 @@ using System.Linq;
 
 namespace CodeBucket.ViewControllers.Groups
 {
-    public class GroupsViewController : ViewModelCollectionDrivenDialogViewController<GroupsViewModel>
+    public class GroupsViewController : ViewModelDrivenDialogViewController<GroupsViewModel>
 	{
-        public GroupsViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Group.ToEmptyListImage(), "There are no groups."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Group.ToEmptyListImage(), "There are no groups."));
 
             ViewModel
                 .Groups

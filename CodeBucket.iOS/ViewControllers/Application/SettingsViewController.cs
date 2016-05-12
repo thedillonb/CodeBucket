@@ -14,10 +14,8 @@ namespace CodeBucket.ViewController.Application
         {
             base.ViewWillAppear(animated);
 
-            HeaderView.Text = Title = ViewModel.Title;
+            Title = ViewModel.Title;
             HeaderView.SetImage(null, Images.Avatar);
-            RefreshHeaderView();
-
             CreateTable();
         }
 
@@ -48,7 +46,7 @@ namespace CodeBucket.ViewController.Application
             rate.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8")));
 
 			//Assign the root
-            ICollection<Section> root = new LinkedList<Section>();
+            var root = new List<Section>();
             root.Add(new Section());
             root.Add(new Section { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
             root.Add(new Section(String.Empty, "Thank you for downloading. Enjoy!")
@@ -57,7 +55,6 @@ namespace CodeBucket.ViewController.Application
                 new StringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
             });
             Root.Reset(root);
-
 		}
     }
 }

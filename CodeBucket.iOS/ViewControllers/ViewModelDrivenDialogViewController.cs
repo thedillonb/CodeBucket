@@ -66,9 +66,10 @@ namespace CodeBucket.ViewControllers
                 NavigationController.NavigationBar.ShadowImage = null;
         }
 
-        protected void RefreshHeaderView(string text = null)
+        protected void RefreshHeaderView(string text = null, UIImage image = null)
         {
             HeaderView.Text = text ?? HeaderView.Text;
+            HeaderView.Image = image ?? HeaderView.Image;
             TableView.TableHeaderView = HeaderView;
             TableView.ReloadData();
         }
@@ -123,15 +124,8 @@ namespace CodeBucket.ViewControllers
 
         object IViewFor.ViewModel
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return ViewModel; }
+            set { ViewModel = (TViewModel)value; }
         }
 
         public override void ViewDidLoad()
@@ -198,12 +192,11 @@ namespace CodeBucket.ViewControllers
                      .Where(x => x.CanExecute(null))
                      .Subscribe(x => x.Execute(null));
 
-            Appearing.Take(1)
-                     .Select(_ => ViewModel)
-                     .OfType<IProvidesTitle>()
-                     .Select(x => x.WhenAnyValue(y => y.Title))
-                     .Switch()
-                     .Subscribe(x => Title = x);
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IProvidesTitle>()
+                .Select(x => x.WhenAnyValue(y => y.Title))
+                .Switch()
+                .Subscribe(x => Title = x);
         }
 
         private void HandleRefreshRequested(object sender, EventArgs e)

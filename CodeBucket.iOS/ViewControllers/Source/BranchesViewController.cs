@@ -7,17 +7,14 @@ using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class BranchesViewController : ViewModelCollectionDrivenDialogViewController<BranchesViewModel>
+    public class BranchesViewController : ViewModelDrivenDialogViewController<BranchesViewModel>
     {
-        public BranchesViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Devtoolsbranch.ToEmptyListImage(), "There are no branches."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsbranch.ToEmptyListImage(), "There are no branches."));
 
             ViewModel
                 .Branches

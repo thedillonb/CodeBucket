@@ -7,9 +7,13 @@ using CodeBucket.Core.Utils;
 using CodeBucket.DialogElements;
 using System.Collections.Generic;
 using CodeBucket.ViewControllers.Accounts;
-using CodeBucket.Core.Services;
 using CoreGraphics;
 using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive;
+using CodeBucket.Core.ViewModels;
+using Splat;
+using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers.Application
 {
@@ -21,10 +25,6 @@ namespace CodeBucket.ViewControllers.Application
 
         public MenuViewModel ViewModel { get; } = new MenuViewModel();
 
-        /// <summary>
-        /// Gets or sets the title.
-        /// </summary>
-        /// <value>The title.</value>
         public override string Title {
             get {
                 return _title == null ? base.Title : " " + _title.Text;
@@ -47,31 +47,37 @@ namespace CodeBucket.ViewControllers.Application
             NavigationItem.TitleView = _title;
 
             OnActivation(d => d(_profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked())));
+
+            Appearing
+                .Take(1)
+                .InvokeCommand(ViewModel.LoadCommand);
+
+            Observable.Return(ViewModel)
+                      .OfType<IRoutingViewModel>()
+                      .Select(x => x.RequestNavigation)
+                      .Switch()
+                      .Subscribe(x =>
+                      {
+                          var viewFor = Locator.Current.GetService<IViewLocatorService>().GetView(x);
+                          NavigationController.PushViewController(viewFor as UIViewController, true);  
+                      });
         }
 
-	    private void CreateMenuRoot()
+        private void CreateMenuRoot(Section profileSection, Section repoSection, Section infoSection)
 		{
             ICollection<Section> root = new LinkedList<Section>();
 
-            root.Add(new Section
-            {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), AtlassianIcon.User.ToImage()),
-            });
+            root.Add(profileSection);
 
             var teamEvents = ViewModel.Teams
                 .Where(_ => ViewModel.ShowTeamEvents)
                 .Select(team => new MenuElement(team.Name, team.GoToCommand.ExecuteIfCan, AtlassianIcon.Blogroll.ToImage()));
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(ViewModel.Username, () => ViewModel.GoToMyEvents.Execute(null), AtlassianIcon.Blogroll.ToImage()));
+            eventsSection.Add(new MenuElement(ViewModel.Username, ViewModel.GoToMyEvents, AtlassianIcon.Blogroll.ToImage()));
             eventsSection.AddAll(teamEvents);
             root.Add(eventsSection);
 
-            var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-            repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), AtlassianIcon.Devtoolsrepository.ToImage()));
-            repoSection.Add(new MenuElement("Shared", () => ViewModel.GoToSharedRepositoriesCommand.Execute(null), AtlassianIcon.Spacedefault.ToImage()));
-            repoSection.Add(new MenuElement("Watched", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), AtlassianIcon.Star.ToImage()));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), AtlassianIcon.Search.ToImage()));
             root.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
@@ -90,31 +96,27 @@ namespace CodeBucket.ViewControllers.Application
                 if (ViewModel.Groups.Count > 0)
                 {
                     var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Groups") };
-                    groupsTeamsSection.AddAll(ViewModel.Groups.Select(g => new MenuElement(g.Name, 
-                        () => g.GoToCommand.Execute(null), AtlassianIcon.Group.ToImage())));
+                    groupsTeamsSection.AddAll(ViewModel.Groups.Select(
+                        g => new MenuElement(g.Name, g.GoToCommand, AtlassianIcon.Group.ToImage())));
                     root.Add(groupsTeamsSection);
                 }
                 if (ViewModel.Teams.Count > 0)
                 {
                     var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Teams") };
-                    groupsTeamsSection.AddAll(ViewModel.Teams.Select(g => new MenuElement(g.Name,
-                        () => g.GoToCommand.Execute(null), AtlassianIcon.Group.ToImage())));
+                    groupsTeamsSection.AddAll(ViewModel.Teams.Select(
+                        g => new MenuElement(g.Name, g.GoToCommand, AtlassianIcon.Group.ToImage())));
                     root.Add(groupsTeamsSection);
                 }
 			}
 			else
 			{
                 var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Collaborations") };
-                groupsTeamsSection.Add(new MenuElement("Groups", () => ViewModel.GoToGroupsCommand.Execute(null), AtlassianIcon.Group.ToImage()));
-                groupsTeamsSection.Add(new MenuElement("Teams", () => ViewModel.GoToTeamsCommand.Execute(null), AtlassianIcon.Userstatus.ToImage()));
+                groupsTeamsSection.Add(new MenuElement("Groups", ViewModel.GoToGroupsCommand, AtlassianIcon.Group.ToImage()));
+                groupsTeamsSection.Add(new MenuElement("Teams", ViewModel.GoToTeamsCommand, AtlassianIcon.Userstatus.ToImage()));
                 root.Add(groupsTeamsSection);
 			}
 
-            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), AtlassianIcon.Configure.ToImage()));
-            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.Execute(null), AtlassianIcon.Comment.ToImage()));
-            infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, AtlassianIcon.User.ToImage()));
             Root.Reset(root);
 		}
 
@@ -139,9 +141,29 @@ namespace CodeBucket.ViewControllers.Application
             TableView.ScrollsToTop = false;
 
             _profileButton.Uri = ViewModel.Avatar.ToUri();
-            ViewModel.WhenAnyValue(x => x.Groups).Subscribe(_ => CreateMenuRoot());
-            ViewModel.WhenAnyValue(x => x.Teams).Subscribe(_ => CreateMenuRoot());
-            ViewModel.LoadCommand.Execute(null);
+
+            var profileSection = new Section();
+            profileSection.Add(new MenuElement("Profile", ViewModel.GoToProfileCommand, AtlassianIcon.User.ToImage()));
+            
+            var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
+            repoSection.Add(new MenuElement("Owned", ViewModel.GoToOwnedRepositoriesCommand, AtlassianIcon.Devtoolsrepository.ToImage()));
+            repoSection.Add(new MenuElement("Shared", ViewModel.GoToSharedRepositoriesCommand, AtlassianIcon.Spacedefault.ToImage()));
+            repoSection.Add(new MenuElement("Watched", ViewModel.GoToStarredRepositoriesCommand, AtlassianIcon.Star.ToImage()));
+            repoSection.Add(new MenuElement("Explore", ViewModel.GoToExploreRepositoriesCommand, AtlassianIcon.Search.ToImage()));
+
+            var infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
+            infoSection.Add(new MenuElement("Settings", ViewModel.GoToSettingsCommand, AtlassianIcon.Configure.ToImage()));
+            infoSection.Add(new MenuElement("Feedback & Support", ViewModel.GoToFeedbackCommand, AtlassianIcon.Comment.ToImage()));
+            infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, AtlassianIcon.User.ToImage()));
+
+            CreateMenuRoot(profileSection, repoSection, infoSection);
+
+            var updatables = new[] { ViewModel.Groups.Changed, ViewModel.Teams.Changed, ViewModel.TeamEvents.Changed };
+
+            Observable.Merge(updatables.Select(y => y.Select(_ => Unit.Default).StartWith(Unit.Default)))
+                      .Throttle(TimeSpan.FromMilliseconds(50))
+                      .ObserveOn(RxApp.MainThreadScheduler)
+                      .Subscribe(_ => CreateMenuRoot(profileSection, repoSection, infoSection));
         }
 
 		private class PinnedRepoElement : MenuElement
@@ -180,7 +202,6 @@ namespace CodeBucket.ViewControllers.Application
         public override void ViewWillAppear(bool animated)
         {
             UpdateProfilePicture();
-            CreateMenuRoot();
             base.ViewWillAppear(animated);
         }
 

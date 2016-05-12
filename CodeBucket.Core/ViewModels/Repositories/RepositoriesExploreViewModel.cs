@@ -5,10 +5,11 @@ using System.Reactive;
 using System.Reactive.Linq;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Utils;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesExploreViewModel : ReactiveObject
+    public class RepositoriesExploreViewModel : BaseViewModel
     {
         public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; }
 
@@ -25,6 +26,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
 		public RepositoriesExploreViewModel(IApplicationService applicationService)
         {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Explore";
+
             var canSearch = this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x));
             SearchCommand = ReactiveCommand.CreateAsyncTask(canSearch, _ => Search());
             var showDescription = applicationService.Account.RepositoryDescriptionInList;

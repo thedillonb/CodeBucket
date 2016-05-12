@@ -9,17 +9,14 @@ using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public abstract class BaseRepositoriesViewController<TViewModel> : ViewModelCollectionDrivenDialogViewController<TViewModel>
+    public abstract class BaseRepositoriesViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
         where TViewModel : RepositoriesViewModel
     {
-        protected BaseRepositoriesViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
-        }
-
         public override void ViewDidLoad()
         {
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
+
             TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 80f;

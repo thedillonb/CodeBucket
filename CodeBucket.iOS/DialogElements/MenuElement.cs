@@ -1,6 +1,8 @@
 ﻿using System;
 using UIKit;
 using CoreGraphics;
+using System.Windows.Input;
+using ReactiveUI;
 
 namespace CodeBucket.DialogElements
 {
@@ -19,6 +21,12 @@ namespace CodeBucket.DialogElements
                 if (cell != null)
                     cell.NotificationNumber = value;
             }
+        }
+
+        public MenuElement(string title, IReactiveCommand command, UIImage image, Uri imageUrl = null)
+            : this(title, image, imageUrl)
+        {
+            Clicked.InvokeCommand(command);
         }
 
         public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) 
