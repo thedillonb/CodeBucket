@@ -12,7 +12,7 @@ namespace CodeBucket.TableViewSources
     public class DialogElementTableViewSource : UITableViewSource
     {
         private readonly ISubject<Unit> _endSubject = new Subject<Unit>();
-        private readonly RootElement _root;
+        private readonly WeakReference<RootElement> _root;
 
         public RootElement Root
         {
@@ -24,7 +24,7 @@ namespace CodeBucket.TableViewSources
             get { return _endSubject.AsObservable(); }
         }
 
-        public DialogElementTableViewSource(UITableView tableView)
+        public DialogElementTableViewSource(RootElement rootElement)
         {
             _root = new WeakReference<RootElement>(rootElement);
         }

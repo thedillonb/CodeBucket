@@ -270,7 +270,6 @@
     <Compile Include="Services\ServiceRegistration.cs" />
     <Compile Include="Services\ViewLocatorService.cs" />
     <Compile Include="TableViewSources\DialogElementTableViewSource.cs" />
-    <Compile Include="TableViewSources\CommitTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
