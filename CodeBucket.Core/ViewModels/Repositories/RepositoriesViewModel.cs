@@ -8,11 +8,18 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : BaseViewModel
+    public abstract class RepositoriesViewModel : BaseViewModel, IProvidesSearch, IListViewModel<RepositoryItemViewModel>
     {
         protected readonly IReactiveList<Repository> RepositoryList = new ReactiveList<Repository>();
 
-        public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; }
+        public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
         protected RepositoriesViewModel(IApplicationService applicationService)
         {
@@ -21,7 +28,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             Title = "Repositories";
 
             var showDescription = applicationService.Account.RepositoryDescriptionInList;
-            Repositories = RepositoryList.CreateDerivedCollection(x =>
+            Items = RepositoryList.CreateDerivedCollection(x =>
             {
                 var description = showDescription ? x.Description : string.Empty;
                 var viewModel = new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
@@ -31,7 +38,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                     NavigateTo(new RepositoryViewModel(id.Owner, id.Name));
                 });
                 return viewModel;
-            });
+            }, x => x.Name.ContainsKeyword(SearchText), signalReset: this.WhenAnyValue(x => x.SearchText));
         }
     }
 }

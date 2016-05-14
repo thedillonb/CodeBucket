@@ -146,6 +146,9 @@
     <Compile Include="ViewModels\Commits\CommitFileItemViewModel.cs" />
     <Compile Include="ViewModels\Comments\CommentItemViewModel.cs" />
     <Compile Include="Services\ServiceRegistration.cs" />
+    <Compile Include="ViewModels\IListViewModel.cs" />
+    <Compile Include="ViewModels\IProvidesSearch.cs" />
+    <Compile Include="ViewModels\IPaginatableViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

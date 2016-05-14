@@ -38,16 +38,16 @@ namespace CodeBucket.ViewControllers
             _backgroundHeaderView = new UIView();
         }
 
-        public override UIRefreshControl RefreshControl
-        {
-            get { return base.RefreshControl; }
-            set
-            {
-                if (value != null)
-                    value.TintColor = UIColor.White;
-                base.RefreshControl = value;
-            }
-        }
+        //public override UIRefreshControl RefreshControl
+        //{
+        //    get { return base.RefreshControl; }
+        //    set
+        //    {
+        //        if (value != null)
+        //            value.TintColor = UIColor.White;
+        //        base.RefreshControl = value;
+        //    }
+        //}
 
         public override void ViewWillAppear(bool animated)
         {
@@ -66,9 +66,10 @@ namespace CodeBucket.ViewControllers
                 NavigationController.NavigationBar.ShadowImage = null;
         }
 
-        protected void RefreshHeaderView(string text = null, UIImage image = null)
+        protected void RefreshHeaderView(string text = null, string subtext = null, UIImage image = null)
         {
             HeaderView.Text = text ?? HeaderView.Text;
+            HeaderView.SubText = subtext ?? HeaderView.SubText;
             HeaderView.Image = image ?? HeaderView.Image;
             TableView.TableHeaderView = HeaderView;
             TableView.ReloadData();
@@ -112,9 +113,6 @@ namespace CodeBucket.ViewControllers
 
     public abstract class ViewModelDrivenDialogViewController<TViewModel> : DialogViewController, IViewFor<TViewModel> where TViewModel : class
     {
-        private bool _manualRefreshRequested;
-        private readonly LoadingIndicator _loadingIndicator = new LoadingIndicator();
-
         private TViewModel _viewModel;
         public TViewModel ViewModel
         {
@@ -127,58 +125,7 @@ namespace CodeBucket.ViewControllers
             get { return ViewModel; }
             set { ViewModel = (TViewModel)value; }
         }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            var loadableViewModel = ViewModel as ILoadableViewModel;
-            if (loadableViewModel != null)
-            {
-                RefreshControl = new UIRefreshControl();
-
-                OnActivation(d =>
-                {
-                    d(loadableViewModel.LoadCommand.IsExecuting.Subscribe(x => {
-                        if (x)
-                        {
-                            _loadingIndicator.Up();
-                            RefreshControl.BeginRefreshing();
-
-                            if (!_manualRefreshRequested)
-                            {
-                                UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                    () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -RefreshControl.Frame.Height), null);
-                            }
-
-                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
-                                t.Enabled = false;
-                        }
-                        else
-                        {
-                            _loadingIndicator.Down();
-
-                            if (RefreshControl.Refreshing)
-                            {
-                                // Stupid bug...
-                                BeginInvokeOnMainThread(() =>
-                                {
-                                    UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                        () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                                    RefreshControl.EndRefreshing(); 
-                                });
-                            }
-
-                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
-                                t.Enabled = true;
-
-                            _manualRefreshRequested = false;
-                        }
-                    }));
-                });
-            }
-        }
-
+       
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
@@ -197,28 +144,6 @@ namespace CodeBucket.ViewControllers
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch()
                 .Subscribe(x => Title = x);
-        }
-
-        private void HandleRefreshRequested(object sender, EventArgs e)
-        {
-            var loadableViewModel = ViewModel as ILoadableViewModel;
-            _manualRefreshRequested = true;
-            loadableViewModel?.LoadCommand.Execute(true);
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            if (RefreshControl != null)
-                RefreshControl.ValueChanged += HandleRefreshRequested;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            if (RefreshControl != null)
-                RefreshControl.ValueChanged -= HandleRefreshRequested;
         }
     }
 }

@@ -4,20 +4,31 @@ using CodeBucket.DialogElements;
 using System.Reactive.Linq;
 using System.Linq;
 using UIKit;
+using CodeBucket.Views;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class SourceTreeViewController : ViewModelDrivenDialogViewController<SourceTreeViewModel>
+    public class SourceTreeViewController : BaseViewController<SourceTreeViewModel>
     {
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            var tableView = new EnhancedTableView(UITableViewStyle.Plain)
+            {
+                ViewModel = ViewModel
+            };
+
+            this.AddTableView(tableView);
+            var root = new RootElement(tableView);
+            tableView.Source = new DialogElementTableViewSource(root);
+
             ViewModel
-                .Content
+                .Items
                 .ChangedObservable()
                 .Select(x => x.Select(CreateElement))
-                .Subscribe(x => Root.Reset(new Section { x }));
+                .Subscribe(x => root.Reset(new Section { x }));
         }
 
         private static AtlassianIcon GetIcon(SourceTreeItemViewModel.SourceTreeItemType type)

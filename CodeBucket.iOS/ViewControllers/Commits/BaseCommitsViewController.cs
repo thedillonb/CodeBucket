@@ -5,47 +5,36 @@ using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Commits;
 using System.Reactive.Linq;
 using System.Linq;
+using CodeBucket.Views;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Commits
 {
-    public abstract class BaseCommitsViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
-        where TViewModel : class
+    public abstract class BaseCommitsViewController<TViewModel> : BaseViewController<TViewModel>
+        where TViewModel : BaseCommitsViewModel
 	{
-        protected BaseCommitsViewController()
-            : base(style: UITableViewStyle.Plain)
-        {
-        }
-
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-            TableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
+            var tableView = new EnhancedTableView { ViewModel = ViewModel };
+            tableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);
+            tableView.RowHeight = UITableView.AutomaticDimension;
+            tableView.EstimatedRowHeight = 80f;
+            this.AddTableView(tableView);
 
-            var vm = (ICommitsViewModel)ViewModel;
+            var root = new RootElement(tableView);
+            var tableViewSource = new DialogElementTableViewSource(root);
+            tableView.Source = tableViewSource;
 
-            vm.Commits
-              .ChangedObservable()
-              .Select(x => x.Select(y => new CommitElement(y)))
-              .Subscribe(x => Root.Reset(new Section { x }));
+            ViewModel.Items
+                .ChangedObservable()
+                .Select(x => x.Select(y => new CommitElement(y)))
+                .Subscribe(x => root.Reset(new Section { x }));
 
-            EndOfList.BindCommand(vm.LoadMoreCommand);
-
-            vm.LoadMoreCommand.IsExecuting.Subscribe(x =>
+            OnActivation(d =>
             {
-                if (x)
-                {
-                    var activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
-                    activity.Frame = new CoreGraphics.CGRect(0, 0, 320, 64f);
-                    activity.StartAnimating();
-                    TableView.TableFooterView = activity;
-                }
-                else
-                {
-                    TableView.TableFooterView = null;
-                }
+                d(tableViewSource.EndOfList.BindCommand(ViewModel.LoadMoreCommand));
             });
 		}
 	}

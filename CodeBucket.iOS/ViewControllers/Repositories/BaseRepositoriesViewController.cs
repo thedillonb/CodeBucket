@@ -6,26 +6,35 @@ using CodeBucket.TableViewCells;
 using System.Reactive.Linq;
 using System.Linq;
 using CodeBucket.Views;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public abstract class BaseRepositoriesViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
+    public abstract class BaseRepositoriesViewController<TViewModel> : BaseViewController<TViewModel>
         where TViewModel : RepositoriesViewModel
     {
         public override void ViewDidLoad()
         {
-            TableView.EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."));
-
-            TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
-
             base.ViewDidLoad();
 
-            ViewModel.Repositories.Changed
-                .Select(_ => ViewModel.Repositories.Select(x => new RepositoryElement(x)))
-                .Subscribe(x => Root.Reset(new Section { x }));
+            var tableView = new EnhancedTableView(UITableViewStyle.Plain)
+            {
+                ViewModel = ViewModel,
+                EmptyView = new Lazy<UIView>(() =>
+                    new EmptyListView(AtlassianIcon.Devtoolsrepository.ToEmptyListImage(), "There are no repositories."))
+            };
+
+            tableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
+            tableView.RowHeight = UITableView.AutomaticDimension;
+            tableView.EstimatedRowHeight = 80f;
+
+            this.AddTableView(tableView);
+            var root = new RootElement(tableView);
+            tableView.Source = new DialogElementTableViewSource(root);
+
+            ViewModel.Items.ChangedObservable()
+                .Select(x => x.Select(y => new RepositoryElement(y)))
+                .Subscribe(x => root.Reset(new Section { x }));
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CodeBucket
+﻿using UIKit;
+
+namespace CodeBucket
 {
     public class AtlassianIcon
     {
@@ -12,6 +14,11 @@
         public static implicit operator AtlassianIcon(char d)
         {
             return new AtlassianIcon(d);
+        }
+
+        public static implicit operator UIImage(AtlassianIcon icon)
+        {
+            return icon.ToImage();
         }
 
         public static AtlassianIcon Add = (char)0xf101;

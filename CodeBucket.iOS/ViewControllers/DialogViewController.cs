@@ -30,7 +30,6 @@ namespace CodeBucket.ViewControllers
     {
         private readonly ISubject<Unit> _endSubject = new Subject<Unit>();
         private readonly Lazy<RootElement> _rootElement;
-        private UISearchBar _searchBar;
 
         /// <summary>
         /// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
@@ -60,18 +59,6 @@ namespace CodeBucket.ViewControllers
         Section [] originalSections;
         Element [][] originalElements;
 
-        /// <summary>
-        /// Allows caller to programatically activate the search bar and start the search process
-        /// </summary>
-        public void StartSearch ()
-        {
-            if (originalSections != null)
-                return;
-
-            _searchBar.BecomeFirstResponder ();
-            CreateOriginals(Root);
-        }
-
         private void CreateOriginals(RootElement root)
         {
             originalSections = root.Sections.ToArray ();
@@ -80,22 +67,22 @@ namespace CodeBucket.ViewControllers
                 originalElements [i] = originalSections [i].Elements.ToArray ();
         }
 
-        /// <summary>
-        /// Allows the caller to programatically stop searching.
-        /// </summary>
-        public virtual void FinishSearch ()
-        {
-            if (originalSections == null)
-                return;
+        ///// <summary>
+        ///// Allows the caller to programatically stop searching.
+        ///// </summary>
+        //public virtual void FinishSearch ()
+        //{
+        //    if (originalSections == null)
+        //        return;
 
-            _searchBar.Text = "";
+        //    _searchBar.Text = "";
 
-            Root.Reset(originalSections);
-            originalSections = null;
-            originalElements = null;
-            _searchBar.ResignFirstResponder ();
-            ReloadData ();
-        }
+        //    Root.Reset(originalSections);
+        //    originalSections = null;
+        //    originalElements = null;
+        //    _searchBar.ResignFirstResponder ();
+        //    ReloadData ();
+        //}
 
         public void PerformFilter (string text)
         {
@@ -125,54 +112,6 @@ namespace CodeBucket.ViewControllers
 
             Root.Reset(newSections);
             ReloadData ();
-        }
-
-        public virtual void SearchButtonClicked (string text)
-        {
-            _searchBar.ResignFirstResponder();
-        }
-
-        protected class SearchDelegate : UISearchBarDelegate {
-            readonly WeakReference<DialogViewController> container;
-
-            public SearchDelegate (DialogViewController container)
-            {
-                this.container = new WeakReference<DialogViewController>(container);
-            }
-
-            public override void OnEditingStarted (UISearchBar searchBar)
-            {
-                searchBar.ShowsCancelButton = true;
-                container.Get()?.StartSearch ();
-            }
-
-            public override void OnEditingStopped (UISearchBar searchBar)
-            {
-                searchBar.ShowsCancelButton = false;
-                //container.FinishSearch ();
-            }
-
-            public override void TextChanged (UISearchBar searchBar, string searchText)
-            {
-                container.Get()?.PerformFilter (searchText ?? "");
-            }
-
-            public override void CancelButtonClicked (UISearchBar searchBar)
-            {
-                var r = container.Get();
-                searchBar.ShowsCancelButton = false;
-                if (r != null)
-                {
-                    r._searchBar.Text = "";
-                    r.FinishSearch();
-                }
-                searchBar.ResignFirstResponder ();
-            }
-
-            public override void SearchButtonClicked (UISearchBar searchBar)
-            {
-                container.Get()?.SearchButtonClicked (searchBar.Text);
-            }
         }
 
         protected virtual void DidScroll(CGPoint p)
@@ -293,26 +232,6 @@ namespace CodeBucket.ViewControllers
             }
         }
 
-        protected virtual IUISearchBarDelegate CreateSearchDelegate()
-        {
-            return new SearchDelegate(this);
-        }
-
-        void SetupSearch ()
-        {
-            if (EnableSearch){
-                _searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
-                    Delegate = CreateSearchDelegate()
-                };
-                if (SearchPlaceholder != null)
-                    _searchBar.Placeholder = this.SearchPlaceholder;
-                TableView.TableHeaderView = _searchBar;                    
-            } else {
-                // Does not work with current Monotouch, will work with 3.0
-                // tableView.TableHeaderView = null;
-            }
-        }
-
         public virtual void Deselected (NSIndexPath indexPath)
         {
             var section = Root[indexPath.Section];
@@ -338,7 +257,6 @@ namespace CodeBucket.ViewControllers
         public override void LoadView ()
         {
             base.LoadView();
-            SetupSearch ();
             TableView.Source = CreateSizingSource();
         }
 

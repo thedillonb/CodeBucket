@@ -1,7 +1,6 @@
 using System;
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
-using BitbucketSharp.Models;
 using CodeBucket.Core.Data;
 using BitbucketSharp;
 using ReactiveUI;

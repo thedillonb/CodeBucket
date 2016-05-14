@@ -14,14 +14,15 @@ namespace CodeBucket.Core.ViewModels.Teams
 {
     public class TeamViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string Name { get; }
-
         private Team _team;
         public Team Team
         {
             get { return _team; }
             private set { this.RaiseAndSetIfChanged(ref _team, value); }
         }
+
+        private readonly ObservableAsPropertyHelper<string> _displayName;
+        public string DisplayName => _displayName.Value;
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
@@ -60,9 +61,13 @@ namespace CodeBucket.Core.ViewModels.Teams
             GoToEventsCommand.Subscribe(_ => NavigateTo(new UserEventsViewModel(name)));
             GoToRepositoriesCommand.Subscribe(_ => NavigateTo(new UserRepositoriesViewModel(name)));
 
+            this.WhenAnyValue(x => x.Team.DisplayName)
+                .Select(x => string.Equals(x, name) ? null : x)
+                .ToProperty(this, x => x.DisplayName, out _displayName);
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                Team = await applicationService.Client.Teams.GetTeam(Name);
+                Team = await applicationService.Client.Teams.GetTeam(name);
             });
         }
     }

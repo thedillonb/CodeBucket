@@ -12,18 +12,11 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public interface ICommitsViewModel : IProvidesTitle
-    {
-        ReactiveList<CommitItemViewModel> Commits { get; }
-
-        IReactiveCommand<Unit> LoadMoreCommand { get; }
-    }
-
-    public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, ICommitsViewModel
+    public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IListViewModel<CommitItemViewModel>
 	{
         private string _nextUrl, _username, _repository;
 
-        public ReactiveList<CommitItemViewModel> Commits { get; } = new ReactiveList<CommitItemViewModel>();
+        public IReadOnlyReactiveList<CommitItemViewModel> Items { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
@@ -46,11 +39,14 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             Title = "Commits";
 
+            var commitItems = new ReactiveList<Commit>();
+            Items = commitItems.CreateDerivedCollection(ToViewModel);
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 HasMore = false;
                 var commits = await GetRequest();
-                Commits.Reset(commits.Values.Select(ToViewModel));
+                commitItems.Reset(commits.Values);
                 _nextUrl = commits.Next;
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
             });
@@ -61,7 +57,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                 HasMore = false;
                 var uri = new Uri(_nextUrl);
                 var commits = await applicationService.Client.Get<Collection<Commit>>(uri);
-                Commits.AddRange(commits.Values.Select(ToViewModel));
+                commitItems.AddRange(commits.Values);
                 _nextUrl = commits.Next;
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
             });

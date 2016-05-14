@@ -9,11 +9,18 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-    public class GroupsViewModel : BaseViewModel, ILoadableViewModel
+    public class GroupsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<GroupItemViewModel>
 	{
-        public IReadOnlyReactiveList<GroupItemViewModel> Groups { get; }
+        public IReadOnlyReactiveList<GroupItemViewModel> Items { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
         public GroupsViewModel(
             string username, 
@@ -24,7 +31,10 @@ namespace CodeBucket.Core.ViewModels.Groups
             Title = "Groups";
 
             var groups = new ReactiveList<GroupModel>();
-            Groups = groups.CreateDerivedCollection(ToViewModel);
+            Items = groups.CreateDerivedCollection(
+                ToViewModel,
+                x => x.Name.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 groups.Reset(await applicationService.Client.Groups.GetGroups(username));

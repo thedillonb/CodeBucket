@@ -17,6 +17,7 @@ namespace CodeBucket.Core.ViewModels.Users
         {
             Username = username;
             Avatar = avatar;
+            DisplayName = string.IsNullOrEmpty(displayName) ? string.Empty : displayName;
         }
     }
 }

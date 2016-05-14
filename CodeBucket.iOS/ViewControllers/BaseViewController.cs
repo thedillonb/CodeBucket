@@ -4,9 +4,40 @@ using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using Foundation;
+using CodeBucket.Core.ViewModels;
 
 namespace CodeBucket.ViewControllers
 {
+    public abstract class BaseViewController<TViewModel> : BaseViewController, IViewFor<TViewModel> where TViewModel : class
+    {
+        private TViewModel _viewModel;
+        public TViewModel ViewModel
+        {
+            get { return _viewModel; }
+            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+        }
+
+        object IViewFor.ViewModel
+        {
+            get { return ViewModel; }
+            set { ViewModel = (TViewModel)value; }
+        }
+
+        protected BaseViewController()
+        {
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<ILoadableViewModel>()
+                .Select(x => x.LoadCommand)
+                .Subscribe(x => x.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IProvidesTitle>()
+                .Select(x => x.WhenAnyValue(y => y.Title))
+                .Switch()
+                .Subscribe(x => Title = x);
+        }
+    }
+
     public abstract class BaseViewController : ReactiveViewController, IActivatable
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();

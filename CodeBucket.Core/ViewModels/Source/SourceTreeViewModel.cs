@@ -8,17 +8,18 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel
+    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<SourceTreeItemViewModel>
     {
-        public IReadOnlyReactiveList<SourceTreeItemViewModel> Content { get; }
+        public IReadOnlyReactiveList<SourceTreeItemViewModel> Items { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
-
-//        public ICommand GoToSubmoduleCommand
-//        {
-//			get { return new MvxCommand<SourceModel>(GoToSubmodule);}
-//        }
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
 //		private void GoToSubmodule(SourceModel x)
 //        {
@@ -39,7 +40,10 @@ namespace CodeBucket.Core.ViewModels.Source
             Title = string.IsNullOrEmpty(path) ? repository : path.Substring(path.LastIndexOf('/') + 1);
 
             var content = new ReactiveList<SourceTreeItemViewModel>();
-            Content = content;
+            Items = content.CreateDerivedCollection(
+                x => x,
+                x => x.Name.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

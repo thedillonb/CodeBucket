@@ -2,28 +2,48 @@
 using UIKit;
 using Foundation;
 using CodeBucket.Views;
+using ReactiveUI;
+using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels;
 
 namespace CodeBucket.ViewControllers
 {
+    public abstract class TableViewController<TViewModel> : TableViewController, IViewFor<TViewModel> where TViewModel : class
+    {
+        private TViewModel _viewModel;
+        public TViewModel ViewModel
+        {
+            get { return _viewModel; }
+            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+        }
+
+        object IViewFor.ViewModel
+        {
+            get { return ViewModel; }
+            set { ViewModel = (TViewModel)value; }
+        }
+
+        protected TableViewController(UITableViewStyle style)
+            : base(style)
+        {
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<ILoadableViewModel>()
+                .Select(x => x.LoadCommand)
+                .Subscribe(x => x.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IProvidesTitle>()
+                .Select(x => x.WhenAnyValue(y => y.Title))
+                .Switch()
+                .Subscribe(x => Title = x);
+        }
+    }
+
     public class TableViewController : BaseViewController
     {
         private readonly Lazy<EnhancedTableView> _tableView;
-        private UIRefreshControl _refreshControl;
 
         public EnhancedTableView TableView { get { return _tableView.Value; } }
-
-        public virtual UIRefreshControl RefreshControl
-        {
-            get { return _refreshControl; }
-            set
-            {
-                _refreshControl?.RemoveFromSuperview();
-                _refreshControl = value;
-
-                if (_refreshControl != null)
-                    TableView.AddSubview(_refreshControl);
-            }
-        }
 
         public TableViewController(UITableViewStyle style)
         {

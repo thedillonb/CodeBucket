@@ -27,6 +27,12 @@ namespace CodeBucket.Core.ViewModels.Users
             private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<string> _displayName;
+        public string DisplayName => _displayName.Value;
+
+        private readonly ObservableAsPropertyHelper<bool> _isWebsiteAvailable;
+        public bool IsWebsiteAvailable => _isWebsiteAvailable.Value;
+
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
@@ -39,6 +45,8 @@ namespace CodeBucket.Core.ViewModels.Users
 
         public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
 
+        public IReactiveCommand<object> GoToWebsiteCommand { get; }
+
         public UserViewModel(string username, IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
@@ -49,7 +57,20 @@ namespace CodeBucket.Core.ViewModels.Users
             GoToGroupsCommand.Subscribe(_ => NavigateTo(new GroupsViewModel(username)));
             GoToRepositoriesCommand.Subscribe(_ => NavigateTo(new UserRepositoriesViewModel(username)));
 
+            this.WhenAnyValue(x => x.User.Website)
+                .Select(x => !string.IsNullOrEmpty(x))
+                .ToProperty(this, x => x.IsWebsiteAvailable, out _isWebsiteAvailable);
+
+            this.WhenAnyValue(x => x.User.DisplayName)
+                .Select(x => string.Equals(x, username) ? null : x)
+                .ToProperty(this, x => x.DisplayName, out _displayName);
+
+            GoToWebsiteCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.IsWebsiteAvailable));
+            GoToWebsiteCommand.Subscribe(_ => NavigateTo(new WebBrowserViewModel(User.Website)));
+
             ShouldShowGroups = string.Equals(username, applicationService.Account.Username, StringComparison.OrdinalIgnoreCase);
+
+            Title = username;
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => 
             {

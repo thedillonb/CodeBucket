@@ -16,7 +16,7 @@ using CodeBucket.Core.ViewModels.Wiki;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
-    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<EventItemViewModel>
     {
         int nextPage = 0;
 
@@ -27,7 +27,7 @@ namespace CodeBucket.Core.ViewModels.Events
             private set { this.RaiseAndSetIfChanged(ref _hasMore, value); }
         }
 
-        public ReactiveList<EventItemViewModel> Events { get; } = new ReactiveList<EventItemViewModel>();
+        public IReadOnlyReactiveList<EventItemViewModel> Items { get; }
 
         public bool ReportRepository { get; private set; } = true;
 
@@ -39,13 +39,16 @@ namespace CodeBucket.Core.ViewModels.Events
         {
             Title = "Events";
 
+            var eventItems = new ReactiveList<EventItemViewModel>();
+            Items = eventItems.CreateDerivedCollection(x => x);
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 HasMore = false;
                 nextPage = 0;
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
-                Events.Reset(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                eventItems.Reset(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
 
@@ -55,7 +58,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 HasMore = false;
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
-                Events.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
         }

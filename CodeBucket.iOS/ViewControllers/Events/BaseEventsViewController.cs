@@ -7,34 +7,39 @@ using CodeBucket.TableViewCells;
 using BitbucketSharp.Models;
 using System.Linq;
 using System.Reactive.Linq;
+using CodeBucket.Views;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Events
 {
-    public abstract class BaseEventsViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
+    public abstract class BaseEventsViewController<TViewModel> : BaseViewController<TViewModel>
         where TViewModel : BaseEventsViewModel
     {
-        protected BaseEventsViewController()
-            : base(style: UITableViewStyle.Plain)
-        {
-            EnableSearch = false;
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            TableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
+            var tableView = new EnhancedTableView(UITableViewStyle.Plain)
+            {
+                ViewModel = ViewModel
+            };
+
+            this.AddTableView(tableView);
+            var root = new RootElement(tableView);
+            tableView.Source = new DialogElementTableViewSource(root);
+
+            tableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
+            tableView.RowHeight = UITableView.AutomaticDimension;
+            tableView.EstimatedRowHeight = 80f;
 
             var itemSection = new Section();
-            Root.Reset(itemSection);
+            root.Reset(itemSection);
 
-            ViewModel.Events
+            ViewModel.Items
                 .ChangedObservable()
                 .Subscribe(x => itemSection.Reset(x.Select(CreateElement)));
 
-            EndOfList.BindCommand(ViewModel.LoadMoreCommand);
+            //EndOfList.BindCommand(ViewModel.LoadMoreCommand);
 
             ViewModel.LoadMoreCommand.IsExecuting.Subscribe(x =>
             {
@@ -43,11 +48,11 @@ namespace CodeBucket.ViewControllers.Events
                     var activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
                     activity.Frame = new CoreGraphics.CGRect(0, 0, 320, 64f);
                     activity.StartAnimating();
-                    TableView.TableFooterView = activity;
+                    tableView.TableFooterView = activity;
                 }
                 else
                 {
-                    TableView.TableFooterView = null;
+                    tableView.TableFooterView = null;
                 }
             });
         }
