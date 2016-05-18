@@ -1,14 +1,15 @@
 using ReactiveUI;
 using CodeBucket.Core.Services;
 using BitbucketSharp;
+using BitbucketSharp.Models.V2;
+using System.Threading.Tasks;
 using Splat;
-using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesStarredViewModel : RepositoriesViewModel, ILoadableViewModel
+    public class RepositoriesStarredViewModel : RepositoriesViewModel
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private readonly string _username;
 
         public RepositoriesStarredViewModel(
             string username = null,
@@ -16,16 +17,14 @@ namespace CodeBucket.Core.ViewModels.Repositories
             : base(applicationService)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
-            username = username ?? applicationService.Account.Username;
-
+            _username = username ?? applicationService.Account.Username;
             Title = "Watched";
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
-            {
-                RepositoryList.Clear();
-                return applicationService.Client.ForAllItems(x => 
-                    x.Repositories.GetRepositories(username), RepositoryList.AddRange);
-            });
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
+        {
+            return applicationService.Client.ForAllItems(x =>
+                x.Repositories.GetRepositories(_username), repositories.AddRange);
         }
     }
 }

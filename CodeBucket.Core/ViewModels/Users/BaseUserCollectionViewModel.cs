@@ -1,5 +1,7 @@
 using System;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using BitbucketSharp.Models.V2;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Teams;
@@ -7,13 +9,20 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : BaseViewModel, IProvidesSearch, IListViewModel<UserItemViewModel>
+    public abstract class BaseUserCollectionViewModel : BaseViewModel, IProvidesSearch, ILoadableViewModel, IListViewModel<UserItemViewModel>
     {
         private string _emptyMessage;
         public string EmptyMessage
         {
             get { return _emptyMessage; }
             protected set { this.RaiseAndSetIfChanged(ref _emptyMessage, value); }
+        }
+
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get { return _isEmpty; }
+            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
         }
 
         private string _searchText;
@@ -23,17 +32,30 @@ namespace CodeBucket.Core.ViewModels.Users
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        protected ReactiveList<UserItemViewModel> Users { get; } = new ReactiveList<UserItemViewModel>();
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReadOnlyReactiveList<UserItemViewModel> Items { get; }
 
         protected BaseUserCollectionViewModel()
         {
-            Items = Users.CreateDerivedCollection(
+            var users = new ReactiveList<UserItemViewModel>();
+            Items = users.CreateDerivedCollection(
                 x => x,
                 x => x.Username.ContainsKeyword(SearchText) || x.DisplayName.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                users.Clear();
+                await Load(users);
+            });
+
+            LoadCommand
+                .IsExecuting
+                .Subscribe(x => IsEmpty = !x && users.Count == 0);
         }
+
+        protected abstract Task Load(ReactiveList<UserItemViewModel> users);
 
         protected UserItemViewModel ToViewModel(User user)
         {

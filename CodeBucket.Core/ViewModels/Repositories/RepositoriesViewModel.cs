@@ -5,14 +5,23 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Utils;
 using Splat;
+using System.Reactive;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : BaseViewModel, IProvidesSearch, IListViewModel<RepositoryItemViewModel>
+    public abstract class RepositoriesViewModel : BaseViewModel, IProvidesSearch, ILoadableViewModel, IListViewModel<RepositoryItemViewModel>
     {
-        protected readonly IReactiveList<Repository> RepositoryList = new ReactiveList<Repository>();
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; }
+
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get { return _isEmpty; }
+            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
+        }
 
         private string _searchText;
         public string SearchText
@@ -28,7 +37,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
             Title = "Repositories";
 
             var showDescription = applicationService.Account.RepositoryDescriptionInList;
-            Items = RepositoryList.CreateDerivedCollection(x =>
+            var repositories = new ReactiveList<Repository>();
+
+            Items = repositories.CreateDerivedCollection(x =>
             {
                 var description = showDescription ? x.Description : string.Empty;
                 var viewModel = new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
@@ -39,6 +50,18 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 });
                 return viewModel;
             }, x => x.Name.ContainsKeyword(SearchText), signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                repositories.Clear();
+                await Load(applicationService, repositories);
+            });
+
+            LoadCommand
+                .IsExecuting
+                .Subscribe(x => IsEmpty = !x && repositories.Count == 0);
         }
+
+        protected abstract Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories);
     }
 }

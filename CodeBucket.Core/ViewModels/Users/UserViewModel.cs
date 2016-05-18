@@ -47,6 +47,12 @@ namespace CodeBucket.Core.ViewModels.Users
 
         public IReactiveCommand<object> GoToWebsiteCommand { get; }
 
+        public UserViewModel(BitbucketSharp.Models.V2.User user, IApplicationService applicationService = null)
+            : this(user.Username, applicationService)
+        {
+            User = user;
+        }
+
         public UserViewModel(string username, IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();

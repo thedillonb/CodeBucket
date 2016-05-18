@@ -95,7 +95,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
         public RepositoryViewModel(string username, string repository,
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null)
         {
-            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            applicationService = _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
             _branches.Changed
@@ -112,9 +112,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                     .ToBackground(x => Forks = x.Size);
 
                 _applicationService.Client.Repositories.GetBranches(username, repository)
-                    .ToObservable()
-                    .Select(x => x.Values)
-                    .Subscribe(_branches.Reset);
+                    .ToBackground(x => _branches.Reset(x.Values));
 
                 if (!Repository.HasIssues)
                     Issues = 0;

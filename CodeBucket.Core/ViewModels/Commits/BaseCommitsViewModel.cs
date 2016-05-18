@@ -12,7 +12,8 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IListViewModel<CommitItemViewModel>
+    public abstract class BaseCommitsViewModel : BaseViewModel, ILoadableViewModel, 
+        IPaginatableViewModel, IListViewModel<CommitItemViewModel>
 	{
         private string _nextUrl, _username, _repository;
 
@@ -45,8 +46,9 @@ namespace CodeBucket.Core.ViewModels.Commits
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 HasMore = false;
+                commitItems.Clear();
                 var commits = await GetRequest();
-                commitItems.Reset(commits.Values);
+                commitItems.AddRange(commits.Values);
                 _nextUrl = commits.Next;
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
             });

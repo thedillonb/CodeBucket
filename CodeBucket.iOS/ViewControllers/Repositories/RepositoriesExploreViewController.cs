@@ -1,5 +1,4 @@
 using System;
-using CodeBucket.DialogElements;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
@@ -11,7 +10,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Views.Repositories
 {
-    public sealed class RepositoriesExploreViewController : ViewModelDrivenDialogViewController<RepositoriesExploreViewModel>
+    public sealed class RepositoriesExploreViewController : BaseTableViewController<RepositoriesExploreViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -34,19 +33,15 @@ namespace CodeBucket.Views.Repositories
                     NavigationController.PushViewController(view, true);
                 });
 
-            ViewModel.Repositories.Changed
-                .Select(_ => ViewModel.Repositories.Select(x => new RepositoryElement(x)))
-                .Subscribe(x => Root.Reset(new Section { x }));
-
             OnActivation(d =>
             {
-                d(ViewModel.SearchCommand.IsExecuting.SubscribeStatus("Searching..."));
-                d(ViewModel.WhenAnyValue(x => x.SearchText).Subscribe(x => search.Text = x));
-                d(search.GetChangedObservable().Subscribe(x => ViewModel.SearchText = x));
-                d(search.GetSearchObservable().Subscribe(_ => {
+                ViewModel.SearchCommand.IsExecuting.SubscribeStatus("Searching...").AddTo(d);
+                ViewModel.WhenAnyValue(x => x.SearchText).Subscribe(x => search.Text = x).AddTo(d);
+                search.GetChangedObservable().Subscribe(x => ViewModel.SearchText = x).AddTo(d);
+                search.GetSearchObservable().Subscribe(_ => {
                     search.ResignFirstResponder();
                     ViewModel.SearchCommand.Execute(null);
-                }));
+                }).AddTo(d);
             });
         }
     }

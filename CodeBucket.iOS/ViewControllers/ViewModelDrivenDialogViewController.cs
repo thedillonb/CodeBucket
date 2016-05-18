@@ -2,15 +2,15 @@ using System;
 using UIKit;
 using System.Linq;
 using CodeBucket.Views;
-using CodeBucket.Core.ViewModels;
-using CodeBucket.Utilities;
 using System.Reactive.Linq;
-using ReactiveUI;
+using CodeBucket.DialogElements;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class PrettyDialogViewController<TViewModel> : ViewModelDrivenDialogViewController<TViewModel> where TViewModel : class
+    public abstract class PrettyDialogViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class
     {
+        private readonly Lazy<RootElement> _rootElement;
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
         private readonly UIView _backgroundHeaderView;
@@ -30,24 +30,18 @@ namespace CodeBucket.ViewControllers
             }
         }
 
+        public RootElement Root => _rootElement.Value;
+
         protected PrettyDialogViewController()
+            : base(UITableViewStyle.Grouped)
         {
+            _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
+            _backgroundHeaderView = new UIView();
+
             HeaderView = new ImageAndTitleHeaderView();
             SlideUpTitle = new SlideUpTitleView(44f) { Offset = 100f };
             NavigationItem.TitleView = SlideUpTitle;
-            _backgroundHeaderView = new UIView();
         }
-
-        //public override UIRefreshControl RefreshControl
-        //{
-        //    get { return base.RefreshControl; }
-        //    set
-        //    {
-        //        if (value != null)
-        //            value.TintColor = UIColor.White;
-        //        base.RefreshControl = value;
-        //    }
-        //}
 
         public override void ViewWillAppear(bool animated)
         {
@@ -87,6 +81,8 @@ namespace CodeBucket.ViewControllers
         {
             base.ViewDidLoad();
 
+            var source = new DialogTableViewSource(Root);
+            TableView.Source = source;
             TableView.TableHeaderView = HeaderView;
             TableView.SectionHeaderHeight = 0;
 
@@ -96,54 +92,22 @@ namespace CodeBucket.ViewControllers
             _backgroundHeaderView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             _backgroundHeaderView.Layer.ZPosition = -1f;
             TableView.InsertSubview(_backgroundHeaderView, 0);
-        }
 
-        protected override void DidScroll(CoreGraphics.CGPoint p)
-        {
-            if (NavigationController == null)
-                return;
-
-            if (p.Y > 0)
-                NavigationController.NavigationBar.ShadowImage = null;
-            if (p.Y <= 0 && NavigationController.NavigationBar.ShadowImage == null)
-                NavigationController.NavigationBar.ShadowImage = new UIImage();
-            SlideUpTitle.Offset = 108 + 28 - p.Y;
-        }
-    }
-
-    public abstract class ViewModelDrivenDialogViewController<TViewModel> : DialogViewController, IViewFor<TViewModel> where TViewModel : class
-    {
-        private TViewModel _viewModel;
-        public TViewModel ViewModel
-        {
-            get { return _viewModel; }
-            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
-        }
-
-        object IViewFor.ViewModel
-        {
-            get { return ViewModel; }
-            set { ViewModel = (TViewModel)value; }
-        }
-       
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        protected ViewModelDrivenDialogViewController(UITableViewStyle style = UITableViewStyle.Grouped)
-            : base(style)
-        {
-            Appearing.Take(1)
-                     .Select(_ => ViewModel)
-                     .OfType<ILoadableViewModel>()
-                     .Select(x => x.LoadCommand)
-                     .Where(x => x.CanExecute(null))
-                     .Subscribe(x => x.Execute(null));
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesTitle>()
-                .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch()
-                .Subscribe(x => Title = x);
+            OnActivation(disposable =>
+            {
+                source
+                    .DidScrolled
+                    .Where(_ => NavigationController != null)
+                    .Subscribe(p =>
+                    {
+                        if (p.Y > 0)
+                            NavigationController.NavigationBar.ShadowImage = null;
+                        if (p.Y <= 0 && NavigationController.NavigationBar.ShadowImage == null)
+                            NavigationController.NavigationBar.ShadowImage = new UIImage();
+                        SlideUpTitle.Offset = 108 + 28 - p.Y;
+                    })
+                    .AddTo(disposable);
+            });
         }
     }
 }

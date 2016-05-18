@@ -1,15 +1,14 @@
-using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Users;
 using UIKit;
 using System;
 using CodeBucket.Views;
-using System.Linq;
-using System.Reactive.Linq;
 using CodeBucket.TableViewSources;
+using ReactiveUI;
+using System.Reactive.Linq;
 
-namespace CodeBucket.ViewControllers.User
+namespace CodeBucket.ViewControllers.Users
 {
-    public abstract class BaseUserCollectionViewController<TViewModel> : BaseViewController<TViewModel> 
+    public abstract class BaseUserCollectionViewController<TViewModel> : BaseTableViewController<TViewModel> 
         where TViewModel : BaseUserCollectionViewModel
     {
         public override void ViewDidLoad()
@@ -17,20 +16,16 @@ namespace CodeBucket.ViewControllers.User
             base.ViewDidLoad();
 
             var emptyMessage = ViewModel.EmptyMessage ?? "There are no users.";
-            var tableView = new EnhancedTableView(UITableViewStyle.Plain)
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.User.ToEmptyListImage(), emptyMessage));
+            TableView.Source = new UserTableViewSource(TableView, ViewModel.Items);
+
+            OnActivation(disposable =>
             {
-                ViewModel = ViewModel,
-                EmptyView = new Lazy<UIView>(() =>
-                    new EmptyListView(AtlassianIcon.User.ToEmptyListImage(), emptyMessage))
-            };
-
-            this.AddTableView(tableView);
-            var root = new RootElement(tableView);
-            tableView.Source = new DialogElementTableViewSource(root);
-
-            ViewModel.Items.ChangedObservable()
-              .Select(users => users.Select(y => new UserElement(y)))
-              .Subscribe(elements => root.Reset(new Section { elements }));
+                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
+                    .Subscribe(x => TableView.IsEmpty = x)
+                    .AddTo(disposable);
+            });
         }
     }
 }

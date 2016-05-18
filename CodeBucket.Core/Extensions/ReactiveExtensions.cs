@@ -1,4 +1,6 @@
 ﻿// ReSharper disable once CheckNamespace
+using System.Reactive.Disposables;
+
 namespace System
 {
     public static class ReactiveExtensions
@@ -24,6 +26,11 @@ namespace System
                 {
                 }
             });
+        }
+
+        public static void AddTo(this IDisposable @this, CompositeDisposable disposable)
+        {
+            disposable.Add(@this);
         }
     }
 }

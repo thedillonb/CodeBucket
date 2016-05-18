@@ -1,6 +1,6 @@
 ﻿using CodeBucket.Core.ViewModels.Teams;
 
-namespace CodeBucket.ViewControllers.User
+namespace CodeBucket.ViewControllers.Users
 {
     public class TeamFollowersViewController : BaseUserCollectionViewController<TeamFollowersViewModel>
     {

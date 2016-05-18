@@ -156,40 +156,25 @@ namespace CodeBucket.DialogElements
                 _sections.Add(s);
             }
 
-            _tableView.Get()?.ReloadData();
+            ReloadData();
+        }
+
+        public void ReloadData()
+        {
+            var tableView = _tableView.Get();
+            if (tableView != null)
+            {
+                UIView.Transition(tableView, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () =>
+                {
+                    tableView.ReloadData();
+                }, null);
+            }
         }
 
         public void Reset(params Section[] sections)
         {
             Reset((IEnumerable<Section>)sections);
         }
-
-//        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
-//        {
-//            if (section == null)
-//                throw new ArgumentNullException ("section");
-//            if (section.Root == null || section.Root != this)
-//                throw new ArgumentException ("Section is not attached to this root");
-//
-//            int idx = 0;
-//            foreach (var sect in _sections)
-//            {
-//                if (sect == section)
-//                {
-//                    try
-//                    {
-//                        _tableView.Get()?.BeginUpdates();
-//                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
-//                    }
-//                    finally
-//                    {
-//                        _tableView.Get()?.EndUpdates();
-//                    }
-//                    return;
-//                }
-//                idx++;
-//            }
-//        }
 
         public void Reload (params Element[] elements)
         {

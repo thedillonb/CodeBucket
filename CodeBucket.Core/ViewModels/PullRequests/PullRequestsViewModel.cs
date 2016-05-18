@@ -12,11 +12,18 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<PullRequestItemViewModel>
     {
-        public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; }
+        public IReadOnlyReactiveList<PullRequestItemViewModel> Items { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get { return _isEmpty; }
+            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
+        }
 
 		private PullRequestState _selectedFilter;
 		public PullRequestState SelectedFilter
@@ -33,7 +40,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             Title = "Pull Requests";
 
             var pullRequests = new ReactiveList<PullRequest>();
-            PullRequests = pullRequests.CreateDerivedCollection(pullRequest =>
+            Items = pullRequests.CreateDerivedCollection(pullRequest =>
             {
                 var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
                 var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
@@ -45,11 +52,15 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                PullRequests.Reset();
+                pullRequests.Clear();
                 return applicationService.Client.ForAllItems(x => 
                     x.Repositories.PullRequests.GetPullRequests(username, repository, SelectedFilter), 
                     pullRequests.AddRange);
             });
+
+            LoadCommand
+                .IsExecuting
+                .Subscribe(x => IsEmpty = !x && pullRequests.Count == 0);
 
             this.WhenAnyValue(x => x.SelectedFilter)
                 .Skip(1)

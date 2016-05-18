@@ -22,16 +22,15 @@ namespace CodeBucket.ViewControllers.Accounts
             "https://bitbucket.org/product/pricing"
         };
 
-        public LoginViewModel ViewModel { get; }
+        public LoginViewModel ViewModel { get; } = new LoginViewModel();
 
         public LoginViewController()
             : base(true)
         {
-            ViewModel = new LoginViewModel();
             Title = "Login";
 
             Appearing.Take(1).Subscribe(_ => LoadRequest());
-            OnActivation(d => d(ViewModel.WhenAnyValue(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
+            OnActivation(d => ViewModel.WhenAnyValue(x => x.IsLoggingIn).SubscribeStatus("Logging in...").AddTo(d));
         }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)

@@ -15,19 +15,19 @@ namespace CodeBucket.Views.Issues
             var status = new StringElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
             var delete = new StringElement("Delete", AtlassianIcon.Delete.ToImage()) { Accessory = UITableViewCellAccessory.None };
 
-            Root[0].Insert(1, UITableViewRowAnimation.None, status);
-            Root.Insert(Root.Count, UITableViewRowAnimation.None, new Section { delete });
+            //Root[0].Insert(1, UITableViewRowAnimation.None, status);
+            //Root.Insert(Root.Count, UITableViewRowAnimation.None, new Section { delete });
 
             OnActivation(d =>
             {
-                d(ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => status.Value = x));
-                d(delete.Clicked.BindCommand(ViewModel.DeleteCommand));
-                d(status.Clicked.Subscribe(_ =>
+                ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => status.Value = x).AddTo(d);
+                delete.Clicked.BindCommand(ViewModel.DeleteCommand).AddTo(d);
+                status.Clicked.Subscribe(_ =>
                 {
                     var ctrl = new IssueAttributesView(IssueModifyViewModel.Statuses, ViewModel.Status) { Title = "Status" };
                     ctrl.SelectedValue = x => ViewModel.Status = x.ToLower();
                     NavigationController.PushViewController(ctrl, true);
-                }));
+                }).AddTo(d);
             });
 
 		}

@@ -2,12 +2,71 @@
 using ReactiveUI;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
-using System.Collections.Generic;
 using Foundation;
 using CodeBucket.Core.ViewModels;
+using UIKit;
+using CodeBucket.Views;
+using System.Reactive.Disposables;
+using Splat;
+using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers
 {
+    public abstract class BaseTableViewController<TViewModel> : BaseViewController<TViewModel> where TViewModel : class
+    {
+        private readonly Lazy<EnhancedTableView> _tableView;
+
+        public EnhancedTableView TableView => _tableView.Value;
+
+        protected BaseTableViewController(UITableViewStyle style = UITableViewStyle.Plain)
+        {
+             _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(style));
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            this.AddTableView(TableView);
+
+            OnActivation(disposable =>
+            {
+                var loadable =
+                    this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<ILoadableViewModel>()
+                    .Select(x => x.LoadCommand.IsExecuting)
+                    .Switch()
+                    .StartWith(false);
+
+                var paginatable =
+                    this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IPaginatableViewModel>()
+                    .Select(x => x.LoadMoreCommand.IsExecuting)
+                    .Switch()
+                    .StartWith(false);
+
+                Observable.CombineLatest(loadable, paginatable, (l, p) => l || p)
+                    .Subscribe(x => TableView.IsLoading = x)
+                    .AddTo(disposable);
+            });
+
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_tableView.IsValueCreated)
+            {
+                var tableView = _tableView.Value;
+                InvokeOnMainThread(() =>
+                {
+                    tableView.Source?.Dispose();
+                    tableView.Source = null;
+                });
+            }
+
+            base.Dispose(disposing);
+        }
+    }
+
     public abstract class BaseViewController<TViewModel> : BaseViewController, IViewFor<TViewModel> where TViewModel : class
     {
         private TViewModel _viewModel;
@@ -25,16 +84,37 @@ namespace CodeBucket.ViewControllers
 
         protected BaseViewController()
         {
-            this.WhenAnyValue(x => x.ViewModel)
+            Appearing
+                .Take(1)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
+                .Switch()
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand)
                 .Subscribe(x => x.ExecuteIfCan());
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesTitle>()
-                .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch()
-                .Subscribe(x => Title = x);
+            OnActivation(disposable =>
+            {
+                this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IProvidesTitle>()
+                    .Select(x => x.WhenAnyValue(y => y.Title))
+                    .Switch()
+                    .Subscribe(x => Title = x)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IRoutingViewModel>()
+                    .Select(x => x.RequestNavigation)
+                    .Switch()
+                    .Select(x => Locator.Current.GetService<IViewLocatorService>().GetView(x))
+                    .OfType<UIViewController>()
+                    .Subscribe(Navigate)
+                    .AddTo(disposable);
+            });
+        }
+
+        protected virtual void Navigate(UIViewController viewController)
+        {
+            NavigationController.PushViewController(viewController, true);
         }
     }
 
@@ -44,7 +124,7 @@ namespace CodeBucket.ViewControllers
         private readonly ISubject<bool> _appearedSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
-        private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         #if DEBUG
         ~BaseViewController()
@@ -53,29 +133,17 @@ namespace CodeBucket.ViewControllers
         }
         #endif
 
-        public IObservable<bool> Appearing
-        {
-            get { return _appearingSubject.AsObservable(); }
-        }
+        public IObservable<bool> Appearing => _appearingSubject.AsObservable();
 
-        public IObservable<bool> Appeared
-        {
-            get { return _appearedSubject.AsObservable(); }
-        }
+        public IObservable<bool> Appeared => _appearedSubject.AsObservable();
 
-        public IObservable<bool> Disappearing
-        {
-            get { return _disappearingSubject.AsObservable(); }
-        }
+        public IObservable<bool> Disappearing => _disappearingSubject.AsObservable();
 
-        public IObservable<bool> Disappeared
-        {
-            get { return _disappearedSubject.AsObservable(); }
-        }
+        public IObservable<bool> Disappeared => _disappearedSubject.AsObservable();
 
-        public void OnActivation(Action<Action<IDisposable>> d)
+        public void OnActivation(Action<CompositeDisposable> d)
         {
-            Appearing.Subscribe(_ => d(x => _activations.Add(x)));
+            Appearing.Subscribe(_ => d(_disposables));
         }
 
         protected BaseViewController()
@@ -96,9 +164,9 @@ namespace CodeBucket.ViewControllers
 
         private void DisposeActivations()
         {
-            foreach (var a in _activations)
-                a.Dispose();
-            _activations.Clear();
+            foreach (var disposable in _disposables)
+                disposable.Dispose();
+            _disposables.Clear();
         }
 
         public override void ViewWillAppear(bool animated)
@@ -125,6 +193,12 @@ namespace CodeBucket.ViewControllers
         {
             base.ViewDidDisappear(animated);
             _disappearedSubject.OnNext(animated);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            InvokeOnMainThread(() => View.DisposeAll());
+            base.Dispose(disposing);
         }
     }
 }

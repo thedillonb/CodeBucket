@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public class CommitItemViewModel : ReactiveObject
+    public class CommitItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public Avatar Avatar { get; }
 

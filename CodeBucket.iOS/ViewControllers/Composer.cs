@@ -46,10 +46,15 @@ namespace CodeBucket.ViewControllers
             _normalButtonImage = ImageFromColor(UIColor.White);
             _pressedButtonImage = ImageFromColor(UIColor.FromWhiteAlpha(0.0f, 0.4f));
 
-            OnActivation(d =>
+            OnActivation(disposables =>
             {
-                d(close.GetClickedObservable().Subscribe(_ => CloseComposer()));
-                d(SendItem.GetClickedObservable().Subscribe(_ => PostCallback()));
+                close.GetClickedObservable()
+                     .Subscribe(_ => CloseComposer())
+                     .AddTo(disposables);
+
+                SendItem.GetClickedObservable()
+                        .Subscribe(_ => PostCallback())
+                        .AddTo(disposables);
             });
         }
 

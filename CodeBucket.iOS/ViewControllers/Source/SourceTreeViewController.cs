@@ -15,14 +15,11 @@ namespace CodeBucket.ViewControllers.Source
         {
             base.ViewDidLoad();
 
-            var tableView = new EnhancedTableView(UITableViewStyle.Plain)
-            {
-                ViewModel = ViewModel
-            };
+            var tableView = new EnhancedTableView(UITableViewStyle.Plain);
 
             this.AddTableView(tableView);
             var root = new RootElement(tableView);
-            tableView.Source = new DialogElementTableViewSource(root);
+            tableView.Source = new DialogTableViewSource(root);
 
             ViewModel
                 .Items

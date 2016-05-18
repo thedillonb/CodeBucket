@@ -46,9 +46,10 @@ namespace CodeBucket.Core.ViewModels.Events
             {
                 HasMore = false;
                 nextPage = 0;
+                eventItems.Clear();
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
-                eventItems.Reset(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
 

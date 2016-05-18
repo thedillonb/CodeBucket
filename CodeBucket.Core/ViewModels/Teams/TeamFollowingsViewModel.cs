@@ -2,29 +2,29 @@
 using ReactiveUI;
 using BitbucketSharp;
 using System.Linq;
-using System.Reactive;
 using Splat;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class TeamFollowingsViewModel : BaseUserCollectionViewModel, ILoadableViewModel
+    public class TeamFollowingsViewModel : BaseUserCollectionViewModel
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private readonly string _name;
+        private readonly IApplicationService _applicationService;
 
         public TeamFollowingsViewModel(string name, IApplicationService applicationService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _name = name;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
             Title = "Following";
             EmptyMessage = "There are no followers.";
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                Users.Clear();
-                return applicationService.Client
-                    .ForAllItems(x => x.Teams.GetFollowing(name),
-                                 x => Users.AddRange(x.Select(ToViewModel)));
-            });
+        protected override System.Threading.Tasks.Task Load(ReactiveList<UserItemViewModel> users)
+        {
+            return _applicationService.Client
+                    .ForAllItems(x => x.Teams.GetFollowing(_name),
+                                 x => users.AddRange(x.Select(ToViewModel)));
         }
     }
 }

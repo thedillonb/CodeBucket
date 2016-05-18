@@ -35,7 +35,7 @@ namespace CodeBucket.Views.Issues
             //ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
 
             var compose = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose) { Enabled = false };
-            OnActivation(d => d(compose.GetClickedObservable().BindCommand(ViewModel.GoToEditCommand)));
+            OnActivation(d => compose.GetClickedObservable().BindCommand(ViewModel.GoToEditCommand).AddTo(d));
 		}
 
 		public void RenderComments()

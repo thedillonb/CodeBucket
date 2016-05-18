@@ -7,17 +7,35 @@ using UIKit;
 
 namespace CodeBucket.Views
 {
-    public sealed class EnhancedTableView : ReactiveTableView
+    public sealed class EnhancedTableView : ReactiveTableView, IActivatable
     {
         private UIRefreshControl _refreshControl;
 
         public Lazy<UIView> EmptyView { get; set; }
 
-        private object _viewModel;
-        public object ViewModel
+        private bool _isLoading;
+        public bool IsLoading
         {
-            get { return _viewModel; }
-            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+            get { return _isLoading; }
+            set
+            {
+                if (_isLoading == value)
+                    return;
+
+                _isLoading = value;
+                if (_isLoading)
+                {
+                    var activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
+                    activity.Frame = new CGRect(0, 0, 320, 64f);
+                    activity.StartAnimating();
+                    TableFooterView = activity;
+                }
+                else
+                {
+                    TableFooterView = null;
+                    ReloadData();
+                }
+            }
         }
 
         public UIRefreshControl RefreshControl
@@ -35,93 +53,29 @@ namespace CodeBucket.Views
         public EnhancedTableView(UITableViewStyle style = UITableViewStyle.Plain)
             : base(CGRect.Empty, style)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesSearch>()
-                .Subscribe(SetupSearch);
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Subscribe(SetupReload);
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IPaginatableViewModel>()
-                .Subscribe(SetupLoadMore);
-
             AutosizesSubviews = true;
             CellLayoutMarginsFollowReadableWidth = false;
         }
 
-        public void SetEmpty(bool empty)
+        private bool _isEmpty;
+        public bool IsEmpty
         {
-            CreateEmptyHandler(empty);
-        }
-
-        public void SetupLoadMore(IPaginatableViewModel paginatableViewModel)
-        {
-            paginatableViewModel.LoadMoreCommand.IsExecuting.Subscribe(x =>
+            get { return _isEmpty; }
+            set
             {
-                if (x)
-                {
-                    var activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
-                    activity.Frame = new CGRect(0, 0, 320, 64f);
-                    activity.StartAnimating();
-                    TableFooterView = activity;
-                }
-                else
-                {
-                    TableFooterView = null;
-                }
-            });
-        }
+                if (_isEmpty == value)
+                    return;
 
-        private void SetupSearch(IProvidesSearch searchProvider)
-        {
-            var searchBar = new UISearchBar(new CGRect(0, 0, Bounds.Width, 44));
-            searchBar.Delegate = new SearchDelegate(searchProvider);
-            TableHeaderView = searchBar;
-        }
-
-        private void SetupReload(ILoadableViewModel loadableViewModel)
-        {
-            var manualRefreshRequested = false;
-
-            RefreshControl = new UIRefreshControl();
-            RefreshControl.GetChangedObservable()
-                          .Do(_ => manualRefreshRequested = true)
-                          .InvokeCommand(loadableViewModel.LoadCommand);
-
-            loadableViewModel.LoadCommand.IsExecuting.Subscribe(x =>
-            {
-                if (x)
-                {
-                    RefreshControl.BeginRefreshing();
-
-                    if (!manualRefreshRequested)
-                    {
-                        UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                            () => ContentOffset = new CGPoint(0, -RefreshControl.Frame.Height), null);
-                    }
-                }
-                else
-                {
-                    if (RefreshControl.Refreshing)
-                    {
-                        // Stupid bug...
-                        BeginInvokeOnMainThread(() =>
-                        {
-                            UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                            RefreshControl.EndRefreshing();
-                        });
-                    }
-
-                    manualRefreshRequested = false;
-                }
-            });
+                _isEmpty = value;
+                CreateEmptyHandler(_isEmpty);
+            }
         }
 
         private void CreateEmptyHandler(bool x)
         {
+            if (EmptyView == null)
+                return;
+            
             if (x)
             {
                 if (!EmptyView.IsValueCreated)
@@ -147,40 +101,6 @@ namespace CodeBucket.Views
                 SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
                 UIView.Animate(0.1f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
                     () => EmptyView.Value.Alpha = 0f, null);
-            }
-        }
-
-        private class SearchDelegate : UISearchBarDelegate
-        {
-            readonly WeakReference<IProvidesSearch> _searchProvider;
-
-            public SearchDelegate(IProvidesSearch searchProvider)
-            {
-                _searchProvider = new WeakReference<IProvidesSearch>(searchProvider);
-            }
-
-            public override void OnEditingStarted(UISearchBar searchBar)
-            {
-                searchBar.ShowsCancelButton = true;
-            }
-
-            public override void OnEditingStopped(UISearchBar searchBar)
-            {
-                searchBar.ShowsCancelButton = false;
-            }
-
-            public override void TextChanged(UISearchBar searchBar, string searchText)
-            {
-                IProvidesSearch search;
-                if (_searchProvider.TryGetTarget(out search))
-                    search.SearchText = searchText ?? "";
-            }
-
-            public override void CancelButtonClicked(UISearchBar searchBar)
-            {
-                searchBar.ShowsCancelButton = false;
-                searchBar.Text = "";
-                searchBar.ResignFirstResponder();
             }
         }
     }

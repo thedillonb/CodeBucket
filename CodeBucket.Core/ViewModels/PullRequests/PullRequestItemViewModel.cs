@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestItemViewModel : ReactiveObject
+    public class PullRequestItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Title { get; }
 

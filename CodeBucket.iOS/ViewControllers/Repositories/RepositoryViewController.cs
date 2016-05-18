@@ -35,19 +35,31 @@ namespace CodeBucket.Views.Repositories
             ViewModel.WhenAnyValue(x => x.Issues).Subscribe(_ => Render(ViewModel.Repository));
             ViewModel.WhenAnyValue(x => x.HasReadme).Subscribe(_ => Render(ViewModel.Repository));
 
-            OnActivation(d => {
-                d(watchers.Clicked.BindCommand(ViewModel.GoToStargazersCommand));
-                d(ViewModel.WhenAnyValue(x => x.BranchesCount).Subscribe(x => branches.Text = x.ToString()));
-                d(ViewModel.WhenAnyValue(x => x.Watchers).Subscribe(x => watchers.Text = x.HasValue ? x.ToString() : "-"));
-                d(ViewModel.WhenAnyValue(x => x.Forks).Subscribe(x => forks.Text = x.HasValue ? x.ToString() : "-"));
+            OnActivation(d => 
+            {
+                watchers.Clicked
+                        .BindCommand(ViewModel.GoToStargazersCommand)
+                        .AddTo(d);
+                
+                this.WhenAnyValue(x => x.ViewModel.BranchesCount)
+                    .Subscribe(x => branches.Text = x.ToString())
+                    .AddTo(d);
+                
+                this.WhenAnyValue(x => x.ViewModel.Watchers)
+                    .Subscribe(x => watchers.Text = x.HasValue ? x.ToString() : "-")
+                    .AddTo(d);
+                
+                this.WhenAnyValue(x => x.ViewModel.Forks)
+                    .Subscribe(x => forks.Text = x.HasValue ? x.ToString() : "-")
+                    .AddTo(d);
 
-                d(ViewModel.WhenAnyValue(x => x.Repository).Subscribe(x =>
-                {
-                    NavigationItem.RightBarButtonItem.Enabled = true;
-                    Render(x);
-                }));
+                this.WhenAnyValue(x => x.ViewModel.Repository)
+                    .Do(_ => NavigationItem.RightBarButtonItem.Enabled = true)
+                    .Subscribe(Render)
+                    .AddTo(d);
 
-                d(actionButton.BindCommand(ViewModel.ShowMenuCommand));
+                actionButton.BindCommand(ViewModel.ShowMenuCommand)
+                            .AddTo(d);
             });
         }
 

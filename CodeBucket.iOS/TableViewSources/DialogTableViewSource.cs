@@ -4,27 +4,25 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using CodeBucket.DialogElements;
+using CoreGraphics;
 using Foundation;
 using UIKit;
 
 namespace CodeBucket.TableViewSources
 {
-    public class DialogElementTableViewSource : UITableViewSource
+    public class DialogTableViewSource : UITableViewSource
     {
-        private readonly ISubject<Unit> _endSubject = new Subject<Unit>();
         private readonly WeakReference<RootElement> _root;
+        private readonly ISubject<CGPoint> _scrolledObservable = new Subject<CGPoint>();
 
         public RootElement Root
         {
             get { return _root.Get(); }
         }
 
-        public IObservable<Unit> EndOfList
-        {
-            get { return _endSubject.AsObservable(); }
-        }
+        public IObservable<CGPoint> DidScrolled => _scrolledObservable.AsObservable();
 
-        public DialogElementTableViewSource(RootElement rootElement)
+        public DialogTableViewSource(RootElement rootElement)
         {
             _root = new WeakReference<RootElement>(rootElement);
         }
@@ -99,12 +97,9 @@ namespace CodeBucket.TableViewSources
             return section?.FooterView?.Frame.Height ?? -1;
         }
 
-        public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+        public override void Scrolled(UIScrollView scrollView)
         {
-            var s = tableView.NumberOfSections() - 1;
-            var r = tableView.NumberOfRowsInSection(s) - 1;
-            if (indexPath.Section == s && indexPath.Row == r)
-                _endSubject.OnNext(Unit.Default);
+            _scrolledObservable.OnNext(Root?.TableView?.ContentOffset ?? CGPoint.Empty);
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)

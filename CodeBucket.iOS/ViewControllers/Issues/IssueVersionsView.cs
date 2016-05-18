@@ -9,7 +9,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssueVersionsView : ViewModelDrivenDialogViewController<IssueVersionsViewModel>
+    public class IssueVersionsView : BaseTableViewController<IssueVersionsViewModel>
 	{
         public IssueVersionsView()
 		{
@@ -33,12 +33,12 @@ namespace CodeBucket.Views.Issues
 //				return e;
 //			});
 //
-            ViewModel.WhenAnyValue(x => x.SelectedValue).Subscribe(x =>
-				{
-					if (Root.Count == 0) return;
-					foreach (var m in Root[0].Elements.Cast<VersionElement>())
-						m.Accessory = (x != null && string.Equals(m.Version.Name, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				});
+    //        ViewModel.WhenAnyValue(x => x.SelectedValue).Subscribe(x =>
+				//{
+				//	if (Root.Count == 0) return;
+				//	foreach (var m in Root[0].Elements.Cast<VersionElement>())
+				//		m.Accessory = (x != null && string.Equals(m.Version.Name, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+				//});
 		}
 
         private class VersionElement : StringElement

@@ -2,7 +2,7 @@
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class ReferenceItemViewModel : ReactiveObject
+    public class ReferenceItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; }
 

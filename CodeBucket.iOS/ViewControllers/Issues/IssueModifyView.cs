@@ -8,7 +8,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Views.Issues
 {
-    public abstract class IssueModifyView<TViewModel> : ViewModelDrivenDialogViewController<TViewModel>
+    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel>
         where TViewModel : IssueModifyViewModel
     {
 		public override void ViewDidLoad()
@@ -26,55 +26,55 @@ namespace CodeBucket.Views.Issues
             var version = new StringElement("Version", "None", UITableViewCellStyle.Value1);
 			var content = new MultilinedElement("Description");
 	
-            Root.Reset(new Section { title, assignedTo, kind, priority }, new Section { milestone, component, version }, new Section { content });
+            //Root.Reset(new Section { title, assignedTo, kind, priority }, new Section { milestone, component, version }, new Section { content });
 
             OnActivation(d =>
             {
-                d(ViewModel.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving..."));
+                ViewModel.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving...").AddTo(d);
 
-                d(ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => title.Value = x));
-                d(ViewModel.WhenAnyValue(x => x.AssignedTo).Subscribe(x => assignedTo.Value = x == null ? "Unassigned" : x.Username));
+                ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => title.Value = x).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.AssignedTo).Subscribe(x => assignedTo.Value = x == null ? "Unassigned" : x.Username).AddTo(d);
 
-                d(ViewModel.WhenAnyValue(x => x.Kind).Subscribe(x => kind.Value = x));
-                d(ViewModel.WhenAnyValue(x => x.Priority).Subscribe(x => priority.Value = x));
-                d(ViewModel.WhenAnyValue(x => x.Milestone).Subscribe(x => milestone.Value = x ?? "None"));
-                d(ViewModel.WhenAnyValue(x => x.Component).Subscribe(x => component.Value = x ?? "None"));
-                d(ViewModel.WhenAnyValue(x => x.Version).Subscribe(x => version.Value = x ?? "None"));
-                d(ViewModel.WhenAnyValue(x => x.Content).Subscribe(x => version.Value = x));
+                ViewModel.WhenAnyValue(x => x.Kind).Subscribe(x => kind.Value = x).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Priority).Subscribe(x => priority.Value = x).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Milestone).Subscribe(x => milestone.Value = x ?? "None").AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Component).Subscribe(x => component.Value = x ?? "None").AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Version).Subscribe(x => version.Value = x ?? "None").AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Content).Subscribe(x => version.Value = x).AddTo(d);
 
-                d(title.Changed.Subscribe(x =>  ViewModel.IssueTitle = x));
-                d(version.Clicked.BindCommand(ViewModel.GoToVersionsCommand));
-                d(assignedTo.Clicked.BindCommand(ViewModel.GoToAssigneeCommand));
-                d(milestone.Clicked.BindCommand(ViewModel.GoToMilestonesCommand));
-                d(component.Clicked.BindCommand(ViewModel.GoToComponentsCommand));
+                title.Changed.Subscribe(x =>  ViewModel.IssueTitle = x).AddTo(d);
+                version.Clicked.BindCommand(ViewModel.GoToVersionsCommand).AddTo(d);
+                assignedTo.Clicked.BindCommand(ViewModel.GoToAssigneeCommand).AddTo(d);
+                milestone.Clicked.BindCommand(ViewModel.GoToMilestonesCommand).AddTo(d);
+                component.Clicked.BindCommand(ViewModel.GoToComponentsCommand).AddTo(d);
 
-                d(save.GetClickedObservable().Subscribe(_ => {
+                save.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
                     ViewModel.SaveCommand.Execute(null);
-                }));
+                }).AddTo(d);
 
-                d(content.Clicked.Subscribe(_ => 
+                content.Clicked.Subscribe(_ => 
                 {
                     var composer = new Composer { Title = "Issue Description", Text = ViewModel.Content };
                     composer.NewComment(this, (text) => {
                         ViewModel.Content = text;
                         composer.CloseComposer();
                     });
-                }));
+                }).AddTo(d);
 
-                d(priority.Clicked.Subscribe(_ => 
+                priority.Clicked.Subscribe(_ => 
                 {
                     var ctrl = new IssueAttributesView(IssueModifyViewModel.Priorities, ViewModel.Priority) { Title = "Priority" };
                     ctrl.SelectedValue = x => ViewModel.Priority = x.ToLower();
                     NavigationController.PushViewController(ctrl, true);
-                }));
+                }).AddTo(d);
 
-                d(kind.Clicked.Subscribe(_ => 
+                kind.Clicked.Subscribe(_ => 
                 {
                     var ctrl = new IssueAttributesView(IssueModifyViewModel.Kinds, ViewModel.Kind) { Title = "Issue Type" };
                     ctrl.SelectedValue = x => ViewModel.Kind = x.ToLower();
                     NavigationController.PushViewController(ctrl, true);
-                }));
+                }).AddTo(d);
             });
 		}
     }

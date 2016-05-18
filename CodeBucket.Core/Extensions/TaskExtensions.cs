@@ -10,7 +10,9 @@ public static class TaskExtensions
 {
     public static Task<T> OnSuccess<T>(this Task<T> task, Action<T> action)
     {
-        return task.ToObservable().Do(action).ToTask();
+        return task.ToObservable()
+                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .Do(action).ToTask();
     }
 
     public static IDisposable ToBackground<T>(this Task<T> task, Action<T> action)

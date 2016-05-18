@@ -13,6 +13,9 @@ using System.Linq;
 using BitbucketSharp;
 using ReactiveUI;
 using Splat;
+using CodeBucket.Core.Utils;
+using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -49,6 +52,9 @@ namespace CodeBucket.Core.ViewModels.Commits
         public IReactiveCommand<object> AddCommentCommand { get; } = ReactiveCommand.Create();
 
         public IReadOnlyReactiveList<CommitFileItemViewModel> CommitFiles { get; }
+
+        private ObservableAsPropertyHelper<ImmutableArray<UserItemViewModel>> _approvals;
+        public ImmutableArray<UserItemViewModel> Approvals => _approvals.Value;
 
         private ChangesetModel _changeset;
         public ChangesetModel Changeset
@@ -102,7 +108,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
             IAlertDialogService alertDialogService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            applicationService = _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
@@ -167,15 +173,15 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             changesetFiles
                 .Count(x => x.Type == ChangesetModel.FileType.Added)
-                .ToProperty(this, x => DiffAdditions, out _diffAdditions);
+                .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
 
             changesetFiles
                 .Count(x => x.Type == ChangesetModel.FileType.Removed)
-                .ToProperty(this, x => DiffDeletions, out _diffDeletions);
+                .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
 
             changesetFiles
                 .Count(x => x.Type == ChangesetModel.FileType.Modified)
-                .ToProperty(this, x => DiffModifications, out _diffModifications);
+                .ToProperty(this, x => x.DiffModifications, out _diffModifications);
 
             var commitFiles = new ReactiveList<ChangesetModel.FileModel>();
             CommitFiles = commitFiles.CreateDerivedCollection(x =>
@@ -187,17 +193,38 @@ namespace CodeBucket.Core.ViewModels.Commits
                 return vm;
             });
 
+            this.WhenAnyValue(x => x.Commit.Participants)
+                .Select(participants =>
+                {
+                    return (participants ?? Enumerable.Empty<Participant>())
+                        .Where(x => x.Approved)
+                        .Select(x =>
+                    {
+                        var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
+                        var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
+                        vm.GoToCommand
+                          .Select(_ => new UserViewModel(x.User))
+                          .Subscribe(NavigateTo);
+                        return vm;
+                    });
+                })
+                .Select(x => ImmutableArray.CreateRange(x))
+                .ToProperty(this, x => x.Approvals, out _approvals, ImmutableArray<UserItemViewModel>.Empty);
+
             this.WhenAnyValue(x => x.Changeset)
                 .Subscribe(x => commitFiles.Reset(x?.Files ?? Enumerable.Empty<ChangesetModel.FileModel>()));
 
-            this.WhenAnyValue(x => x.Commit).Subscribe(x => {
-                var currentUsername = applicationService.Account.Username;
-                Approved = x?.Participants
-                    .FirstOrDefault(y => string.Equals(y.User.Username, currentUsername, StringComparison.OrdinalIgnoreCase))
-                    ?.Approved ?? false;
-            });
+            this.WhenAnyValue(x => x.Commit)
+                .Subscribe(x => 
+                {
+                    var currentUsername = applicationService.Account.Username;
+                    Approved = x?.Participants
+                        ?.FirstOrDefault(y => string.Equals(currentUsername, y?.User?.Username, StringComparison.OrdinalIgnoreCase))
+                        ?.Approved ?? false;
+                });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
+            {
                 var commit = applicationService.Client.Commits.GetCommit(User, Repository, Node)
                     .OnSuccess(x => Commit = x);
                 var changeset = applicationService.Client.Commits.GetChangeset(User, Repository, Node)

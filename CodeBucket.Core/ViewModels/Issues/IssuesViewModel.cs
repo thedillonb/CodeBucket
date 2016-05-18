@@ -1,12 +1,7 @@
-using System.Threading.Tasks;
-using CodeBucket.Core.Filters;
-using System.Windows.Input;
-using CodeBucket.Core.Messages;
 using System.Linq;
 using BitbucketSharp.Models;
 using System.Collections.Generic;
 using System;
-using CodeBucket.Core.Utils;
 using CodeBucket.Core.Services;
 using Splat;
 using ReactiveUI;
@@ -15,13 +10,11 @@ using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssuesViewModel : BaseViewModel, ILoadableViewModel
+    public class IssuesViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<IssueItemViewModel>
     {
-        public bool Simple { get; private set; }
+        public IReadOnlyReactiveList<IssueItemViewModel> Items { get; }
 
-        public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; }
-
-        public IReactiveCommand<object> GoToNewIssueCommand { get; }
+        public IReactiveCommand<object> GoToNewIssueCommand { get; } = ReactiveCommand.Create();
 
         //public ICommand GoToFiltersCommand
         //{
@@ -122,6 +115,14 @@ namespace CodeBucket.Core.ViewModels.Issues
             Title = "Issues";
 
             var issues = new ReactiveList<IssueModel>();
+            Items = issues.CreateDerivedCollection(x =>
+            {
+                var vm = new IssueItemViewModel(x);
+                vm.GoToCommand
+                  .Select(_ => new IssueViewModel(username, repository, x))
+                  .Subscribe(NavigateTo);
+                return vm;
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {

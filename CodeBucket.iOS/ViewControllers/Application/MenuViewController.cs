@@ -46,7 +46,7 @@ namespace CodeBucket.ViewControllers.Application
             _title.TextColor = UIColor.FromRGB(246, 246, 246);
             NavigationItem.TitleView = _title;
 
-            OnActivation(d => d(_profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked())));
+            OnActivation(d => _profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked()).AddTo(d));
 
             Appearing
                 .Take(1)
@@ -58,7 +58,7 @@ namespace CodeBucket.ViewControllers.Application
                       .Switch()
                       .Subscribe(x =>
                       {
-                          var viewFor = Locator.Current.GetService<IViewLocatorService>().GetView(x);
+                        var viewFor = Locator.Current.GetService<IViewLocatorService>().GetView(x);
                           NavigationController.PushViewController(viewFor as UIViewController, true);  
                       });
         }

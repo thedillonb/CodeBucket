@@ -56,12 +56,12 @@ namespace CodeBucket.ViewControllers
 
             OnActivation(d =>
             {
-                d(ViewModel.WhenAnyValue(x => x.Avatar).Subscribe(UpdatedImage));
-                d(ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x));
-                d(ViewModel.GoToMenuCommand.Subscribe(GoToMenu));
-                d(ViewModel.GoToAccountsCommand.Subscribe(GoToAccounts));
-                d(ViewModel.GoToLoginCommand.Subscribe(GoToNewAccount));
-                d(ViewModel.WhenAnyValue(x => x.IsLoggingIn).Subscribe(x =>
+                ViewModel.WhenAnyValue(x => x.Avatar).Subscribe(UpdatedImage).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x).AddTo(d);
+                ViewModel.GoToMenuCommand.Subscribe(GoToMenu).AddTo(d);
+                ViewModel.GoToAccountsCommand.Subscribe(GoToAccounts).AddTo(d);
+                ViewModel.GoToLoginCommand.Subscribe(GoToNewAccount).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
                         _activityView.StartAnimating();
@@ -69,7 +69,7 @@ namespace CodeBucket.ViewControllers
                         _activityView.StopAnimating();
 
                     _activityView.Hidden = !x;
-                }));
+                }).AddTo(d);
             });
         }
 
@@ -79,7 +79,9 @@ namespace CodeBucket.ViewControllers
             var slideoutController = new SlideoutNavigationController();
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            vc.ViewModel.GoToDefaultTopView.Execute(null);
+            //vc.ViewModel.GoToDefaultTopView.Execute(null);
+            var vm = new Core.ViewModels.Commits.CommitsViewModel("thedillonb", "bitbucketbrowser", "master");
+            vc.NavigationController.PushViewController(new Commits.CommitsViewController() { ViewModel = vm }, true);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);
         }

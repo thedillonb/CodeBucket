@@ -6,11 +6,9 @@ using CodeBucket.Core.ViewModels.Commits;
 using Humanizer;
 using CodeBucket.Core.Utils;
 using CodeBucket.DialogElements;
-using CodeBucket.Utilities;
 using CodeBucket.Services;
 using BitbucketSharp.Models.V2;
 using BitbucketSharp.Models;
-using CodeBucket.Core.ViewModels.Users;
 using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Commits
@@ -58,7 +56,7 @@ namespace CodeBucket.ViewControllers.Commits
 
             var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
             NavigationItem.RightBarButtonItem = actionButton;
-            OnActivation(d => d(actionButton.BindCommand(ViewModel.ShowMenuCommand)));
+            OnActivation(d => actionButton.BindCommand(ViewModel.ShowMenuCommand).AddTo(d));
 
             ViewModel.AddCommentCommand.Subscribe(_ => AddCommentTapped());
 
@@ -90,8 +88,8 @@ namespace CodeBucket.ViewControllers.Commits
             }
 
             ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(x => {
-                participants.Text = x?.Participants.Count.ToString() ?? "-";
-                approvals.Text = x?.Participants.Count(y => y.Approved).ToString() ?? "-";
+                participants.Text = x?.Participants?.Count.ToString() ?? "-";
+                approvals.Text = x?.Participants?.Count(y => y.Approved).ToString() ?? "-";
 
                 var titleMsg = (ViewModel.Commit.Message ?? string.Empty).Split(new [] { '\n' }, 2).FirstOrDefault();
                 var avatarUrl = ViewModel.Commit.Author?.User?.Links?.Avatar?.Href;
@@ -105,19 +103,14 @@ namespace CodeBucket.ViewControllers.Commits
                 var user = x.Author?.User?.DisplayName ?? x.Author.Raw ?? "Unknown";
                 detailsElement.Caption = user;
                 detailsElement.Details = x.Message;
-
-                var participantElements = (x.Participants ?? Enumerable.Empty<Participant>())
-                    .Where(y => y.Approved)
-                    .Select(l => {
-                        var avatar = new Avatar(l.User?.Links?.Avatar?.Href);
-                        var vm = new UserItemViewModel(l.User.Username, l.User.DisplayName, avatar);
-                        vm.GoToCommand.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
-                        return new UserElement(vm);
-                    })
-                    .OfType<Element>();
-
-                approvalSection.Reset(participantElements.Concat(new [] { approveElement }));
             });
+
+            this.WhenAnyValue(x => x.ViewModel.Approvals)
+                .Subscribe(x =>
+                {
+                    var elements = x.Select(y => new UserElement(y)).OfType<Element>();
+                    approvalSection.Reset(elements.Concat(new[] { approveElement }));
+                });
 
             ViewModel.WhenAnyValue(x => x.Comments).Subscribe(x => {
                 comments.Text = x?.Count.ToString() ?? "-";

@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using ReactiveUI;
 using System.Reactive.Disposables;
+using CoreGraphics;
 
 
 // Analysis disable once CheckNamespace
@@ -55,6 +56,45 @@ namespace UIKit
         public static IObservable<Unit> GetSearchObservable(this UISearchBar @this)
         {
             return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
+        }
+
+        public static UISearchBar CreateSearchBar(this UITableView tableView)
+        {
+            var searchBar = new UISearchBar(new CGRect(0, 0, tableView.Bounds.Width, 44));
+            searchBar.OnEditingStarted += (sender, e) => searchBar.ShowsCancelButton = true;
+            searchBar.OnEditingStopped += (sender, e) => searchBar.ShowsCancelButton = false;
+            searchBar.CancelButtonClicked += (sender, e) =>
+            {
+                searchBar.ShowsCancelButton = false;
+                searchBar.Text = "";
+                searchBar.ResignFirstResponder();
+            };
+            return searchBar;
+        }
+
+        public static void DisposeAll(this UIView view)
+        {
+            if (view.IsDisposedOrNull())
+                return;
+            
+            try
+            {
+                foreach (var subView in view.Subviews)
+                    subView.DisposeAll();
+
+                view.RemoveFromSuperview();
+                view.Dispose();
+            }
+            catch
+            {
+            }
+        }
+
+        public static bool IsDisposedOrNull(this UIView view)
+        {
+            if (view == null) return true;
+            if (view.Handle == IntPtr.Zero) return true;
+            return false;
         }
     }
 }

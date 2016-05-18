@@ -240,7 +240,7 @@ namespace CodeBucket.DialogElements
                 e.SetSection(null);
             
             _elements.Clear();
-            Root?.TableView?.ReloadData ();
+            Root?.ReloadData();
         }
 
         public void Reset(IEnumerable<Element> elements)
@@ -254,7 +254,7 @@ namespace CodeBucket.DialogElements
             foreach (var e in _elements)
                 e.SetSection(this);
 
-            Root?.TableView?.ReloadData();
+            Root?.ReloadData();
         }
     }
 }

@@ -3,32 +3,14 @@ using UIKit;
 using BitbucketSharp.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssuesView : ViewModelDrivenDialogViewController<IssuesViewModel>
+    public class IssuesView : BaseTableViewController<IssuesViewModel>
     {
         private UISegmentedControl _viewSegment;
         private UIBarButtonItem _segmentBarButton;
-
-		protected Element CreateElement(IssueModel x)
-		{
-			var assigned = x.Responsible != null ? x.Responsible.Username : "unassigned";
-			var kind = x.Metadata.Kind;
-			if (kind == "enhancement")
-				kind = "enhance";
-
-			var commentString = x.CommentCount == 1 ? "1 comment" : x.CommentCount + " comments";
-			var el = new IssueElement(x.LocalId.ToString(), x.Title, assigned, x.Status, commentString, kind, x.UtcLastUpdated);
-
-			//el.Tapped += () => {
-			//	//Make sure the first responder is gone.
-			//	View.EndEditing(true);
-			//	ViewModel.GoToIssueCommand.Execute(x);
-			//};
-
-			return el;
-		}
 
         public override void ViewDidLoad()
         {
@@ -41,6 +23,8 @@ namespace CodeBucket.Views.Issues
 			_segmentBarButton.Width = View.Frame.Width - 10f;
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             //BindCollection(ViewModel.Issues, CreateElement);
+
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Items);
         }
 
 

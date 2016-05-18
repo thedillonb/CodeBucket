@@ -3,6 +3,7 @@ using System.Linq;
 using UIKit;
 using CodeBucket.DialogElements;
 using Humanizer;
+using System.Reactive.Linq;
 
 namespace CodeBucket.ViewControllers
 {
@@ -16,13 +17,16 @@ namespace CodeBucket.ViewControllers
             var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
             var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Save };
 
-            OnActivation(d =>
+            OnActivation(disposables =>
             {
-                d(cancel.GetClickedObservable().Subscribe(_ => DismissViewController(true, null)));
-                d(save.GetClickedObservable().Subscribe(_ => {
-                    ApplyButtonPressed();
-                    DismissViewController(true, null); 
-                }));
+                cancel.GetClickedObservable()
+                      .Subscribe(_ => DismissViewController(true, null))
+                      .AddTo(disposables);
+
+                save.GetClickedObservable()
+                    .Do(_ => ApplyButtonPressed())
+                    .Subscribe(_ => DismissViewController(true, null))
+                    .AddTo(disposables);
             });
         }
 

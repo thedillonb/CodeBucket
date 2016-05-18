@@ -1,5 +1,5 @@
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.ViewControllers.User;
+using CodeBucket.ViewControllers.Users;
 
 namespace CodeBucket.ViewControllers.Repositories
 {

@@ -1,24 +1,24 @@
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using BitbucketSharp;
-using Splat;
-using System.Reactive;
+using System.Threading.Tasks;
+using BitbucketSharp.Models.V2;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class UserRepositoriesViewModel : RepositoriesViewModel, ILoadableViewModel
+    public class UserRepositoriesViewModel : RepositoriesViewModel
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private readonly string _username;
 
         public UserRepositoriesViewModel(string username, IApplicationService applicationService = null)
             : base(applicationService)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username;
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
-                RepositoryList.Clear();
-                return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(username), RepositoryList.AddRange);
-            });
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
+        {
+            return applicationService.Client.ForAllItems(x => x.Users.GetRepositories(_username), repositories.AddRange);
         }
     }
 }

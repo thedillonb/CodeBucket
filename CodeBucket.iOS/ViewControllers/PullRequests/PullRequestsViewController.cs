@@ -5,42 +5,38 @@ using CodeBucket.TableViewCells;
 using System;
 using CodeBucket.Views;
 using ReactiveUI;
-using System.Linq;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.PullRequests
 {
-    public class PullRequestsViewController : ViewModelDrivenDialogViewController<PullRequestsViewModel>
+    public class PullRequestsViewController : BaseTableViewController<PullRequestsViewModel>
     {
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            EnableSearch = true;
-
+            var source = new PullRequestTableViewSource(TableView, ViewModel.Items);
+            TableView.Source = source;
             TableView.EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Devtoolspullrequest.ToImage(64f), "There are no pull requests."));
 
             var viewSegment = new UISegmentedControl(new object[] { "Open", "Merged", "Declined" });
             NavigationItem.TitleView = viewSegment;
 
-            TableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
-
-            var section = new Section();
-            Root.Reset(section);
-
-            ViewModel
-                .PullRequests
-                .ChangedObservable()
-                .Subscribe(x => section.Reset(x.Select(y => new PullRequestElement(y))));
-
-            OnActivation(d =>
+            OnActivation(disposable =>
             {
-                d(viewSegment.GetChangedObservable().Subscribe(x => ViewModel.SelectedFilter = (BitbucketSharp.Models.V2.PullRequestState)x));
-                d(ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => viewSegment.SelectedSegment = (int)x));
-            });
+                viewSegment.GetChangedObservable()
+                    .Subscribe(x => ViewModel.SelectedFilter = (BitbucketSharp.Models.V2.PullRequestState)x)
+                    .AddTo(disposable);
 
+                ViewModel.WhenAnyValue(x => x.SelectedFilter)
+                    .Subscribe(x => viewSegment.SelectedSegment = (int)x)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
+                    .Subscribe(x => TableView.IsEmpty = x)
+                    .AddTo(disposable);
+            });
         }
     }
 }

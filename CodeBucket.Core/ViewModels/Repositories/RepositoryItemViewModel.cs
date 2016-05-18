@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoryItemViewModel : ReactiveObject
+    public class RepositoryItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
 

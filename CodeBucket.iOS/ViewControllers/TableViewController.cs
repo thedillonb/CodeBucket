@@ -23,19 +23,26 @@ namespace CodeBucket.ViewControllers
             set { ViewModel = (TViewModel)value; }
         }
 
-        protected TableViewController(UITableViewStyle style)
+        protected TableViewController(UITableViewStyle style = UITableViewStyle.Plain)
             : base(style)
         {
-            this.WhenAnyValue(x => x.ViewModel)
+            Appearing
+                .Take(1)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
+                .Switch()
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand)
                 .Subscribe(x => x.ExecuteIfCan());
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesTitle>()
-                .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch()
-                .Subscribe(x => Title = x);
+            OnActivation(disposable =>
+            {
+                this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IProvidesTitle>()
+                    .Select(x => x.WhenAnyValue(y => y.Title))
+                    .Switch()
+                    .Subscribe(x => Title = x)
+                    .AddTo(disposable);
+            });
         }
     }
 

@@ -9,7 +9,7 @@ namespace CodeBucket.Services
 {
     public interface IViewLocatorService
     {
-        IViewFor GetView<T>(T viewModel) where T : class;
+        IViewFor GetView(object viewModel);
     }
 
     public class ViewLocatorService : IViewLocatorService
@@ -25,13 +25,16 @@ namespace CodeBucket.Services
 
             foreach (var type in types)
             {
+                if (type.GetConstructor(Type.EmptyTypes) == null)
+                    continue;
+                
                 var viewFor = type.GetInterface("IViewFor`1");
                 var genericType = viewFor.GetGenericArguments()[0];
                 _map.Add(genericType, Expression.Lambda<Func<IViewFor>>(Expression.New(type)).Compile());
             }
         }
 
-        public IViewFor GetView<T>(T viewModel) where T : class
+        public IViewFor GetView(object viewModel)
         {
             var vc = _map[viewModel.GetType()].Invoke() as IViewFor;
             vc.ViewModel = viewModel;

@@ -1,30 +1,29 @@
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using BitbucketSharp;
-using System.Reactive;
-using Splat;
+using BitbucketSharp.Models.V2;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoriesForkedViewModel : RepositoriesViewModel, ILoadableViewModel
+    public class RepositoriesForkedViewModel : RepositoriesViewModel
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private readonly string _username, _repository;
 
         public RepositoriesForkedViewModel(
             string username, string repository,
             IApplicationService applicationService = null)
             : base(applicationService)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
-
+            _username = username;
+            _repository = repository;
             Title = "Forked";
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
-            {
-                RepositoryList.Clear();
-                return applicationService.Client.ForAllItems(x => 
-                    x.Repositories.GetForks(username, repository), RepositoryList.AddRange);
-            });
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
+        {
+            return applicationService.Client.ForAllItems(x =>
+                x.Repositories.GetForks(_username, _repository), repositories.AddRange);
         }
     }
 }

@@ -17,14 +17,13 @@ namespace CodeBucket.ViewControllers.Teams
 
             var tableView = new EnhancedTableView(UITableViewStyle.Plain)
             {
-                ViewModel = ViewModel,
                 EmptyView = new Lazy<UIView>(() =>
                     new EmptyListView(AtlassianIcon.Userstatus.ToEmptyListImage(), "There are no teams."))
             };
 
             this.AddTableView(tableView);
             var root = new RootElement(tableView);
-            tableView.Source = new DialogElementTableViewSource(root);
+            tableView.Source = new DialogTableViewSource(root);
 
             ViewModel.Items.ChangedObservable()
                  .Select(x => x.Select(CreateElement))

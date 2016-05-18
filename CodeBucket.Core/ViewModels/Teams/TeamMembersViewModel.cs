@@ -5,27 +5,27 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using System.Linq;
 using Splat;
-using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamMembersViewModel : BaseUserCollectionViewModel, ILoadableViewModel
+    public class TeamMembersViewModel : BaseUserCollectionViewModel
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private readonly string _name;
+        private readonly IApplicationService _applicationService;
 
         public TeamMembersViewModel(string name, IApplicationService applicationService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _name = name;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
             Title = "Members";
             EmptyMessage = "There are no members.";
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
-                Users.Clear();
-                return applicationService.Client.ForAllItems(x => x.Teams.GetMembers(name), 
-                                                             x => Users.AddRange(x.Select(ToViewModel)));
-            });
+        protected override System.Threading.Tasks.Task Load(ReactiveList<UserItemViewModel> users)
+        {
+            return _applicationService.Client.ForAllItems(x => x.Teams.GetMembers(_name),
+                                                          x => users.AddRange(x.Select(ToViewModel)));
         }
     }
 }
