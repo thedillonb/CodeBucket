@@ -1,8 +1,6 @@
 using UIKit;
-using System;
 using CodeBucket.TableViewCells;
-using CodeBucket.Core.Utils;
-using Humanizer;
+using CodeBucket.Core.ViewModels.Comments;
 
 namespace CodeBucket.DialogElements
 {
@@ -10,9 +8,10 @@ namespace CodeBucket.DialogElements
     {
         private readonly Core.ViewModels.Commits.CommitItemViewModel _viewModel;
 
-        public CommentElement(string title, string message, DateTimeOffset date, Avatar avatar)
+        public CommentElement(CommentItemViewModel viewModel)
         {
-            _viewModel = new Core.ViewModels.Commits.CommitItemViewModel(title, message, date.Humanize(), avatar);
+            _viewModel = new Core.ViewModels.Commits.CommitItemViewModel(
+                viewModel.Name, viewModel.Content, viewModel.CreatedOn, viewModel.Avatar);
         }
 
         public override UITableViewCell GetCell (UITableView tv)

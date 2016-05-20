@@ -16,20 +16,6 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        private bool _hidden;
-        public bool Hidden
-        {
-            get { return _hidden; }
-            set
-            {
-                if (value == _hidden)
-                    return;
-
-                _hidden = value;
-                GetRootElement()?.Reload(this);
-            }
-        }
-
         internal void SetSection(Section section)
         {
             _weakSection = new WeakReference<Section>(section);

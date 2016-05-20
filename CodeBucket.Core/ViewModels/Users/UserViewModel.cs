@@ -8,6 +8,7 @@ using System.Reactive.Threading.Tasks;
 using Splat;
 using ReactiveUI;
 using System.Reactive;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
@@ -80,12 +81,14 @@ namespace CodeBucket.Core.ViewModels.Users
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => 
             {
+                await Task.Delay(TimeSpan.FromSeconds(2));
                 if (!string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase))
                 {
                     applicationService.Client.Groups.GetGroups(username)
                                   .ToObservable()
                                   .Select(_ => true)
                                   .Catch(Observable.Return(false))
+                                  .ObserveOn(RxApp.MainThreadScheduler)
                                   .Subscribe(x => ShouldShowGroups = x);
                 }
 

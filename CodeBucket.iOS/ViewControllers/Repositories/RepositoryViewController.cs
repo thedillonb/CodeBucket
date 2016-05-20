@@ -31,15 +31,18 @@ namespace CodeBucket.Views.Repositories
             var watchers = _split.AddButton("Watchers", "-");
             var forks = _split.AddButton("Forks", "-");
             var branches = _split.AddButton("Branches", "-");
+
+            _split3.Button2.Text = "- Issues";
  
             ViewModel.WhenAnyValue(x => x.Issues).Subscribe(_ => Render(ViewModel.Repository));
             ViewModel.WhenAnyValue(x => x.HasReadme).Subscribe(_ => Render(ViewModel.Repository));
 
+
             OnActivation(d => 
             {
                 watchers.Clicked
-                        .BindCommand(ViewModel.GoToStargazersCommand)
-                        .AddTo(d);
+                    .BindCommand(ViewModel.GoToStargazersCommand)
+                    .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.BranchesCount)
                     .Subscribe(x => branches.Text = x.ToString())
@@ -58,8 +61,12 @@ namespace CodeBucket.Views.Repositories
                     .Subscribe(Render)
                     .AddTo(d);
 
+                this.WhenAnyValue(x => x.ViewModel.Issues)
+                    .Subscribe(x => _split3.Button2.Text = "Issues".ToQuantity(x.GetValueOrDefault()))
+                    .AddTo(d);
+
                 actionButton.BindCommand(ViewModel.ShowMenuCommand)
-                            .AddTo(d);
+                    .AddTo(d);
             });
         }
 
@@ -68,8 +75,6 @@ namespace CodeBucket.Views.Repositories
             if (model == null)
                 return;
             
-			Title = model.Name;
-
             var avatar = new Avatar(model.Links.Avatar.Href).ToUrl(128);
             ICollection<Section> root = new LinkedList<Section>();
             HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UpdatedOn.Humanize() : model.Description;
@@ -84,7 +89,6 @@ namespace CodeBucket.Views.Repositories
             sec1.Add(_split1);
 
             _split3.Button1.Text = model.Scm.ApplyCase(LetterCasing.Title);
-            _split3.Button2.Text = "Issues".ToQuantity(ViewModel.Issues.GetValueOrDefault());
             sec1.Add(_split3);
 
             _split2.Button1.Text = (model.UpdatedOn).ToString("MM/dd/yy");

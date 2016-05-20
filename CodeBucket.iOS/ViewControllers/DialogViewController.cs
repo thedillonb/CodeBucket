@@ -164,10 +164,7 @@ namespace CodeBucket.ViewControllers
             {
                 var section = Root?[indexPath.Section];
                 var element = section?[indexPath.Row];
-                var cell = element?.GetCell (tableView);
-                if (cell != null && cell.Hidden != element.Hidden)
-                    cell.Hidden = element.Hidden;
-                return cell;
+                return element?.GetCell (tableView);
             }
 
             public override void RowDeselected (UITableView tableView, NSIndexPath indexPath)
@@ -221,12 +218,6 @@ namespace CodeBucket.ViewControllers
             {
                 var section = Root?[indexPath.Section];
                 var element = section?[indexPath.Row];
-
-                if (element?.Hidden ?? false)
-                {
-                    return 0;
-                }
-
                 var sizable = element as IElementSizing;
                 return sizable?.GetHeight(tableView, indexPath) ?? tableView.RowHeight;
             }

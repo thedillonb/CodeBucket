@@ -57,9 +57,7 @@ namespace CodeBucket.Core.ViewModels.App
             ExpandTeamsAndGroups = applicationService.Account.ExpandTeamsAndGroups;
             Title = username;
 
-            var teams = new ReactiveList<Team>();
             var repos = new ReactiveList<PinnedRepository>();
-
             PinnedRepositories = repos.CreateDerivedCollection(x =>
             {
                 var vm = new PinnedRepositoryItemViewModel(x.Name, new Avatar(x.ImageUri));
@@ -75,6 +73,7 @@ namespace CodeBucket.Core.ViewModels.App
             this.WhenActivated(d =>
                 repos.Reset(accountsService.ActiveAccount.PinnnedRepositories));
 
+            var teams = new ReactiveList<Team>();
             Teams = teams.CreateDerivedCollection(x =>
             {
                 var viewModel = new TeamItemViewModel(x.Username);

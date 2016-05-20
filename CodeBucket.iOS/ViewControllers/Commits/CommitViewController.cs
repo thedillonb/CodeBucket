@@ -10,6 +10,9 @@ using CodeBucket.Services;
 using BitbucketSharp.Models.V2;
 using BitbucketSharp.Models;
 using ReactiveUI;
+using CodeBucket.ViewControllers;
+using CodeBucket.Utilities;
+using CodeBucket.ViewControllers.Comments;
 
 namespace CodeBucket.ViewControllers.Commits
 {
@@ -112,19 +115,16 @@ namespace CodeBucket.ViewControllers.Commits
                     approvalSection.Reset(elements.Concat(new[] { approveElement }));
                 });
 
-            ViewModel.WhenAnyValue(x => x.Comments).Subscribe(x => {
-                comments.Text = x?.Count.ToString() ?? "-";
+            ViewModel.Comments
+                     .CountChanged
+                     .Select(x => x.ToString())
+                     .StartWith("-")
+                     .Subscribe(x => comments.Text = x);
 
-                var commentElements = (x ?? Enumerable.Empty<CommitComment>())
-                    .Select(comment => {
-                        var name = comment.User.DisplayName ?? comment.User.Username;
-                        var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
-                        return new CommentElement(name, comment.Content.Raw, comment.CreatedOn, avatar);
-                    })
-                    .OfType<Element>();
-
-                commentsSection.Reset(commentElements.Concat(new [] { addCommentElement }));
-            });
+            ViewModel.Comments
+                     .ChangedObservable()
+                     .Select(x => x.Select(y => new CommentElement(y)).OfType<Element>())
+                     .Subscribe(x => commentsSection.Reset(x.Concat(new[] { addCommentElement })));
 
             ViewModel.WhenAnyValue(x => x.Commit)
                 .IsNotNull()
@@ -154,22 +154,11 @@ namespace CodeBucket.ViewControllers.Commits
 
         void AddCommentTapped()
         {
-            var composer = new Composer();
-			composer.NewComment(this, async (text) => {
-                try
-                {
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
-					composer.CloseComposer();
-                }
-                catch (Exception e)
-                {
-					AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
-                }
-                finally
-                {
-                    composer.EnableSendButton = true;
-                }
-            });
+            var newCommentVC = new NewCommentViewController();
+            newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
+
+            composer.WantsDismiss.Subscribe(_ => DismissViewController(true, null));
+            PresentViewController(new UINavigationController(composer), true, null);
         }
     }
 }

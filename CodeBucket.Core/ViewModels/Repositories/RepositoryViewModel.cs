@@ -15,7 +15,6 @@ using CodeBucket.Core.ViewModels.Wiki;
 using CodeBucket.Core.ViewModels.Source;
 using CodeBucket.Core.ViewModels.Issues;
 using BitbucketSharp.Models;
-using System.Reactive.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -101,6 +100,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
             _branches.Changed
                 .Select(_ => _branches.Count)
                 .ToProperty(this, x => x.BranchesCount, out _branchesCount);
+
+            this.WhenAnyValue(x => x.Repository.Name)
+                .StartWith(repository)
+                .Subscribe(x => Title = x);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 Repository = await applicationService.Client.Repositories.GetRepository(username, repository);

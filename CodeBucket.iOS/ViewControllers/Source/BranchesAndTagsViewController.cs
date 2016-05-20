@@ -1,6 +1,5 @@
 using CodeBucket.Core.ViewModels.Source;
 using UIKit;
-using CodeBucket.DialogElements;
 using System;
 using CodeBucket.Views;
 using ReactiveUI;

@@ -41,7 +41,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>i386</MtouchArch>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseThumb>true</MtouchUseThumb>
   </PropertyGroup>
@@ -123,9 +123,8 @@
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
-    <Compile Include="ViewControllers\Composer.cs" />
+    <Compile Include="ViewControllers\ComposerViewController.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
-    <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
@@ -277,6 +276,7 @@
     <Compile Include="TableViewSources\ReferenceTableViewSource.cs" />
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
+    <Compile Include="ViewControllers\Comments\NewCommentViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -323,9 +323,6 @@
     </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>..\packages\BTProgressHUD.1.2.0.2\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -383,6 +380,7 @@
     <Folder Include="ViewControllers\Wikis\" />
     <Folder Include="ViewControllers\Filters\" />
     <Folder Include="TableViewSources\" />
+    <Folder Include="ViewControllers\Comments\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">

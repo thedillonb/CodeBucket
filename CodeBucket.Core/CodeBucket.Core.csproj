@@ -152,6 +152,7 @@
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
     <Compile Include="Extensions\ReactiveUIExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
+    <Compile Include="ViewModels\Comments\NewCommentViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -183,9 +184,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

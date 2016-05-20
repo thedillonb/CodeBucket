@@ -55,11 +55,11 @@ namespace CodeBucket.Views.Issues
 
                 content.Clicked.Subscribe(_ => 
                 {
-                    var composer = new Composer { Title = "Issue Description", Text = ViewModel.Content };
-                    composer.NewComment(this, (text) => {
-                        ViewModel.Content = text;
-                        composer.CloseComposer();
-                    });
+                    //var composer = new ComposerViewController { Title = "Issue Description", Text = ViewModel.Content };
+                    //composer.NewComment(this, (text) => {
+                    //    ViewModel.Content = text;
+                    //    composer.CloseComposer();
+                    //});
                 }).AddTo(d);
 
                 priority.Clicked.Subscribe(_ => 

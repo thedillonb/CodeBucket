@@ -2,7 +2,6 @@ using CodeBucket.Core.ViewModels.Repositories;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Source;
 using BitbucketSharp.Models;
-using System.Collections.Generic;
 using System;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.Services;
@@ -14,23 +13,13 @@ using BitbucketSharp;
 using ReactiveUI;
 using Splat;
 using CodeBucket.Core.Utils;
-using System.Collections.ObjectModel;
-using System.Collections.Immutable;
+using CodeBucket.Core.ViewModels.Comments;
+using Humanizer;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
     public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IApplicationService _applicationService;
-
-		public string Node { get; }
-
-		public string User { get; }
-
-		public string Repository { get; }
-
-        public bool ShowRepository { get; }
-
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> ToggleApproveButton { get; }
@@ -53,8 +42,8 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public IReadOnlyReactiveList<CommitFileItemViewModel> CommitFiles { get; }
 
-        private ObservableAsPropertyHelper<ImmutableArray<UserItemViewModel>> _approvals;
-        public ImmutableArray<UserItemViewModel> Approvals => _approvals.Value;
+        private readonly ObservableAsPropertyHelper<UserItemViewModel[]> _approvals;
+        public UserItemViewModel[] Approvals => _approvals.Value;
 
         private ChangesetModel _changeset;
         public ChangesetModel Changeset
@@ -70,12 +59,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             private set { this.RaiseAndSetIfChanged(ref _commit, value); }
 		}
 
-        private IReadOnlyList<CommitComment> _comments;
-        public IReadOnlyList<CommitComment> Comments
-        {
-            get { return _comments; }
-            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
-        }
+        public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
         private readonly ObservableAsPropertyHelper<int> _diffAdditions;
         public int DiffAdditions => _diffAdditions.Value;
@@ -93,6 +77,8 @@ namespace CodeBucket.Core.ViewModels.Commits
             private set { this.RaiseAndSetIfChanged(ref _approved, value); }
         }
 
+        public NewCommentViewModel NewCommentViewModel { get; }
+
         public CommitViewModel(
             string username, string repository, Commit commit, bool showRepository = false,
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
@@ -108,17 +94,47 @@ namespace CodeBucket.Core.ViewModels.Commits
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
             IAlertDialogService alertDialogService = null)
         {
-            applicationService = _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            User = username;
-            Repository = repository;
-            Node = node;
-            ShowRepository = showRepository;
-
-            var shortNode = Node.Substring(0, Node.Length > 7 ? 7 : Node.Length);
+            var shortNode = node.Substring(0, node.Length > 7 ? 7 : node.Length);
             Title = $"Commit {shortNode}";
+
+            var comments = new ReactiveList<CommitComment>();
+            Comments = comments.CreateDerivedCollection(comment =>
+            {
+                var name = comment.User.DisplayName ?? comment.User.Username;
+                var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
+                return new CommentItemViewModel(name, avatar, comment.CreatedOn.Humanize(), comment.Content.Raw);
+            });
+
+            NewCommentViewModel = new NewCommentViewModel(async text =>
+            {
+                var model = new CreateChangesetCommentModel { Content = text };
+                var comment = await applicationService.Client.Commits.AddComment(username, repository, node, model);
+                comments.Add(new CommitComment
+                {
+                    CreatedOn = comment.UtcCreatedOn,
+                    Content = new CommitCommentContent
+                    {
+                        Raw = comment.Content,
+                        Html = comment.ContentRendered
+                    },
+                    User = new User
+                    {
+                        DisplayName = comment.DisplayName,
+                        Username = comment.Username,
+                        Links = new User.LinksModel
+                        {
+                            Avatar = new LinkModel
+                            {
+                                Href = comment.UserAvatarUrl
+                            }
+                        }
+                    }
+                });
+            });
 
             GoToUserCommand
                 .OfType<string>()
@@ -143,10 +159,10 @@ namespace CodeBucket.Core.ViewModels.Commits
             ShowMenuCommand = ReactiveCommand.Create(canShowMenu);
             ShowMenuCommand.Subscribe(sender =>
             {
-                var uri = new Uri($"https://bitbucket.org/{User}/{Repository}/commits/{Node}");
+                var uri = new Uri($"https://bitbucket.org/{username}/{repository}/commits/{node}");
                 var menu = actionMenuService.Create();
                 menu.AddButton("Add Comment", AddCommentCommand);
-                menu.AddButton("Copy SHA", () => actionMenuService.SendToPasteBoard(Node));
+                menu.AddButton("Copy SHA", () => actionMenuService.SendToPasteBoard(node));
                 menu.AddButton("Share", () => actionMenuService.ShareUrl(sender, uri));
                 menu.AddButton("Show In Bitbucket", () => NavigateTo(new WebBrowserViewModel(uri.AbsoluteUri)));
                 menu.Show(sender);
@@ -155,11 +171,11 @@ namespace CodeBucket.Core.ViewModels.Commits
             ToggleApproveButton = ReactiveCommand.CreateAsyncTask(async _ => 
             {
                 if (Approved)
-                    await _applicationService.Client.Commits.UnapproveCommit(User, Repository, Node);
+                    await applicationService.Client.Commits.UnapproveCommit(username, repository, node);
                 else
-                    await _applicationService.Client.Commits.ApproveCommit(User, Repository, Node);
+                    await applicationService.Client.Commits.ApproveCommit(username, repository, node);
 
-                Commit = await _applicationService.Client.Commits.GetCommit(User, Repository, Node);
+                Commit = await applicationService.Client.Commits.GetCommit(username, repository, node);
             });
 
             ToggleApproveButton
@@ -208,8 +224,8 @@ namespace CodeBucket.Core.ViewModels.Commits
                         return vm;
                     });
                 })
-                .Select(x => ImmutableArray.CreateRange(x))
-                .ToProperty(this, x => x.Approvals, out _approvals, ImmutableArray<UserItemViewModel>.Empty);
+                .Select(x => x.ToArray())
+                .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
 
             this.WhenAnyValue(x => x.Changeset)
                 .Subscribe(x => commitFiles.Reset(x?.Files ?? Enumerable.Empty<ChangesetModel.FileModel>()));
@@ -225,28 +241,16 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
             {
-                var commit = applicationService.Client.Commits.GetCommit(User, Repository, Node)
+                var commit = applicationService.Client.Commits.GetCommit(username, repository, node)
                     .OnSuccess(x => Commit = x);
-                var changeset = applicationService.Client.Commits.GetChangeset(User, Repository, Node)
+                var changeset = applicationService.Client.Commits.GetChangeset(username, repository, node)
                     .OnSuccess(x => Changeset = x);
      
-                RetrieveAllComments().ToBackground();
+                applicationService.Client.AllItems(x => x.Commits.GetCommitComments(username, repository, node))
+                    .ToBackground(comments.Reset);
 
                 return Task.WhenAll(commit, changeset);
             });
-        }
-
-        private async Task RetrieveAllComments()
-        {
-            var comments = await _applicationService.Client.AllItems(x => x.Commits.GetCommitComments(User, Repository, Node));
-            Comments = comments.ToList();
-        }
-
-        public async Task AddComment(string text)
-        {
-            var model = new CreateChangesetCommentModel { Content = text };
-            await _applicationService.Client.Commits.AddComment(User, Repository, Node, model);
-            await RetrieveAllComments();
         }
     }
 }

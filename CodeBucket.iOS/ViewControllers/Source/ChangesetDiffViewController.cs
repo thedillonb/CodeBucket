@@ -141,19 +141,19 @@ namespace CodeBucket.ViewControllers.Source
 
 		private void ShowCommentComposer(int? lineFrom, int? lineTo)
         {
-            var composer = new Composer();
-			composer.NewComment(this, async (text) => {
-				try
-				{
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, lineFrom, lineTo));
-					composer.CloseComposer();
-				}
-				catch (Exception e)
-				{
-					AlertDialogService.ShowAlert("Unable to Comment", e.Message);
-					composer.EnableSendButton = true;
-				}
-            });
+   //         var composer = new ComposerViewController();
+			//composer.NewComment(this, async (text) => {
+			//	try
+			//	{
+			//		await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, lineFrom, lineTo));
+			//		composer.CloseComposer();
+			//	}
+			//	catch (Exception e)
+			//	{
+			//		AlertDialogService.ShowAlert("Unable to Comment", e.Message);
+			//		composer.EnableSendButton = true;
+			//	}
+   //         });
         }
     }
 }

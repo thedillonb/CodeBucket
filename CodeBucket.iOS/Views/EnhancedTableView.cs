@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reactive.Linq;
-using CodeBucket.Core.ViewModels;
 using CoreGraphics;
 using ReactiveUI;
 using UIKit;
@@ -32,8 +30,9 @@ namespace CodeBucket.Views
                 }
                 else
                 {
+                    (TableFooterView as UIActivityIndicatorView)?.StopAnimating();
                     TableFooterView = null;
-                    ReloadData();
+                    //ReloadData();
                 }
             }
         }
