@@ -9,7 +9,7 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<ReferenceItemViewModel>
+    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<ReferenceItemViewModel>
 	{
 		private int _selectedFilter;
 		public int SelectedFilter

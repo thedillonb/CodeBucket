@@ -1,7 +1,5 @@
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
-using CodeBucket.DialogElements;
-using CodeBucket.TableViewCells;
 using System;
 using CodeBucket.Views;
 using ReactiveUI;
@@ -9,7 +7,7 @@ using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.PullRequests
 {
-    public class PullRequestsViewController : BaseTableViewController<PullRequestsViewModel>
+    public class PullRequestsViewController : BaseTableViewController<PullRequestsViewModel, PullRequestItemViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -31,10 +29,6 @@ namespace CodeBucket.ViewControllers.PullRequests
 
                 ViewModel.WhenAnyValue(x => x.SelectedFilter)
                     .Subscribe(x => viewSegment.SelectedSegment = (int)x)
-                    .AddTo(disposable);
-
-                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
-                    .Subscribe(x => TableView.IsEmpty = x)
                     .AddTo(disposable);
             });
         }

@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class UserFollowersViewModel : BaseUserCollectionViewModel
+    public class UserFollowersViewModel : UsersViewModel
     {
         private readonly string _username;
         private readonly IApplicationService _applicationService;

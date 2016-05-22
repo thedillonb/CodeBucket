@@ -30,6 +30,15 @@ namespace CodeBucket.Core.ViewModels.Commits
             private set { this.RaiseAndSetIfChanged(ref _hasMore, value); }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
+
+        public bool IsEmpty => false;
+
         protected BaseCommitsViewModel(
             string username, string repository,
             IApplicationService applicationService = null)

@@ -219,7 +219,7 @@
     <Compile Include="ViewControllers\Groups\GroupViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoriesSharedViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoriesStarredViewController.cs" />
-    <Compile Include="ViewControllers\Repositories\BaseRepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoriesViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoryWatchersViewController.cs" />
     <Compile Include="ViewControllers\Repositories\UserRepositoriesViewController.cs" />
     <Compile Include="ViewControllers\Users\BaseUserCollectionViewController.cs" />
@@ -234,7 +234,7 @@
     <Compile Include="ViewControllers\Source\BranchesViewController.cs" />
     <Compile Include="ViewControllers\Source\SourceTreeViewController.cs" />
     <Compile Include="ViewControllers\Source\SourceViewController.cs" />
-    <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\EventsViewController.cs" />
     <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
     <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestViewController.cs" />
@@ -251,7 +251,7 @@
     <Compile Include="ViewControllers\Issues\IssueLabelsView.cs" />
     <Compile Include="ViewControllers\Issues\IssueModifyView.cs" />
     <Compile Include="ViewControllers\Issues\IssuesFiltersView.cs" />
-    <Compile Include="ViewControllers\Issues\IssuesView.cs" />
+    <Compile Include="ViewControllers\Issues\IssuesViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueVersionsView.cs" />
     <Compile Include="ViewControllers\Issues\IssueView.cs" />
     <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
@@ -279,6 +279,8 @@
     <Compile Include="Services\LoadingIndicatorService.cs" />
     <Compile Include="TableViewSources\SourceTreeTableViewSource.cs" />
     <Compile Include="TableViewCells\SourceTreeTableViewCell.cs" />
+    <Compile Include="TableViewCells\TeamTableViewCell.cs" />
+    <Compile Include="TableViewSources\TeamTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -339,8 +341,6 @@
     <BundleResource Include="Images\Buttons\fork%402x.png" />
     <BundleResource Include="Images\Buttons\grey_button.png" />
     <BundleResource Include="Images\Buttons\grey_button%402x.png" />
-    <BundleResource Include="Images\Buttons\save.png" />
-    <BundleResource Include="Images\Buttons\save%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />

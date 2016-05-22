@@ -9,7 +9,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : BaseViewModel, IProvidesSearch, ILoadableViewModel, IListViewModel<UserItemViewModel>
+    public abstract class UsersViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<UserItemViewModel>
     {
         private string _emptyMessage;
         public string EmptyMessage
@@ -18,12 +18,8 @@ namespace CodeBucket.Core.ViewModels.Users
             protected set { this.RaiseAndSetIfChanged(ref _emptyMessage, value); }
         }
 
-        private bool _isEmpty;
-        public bool IsEmpty
-        {
-            get { return _isEmpty; }
-            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
-        }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         private string _searchText;
         public string SearchText
@@ -36,7 +32,7 @@ namespace CodeBucket.Core.ViewModels.Users
 
         public IReadOnlyReactiveList<UserItemViewModel> Items { get; }
 
-        protected BaseUserCollectionViewModel()
+        protected UsersViewModel()
         {
             var users = new ReactiveList<UserItemViewModel>();
             Items = users.CreateDerivedCollection(
@@ -50,9 +46,11 @@ namespace CodeBucket.Core.ViewModels.Users
                 await Load(users);
             });
 
-            LoadCommand
+            _isEmpty = LoadCommand
                 .IsExecuting
-                .Subscribe(x => IsEmpty = !x && users.Count == 0);
+                .Skip(1)
+                .Select(x => !x && users.Count == 0)
+                .ToProperty(this, x => x.IsEmpty);
         }
 
         protected abstract Task Load(ReactiveList<UserItemViewModel> users);

@@ -10,52 +10,70 @@ namespace CodeBucket.ViewController.Application
 {
     public class SettingsViewController : PrettyDialogViewController<SettingsViewModel>
     {
-        public override void ViewWillAppear(bool animated)
+        public override void ViewDidLoad()
         {
-            base.ViewWillAppear(animated);
+            base.ViewDidLoad();
 
-            Title = ViewModel.Title;
-            HeaderView.SetImage(null, Images.Avatar);
-            CreateTable();
-        }
+            RefreshHeaderView(subtext: ViewModel.Account.Username, image: Images.Avatar);
 
-		private void CreateTable()
-		{
             var currentAccount = ViewModel.Account;
-
             var showOrganizationsInEvents = new BooleanElement("Show Teams under Events", currentAccount.ShowTeamEvents);
-            showOrganizationsInEvents.Changed.Subscribe(e => ViewModel.SetAccount(x => x.ShowTeamEvents = e));
-
             var showOrganizations = new BooleanElement("List Teams & Groups in Menu", currentAccount.ExpandTeamsAndGroups);
-            showOrganizations.Changed.Subscribe(e => ViewModel.SetAccount(x => x.ExpandTeamsAndGroups = e));
-
             var repoDescriptions = new BooleanElement("Show Repo Descriptions", currentAccount.RepositoryDescriptionInList);
-            repoDescriptions.Changed.Subscribe(e => ViewModel.SetAccount(x => x.RepositoryDescriptionInList = e));
-
             var startupView = new ButtonElement("Startup View", ViewModel.DefaultStartupViewName);
-            startupView.Clicked.Subscribe(_ =>
-                NavigationController.PushViewController(new DefaultStartupViewController(), true));
-
             var sourceCommand = new ButtonElement("Source Code");
-            sourceCommand.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")));
+            var twitter = new ButtonElement("Follow On Twitter");
+            var rate = new ButtonElement("Rate This App");
 
-            var twitter = new StringElement("Follow On Twitter");
-            twitter.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp")));
-
-            var rate = new StringElement("Rate This App");
-            rate.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8")));
-
-			//Assign the root
+            //Assign the root
             var root = new List<Section>();
             root.Add(new Section());
             root.Add(new Section { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
-            root.Add(new Section(String.Empty, "Thank you for downloading. Enjoy!")
+            root.Add(new Section(string.Empty, "Thank you for downloading. Enjoy!")
             {
                 sourceCommand, twitter, rate,
                 new StringElement("App Version", NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
             });
             Root.Reset(root);
-		}
+
+            OnActivation(disposable =>
+            {
+                showOrganizationsInEvents
+                    .Changed
+                    .Subscribe(e => ViewModel.SetAccount(x => x.ShowTeamEvents = e))
+                    .AddTo(disposable);
+
+                showOrganizations
+                    .Changed
+                    .Subscribe(e => ViewModel.SetAccount(x => x.ExpandTeamsAndGroups = e))
+                    .AddTo(disposable);
+
+                startupView
+                    .Clicked
+                    .Subscribe(_ => NavigationController.PushViewController(new DefaultStartupViewController(), true))
+                    .AddTo(disposable);
+
+                repoDescriptions
+                    .Changed
+                    .Subscribe(e => ViewModel.SetAccount(x => x.RepositoryDescriptionInList = e))
+                    .AddTo(disposable);
+
+                sourceCommand
+                    .Clicked
+                    .Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")))
+                    .AddTo(disposable);
+
+                twitter
+                    .Clicked
+                    .Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/Codebucketapp")))
+                    .AddTo(disposable);
+
+                rate
+                    .Clicked
+                    .Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codebucket/id551531422?mt=8")))
+                    .AddTo(disposable);
+            });
+        }
     }
 }
 

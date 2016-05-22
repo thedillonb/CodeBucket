@@ -8,7 +8,7 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<SourceTreeItemViewModel>
+    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<SourceTreeItemViewModel>
     {
         public IReadOnlyReactiveList<SourceTreeItemViewModel> Items { get; }
 
@@ -21,13 +21,16 @@ namespace CodeBucket.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-//		private void GoToSubmodule(SourceModel x)
-//        {
-//            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
-//            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
-//            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-//            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
-//        }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
+
+        //		private void GoToSubmodule(SourceModel x)
+        //        {
+        //            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
+        //            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
+        //            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+        //            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+        //        }
 
         public SourceTreeViewModel(
             string username, string repository, string branch, string path = null,
@@ -69,6 +72,9 @@ namespace CodeBucket.Core.ViewModels.Source
 
                 content.Reset(dirs.Concat(files));
             });
+
+            LoadCommand.IsExecuting.CombineLatest(content.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
     }
 }

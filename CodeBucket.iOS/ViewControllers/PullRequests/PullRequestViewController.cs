@@ -88,7 +88,7 @@ namespace CodeBucket.ViewControllers.PullRequests
                 secDetails.Add(_descriptionElement);
             }
 
-            var commitsElement = new StringElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
+            var commitsElement = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
             commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
 
 			var merged = ViewModel.Merged;
@@ -101,7 +101,7 @@ namespace CodeBucket.ViewControllers.PullRequests
 
             if (!merged)
             {
-                var mergeElement = new StringElement("Merge", AtlassianIcon.Approve.ToImage());
+                var mergeElement = new ButtonElement("Merge", AtlassianIcon.Approve.ToImage());
                 mergeElement.Clicked.InvokeCommand(ViewModel.MergeCommand);
                 root.Add(new Section { mergeElement });
             }
@@ -142,7 +142,7 @@ namespace CodeBucket.ViewControllers.PullRequests
                 commentsSection.Add(_commentsElement);
             }
 
-            var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
+            var addComment = new ButtonElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
             addComment.Clicked.Subscribe(_ => AddCommentTapped());
             commentsSection.Add(addComment);
 

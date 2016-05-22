@@ -10,18 +10,14 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : BaseViewModel, IProvidesSearch, ILoadableViewModel, IListViewModel<RepositoryItemViewModel>
+    public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<RepositoryItemViewModel>
     {
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; }
 
-        private bool _isEmpty;
-        public bool IsEmpty
-        {
-            get { return _isEmpty; }
-            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
-        }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         private string _searchText;
         public string SearchText
@@ -57,9 +53,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 await Load(applicationService, repositories);
             });
 
-            LoadCommand
-                .IsExecuting
-                .Subscribe(x => IsEmpty = !x && repositories.Count == 0);
+            LoadCommand.IsExecuting.CombineLatest(repositories.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
 
         protected abstract Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories);

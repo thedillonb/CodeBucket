@@ -9,7 +9,7 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-    public class GroupsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<GroupItemViewModel>
+    public class GroupsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<GroupItemViewModel>
 	{
         public IReadOnlyReactiveList<GroupItemViewModel> Items { get; }
 
@@ -21,6 +21,9 @@ namespace CodeBucket.Core.ViewModels.Groups
             get { return _searchText; }
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         public GroupsViewModel(
             string username, 
@@ -39,6 +42,12 @@ namespace CodeBucket.Core.ViewModels.Groups
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 groups.Reset(await applicationService.Client.Groups.GetGroups(username));
             });
+
+            _isEmpty = LoadCommand
+                .IsExecuting
+                .Skip(1)
+                .Select(x => !x && groups.Count == 0)
+                .ToProperty(this, x => x.IsEmpty);
         }
 
         private GroupItemViewModel ToViewModel(GroupModel model)

@@ -35,10 +35,9 @@ namespace CodeBucket.ViewControllers.Issues
 
         private StringElement CreateElement(IssueAssigneeItemViewModel item)
         {
-            var element = new StringElement(item.Name) { ImageUri = item.Avatar.ToUri() };
-            item.WhenAnyValue(x => x.IsSelected)
-                     .Subscribe(x => element.Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
-            element.BindClick(item.SelectCommand);
+            var element = new CheckElement(item.Name) { ImageUri = item.Avatar.ToUri() };
+            item.WhenAnyValue(x => x.IsSelected).Subscribe(x => element.Checked = x);
+            element.Clicked.InvokeCommand(item.SelectCommand);
             return element;
         }
     }

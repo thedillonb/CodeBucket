@@ -8,22 +8,30 @@ using ReactiveUI;
 
 namespace CodeBucket.Views.Issues
 {
-    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel>
+    public abstract class IssueModifyView<TViewModel> : DialogViewController
         where TViewModel : IssueModifyViewModel
     {
-		public override void ViewDidLoad()
+        public TViewModel ViewModel { get; }
+
+        public IssueModifyView()
+            : base(UITableViewStyle.Grouped)
+        {
+
+        }
+
+        public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Save };
+            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
             var title = new EntryElement("Title", string.Empty, string.Empty) { TextAlignment = UITextAlignment.Right };
-            var assignedTo = new StringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
-            var kind = new StringElement("Issue Type", ViewModel.Kind, UITableViewCellStyle.Value1);
-            var priority = new StringElement("Priority", ViewModel.Priority, UITableViewCellStyle.Value1);
-            var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
-            var component = new StringElement("Component", "None", UITableViewCellStyle.Value1);
-            var version = new StringElement("Version", "None", UITableViewCellStyle.Value1);
+            var assignedTo = new ButtonElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
+            var kind = new ButtonElement("Issue Type", ViewModel.Kind, UITableViewCellStyle.Value1);
+            var priority = new ButtonElement("Priority", ViewModel.Priority, UITableViewCellStyle.Value1);
+            var milestone = new ButtonElement("Milestone", "None", UITableViewCellStyle.Value1);
+            var component = new ButtonElement("Component", "None", UITableViewCellStyle.Value1);
+            var version = new ButtonElement("Version", "None", UITableViewCellStyle.Value1);
 			var content = new MultilinedElement("Description");
 	
             //Root.Reset(new Section { title, assignedTo, kind, priority }, new Section { milestone, component, version }, new Section { content });

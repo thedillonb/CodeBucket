@@ -10,7 +10,7 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<TeamItemViewModel>
+    public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<TeamItemViewModel>
     {
         public IReadOnlyReactiveList<TeamItemViewModel> Items { get; }
 
@@ -22,6 +22,9 @@ namespace CodeBucket.Core.ViewModels.Teams
             get { return _searchText; }
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         public TeamsViewModel(IApplicationService applicationService = null)
         {
@@ -46,6 +49,12 @@ namespace CodeBucket.Core.ViewModels.Teams
                 teams.Clear();
                 return applicationService.Client.ForAllItems(x => x.Teams.GetTeams(TeamRole.Member), teams.AddRange);
             });
+
+            _isEmpty = LoadCommand
+                .IsExecuting
+                .Skip(1)
+                .Select(x => !x && teams.Count == 0)
+                .ToProperty(this, x => x.IsEmpty);
         }
     }
 }

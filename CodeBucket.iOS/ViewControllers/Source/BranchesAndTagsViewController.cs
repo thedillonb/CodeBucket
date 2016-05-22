@@ -7,7 +7,7 @@ using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class BranchesAndTagsViewController : BaseTableViewController<BranchesAndTagsViewModel>
+    public class BranchesAndTagsViewController : BaseTableViewController<BranchesAndTagsViewModel, ReferenceItemViewModel>
 	{
 		public override void ViewDidLoad()
 		{
@@ -20,8 +20,6 @@ namespace CodeBucket.ViewControllers.Source
             TableView.EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Filecode.ToEmptyListImage(), "There are no items."));
 
-            var searchBar = TableView.CreateSearchBar();
-
             OnActivation(disposable => 
             {
                 this.WhenAnyValue(x => x.ViewModel.SelectedFilter)
@@ -30,18 +28,6 @@ namespace CodeBucket.ViewControllers.Source
                 
                 viewSegment.GetChangedObservable()
                     .Subscribe(x => ViewModel.SelectedFilter = x)
-                    .AddTo(disposable);
-
-                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
-                    .Subscribe(x => TableView.IsEmpty = x)
-                    .AddTo(disposable);
-
-                this.WhenAnyValue(x => x.ViewModel.SearchText)
-                    .Subscribe(x => searchBar.Text = x)
-                    .AddTo(disposable);
-
-                searchBar.GetChangedObservable()
-                    .Subscribe(x => ViewModel.SearchText = x)
                     .AddTo(disposable);
             });
 		}

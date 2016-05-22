@@ -13,6 +13,7 @@ using System.Reactive;
 using CodeBucket.Core.Utils;
 using Humanizer;
 using CodeBucket.Core.ViewModels.Wiki;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -34,6 +35,11 @@ namespace CodeBucket.Core.ViewModels.Events
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> LoadMoreCommand { get; }
+
+        public string SearchText { get; set; }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         protected BaseEventsViewModel()
         {
@@ -62,6 +68,9 @@ namespace CodeBucket.Core.ViewModels.Events
                 eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
+
+            LoadCommand.IsExecuting.CombineLatest(eventItems.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
 
         protected abstract Task<EventsModel> GetEvents(int start, int limit);

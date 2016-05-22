@@ -83,6 +83,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToSourceCommand { get; } = ReactiveCommand.Create();
 
+        public IReactiveCommand<object> GoToBranchesCommand { get; } = ReactiveCommand.Create();
+
         public IReactiveCommand<object> GoToWebsiteCommand { get; }
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; }
@@ -172,6 +174,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
             GoToEventsCommand
                 .Select(_ => new RepositoryEventsViewModel(username, repository))
+                .Subscribe(NavigateTo);
+
+            GoToBranchesCommand
+                .Select(_ => new BranchesViewModel(username, repository))
                 .Subscribe(NavigateTo);
 
             var validWebsite = this.WhenAnyValue(x => x.Repository.Website)

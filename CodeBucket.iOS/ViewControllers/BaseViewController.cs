@@ -12,7 +12,8 @@ using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class BaseTableViewController<TViewModel> : BaseViewController<TViewModel> where TViewModel : class
+    public abstract class BaseTableViewController<TViewModel, TItemViewModel> : BaseViewController<TViewModel> 
+        where TViewModel : class, IListViewModel<TItemViewModel>
     {
         private readonly Lazy<EnhancedTableView> _tableView;
 
@@ -27,6 +28,8 @@ namespace CodeBucket.ViewControllers
         {
             base.ViewDidLoad();
             this.AddTableView(TableView);
+
+            var searchBar = TableView.CreateSearchBar();
 
             OnActivation(disposable =>
             {
@@ -46,6 +49,18 @@ namespace CodeBucket.ViewControllers
 
                 Observable.CombineLatest(loadable, paginatable, (l, p) => l || p)
                     .Subscribe(x => TableView.IsLoading = x)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.SearchText)
+                    .Subscribe(x => searchBar.Text = x)
+                    .AddTo(disposable);
+
+                searchBar.GetChangedObservable()
+                    .Subscribe(x => ViewModel.SearchText = x)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
+                    .Subscribe(x => TableView.IsEmpty = x)
                     .AddTo(disposable);
             });
 

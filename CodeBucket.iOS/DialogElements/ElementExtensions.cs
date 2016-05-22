@@ -15,7 +15,7 @@ namespace CodeBucket.DialogElements
             return new CompositeDisposable(isExecuting, invoke, canExecute);
         }
 
-        public static IDisposable BindClick<T>(this StringElement @this, IReactiveCommand<T> cmd)
+        public static IDisposable BindClick<T>(this ButtonElement @this, IReactiveCommand<T> cmd)
         {
             return @this.Clicked.InvokeCommand(cmd);
         }
@@ -30,7 +30,7 @@ namespace CodeBucket.DialogElements
             return value.SubscribeSafe(x => stringElement.Value = x.ToString());
         }
 
-        public static IDisposable BindDisclosure(this StringElement stringElement, IObservable<bool> value)
+        public static IDisposable BindDisclosure(this ButtonElement stringElement, IObservable<bool> value)
         {
             return value.SubscribeSafe(x => {
                 stringElement.SelectionStyle = x ? UITableViewCellSelectionStyle.Default : UITableViewCellSelectionStyle.None;

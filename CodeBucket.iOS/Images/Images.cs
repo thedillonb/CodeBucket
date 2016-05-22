@@ -26,7 +26,6 @@ namespace CodeBucket
             public static UIImage ThreeLines { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
             public static UIImage Cancel { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
             public static UIImage Sort { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
-            public static UIImage Save { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
             public static UIImage View { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
             public static UIImage Fork { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
         }

@@ -32,7 +32,7 @@ namespace CodeBucket.ViewControllers.Commits
             {
                 var elements = x.Select(y =>
                 {
-                    var element = new StringElement(y.Name, y.Type.ToString(), UIKit.UITableViewCellStyle.Subtitle);
+                    var element = new ButtonElement(y.Name, y.Type.ToString(), UIKit.UITableViewCellStyle.Subtitle);
                     element.Image = AtlassianIcon.PageDefault.ToImage();
                     element.Clicked.InvokeCommand(y.GoToCommand);
                     return element;

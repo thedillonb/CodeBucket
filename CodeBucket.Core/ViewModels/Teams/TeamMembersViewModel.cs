@@ -8,7 +8,7 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamMembersViewModel : BaseUserCollectionViewModel
+    public class TeamMembersViewModel : UsersViewModel
     {
         private readonly string _name;
         private readonly IApplicationService _applicationService;

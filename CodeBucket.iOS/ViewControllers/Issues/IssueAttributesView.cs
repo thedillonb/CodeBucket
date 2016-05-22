@@ -26,9 +26,8 @@ namespace CodeBucket.Views.Issues
 			foreach (var val in _values)
 			{
 				var capture = val;
-				var el = new StringElement(val);
-				if (string.Equals(val, _selected, StringComparison.OrdinalIgnoreCase))
-					el.Accessory = UIKit.UITableViewCellAccessory.Checkmark;
+                var el = new CheckElement(val);
+                el.Checked = string.Equals(val, _selected, StringComparison.OrdinalIgnoreCase);
                 el.Clicked.Subscribe(_ =>
                 {
                     SelectedValue?.Invoke(capture);

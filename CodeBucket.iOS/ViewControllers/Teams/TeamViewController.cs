@@ -15,26 +15,31 @@ namespace CodeBucket.ViewControllers.Teams
         {
             base.ViewDidLoad();
 
-            var followers = new StringElement("Followers", AtlassianIcon.Star);
-            var events = new StringElement("Events", AtlassianIcon.Blogroll);
-            var organizations = new StringElement("Groups", AtlassianIcon.Group);
-            var repos = new StringElement("Repositories", AtlassianIcon.Devtoolsrepository);
-            var members = new StringElement("Members", AtlassianIcon.User);
+            var followers = new ButtonElement("Followers", AtlassianIcon.Star);
+            var events = new ButtonElement("Events", AtlassianIcon.Blogroll);
+            var organizations = new ButtonElement("Groups", AtlassianIcon.Group);
+            var repos = new ButtonElement("Repositories", AtlassianIcon.Devtoolsrepository);
+            var members = new ButtonElement("Members", AtlassianIcon.User);
             var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, organizations, members, followers };
             Root.Reset(midSec, new Section { repos });
 
-            followers.BindClick(ViewModel.GoToFollowersCommand);
-            events.BindClick(ViewModel.GoToEventsCommand);
-            organizations.BindClick(ViewModel.GoToGroupsCommand);
-            repos.BindClick(ViewModel.GoToRepositoriesCommand);
-            members.BindClick(ViewModel.GoToMembersCommand);
+            OnActivation(disposable =>
+            {
+                followers.BindClick(ViewModel.GoToFollowersCommand).AddTo(disposable);
+                events.BindClick(ViewModel.GoToEventsCommand).AddTo(disposable);
+                organizations.BindClick(ViewModel.GoToGroupsCommand).AddTo(disposable);
+                repos.BindClick(ViewModel.GoToRepositoriesCommand).AddTo(disposable);
+                members.BindClick(ViewModel.GoToMembersCommand).AddTo(disposable);
 
-            this.WhenAnyValue(x => x.ViewModel.Team)
-                .Select(x => x == null ? null : new Avatar(x.Links.Avatar.Href).ToUrl(128))
-                .Subscribe(x => HeaderView.SetImage(x, Images.Avatar));
+                this.WhenAnyValue(x => x.ViewModel.Team)
+                    .Select(x => x == null ? null : new Avatar(x.Links.Avatar.Href).ToUrl(128))
+                    .Subscribe(x => HeaderView.SetImage(x, Images.Avatar))
+                    .AddTo(disposable);
 
-            this.WhenAnyValue(x => x.ViewModel.DisplayName)
-                .Subscribe(x => RefreshHeaderView(subtext: x));
+                this.WhenAnyValue(x => x.ViewModel.DisplayName)
+                    .Subscribe(x => RefreshHeaderView(subtext: x))
+                    .AddTo(disposable);
+            });
         }
     }
 }

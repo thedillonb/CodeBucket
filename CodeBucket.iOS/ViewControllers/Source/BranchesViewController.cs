@@ -1,30 +1,20 @@
 using System;
 using CodeBucket.Core.ViewModels.Source;
 using CodeBucket.TableViewSources;
-using ReactiveUI;
+using CodeBucket.Views;
 using UIKit;
 
 namespace CodeBucket.ViewControllers.Source
 {
-    public class BranchesViewController : BaseTableViewController<BranchesViewModel>
+    public class BranchesViewController : BaseTableViewController<BranchesViewModel, ReferenceItemViewModel>
     {
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var searchBar = TableView.CreateSearchBar();
+            TableView.EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(AtlassianIcon.Filecode.ToEmptyListImage(), "There are no branches."));
             TableView.Source = new ReferenceTableViewSource(TableView, ViewModel.Items);
-
-            OnActivation(disposable =>
-            {
-                this.WhenAnyValue(x => x.ViewModel.SearchText)
-                    .Subscribe(x => searchBar.Text = x)
-                    .AddTo(disposable);
-
-                searchBar.GetChangedObservable()
-                    .Subscribe(x => ViewModel.SearchText = x)
-                    .AddTo(disposable);
-            });
         }
     }
 }

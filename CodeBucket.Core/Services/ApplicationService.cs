@@ -21,7 +21,7 @@ namespace CodeBucket.Core.Services
 
             Client.Factory = () => new HttpClient(new LoadingMessageHandler(loadingService));
 
-            _timer = new Timer(1000 * 60 * 45); // 45 minutes
+            _timer = new Timer(1000 * 60 * 30); // 30 minutes
             _timer.AutoReset = true;
             _timer.Elapsed += (sender, e) => {
                 if (Account == null)

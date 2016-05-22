@@ -22,7 +22,11 @@ namespace CodeBucket.Core.ViewModels.App
 {
     public class MenuViewModel : BaseViewModel, ILoadableViewModel, ISupportsActivation
     {
+        private readonly IApplicationService _applicationService;
+
         public IReactiveCommand<object> GoToDefaultTopView { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<Unit> RefreshCommand { get; }
 
         public ReactiveList<GroupItemViewModel> Groups { get; } = new ReactiveList<GroupItemViewModel>();
 
@@ -32,9 +36,9 @@ namespace CodeBucket.Core.ViewModels.App
 
         public IReadOnlyReactiveList<PinnedRepositoryItemViewModel> PinnedRepositories { get; }
 
-        public bool ExpandTeamsAndGroups { get; }
+        public bool ExpandTeamsAndGroups => _applicationService.Account.ExpandTeamsAndGroups;
 
-        public bool ShowTeamEvents { get; }
+        public bool ShowTeamEvents => _applicationService.Account.ShowTeamEvents;
 
         public string Username { get; }
 
@@ -44,17 +48,14 @@ namespace CodeBucket.Core.ViewModels.App
             IApplicationService applicationService = null,
             IAccountsService accountsService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
 
             var account = applicationService.Account;
             Avatar = new Avatar(account.AvatarUrl);
-            ExpandTeamsAndGroups = account.ExpandTeamsAndGroups;
-            ShowTeamEvents = account.ShowTeamEvents;
             Username = account.Username;
             var username = Username;
 
-            ExpandTeamsAndGroups = applicationService.Account.ExpandTeamsAndGroups;
             Title = username;
 
             var repos = new ReactiveList<PinnedRepository>();
@@ -70,8 +71,11 @@ namespace CodeBucket.Core.ViewModels.App
                 return vm;
             });
 
-            this.WhenActivated(d =>
-                repos.Reset(accountsService.ActiveAccount.PinnnedRepositories));
+            RefreshCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                repos.Reset(accountsService.ActiveAccount.PinnnedRepositories);
+                return Task.FromResult(Unit.Default);
+            });
 
             var teams = new ReactiveList<Team>();
             Teams = teams.CreateDerivedCollection(x =>
@@ -139,6 +143,10 @@ namespace CodeBucket.Core.ViewModels.App
 
             GoToGroupsCommand
                 .Select(_ => new GroupsViewModel(username))
+                .Subscribe(NavigateTo);
+
+            GoToExploreRepositoriesCommand
+                .Select(_ => new RepositoriesExploreViewModel())
                 .Subscribe(NavigateTo);
 
             GoToDefaultTopView.Subscribe(_ =>

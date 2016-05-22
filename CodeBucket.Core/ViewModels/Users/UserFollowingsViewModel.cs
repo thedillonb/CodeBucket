@@ -6,7 +6,7 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class UserFollowingsViewModel : BaseUserCollectionViewModel
+    public class UserFollowingsViewModel : UsersViewModel
     {
         private readonly string _username;
         private readonly IApplicationService _applicationService;

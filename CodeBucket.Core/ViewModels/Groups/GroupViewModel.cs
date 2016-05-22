@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-    public class GroupViewModel : BaseUserCollectionViewModel
+    public class GroupViewModel : UsersViewModel
 	{
         private readonly string _owner, _slug;
         private readonly IApplicationService _applicationService;

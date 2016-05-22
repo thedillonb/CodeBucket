@@ -15,23 +15,23 @@ namespace CodeBucket.ViewControllers.Users
         {
             base.ViewDidLoad();
 
-            var followers = new StringElement("Followers", AtlassianIcon.Star.ToImage());
+            var followers = new ButtonElement("Followers", AtlassianIcon.Star.ToImage());
             followers.BindClick(ViewModel.GoToFollowersCommand);
 
-            var events = new StringElement("Events", AtlassianIcon.Blogroll.ToImage());
+            var events = new ButtonElement("Events", AtlassianIcon.Blogroll.ToImage());
             events.BindClick(ViewModel.GoToEventsCommand);
 
-            var groups = new StringElement("Groups", AtlassianIcon.Group.ToImage());
+            var groups = new ButtonElement("Groups", AtlassianIcon.Group.ToImage());
             groups.BindClick(ViewModel.GoToGroupsCommand);
 
-            var repos = new StringElement("Repositories", AtlassianIcon.Devtoolsrepository.ToImage());
+            var repos = new ButtonElement("Repositories", AtlassianIcon.Devtoolsrepository.ToImage());
             repos.BindClick(ViewModel.GoToRepositoriesCommand);
 
-            var following = new StringElement("Following", AtlassianIcon.View.ToImage());
+            var following = new ButtonElement("Following", AtlassianIcon.View.ToImage());
             following.BindClick(ViewModel.GoToFollowingCommand);
 
             var websiteSection = new Section();
-            var website = new StringElement("Website", AtlassianIcon.Weblink.ToImage());
+            var website = new ButtonElement("Website", AtlassianIcon.Weblink.ToImage());
             website.BindClick(ViewModel.GoToWebsiteCommand);
 
             var midSec = new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, followers, following };

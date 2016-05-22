@@ -23,67 +23,47 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
-  //      protected List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
-		//{
-		//	var order = Issues.Filter.OrderBy;
-		//	if (order == IssuesFilterModel.Order.Status)
-		//	{
-		//		return model.GroupBy(x => x.Status).ToList();
-		//	}
-		//	if (order == IssuesFilterModel.Order.Component)
-		//	{
-		//		return model.GroupBy(x => x.Metadata != null ? x.Metadata.Component : "N/A").ToList();
-		//	}
-		//	if (order == IssuesFilterModel.Order.Milestone)
-		//	{
-		//		return model.GroupBy(x => x.Metadata != null ? x.Metadata.Milestone : "N/A").ToList();
-		//	}
-		//	if (order == IssuesFilterModel.Order.Version)
-		//	{
-		//		return model.GroupBy(x => x.Metadata != null ? x.Metadata.Version : "N/A").ToList();
-		//	}
-		//	if (order == IssuesFilterModel.Order.Utc_Last_Updated)
-		//	{
-		//		var g = model.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
-		//		return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
-		//	}
-		//	if (order == IssuesFilterModel.Order.Created_On)
-		//	{
-		//		var g = model.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
-		//		return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
-		//	}
-		//	if (order == IssuesFilterModel.Order.Priority)
-		//	{
-		//		return model.GroupBy(x => x.Priority).ToList();
-		//	}
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
-		//	return null;
-		//}
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
-   //     private bool DoesIssueBelong(IssueModel model)
-   //     {
-			//var filter = Issues.Filter;
-			//if (filter == null)
-   //             return true;
+        private int _selectedFilter;
+        public int SelectedFilter
+        {
+            get { return _selectedFilter; }
+            set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
+        }
 
-			//if (filter.Status != null && !filter.Status.IsDefault())
-   //             if (!PropertyToUrl(null, filter.Status).Any(x => x.Item2.Equals(model.Status)))
-   //                 return false;
-			//if (filter.Kind != null && !filter.Kind.IsDefault())
-   //             if (!PropertyToUrl(null, filter.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
-   //                 return false;
-			//if (filter.Priority != null && !filter.Priority.IsDefault())
-   //             if (!PropertyToUrl(null, filter.Priority).Any(x => x.Item2.Equals(model.Priority)))
-   //                 return false;
-			//if (!string.IsNullOrEmpty(filter.AssignedTo))
-			//if (!object.Equals(filter.AssignedTo, (model.Responsible == null ? "unassigned" : model.Responsible.Username)))
-   //                 return false;
-			//if (!string.IsNullOrEmpty(filter.ReportedBy))
-			//	if (model.ReportedBy == null || !object.Equals(filter.ReportedBy, model.ReportedBy.Username))
-   //                 return false;
+        //     private bool DoesIssueBelong(IssueModel model)
+        //     {
+        //var filter = Issues.Filter;
+        //if (filter == null)
+        //             return true;
 
-   //         return true;
-   //     }
+        //if (filter.Status != null && !filter.Status.IsDefault())
+        //             if (!PropertyToUrl(null, filter.Status).Any(x => x.Item2.Equals(model.Status)))
+        //                 return false;
+        //if (filter.Kind != null && !filter.Kind.IsDefault())
+        //             if (!PropertyToUrl(null, filter.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
+        //                 return false;
+        //if (filter.Priority != null && !filter.Priority.IsDefault())
+        //             if (!PropertyToUrl(null, filter.Priority).Any(x => x.Item2.Equals(model.Priority)))
+        //                 return false;
+        //if (!string.IsNullOrEmpty(filter.AssignedTo))
+        //if (!object.Equals(filter.AssignedTo, (model.Responsible == null ? "unassigned" : model.Responsible.Username)))
+        //                 return false;
+        //if (!string.IsNullOrEmpty(filter.ReportedBy))
+        //	if (model.ReportedBy == null || !object.Equals(filter.ReportedBy, model.ReportedBy.Username))
+        //                 return false;
+
+        //         return true;
+        //     }
 
         private static IEnumerable<Tuple<string, string>> PropertyToUrl(string name, object o)
         {
@@ -115,14 +95,17 @@ namespace CodeBucket.Core.ViewModels.Issues
             Title = "Issues";
 
             var issues = new ReactiveList<IssueModel>();
-            Items = issues.CreateDerivedCollection(x =>
-            {
-                var vm = new IssueItemViewModel(x);
-                vm.GoToCommand
-                  .Select(_ => new IssueViewModel(username, repository, x))
-                  .Subscribe(NavigateTo);
-                return vm;
-            });
+            Items = issues.CreateDerivedCollection(
+                x =>
+                {
+                    var vm = new IssueItemViewModel(x);
+                    vm.GoToCommand
+                      .Select(_ => new IssueViewModel(username, repository, x))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                },
+                x => x.Title.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
@@ -150,8 +133,16 @@ namespace CodeBucket.Core.ViewModels.Issues
                 //}
 
 
-                await applicationService.Client.Repositories.Issues.GetIssues(username, repository);
+                var x = await applicationService.Client.Repositories.Issues.GetIssues(username, repository);
+                issues.Reset(x.Issues);
             });
+
+            LoadCommand.IsExecuting.CombineLatest(issues.IsEmptyChanged, (x, y) => !x && y)
+                .ToProperty(this, x => x.IsEmpty, out _isEmpty);
+
+            this.WhenAnyValue(x => x.SelectedFilter)
+                .Skip(1)
+                .InvokeCommand(LoadCommand);
         }
     }
 }

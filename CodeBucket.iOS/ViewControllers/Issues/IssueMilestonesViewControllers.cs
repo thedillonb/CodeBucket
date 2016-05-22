@@ -34,10 +34,9 @@ namespace CodeBucket.ViewControllers.Issues
 
         private StringElement CreateElement(IssueComponentItemViewModel component)
         {
-            var element = new StringElement(component.Name);
-            component.WhenAnyValue(x => x.IsSelected)
-                     .Subscribe(x => element.Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
-            element.BindClick(component.SelectCommand);
+            var element = new CheckElement(component.Name);
+            component.WhenAnyValue(x => x.IsSelected).Subscribe(x => element.Checked = x);
+            element.Clicked.InvokeCommand(component.SelectCommand);
             return element;
         }
 	}

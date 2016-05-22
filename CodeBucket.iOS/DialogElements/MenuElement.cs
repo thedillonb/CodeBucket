@@ -1,12 +1,11 @@
 ﻿using System;
 using UIKit;
 using CoreGraphics;
-using System.Windows.Input;
 using ReactiveUI;
 
 namespace CodeBucket.DialogElements
 {
-    public class MenuElement : StringElement
+    public class MenuElement : ButtonElement
     {
         private int _notificationNumber;
         public int NotificationNumber

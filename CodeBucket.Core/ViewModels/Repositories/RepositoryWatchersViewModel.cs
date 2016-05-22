@@ -7,7 +7,7 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class RepositoryWatchersViewModel : BaseUserCollectionViewModel
+    public class RepositoryWatchersViewModel : UsersViewModel
     {
         private readonly string _username, _repository;
         private readonly IApplicationService _applicationService;

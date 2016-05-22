@@ -24,10 +24,10 @@ namespace CodeBucket.ViewControllers.Commits
             HeaderView.SetImage(null, Images.Avatar);
 
             var detailsSection = new Section();
-            var diffButton = new StringElement(AtlassianIcon.ListAdd.ToImage());
-            var removedButton = new StringElement(AtlassianIcon.ListRemove.ToImage());
-            var modifiedButton = new StringElement(AtlassianIcon.Edit.ToImage());
-            var allChangesButton = new StringElement("All Changes", AtlassianIcon.Devtoolssidediff.ToImage());
+            var diffButton = new ButtonElement(AtlassianIcon.ListAdd.ToImage());
+            var removedButton = new ButtonElement(AtlassianIcon.ListRemove.ToImage());
+            var modifiedButton = new ButtonElement(AtlassianIcon.Edit.ToImage());
+            var allChangesButton = new ButtonElement("All Changes", AtlassianIcon.Devtoolssidediff.ToImage());
             detailsSection.Add(new [] { diffButton, removedButton, modifiedButton, allChangesButton });
 
             var additions = ViewModel.WhenAnyValue(x => x.DiffAdditions);
@@ -70,14 +70,12 @@ namespace CodeBucket.ViewControllers.Commits
             approveElement.BindCaption(ViewModel.WhenAnyValue(x => x.Approved).Select(x => x ? "Unapprove" : "Approve"));
 
             var commentsSection = new Section("Comments");
-            var addCommentElement = new StringElement("Add Comment", AtlassianIcon.Addcomment.ToImage());
+            var addCommentElement = new ButtonElement("Add Comment", AtlassianIcon.Addcomment.ToImage());
             addCommentElement.Clicked.Subscribe(_ => AddCommentTapped());
 
             if (ViewModel.ShowRepository)
             {
-                var repo = new StringElement(ViewModel.Repository) { 
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
-                    Lines = 1, 
+                var repo = new ButtonElement(ViewModel.Repository) { 
                     TextColor = StringElement.DefaultDetailColor,
                     Image = AtlassianIcon.Devtoolsrepository.ToImage()
                 };

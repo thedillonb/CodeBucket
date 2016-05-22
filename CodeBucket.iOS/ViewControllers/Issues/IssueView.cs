@@ -94,7 +94,7 @@ namespace CodeBucket.Views.Issues
             _split3.Button2.Text = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
             secDetails.Add(_split3);
 
-            var assigneeElement = new StringElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
+            var assigneeElement = new ButtonElement("Assigned", ViewModel.Issue.Responsible != null ? ViewModel.Issue.Responsible.Username : "Unassigned", UITableViewCellStyle.Value1) {
                 Image = AtlassianIcon.User.ToImage(),
 			};
             assigneeElement.Clicked.BindCommand(ViewModel.GoToAssigneeCommand);
@@ -107,7 +107,7 @@ namespace CodeBucket.Views.Issues
 				root.Add(new Section { _commentsElement });
 			}
 
-            var addComment = new StringElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
+            var addComment = new ButtonElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
             addComment.Clicked.Subscribe(_ => AddCommentTapped());
 			root.Add(new Section { addComment });
             Root.Reset(root);

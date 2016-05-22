@@ -7,22 +7,119 @@ using System.Reactive.Linq;
 
 namespace CodeBucket.DialogElements
 {
-    public class ButtonElement : StringElement
+    public class CheckElement : StringElement
     {
-        public ButtonElement (string caption, string value, UIImage image = null) 
-            : base (caption, value, UITableViewCellStyle.Value1) 
+        private readonly Subject<object> _tapped = new Subject<object>();
+        public IObservable<object> Clicked
         {
-            Image = image;
-            Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            get { return _tapped.AsObservable(); }
         }
 
-        public ButtonElement (string caption, UIImage image = null) 
-            : this (caption, null, image)
+        private bool _checked;
+        public bool Checked
         {
+            get { return _checked; }
+            set
+            {
+                if (value == _checked)
+                    return;
+
+                _checked = value;
+                Accessory = _checked ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+            }
+        }
+
+        public CheckElement(
+            string caption = null, string value = null,
+            UITableViewCellStyle style = UITableViewCellStyle.Value1) 
+            : base (caption, value, style) 
+        {
+            Checked = false;
+        }
+
+        public override void Selected(UITableView tableView, NSIndexPath path)
+        {
+            base.Selected(tableView, path);
+            _tapped.OnNext(this);
         }
     }
 
-    public class LoaderButtonElement : StringElement
+    public class ButtonElement : StringElement
+    {
+        private readonly Subject<object> _tapped = new Subject<object>();
+        public IObservable<object> Clicked
+        {
+            get { return _tapped.AsObservable(); }
+        }
+
+        private bool _enabled;
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (value == _enabled)
+                    return;
+
+                _enabled = value;
+                SelectionStyle = _enabled ? UITableViewCellSelectionStyle.Default : UITableViewCellSelectionStyle.None;
+            }
+        }
+
+        private UITableViewCellSelectionStyle _selectionStyle = UITableViewCellSelectionStyle.None;
+        public UITableViewCellSelectionStyle SelectionStyle
+        {
+            get { return _selectionStyle; }
+            set
+            {
+                if (_selectionStyle == value)
+                    return;
+
+                _selectionStyle = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.SelectionStyle = value;
+            }
+        }
+
+        public ButtonElement (
+            string caption, string value, 
+            UITableViewCellStyle style = UITableViewCellStyle.Value1, 
+            UIImage image = null) 
+            : base (caption, value, style) 
+        {
+            Image = image;
+            Enabled = true;
+            Accessory = UITableViewCellAccessory.DisclosureIndicator;
+        }
+
+        public ButtonElement(string caption, UIImage image = null)
+            : this(caption, null, image: image)
+        {
+        }
+
+        public ButtonElement(UIImage image = null)
+            : this(null, null, image: image)
+        {
+        }
+
+        protected override UITableViewCell InitializeCell(UITableViewCell cell)
+        {
+            var c = base.InitializeCell(cell);
+            c.SelectionStyle = SelectionStyle;
+            return c;
+        }
+
+        public override void Selected(UITableView tableView, NSIndexPath path)
+        {
+            base.Selected(tableView, path);
+
+            if (Enabled)
+                _tapped.OnNext(this);
+        }
+    }
+
+    public class LoaderButtonElement : ButtonElement
     {
         private UIActivityIndicatorView _activityView;
 
@@ -46,7 +143,7 @@ namespace CodeBucket.DialogElements
         }
 
         public LoaderButtonElement(string caption, UIImage image) 
-            : base (caption, image) 
+            : base (caption, image: image) 
         {
         }
 
@@ -79,43 +176,7 @@ namespace CodeBucket.DialogElements
         private UIImage _image;
         private Uri _imageUri;
         private string _value;
-        private UITableViewCellAccessory _accessory = UITableViewCellAccessory.DisclosureIndicator;
-        private readonly Subject<object> _tapped = new Subject<object>();
-        private UITableViewCellSelectionStyle _selectionStyle = UITableViewCellSelectionStyle.Default;
-
-        public IObservable<object> Clicked
-        {
-            get { return _tapped.AsObservable(); }
-        }
-
-        private bool _enabled = true;
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set
-            {
-                if (value == _enabled)
-                    return;
-
-                _enabled = value;
-                SelectionStyle = _enabled ? UITableViewCellSelectionStyle.Default : UITableViewCellSelectionStyle.None;
-            }
-        }
-
-        public UITableViewCellSelectionStyle SelectionStyle
-        {
-            get { return _selectionStyle; }
-            set
-            {
-                if (_selectionStyle == value)
-                    return;
-                
-                _selectionStyle = value;
-                var cell = GetActiveCell();
-                if (cell != null)
-                    cell.SelectionStyle = value;
-            }
-        }
+        private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
 
         private string _caption;
         public string Caption
@@ -199,6 +260,7 @@ namespace CodeBucket.DialogElements
 
         public StringElement()
         {
+            Lines = 1;
             Font = UIFont.PreferredBody;
             SubtitleFont = UIFont.PreferredSubheadline;
             TextColor = DefaultTitleColor;
@@ -284,7 +346,7 @@ namespace CodeBucket.DialogElements
 
         protected virtual UITableViewCell InitializeCell(UITableViewCell cell)
         {
-            cell.SelectionStyle = SelectionStyle;
+            cell.SelectionStyle = UITableViewCellSelectionStyle.None;
             cell.TextLabel.Text = Caption;
             cell.TextLabel.TextColor = TextColor;
             cell.ImageView.Image = Image;
@@ -299,14 +361,6 @@ namespace CodeBucket.DialogElements
                 cell.DetailTextLabel.TextColor = DefaultDetailColor;
             }
             return cell;
-        }
-
-        public override void Selected (UITableView tableView, NSIndexPath indexPath)
-        {
-            base.Selected(tableView, indexPath);
-
-            if (Enabled)
-                _tapped.OnNext(this);
         }
 
         public override bool Matches (string text)

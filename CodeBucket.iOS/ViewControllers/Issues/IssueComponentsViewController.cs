@@ -35,7 +35,7 @@ namespace CodeBucket.ViewControllers.Issues
 
         private StringElement CreateElement(IssueComponentItemViewModel component)
         {
-            var element = new StringElement(component.Name);
+            var element = new ButtonElement(component.Name);
             component.WhenAnyValue(x => x.IsSelected)
                      .Subscribe(x => element.Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
             element.BindClick(component.SelectCommand);

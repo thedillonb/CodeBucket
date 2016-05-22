@@ -42,6 +42,10 @@ namespace CodeBucket.ViewControllers.Repositories
                 watchers.Clicked
                     .BindCommand(ViewModel.GoToStargazersCommand)
                     .AddTo(d);
+
+                branches.Clicked
+                   .BindCommand(ViewModel.GoToBranchesCommand)
+                   .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.BranchesCount)
                     .Subscribe(x => branches.Text = x.ToString())
@@ -94,49 +98,49 @@ namespace CodeBucket.ViewControllers.Repositories
             _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 
-            var owner = new StringElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage() };
+            var owner = new ButtonElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage() };
             owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
             sec1.Add(owner);
 
             if (model.Parent != null)
             {
-                var parent = new StringElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage() };
+                var parent = new ButtonElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage() };
                 parent.Clicked.BindCommand(ViewModel.GoToForkParentCommand);
                 sec1.Add(parent);
             }
 
-            var events = new StringElement("Events", AtlassianIcon.Blogroll.ToImage());
+            var events = new ButtonElement("Events", AtlassianIcon.Blogroll.ToImage());
             events.Clicked.BindCommand(ViewModel.GoToEventsCommand);
             var sec2 = new Section { events };
 
             if (model.HasWiki)
             {
-                var wiki = new StringElement("Wiki", AtlassianIcon.Edit.ToImage());
+                var wiki = new ButtonElement("Wiki", AtlassianIcon.Edit.ToImage());
                 wiki.Clicked.BindCommand(ViewModel.GoToWikiCommand);
                 sec2.Add(wiki);
             }
 
             if (model.HasIssues)
             {
-                var issues = new StringElement("Issues", AtlassianIcon.Flag.ToImage());
+                var issues = new ButtonElement("Issues", AtlassianIcon.Flag.ToImage());
                 issues.Clicked.BindCommand(ViewModel.GoToIssuesCommand);
                 sec2.Add(issues);
             }
 
             if (ViewModel.HasReadme)
             {
-                var readme = new StringElement("Readme", AtlassianIcon.PageDefault.ToImage());
+                var readme = new ButtonElement("Readme", AtlassianIcon.PageDefault.ToImage());
                 readme.Clicked.BindCommand(ViewModel.GoToReadmeCommand);
                 sec2.Add(readme);
             }
 
-            var commits = new StringElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
+            var commits = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
             commits.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
 
-            var pullRequests = new StringElement("Pull Requests", AtlassianIcon.Devtoolspullrequest.ToImage());
+            var pullRequests = new ButtonElement("Pull Requests", AtlassianIcon.Devtoolspullrequest.ToImage());
             pullRequests.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand);
 
-            var source = new StringElement("Source", AtlassianIcon.Filecode.ToImage());
+            var source = new ButtonElement("Source", AtlassianIcon.Filecode.ToImage());
             source.Clicked.BindCommand(ViewModel.GoToSourceCommand);
 
             var sec3 = new Section { commits, pullRequests, source };
@@ -145,7 +149,7 @@ namespace CodeBucket.ViewControllers.Repositories
 
             if (!string.IsNullOrEmpty(ViewModel.Repository.Website))
             {
-                var website = new StringElement("Website", AtlassianIcon.Weblink.ToImage());
+                var website = new ButtonElement("Website", AtlassianIcon.Weblink.ToImage());
                 website.Clicked.InvokeCommand(ViewModel.GoToWebsiteCommand);
                 root.Add(new Section { website });
             }

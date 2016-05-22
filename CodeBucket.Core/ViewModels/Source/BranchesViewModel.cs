@@ -9,7 +9,7 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class BranchesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<ReferenceItemViewModel>
+    public class BranchesViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<ReferenceItemViewModel>
     {
         public IReadOnlyReactiveList<ReferenceItemViewModel> Items { get; }
 
@@ -21,6 +21,9 @@ namespace CodeBucket.Core.ViewModels.Source
             get { return _searchText; }
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         public BranchesViewModel(
             string username, string repository,
@@ -45,9 +48,13 @@ namespace CodeBucket.Core.ViewModels.Source
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
+                branches.Clear();
                 var items = await applicationService.Client.Repositories.GetBranches(username, repository);
                 branches.Reset(items.Values);
             });
+
+            LoadCommand.IsExecuting.CombineLatest(branches.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
     }
 }

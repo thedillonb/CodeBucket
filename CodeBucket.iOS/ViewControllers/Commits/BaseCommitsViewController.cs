@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Commits
 {
-    public abstract class BaseCommitsViewController<TViewModel> : BaseTableViewController<TViewModel>
+    public abstract class BaseCommitsViewController<TViewModel> : BaseTableViewController<TViewModel, CommitItemViewModel>
         where TViewModel : BaseCommitsViewModel
 	{
 		public override void ViewDidLoad()

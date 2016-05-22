@@ -12,8 +12,8 @@ namespace CodeBucket.Views.Issues
 		{
 			base.ViewDidLoad();
 
-            var status = new StringElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
-            var delete = new StringElement("Delete", AtlassianIcon.Delete.ToImage()) { Accessory = UITableViewCellAccessory.None };
+            var status = new ButtonElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
+            var delete = new ButtonElement("Delete", AtlassianIcon.Delete.ToImage()) { Accessory = UITableViewCellAccessory.None };
 
             //Root[0].Insert(1, UITableViewRowAnimation.None, status);
             //Root.Insert(Root.Count, UITableViewRowAnimation.None, new Section { delete });

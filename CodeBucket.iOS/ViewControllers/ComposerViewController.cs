@@ -38,7 +38,7 @@ namespace CodeBucket.ViewControllers
 
             var close = new UIBarButtonItem { Image = Images.Buttons.Cancel };
             NavigationItem.LeftBarButtonItem = close;
-            _doneButton = new UIBarButtonItem { Image = Images.Buttons.Save };
+            _doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = _doneButton;
 
             TextView = new UITextView(ComputeComposerSize(CGRect.Empty));

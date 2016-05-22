@@ -18,12 +18,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
-        private bool _isEmpty;
-        public bool IsEmpty
-        {
-            get { return _isEmpty; }
-            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
-        }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
 		private PullRequestState _selectedFilter;
 		public PullRequestState SelectedFilter
@@ -31,6 +27,13 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 			get { return _selectedFilter; }
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
+
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
         public PullRequestsViewModel(string username, string repository,
                                      IApplicationService applicationService = null)
@@ -40,15 +43,18 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             Title = "Pull Requests";
 
             var pullRequests = new ReactiveList<PullRequest>();
-            Items = pullRequests.CreateDerivedCollection(pullRequest =>
-            {
-                var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
-                var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
-                vm.GoToCommand
-                  .Select(_ => new PullRequestViewModel(username, repository, pullRequest))
-                  .Subscribe(NavigateTo);
-                return vm;
-            });
+            Items = pullRequests.CreateDerivedCollection(
+                pullRequest =>
+                {
+                    var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
+                    var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
+                    vm.GoToCommand
+                      .Select(_ => new PullRequestViewModel(username, repository, pullRequest))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                },
+                x => x.Title.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
@@ -58,9 +64,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                     pullRequests.AddRange);
             });
 
-            LoadCommand
-                .IsExecuting
-                .Subscribe(x => IsEmpty = !x && pullRequests.Count == 0);
+            LoadCommand.IsExecuting.CombineLatest(pullRequests.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
 
             this.WhenAnyValue(x => x.SelectedFilter)
                 .Skip(1)

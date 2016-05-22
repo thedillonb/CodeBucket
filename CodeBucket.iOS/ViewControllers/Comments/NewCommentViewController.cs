@@ -18,7 +18,7 @@ namespace CodeBucket.ViewControllers.Comments
             EdgesForExtendedLayout = UIRectEdge.None;
 
             var discardButton = new UIBarButtonItem { Image = Images.Buttons.Cancel };
-            var doneButton = new UIBarButtonItem { Image = Images.Buttons.Save };
+            var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
             NavigationItem.RightBarButtonItem = doneButton;
             NavigationItem.LeftBarButtonItem = discardButton;

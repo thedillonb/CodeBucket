@@ -68,7 +68,7 @@
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
-    <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Users\UsersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserFollowersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsViewModel.cs" />
@@ -147,7 +147,6 @@
     <Compile Include="ViewModels\Comments\CommentItemViewModel.cs" />
     <Compile Include="Services\ServiceRegistration.cs" />
     <Compile Include="ViewModels\IListViewModel.cs" />
-    <Compile Include="ViewModels\IProvidesSearch.cs" />
     <Compile Include="ViewModels\IPaginatableViewModel.cs" />
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
     <Compile Include="Extensions\ReactiveUIExtensions.cs" />
@@ -187,9 +186,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

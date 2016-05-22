@@ -28,11 +28,9 @@ namespace CodeBucket.ViewController.Application
             {
                 var elements = views.Select(x =>
                 {
-                    var e = new StringElement(x);
+                    var e = new CheckElement(x);
                     e.Clicked.Subscribe(_ => ViewModel.SelectedStartupView = x);
-                    e.Accessory = string.Equals(ViewModel.SelectedStartupView, x)
-                        ? UITableViewCellAccessory.Checkmark
-                        : UITableViewCellAccessory.None;
+                    e.Checked = string.Equals(ViewModel.SelectedStartupView, x);
                     return e;  
                 });
 

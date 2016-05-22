@@ -1,17 +1,14 @@
-using System;
-using System.Linq;
 using UIKit;
-using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 using BitbucketSharp.Models;
-using ReactiveUI;
 
 namespace CodeBucket.Views.Issues
 {
-    public class IssueVersionsView : BaseTableViewController<IssueVersionsViewModel>
+    public class IssueVersionsView : DialogViewController
 	{
         public IssueVersionsView()
+            : base(UITableViewStyle.Plain)
 		{
 			Title = "Versions";
 		}
