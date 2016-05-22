@@ -50,7 +50,13 @@ namespace UIKit
 
         public static IObservable<string> GetChangedObservable(this UISearchBar @this)
         {
-            return Observable.FromEventPattern<UISearchBarTextChangedEventArgs>(t => @this.TextChanged += t, t => @this.TextChanged -= t).Select(_ => @this.Text);
+            var obs = Observable.FromEventPattern<UISearchBarTextChangedEventArgs>(
+                t => @this.TextChanged += t, t => @this.TextChanged -= t).Select(_ => @this.Text);
+
+            var obs2 = Observable.FromEventPattern(
+                t => @this.CancelButtonClicked += t, t => @this.CancelButtonClicked -= t).Select(_ => string.Empty);
+
+            return obs.Merge(obs2);
         }
 
         public static IObservable<Unit> GetSearchObservable(this UISearchBar @this)
@@ -69,6 +75,7 @@ namespace UIKit
                 searchBar.Text = "";
                 searchBar.ResignFirstResponder();
             };
+            tableView.TableHeaderView = searchBar;
             return searchBar;
         }
 

@@ -9,11 +9,18 @@ using Splat;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class BranchesViewModel : BaseViewModel, ILoadableViewModel
+    public class BranchesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearch, IListViewModel<ReferenceItemViewModel>
     {
-        public IReadOnlyReactiveList<ReferenceItemViewModel> Branches { get; }
+        public IReadOnlyReactiveList<ReferenceItemViewModel> Items { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
 
         public BranchesViewModel(
             string username, string repository,
@@ -24,14 +31,17 @@ namespace CodeBucket.Core.ViewModels.Source
             Title = "Branches";
 
             var branches = new ReactiveList<ReferenceModel>();
-            Branches = branches.CreateDerivedCollection(branch =>
-            {
-                var vm = new ReferenceItemViewModel(branch.Branch);
-                vm.GoToCommand
-                  .Select(_ => new CommitsViewModel(username, repository, branch.Node))
-                  .Subscribe(NavigateTo);
-                return vm;
-            });
+            Items = branches.CreateDerivedCollection(
+                branch =>
+                {
+                    var vm = new ReferenceItemViewModel(branch.Branch);
+                    vm.GoToCommand
+                      .Select(_ => new CommitsViewModel(username, repository, branch.Node))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                },
+                x => x.Branch.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {

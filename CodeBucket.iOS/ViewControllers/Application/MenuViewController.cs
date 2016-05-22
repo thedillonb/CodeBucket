@@ -14,6 +14,7 @@ using System.Reactive;
 using CodeBucket.Core.ViewModels;
 using Splat;
 using CodeBucket.Services;
+using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers.Application
 {
@@ -193,7 +194,7 @@ namespace CodeBucket.ViewControllers.Application
 			}
 		}
 
-        public override Source CreateSizingSource()
+        public override UITableViewSource CreateSizingSource()
 		{
 			return new EditSource(this);
 		}
@@ -226,11 +227,11 @@ namespace CodeBucket.ViewControllers.Application
         }
 
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
 		{
 			private readonly MenuViewController _parent;
 			public EditSource(MenuViewController dvc) 
-				: base (dvc)
+				: base (dvc.Root)
 			{
 				_parent = dvc;
 			}

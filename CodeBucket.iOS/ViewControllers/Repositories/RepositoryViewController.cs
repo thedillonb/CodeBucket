@@ -1,5 +1,4 @@
 using System;
-using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
 using UIKit;
 using CodeBucket.DialogElements;
@@ -10,7 +9,7 @@ using System.Reactive.Linq;
 using BitbucketSharp.Models.V2;
 using ReactiveUI;
 
-namespace CodeBucket.Views.Repositories
+namespace CodeBucket.ViewControllers.Repositories
 {
     public class RepositoryViewController : PrettyDialogViewController<RepositoryViewModel>
     {
@@ -144,9 +143,9 @@ namespace CodeBucket.Views.Repositories
             foreach (var s in new[] { new Section { _split }, sec1, sec2, sec3 })
                 root.Add(s);
 
-            if (!String.IsNullOrEmpty(ViewModel.Repository.Website))
+            if (!string.IsNullOrEmpty(ViewModel.Repository.Website))
             {
-                var website = new StringElement("Website", AtlassianIcon.Homepage.ToImage());
+                var website = new StringElement("Website", AtlassianIcon.Weblink.ToImage());
                 website.Clicked.InvokeCommand(ViewModel.GoToWebsiteCommand);
                 root.Add(new Section { website });
             }

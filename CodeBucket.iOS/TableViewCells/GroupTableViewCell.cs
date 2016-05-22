@@ -14,7 +14,7 @@ namespace CodeBucket.TableViewCells
         {
             this.WhenAnyValue(x => x.ViewModel).Subscribe(x =>
             {
-                TextLabel.Text = x.Name;
+                TextLabel.Text = x?.Name;
             });
         }
     }

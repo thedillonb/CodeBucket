@@ -2,24 +2,21 @@ using System.IO;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive;
-using BitbucketSharp.Models;
 using System.Reactive.Linq;
 using Splat;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
     public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
     {
-        private RawFileModel _file;
-        public RawFileModel File
-        {
-            get { return _file; }
-            private set { this.RaiseAndSetIfChanged(ref _file, value); }
-        }
+        private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
+        public bool IsMarkdown { get; }
 
         public SourceViewModel(
             string username, string repository, string branch, string path, string name,
@@ -36,22 +33,25 @@ namespace CodeBucket.Core.ViewModels.Source
             //Create the temp file path
             Title = fileName;
 
-            var canExecute = this.WhenAnyValue(x => x.File).Select(x => x != null);
+            var extension = Path.GetExtension(path);
+            IsMarkdown = MarkdownExtensions.Any(x => x == extension);
 
-            var openInCommand = ReactiveCommand.Create()
-                .WithSubscription(x => actionMenuService.OpenIn(x, null));
+            var canExecute = this.WhenAnyValue(x => x.HtmlUrl).Select(x => x != null);
+            var canOpen = this.WhenAnyValue(x => x.FilePath).Select(x => x != null);
+
+            var openInCommand = ReactiveCommand.Create(canOpen)
+                .WithSubscription(x => actionMenuService.OpenIn(x, FilePath));
 
             var shareCommand = ReactiveCommand.Create(canExecute)
-                .WithSubscription(x => actionMenuService.ShareUrl(x, File.HtmlUrl));
+                .WithSubscription(x => actionMenuService.ShareUrl(x, HtmlUrl));
 
-            var showInCommand = ReactiveCommand.Create();
-
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canExecute, sender =>
+            var canShow = Observable.CombineLatest(canExecute, canOpen, (x, y) => x && y);
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShow, sender =>
             {
                 var menu = actionMenuService.Create();
                 menu.AddButton("Open In", openInCommand);
                 menu.AddButton("Share", shareCommand);
-                menu.AddButton("Show in Bitbucket", showInCommand);
+                menu.AddButton("Show in Bitbucket", GoToHtmlUrlCommand);
                 return menu.Show(sender);
             });
 
@@ -67,6 +67,7 @@ namespace CodeBucket.Core.ViewModels.Source
                 }
 
                 FilePath = filePath;
+                HtmlUrl = file.HtmlUrl;
             });
         }
     }

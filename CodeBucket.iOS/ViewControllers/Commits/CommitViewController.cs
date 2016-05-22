@@ -6,12 +6,8 @@ using CodeBucket.Core.ViewModels.Commits;
 using Humanizer;
 using CodeBucket.Core.Utils;
 using CodeBucket.DialogElements;
-using CodeBucket.Services;
-using BitbucketSharp.Models.V2;
 using BitbucketSharp.Models;
 using ReactiveUI;
-using CodeBucket.ViewControllers;
-using CodeBucket.Utilities;
 using CodeBucket.ViewControllers.Comments;
 
 namespace CodeBucket.ViewControllers.Commits
@@ -96,10 +92,8 @@ namespace CodeBucket.ViewControllers.Commits
 
                 var titleMsg = (ViewModel.Commit.Message ?? string.Empty).Split(new [] { '\n' }, 2).FirstOrDefault();
                 var avatarUrl = ViewModel.Commit.Author?.User?.Links?.Avatar?.Href;
-                var node = ViewModel.Node.Substring(0, ViewModel.Node.Length > 7 ? 7 : ViewModel.Node.Length);
 
-                HeaderView.Text = titleMsg ?? node;
-                HeaderView.SubText = "Commited " + (ViewModel.Commit.Date).Humanize();
+                HeaderView.SubText = titleMsg ?? "Commited " + (ViewModel.Commit.Date).Humanize();
                 HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
                 RefreshHeaderView();
 
@@ -156,9 +150,15 @@ namespace CodeBucket.ViewControllers.Commits
         {
             var newCommentVC = new NewCommentViewController();
             newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
+            newCommentVC.OnActivation(d =>
+            {
+                newCommentVC.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                            .Switch()
+                            .Subscribe(_ => DismissViewController(true, null))
+                            .AddTo(d);
+            });
 
-            composer.WantsDismiss.Subscribe(_ => DismissViewController(true, null));
-            PresentViewController(new UINavigationController(composer), true, null);
+            PresentViewController(new ThemedNavigationController(newCommentVC), true, null);
         }
     }
 }

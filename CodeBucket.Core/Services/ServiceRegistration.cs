@@ -14,7 +14,8 @@ namespace CodeBucket.Core.Services
                                           typeof(IAccountsService));
 
             locator.RegisterLazySingleton(() => new ApplicationService(
-                locator.GetService<IAccountsService>()),
+                locator.GetService<IAccountsService>(),
+                locator.GetService<ILoadingIndicatorService>()),
                                           typeof(IApplicationService));
         }
     }

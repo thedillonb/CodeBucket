@@ -13,7 +13,7 @@ using System.Reactive;
 
 namespace CodeBucket.ViewControllers.Source
 {
-	public class ChangesetDiffViewController : FileSourceViewController<ChangesetDiffViewModel>
+    public class ChangesetDiffViewController : WebViewController<ChangesetDiffViewModel>
     {
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
@@ -85,7 +85,7 @@ namespace CodeBucket.ViewControllers.Source
 			public int? LineTo { get; set; }
         }
 
-        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
+        public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             var url = navigationAction.Request.Url;
 			if(url != null && url.Scheme.Equals("app")) {
@@ -99,8 +99,8 @@ namespace CodeBucket.ViewControllers.Source
 				}
 				else if(func.Equals("comment")) 
 				{
-                    var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
-					PromptForComment(commentModel);
+                    //var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
+					//PromptForComment(commentModel);
                 }
 
 				return false;

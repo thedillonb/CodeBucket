@@ -2,7 +2,7 @@
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-    public class GroupItemViewModel : ReactiveObject
+    public class GroupItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; }
 

@@ -36,9 +36,20 @@ namespace CodeBucket.Services
 
         public IViewFor GetView(object viewModel)
         {
-            var vc = _map[viewModel.GetType()].Invoke() as IViewFor;
-            vc.ViewModel = viewModel;
-            return vc;
+            var type = viewModel.GetType();
+            if (!_map.ContainsKey(type))
+                return null;
+
+            try
+            {
+                var vc = _map[type].Invoke() as IViewFor;
+                vc.ViewModel = viewModel;
+                return vc;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

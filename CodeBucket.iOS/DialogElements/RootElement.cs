@@ -159,16 +159,20 @@ namespace CodeBucket.DialogElements
             ReloadData();
         }
 
+        public void ReloadSection(Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+        {
+            if (!_sections.Contains(section))
+                return;
+
+            var index = _sections.IndexOf(section);
+            var indexSet = NSIndexSet.FromIndex(index);
+            _tableView.Get().ReloadSections(indexSet, animation);
+        }
+
         public void ReloadData()
         {
             var tableView = _tableView.Get();
-            if (tableView != null)
-            {
-                UIView.Transition(tableView, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () =>
-                {
-                    tableView.ReloadData();
-                }, null);
-            }
+            tableView?.ReloadData();
         }
 
         public void Reset(params Section[] sections)

@@ -1,53 +1,16 @@
-﻿using UIKit;
-using System;
+﻿using CodeBucket.Services;
 
 namespace CodeBucket.Utilities
 {
-    public static class NetworkActivity
-    {
-        /// <summary>
-        ///   A shortcut to the main application
-        /// </summary>
-        public static UIApplication MainApp = UIApplication.SharedApplication;
-
-        //
-        // Since we are a multithreaded application and we could have many
-        // different outgoing network connections (api.twitter, images,
-        // searches) we need a centralized API to keep the network visibility
-        // indicator state
-        //
-        static readonly object NetworkLock = new object ();
-        static int _active;
-
-        public static void PushNetworkActive ()
-        {
-            lock (NetworkLock){
-                _active++;
-                MainApp.NetworkActivityIndicatorVisible = true;
-            }
-        }
-
-        public static void PopNetworkActive ()
-        {
-            lock (NetworkLock){
-                if (_active == 0)
-                    return;
-
-                _active--;
-                if (_active == 0)
-                    MainApp.NetworkActivityIndicatorVisible = false;
-            }
-        }
-    }
-
     public class LoadingIndicator
     {
+        private readonly LoadingIndicatorService _loading = new LoadingIndicatorService();
         private int _value;
 
         public void Up()
         {
             _value++;
-            NetworkActivity.PushNetworkActive();
+            _loading.Up();
         }
 
         public void Down()
@@ -55,14 +18,14 @@ namespace CodeBucket.Utilities
             if (_value == 0)
                 return;
             _value--;
-            NetworkActivity.PopNetworkActive();
+            _loading.Down();
         }
 
         ~LoadingIndicator()
         {
             for (var i = 0; i < _value; i++)
             {
-                NetworkActivity.PopNetworkActive();
+                _loading.Down();
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Linq;
 using BitbucketSharp.Models;
 using ReactiveUI;
+using CodeBucket.ViewControllers.Repositories;
 
 namespace CodeBucket.Views.Repositories
 {

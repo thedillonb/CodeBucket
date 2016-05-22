@@ -20,6 +20,10 @@ namespace CodeBucket.Core.ViewModels.Commits
 {
     public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
+        public string Repository { get; }
+
+        public bool ShowRepository { get; }
+
         public IReactiveCommand<Unit> LoadCommand { get; }
 
         public IReactiveCommand<Unit> ToggleApproveButton { get; }
@@ -98,6 +102,9 @@ namespace CodeBucket.Core.ViewModels.Commits
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
+            Repository = repository;
+            ShowRepository = showRepository;
+
             var shortNode = node.Substring(0, node.Length > 7 ? 7 : node.Length);
             Title = $"Commit {shortNode}";
 
@@ -175,7 +182,14 @@ namespace CodeBucket.Core.ViewModels.Commits
                 else
                     await applicationService.Client.Commits.ApproveCommit(username, repository, node);
 
-                Commit = await applicationService.Client.Commits.GetCommit(username, repository, node);
+                var shouldBe = !Approved;
+                var commit = await applicationService.Client.Commits.GetCommit(username, repository, node);
+                var currentUsername = applicationService.Account.Username;
+                var me = commit.Participants.FirstOrDefault(
+                    y => string.Equals(currentUsername, y?.User?.Username, StringComparison.OrdinalIgnoreCase));
+                if (me != null)
+                    me.Approved = shouldBe;
+                Commit = commit;
             });
 
             ToggleApproveButton
@@ -185,18 +199,18 @@ namespace CodeBucket.Core.ViewModels.Commits
             var changesetFiles = 
                 this.WhenAnyValue(x => x.Changeset)
                 .IsNotNull()
-                .SelectMany(x => x.Files ?? Enumerable.Empty<ChangesetModel.FileModel>());
+                .Select(x => x.Files ?? Enumerable.Empty<ChangesetModel.FileModel>());
 
             changesetFiles
-                .Count(x => x.Type == ChangesetModel.FileType.Added)
+                .Select(x => x.Count(y => y.Type == ChangesetModel.FileType.Added))
                 .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
 
             changesetFiles
-                .Count(x => x.Type == ChangesetModel.FileType.Removed)
+                .Select(x => x.Count(y => y.Type == ChangesetModel.FileType.Removed))
                 .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
 
             changesetFiles
-                .Count(x => x.Type == ChangesetModel.FileType.Modified)
+                .Select(x => x.Count(y => y.Type == ChangesetModel.FileType.Modified))
                 .ToProperty(this, x => x.DiffModifications, out _diffModifications);
 
             var commitFiles = new ReactiveList<ChangesetModel.FileModel>();

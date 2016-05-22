@@ -1,31 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.DialogElements;
+using CodeBucket.TableViewSources;
 using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Commits
 {
-    public class CommitFileChangesViewController : DialogViewController
+    public class CommitFileChangesViewController : TableViewController
     {
         private readonly IList<CommitFileItemViewModel> _files;
-        private readonly bool _showDetails;
+        private readonly Lazy<RootElement> _rootElement;
 
         public CommitFileChangesViewController(IEnumerable<CommitFileItemViewModel> files)
             : base(UIKit.UITableViewStyle.Plain)
         {
             _files = files.ToList();
+            _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var sections = 
-                _files
-                .GroupBy(x => x.Parent)
-                .Select(x =>
+            var root = _rootElement.Value;
+            TableView.Source = new DialogTableViewSource(root);
+
+            var sections = _files.GroupBy(x => x.Parent).Select(x =>
             {
                 var elements = x.Select(y =>
                 {
@@ -38,7 +41,7 @@ namespace CodeBucket.ViewControllers.Commits
                 return new Section(x.Key) { elements };
             });
 
-            Root.Reset(sections);
+            root.Reset(sections);
         }
     }
 }

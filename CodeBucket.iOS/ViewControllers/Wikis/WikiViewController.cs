@@ -2,23 +2,12 @@ using CodeBucket.Core.ViewModels.Wiki;
 using UIKit;
 using System.Threading.Tasks;
 using WebKit;
-using ReactiveUI;
 
-namespace CodeBucket.Views.Wikis
+namespace CodeBucket.ViewControllers.Wikis
 {
-	public class WikiViewController : WebViewController
+	public class WikiViewController : WebViewController<WikiViewModel>
     {
-		private bool _loaded;
-
-        private WikiViewModel _viewModel;
-		public WikiViewModel ViewModel
-		{
-            get { return _viewModel; }
-            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
-		}
-
         public WikiViewController()
-            : base(true, true)
         {
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => {
                 var menu = CreateExtraMenu();
@@ -68,7 +57,7 @@ namespace CodeBucket.Views.Wikis
 		}
 
 
-        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
+        public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             try 
             {
@@ -88,23 +77,23 @@ namespace CodeBucket.Views.Wikis
             return base.ShouldStartLoad(webView, navigationAction);
         }
 
-        protected async override void Refresh()
-		{
-//            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
-//            if (page != null)
-//            {
-//                try
-//                {
-//                    await ViewModel.GetData(page);
-//                }
-//                catch (Exception e)
-//                {
-//                    AlertDialogService.ShowAlert("Error", e.Message);
-//                }
-//            }
-//     
-			base.Refresh();
-		}
+//        protected async override void Refresh()
+//		{
+////            var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
+////            if (page != null)
+////            {
+////                try
+////                {
+////                    await ViewModel.GetData(page);
+////                }
+////                catch (Exception e)
+////                {
+////                    AlertDialogService.ShowAlert("Error", e.Message);
+////                }
+////            }
+////     
+//			base.Refresh();
+//		}
 
         private UIActionSheet CreateExtraMenu()
         {

@@ -2,6 +2,8 @@ using CodeBucket.Core.Data;
 using BitbucketSharp;
 using System.Timers;
 using CodeBucket.Core.ViewModels.Accounts;
+using System.Net.Http;
+using CodeBucket.Core.Utils;
 
 namespace CodeBucket.Core.Services
 {
@@ -13,9 +15,11 @@ namespace CodeBucket.Core.Services
 		public BitbucketAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
-        public ApplicationService(IAccountsService accounts)
+        public ApplicationService(IAccountsService accounts, ILoadingIndicatorService loadingService)
         {
             Accounts = accounts;
+
+            Client.Factory = () => new HttpClient(new LoadingMessageHandler(loadingService));
 
             _timer = new Timer(1000 * 60 * 45); // 45 minutes
             _timer.AutoReset = true;

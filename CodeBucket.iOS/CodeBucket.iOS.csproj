@@ -234,7 +234,6 @@
     <Compile Include="ViewControllers\Source\BranchesViewController.cs" />
     <Compile Include="ViewControllers\Source\SourceTreeViewController.cs" />
     <Compile Include="ViewControllers\Source\SourceViewController.cs" />
-    <Compile Include="ViewControllers\Source\FileSourceViewController.cs" />
     <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
     <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
     <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
@@ -277,6 +276,9 @@
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
     <Compile Include="ViewControllers\Comments\NewCommentViewController.cs" />
+    <Compile Include="Services\LoadingIndicatorService.cs" />
+    <Compile Include="TableViewSources\SourceTreeTableViewSource.cs" />
+    <Compile Include="TableViewCells\SourceTreeTableViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -322,7 +324,7 @@
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
     <Reference Include="BTProgressHUD">
-      <HintPath>..\packages\BTProgressHUD.1.2.0.2\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
+      <HintPath>..\packages\BTProgressHUD.1.2.0.3\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

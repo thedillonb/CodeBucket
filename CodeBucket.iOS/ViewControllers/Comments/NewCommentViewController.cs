@@ -4,7 +4,6 @@ using Foundation;
 using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Comments;
 
 namespace CodeBucket.ViewControllers.Comments
@@ -18,13 +17,13 @@ namespace CodeBucket.ViewControllers.Comments
             Title = "New Comment";
             EdgesForExtendedLayout = UIRectEdge.None;
 
-            var closeButton = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+            var discardButton = new UIBarButtonItem { Image = Images.Buttons.Cancel };
             var doneButton = new UIBarButtonItem { Image = Images.Buttons.Save };
 
             NavigationItem.RightBarButtonItem = doneButton;
-            NavigationItem.LeftBarButtonItem = closeButton;
+            NavigationItem.LeftBarButtonItem = discardButton;
 
-            _textView = new UITextView(ComputeComposerSize(CGRect.Empty));
+            _textView = new UITextView();
             _textView.Font = UIFont.PreferredBody;
             _textView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
 
@@ -34,13 +33,12 @@ namespace CodeBucket.ViewControllers.Comments
 
             OnActivation(d =>
             {
-                closeButton
+                discardButton
                     .GetClickedObservable()
-                    .InvokeCommand(ViewModel.DismissCommand)
+                    .InvokeCommand(ViewModel.DiscardCommand)
                     .AddTo(d);
 
-                this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                    .Select(x => x.CanExecuteObservable)
+                this.WhenAnyValue(x => x.ViewModel.DoneCommand.CanExecuteObservable)
                     .Switch()
                     .Subscribe(x => doneButton.Enabled = x)
                     .AddTo(d);
@@ -55,12 +53,18 @@ namespace CodeBucket.ViewControllers.Comments
                     .GetChangedObservable()
                     .Subscribe(x => ViewModel.Text = x)
                     .AddTo(d);
+
+                this.WhenAnyValue(x => x.ViewModel.Text)
+                    .Subscribe(x => _textView.Text = x)
+                    .AddTo(d);
             });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            _textView.Frame = ComputeComposerSize(CGRect.Empty);
             View.AddSubview(_textView);
         }
 

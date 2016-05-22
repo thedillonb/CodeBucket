@@ -24,7 +24,6 @@ namespace CodeBucket
 		{
 			var theme = new Theme();
 			CurrentTheme = theme;
-			Theme.CurrentTheme = theme;
 
             var backgroundImg = CreateBackgroundImage(Theme.CurrentTheme.PrimaryColor);
             var barTypes = new [] { typeof(MainNavigationController), typeof(ThemedNavigationController) };
@@ -38,8 +37,8 @@ namespace CodeBucket
 
             foreach (var buttonItem in barTypes.Select(x => UIBarButtonItem.AppearanceWhenContainedIn(x)))
             {
-                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
-                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
+                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -float.MaxValue), UIBarMetrics.LandscapePhone);
+                buttonItem.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -float.MaxValue), UIBarMetrics.Default);
             }
 
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UIToolbar)).TintColor = Theme.CurrentTheme.PrimaryColor;

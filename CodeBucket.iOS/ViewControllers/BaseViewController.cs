@@ -160,6 +160,7 @@ namespace CodeBucket.ViewControllers
         private void CommonConstructor()
         {
             this.WhenActivated(_ => { });
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
         }
 
         private void DisposeActivations()

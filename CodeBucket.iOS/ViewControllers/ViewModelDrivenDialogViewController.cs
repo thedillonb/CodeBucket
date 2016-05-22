@@ -8,8 +8,9 @@ using CodeBucket.TableViewSources;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class PrettyDialogViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class
+    public abstract class PrettyDialogViewController<TViewModel> : BaseViewController<TViewModel> where TViewModel : class
     {
+        private readonly Lazy<EnhancedTableView> _tableView;
         private readonly Lazy<RootElement> _rootElement;
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
@@ -32,11 +33,13 @@ namespace CodeBucket.ViewControllers
 
         public RootElement Root => _rootElement.Value;
 
+        public EnhancedTableView TableView => _tableView.Value;
+
         protected PrettyDialogViewController()
-            : base(UITableViewStyle.Grouped)
         {
             _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
             _backgroundHeaderView = new UIView();
+            _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(UITableViewStyle.Grouped));
 
             HeaderView = new ImageAndTitleHeaderView();
             SlideUpTitle = new SlideUpTitleView(44f) { Offset = 100f };
@@ -65,22 +68,27 @@ namespace CodeBucket.ViewControllers
             HeaderView.Text = text ?? HeaderView.Text;
             HeaderView.SubText = subtext ?? HeaderView.SubText;
             HeaderView.Image = image ?? HeaderView.Image;
-            TableView.TableHeaderView = HeaderView;
-            TableView.ReloadData();
+            ReloadHeaderView();
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-            TableView.BeginUpdates();
+            ReloadHeaderView();
+        }
+
+        private void ReloadHeaderView()
+        {
+            //TableView.BeginUpdates();
             TableView.TableHeaderView = HeaderView;
-            TableView.EndUpdates();
+            //TableView.EndUpdates();
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            this.AddTableView(TableView);
             var source = new DialogTableViewSource(Root);
             TableView.Source = source;
             TableView.TableHeaderView = HeaderView;

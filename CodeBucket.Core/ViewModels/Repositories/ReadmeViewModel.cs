@@ -58,6 +58,8 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 return menu.Show(sender);
             });
 
+            Title = "Readme";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);

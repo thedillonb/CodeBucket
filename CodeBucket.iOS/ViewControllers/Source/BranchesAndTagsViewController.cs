@@ -20,15 +20,29 @@ namespace CodeBucket.ViewControllers.Source
             TableView.EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Filecode.ToEmptyListImage(), "There are no items."));
 
-            OnActivation(d => 
+            var searchBar = TableView.CreateSearchBar();
+
+            OnActivation(disposable => 
             {
                 this.WhenAnyValue(x => x.ViewModel.SelectedFilter)
                     .Subscribe(x => viewSegment.SelectedSegment = x)
-                    .AddTo(d);
+                    .AddTo(disposable);
                 
                 viewSegment.GetChangedObservable()
                     .Subscribe(x => ViewModel.SelectedFilter = x)
-                    .AddTo(d);
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.IsEmpty)
+                    .Subscribe(x => TableView.IsEmpty = x)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.SearchText)
+                    .Subscribe(x => searchBar.Text = x)
+                    .AddTo(disposable);
+
+                searchBar.GetChangedObservable()
+                    .Subscribe(x => ViewModel.SearchText = x)
+                    .AddTo(disposable);
             });
 		}
 	}

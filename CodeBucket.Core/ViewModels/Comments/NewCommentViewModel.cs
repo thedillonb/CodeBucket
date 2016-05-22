@@ -2,7 +2,9 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CodeBucket.Core.Services;
 using ReactiveUI;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Comments
 {
@@ -17,16 +19,38 @@ namespace CodeBucket.Core.ViewModels.Comments
 
         public IReactiveCommand<Unit> DoneCommand { get; }
 
-        public IReactiveCommand<Unit> DismissCommand { get; }
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
-        public NewCommentViewModel(Func<string, Task> doneAction)
+        public IReactiveCommand<Unit> DiscardCommand { get; }
+
+        public NewCommentViewModel(
+            Func<string, Task> doneAction,
+            IAlertDialogService alertDialogService = null)
         {
-            DoneCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Text).Select(x => x.Length > 0),
-                _ => doneAction(Text));
+            alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            DismissCommand = ReactiveCommand.CreateAsyncTask(
-                _ => Task.FromResult(Unit.Default));
+            DoneCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Text).Select(x => x?.Length > 0),
+                async _ =>
+                {
+                    await doneAction(Text);
+                    Text = string.Empty;
+                    DismissCommand.ExecuteIfCan();
+                });
+
+            DiscardCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                if (Text?.Length > 0)
+                {
+                    var result = await alertDialogService.PromptYesNo(
+                        "Discard Comment", "Are you sure you want to discard this comment?");
+                    if (!result)
+                        return;
+                }
+
+                Text = string.Empty;
+                DismissCommand.ExecuteIfCan();
+            });
         }
     }
 }

@@ -8,57 +8,41 @@ using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
-    public class ReadmeViewController : WebViewController<ReadmeViewModel>
+    public sealed class ReadmeViewController : WebViewController<ReadmeViewModel>
     {
-        private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
-
-        public ReadmeViewController() : base(false)
-        {
-            Title = "Readme";
-            NavigationItem.RightBarButtonItem = _actionButton;
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+            NavigationItem.RightBarButtonItem = actionButton;
+
+            OnActivation(disposable =>
+            {
+                actionButton
+                    .GetClickedObservable()
+                    .InvokeCommand(ViewModel.ShowMenuCommand)
+                    .AddTo(disposable);
+            });
 
             this.WhenAnyValue(x => x.ViewModel.ContentText)
                 .IsNotNull()
                 .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
                 .Select(x => new MarkdownView { Model = x }.GenerateString())
                 .Subscribe(LoadContent);
-
-            ViewModel.LoadCommand.Execute(null);
         }
 
-        public override void ViewWillAppear(bool animated)
+        public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-            base.ViewWillAppear(animated);
-            _actionButton.Clicked += ShareButtonPress;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            _actionButton.Clicked -= ShareButtonPress;
-        }
-
-        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
-        {
-            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
+            var url = navigationAction.Request.Url.AbsoluteString;
+            if (!url.StartsWith("file://", StringComparison.Ordinal))
             {
-                var webBrowser = new WebBrowserViewController();
+                var webBrowser = new WebBrowserViewController(url);
                 NavigationController.PushViewController(webBrowser, true);
                 return false;
             }
 
             return base.ShouldStartLoad(webView, navigationAction);
-        }
-
-        private void ShareButtonPress(object o, EventArgs args)
-        {
-            if (ViewModel.ShowMenuCommand.CanExecute(_actionButton))
-                ViewModel.ShowMenuCommand.Execute(_actionButton);
         }
     }
 }

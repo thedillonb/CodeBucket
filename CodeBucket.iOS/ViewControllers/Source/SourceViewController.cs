@@ -4,48 +4,62 @@ using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Source;
 using ReactiveUI;
 using CodeBucket.Views;
+using Splat;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.ViewControllers.Source
 {
-	public class SourceViewController : FileSourceViewController<SourceViewModel>
+	public class SourceViewController : WebViewController<SourceViewModel>
     {
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+        private string _loadedPath;
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
-
-            ViewModel.WhenAnyValue(x => x.FilePath)
-                .IsNotNull()
-                .Subscribe(Load);
-
-            var sourceViewModel = ViewModel;
-            if (sourceViewModel != null)
-                _actionButton.GetClickedObservable().InvokeCommand(sourceViewModel.ShowMenuCommand);
-        }
-
-        public override void ViewWillAppear(bool animated)
+        public SourceViewController()
         {
-            base.ViewWillAppear(animated);
             NavigationItem.RightBarButtonItem = _actionButton;
-        }
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
+            OnActivation(disposable =>
+            {
+                _actionButton
+                    .GetClickedObservable()
+                    .InvokeCommand(ViewModel.ShowMenuCommand)
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.FilePath)
+                    .IsNotNull()
+                    .Subscribe(Load)
+                    .AddTo(disposable);
+            });
         }
 
         private void Load(string path)
         {
+            if (path == _loadedPath)
+                return;
+
+            _loadedPath = path;
+
             if (ViewModel.IsText)
             {
-                var content = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
-                var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
-                var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
-                var model = new SourceBrowserModel(content, "idea", fontSize, zoom, path);
-                var v = new SyntaxHighlighterView { Model = model };
-                LoadContent(v.GenerateString());
+                if (ViewModel.IsMarkdown)
+                {
+                    var converter = Locator.Current.GetService<IMarkdownService>();
+                    var content = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
+                    var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+                    var markdownContent = converter.ConvertMarkdown(content);
+                    var model = new DescriptionModel(markdownContent, fontSize);
+                    var v = new MarkdownView { Model = model };
+                    LoadContent(v.GenerateString());
+                }
+                else
+                {
+                    var content = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
+                    var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+                    var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
+                    var model = new SourceBrowserModel(content, "idea", fontSize, zoom, path);
+                    var v = new SyntaxHighlighterView { Model = model };
+                    LoadContent(v.GenerateString());
+                }
             }
             else
             {
