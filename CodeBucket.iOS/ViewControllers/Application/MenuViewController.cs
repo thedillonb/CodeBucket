@@ -94,7 +94,7 @@ namespace CodeBucket.ViewControllers.Application
 
             root.Add(_profileSection);
 
-            var teamEvents = ViewModel.Teams
+            var teamEvents = ViewModel.TeamEvents
                 .Where(_ => ViewModel.ShowTeamEvents)
                 .Select(team => new MenuElement(team.Name, team.GoToCommand.ExecuteIfCan, AtlassianIcon.Blogroll.ToImage()));
 

@@ -3,10 +3,11 @@ using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.DialogElements;
 using System;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Views.Issues
 {
-	public class IssueEditView : IssueModifyView<IssueEditViewModel>
+	public class IssueEditView : IssueModifyViewController<IssueEditViewModel>
     {
 		public override void ViewDidLoad()
 		{
@@ -24,8 +25,11 @@ namespace CodeBucket.Views.Issues
                 delete.Clicked.BindCommand(ViewModel.DeleteCommand).AddTo(d);
                 status.Clicked.Subscribe(_ =>
                 {
-                    var ctrl = new IssueAttributesView(IssueModifyViewModel.Statuses, ViewModel.Status) { Title = "Status" };
-                    ctrl.SelectedValue = x => ViewModel.Status = x.ToLower();
+                    var ctrl = new IssueAttributesViewController(
+                        IssueAttributesViewController.Statuses, ViewModel.Status) { Title = "Status" };
+                    ctrl.SelectedObservable
+                        .Do(x => ViewModel.Status = x.ToLower())
+                        .Subscribe(__ => NavigationController.PopToViewController(this, true));
                     NavigationController.PushViewController(ctrl, true);
                 }).AddTo(d);
             });

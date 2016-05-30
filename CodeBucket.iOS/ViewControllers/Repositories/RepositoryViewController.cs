@@ -6,7 +6,6 @@ using Humanizer;
 using CodeBucket.Core.Utils;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using BitbucketSharp.Models.V2;
 using ReactiveUI;
 
 namespace CodeBucket.ViewControllers.Repositories
@@ -16,7 +15,7 @@ namespace CodeBucket.ViewControllers.Repositories
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.PageDefault.ToImage());
         private readonly SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
-        private readonly SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
+        private readonly SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Flag.ToImage());
 
         public override void ViewDidLoad()
         {
@@ -33,10 +32,6 @@ namespace CodeBucket.ViewControllers.Repositories
 
             _split3.Button2.Text = "- Issues";
  
-            ViewModel.WhenAnyValue(x => x.Issues).Subscribe(_ => Render(ViewModel.Repository));
-            ViewModel.WhenAnyValue(x => x.HasReadme).Subscribe(_ => Render(ViewModel.Repository));
-
-
             OnActivation(d => 
             {
                 watchers.Clicked
@@ -59,9 +54,11 @@ namespace CodeBucket.ViewControllers.Repositories
                     .Subscribe(x => forks.Text = x.HasValue ? x.ToString() : "-")
                     .AddTo(d);
 
-                this.WhenAnyValue(x => x.ViewModel.Repository)
+                this.WhenAnyValue(x => x.ViewModel.Repository).SelectUnit()
+                    .Merge(this.WhenAnyValue(x => x.ViewModel.HasReadme).SelectUnit())
+                    .Where(x => ViewModel.Repository != null)
                     .Do(_ => NavigationItem.RightBarButtonItem.Enabled = true)
-                    .Subscribe(Render)
+                    .Subscribe(_ => Render())
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Issues)
@@ -73,11 +70,9 @@ namespace CodeBucket.ViewControllers.Repositories
             });
         }
 
-        public void Render(Repository model)
+        public void Render()
         {
-            if (model == null)
-                return;
-            
+            var model = ViewModel.Repository;
             var avatar = new Avatar(model.Links.Avatar.Href).ToUrl(128);
             ICollection<Section> root = new LinkedList<Section>();
             HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UpdatedOn.Humanize() : model.Description;

@@ -37,6 +37,13 @@ namespace CodeBucket.DialogElements
             Checked = false;
         }
 
+        protected override UITableViewCell InitializeCell(UITableViewCell cell)
+        {
+            var c = base.InitializeCell(cell);
+            c.SelectionStyle = UITableViewCellSelectionStyle.Default;
+            return c;
+        }
+
         public override void Selected(UITableView tableView, NSIndexPath path)
         {
             base.Selected(tableView, path);

@@ -57,6 +57,13 @@ namespace CodeBucket.ViewControllers
             ViewModel = new WebBrowserViewModel(url);
         }
 
+        public static UIViewController CreateWithNavbar(string url)
+        {
+            var vc = new WebBrowserViewController();
+            vc.ViewModel = new WebBrowserViewModel(url);
+            return new UINavigationController(vc);
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

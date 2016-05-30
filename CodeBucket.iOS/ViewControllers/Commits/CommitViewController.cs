@@ -9,11 +9,25 @@ using CodeBucket.DialogElements;
 using BitbucketSharp.Models;
 using ReactiveUI;
 using CodeBucket.ViewControllers.Comments;
+using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Commits
 {
     public class CommitViewController : PrettyDialogViewController<CommitViewModel>
     {
+        private HtmlElement _commentsElement = new HtmlElement("comments");
+
+        public CommitViewController()
+        {
+            OnActivation(d =>
+            {
+                _commentsElement.UrlRequested
+                    .Select(WebBrowserViewController.CreateWithNavbar)
+                    .Subscribe(x => PresentViewController(x, true, null))
+                    .AddTo(d);
+            });
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -48,7 +62,7 @@ namespace CodeBucket.ViewControllers.Commits
             allChangesButton.BindClick(ViewModel.GoToAllFiles);
 
             var split = new SplitButtonElement();
-            var comments = split.AddButton("Comments", "-");
+            var commentCount = split.AddButton("Comments", "-");
             var participants = split.AddButton("Participants", "-");
             var approvals = split.AddButton("Approvals", "-");
             var headerSection = new Section { split };
@@ -71,7 +85,7 @@ namespace CodeBucket.ViewControllers.Commits
 
             var commentsSection = new Section("Comments");
             var addCommentElement = new ButtonElement("Add Comment", AtlassianIcon.Addcomment.ToImage());
-            addCommentElement.Clicked.Subscribe(_ => AddCommentTapped());
+            commentsSection.Add(addCommentElement);
 
             if (ViewModel.ShowRepository)
             {
@@ -101,22 +115,33 @@ namespace CodeBucket.ViewControllers.Commits
             });
 
             this.WhenAnyValue(x => x.ViewModel.Approvals)
-                .Subscribe(x =>
-                {
-                    var elements = x.Select(y => new UserElement(y)).OfType<Element>();
-                    approvalSection.Reset(elements.Concat(new[] { approveElement }));
-                });
+                .Select(x => x.Select(y => new UserElement(y)).OfType<Element>())
+                .Subscribe(x => approvalSection.Reset(x.Concat(new[] { approveElement })));
 
             ViewModel.Comments
                      .CountChanged
                      .Select(x => x.ToString())
                      .StartWith("-")
-                     .Subscribe(x => comments.Text = x);
+                     .Subscribe(x => commentCount.Text = x);
 
-            ViewModel.Comments
-                     .ChangedObservable()
-                     .Select(x => x.Select(y => new CommentElement(y)).OfType<Element>())
-                     .Subscribe(x => commentsSection.Reset(x.Concat(new[] { addCommentElement })));
+            ViewModel
+                .Comments
+                .ChangedObservable()
+                .Subscribe(x =>
+                {
+                    if (x.Count > 0)
+                    {
+                        var comments = x.Select(y => new Comment(y.Avatar.ToUrl(), y.Name, y.Content, y.CreatedOn)).ToList();
+                        var commentModel = new Views.CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                        var content = new CommentsView { Model = commentModel }.GenerateString();
+                        _commentsElement.SetValue(content);
+                        commentsSection.Insert(0, UITableViewRowAnimation.None, _commentsElement);
+                    }
+                    else
+                    {
+                        commentsSection.Remove(_commentsElement);
+                    }
+                });
 
             ViewModel.WhenAnyValue(x => x.Commit)
                 .IsNotNull()
@@ -127,6 +152,11 @@ namespace CodeBucket.ViewControllers.Commits
             ViewModel.GoToRemovedFiles.Select(_ => ChangesetModel.FileType.Removed).Subscribe(GoToFiles);
             ViewModel.GoToModifiedFiles.Select(_ => ChangesetModel.FileType.Modified).Subscribe(GoToFiles);
             ViewModel.GoToAllFiles.Subscribe(_ => GoToAllFiles());
+
+            OnActivation(d =>
+            {
+                addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()).AddTo(d);
+            });
         }
 
         private void GoToFiles(ChangesetModel.FileType commitFileType)

@@ -27,7 +27,7 @@ namespace CodeBucket.DialogElements
 
         public static IDisposable BindValue<T>(this StringElement stringElement, IObservable<T> value)
         {
-            return value.SubscribeSafe(x => stringElement.Value = x.ToString());
+            return value.SubscribeSafe(x => stringElement.Value = x?.ToString());
         }
 
         public static IDisposable BindDisclosure(this ButtonElement stringElement, IObservable<bool> value)

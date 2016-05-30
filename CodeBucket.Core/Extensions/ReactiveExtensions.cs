@@ -1,10 +1,17 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class ReactiveExtensions
     {
+        public static IObservable<Unit> SelectUnit<T>(this IObservable<T> source)
+        {
+            return source.Select(_ => Unit.Default);
+        }
+
         public static IDisposable SubscribeSafe<T>(this IObservable<T> source, Action<T> onNext)
         {
             if (source == null)

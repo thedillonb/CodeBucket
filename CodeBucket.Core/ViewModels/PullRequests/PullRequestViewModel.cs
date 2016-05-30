@@ -34,8 +34,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         private readonly ObservableAsPropertyHelper<string> _description;
         public string Description => _description.Value;
 
-        private readonly ObservableAsPropertyHelper<int?> _approvals;
-        public int? ApprovalCount => _approvals.Value;
+        private readonly ObservableAsPropertyHelper<int?> _approvalCount;
+        public int? ApprovalCount => _approvalCount.Value;
+
+        private readonly ObservableAsPropertyHelper<UserItemViewModel[]> _approvals;
+        public UserItemViewModel[] Approvals => _approvals.Value;
 
         private int? _comments;
         public int? CommentCount
@@ -62,6 +65,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> GoToCommitsCommand { get; }
 
+        public NewCommentViewModel NewCommentViewModel { get; }
+
         public PullRequestViewModel(
             string username, string repository, PullRequest pullRequest,
             IMarkdownService markdownService = null, IApplicationService applicationService = null)
@@ -77,7 +82,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
-            Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
+            Title = $"Pull Request #{pullRequestId}";
 
             var comments = new ReactiveList<PullRequestComment>();
             Comments = comments.CreateDerivedCollection(x =>
@@ -87,18 +92,31 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 return new CommentItemViewModel(name, avatar, x.CreatedOn.Humanize(), x.Content.Html);
             });
 
+            Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
+
+            NewCommentViewModel = new NewCommentViewModel(async text =>
+            {
+                var oldComment = await applicationService.Client.Repositories.PullRequests.AddComment(
+                    username, repository, pullRequestId, text);
+
+                var comment = await applicationService.Client.Repositories.PullRequests.GetPullRequestComment(
+                    username, repository, pullRequestId, oldComment.CommentId);
+                
+                comments.Add(comment);
+            });
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 PullRequest = await applicationService.Client.Repositories.PullRequests.GetPullRequest(username, repository, pullRequestId);
                 comments.Clear();
                 await applicationService.Client
-                    .ForAllItems(x =>
-                                x.Repositories.PullRequests.GetPullRequestComments(username, repository, pullRequestId), y =>
-                                {
-                                    var items = y.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
-                                                 .OrderBy(x => (x.CreatedOn));
-                                    comments.Reset(items);
-                                });
+                    .ForAllItems(x => x.Repositories.PullRequests.GetPullRequestComments(username, repository, pullRequestId), 
+                                 y =>
+                                 {
+                                     var items = y.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
+                                                  .OrderBy(x => (x.CreatedOn));
+                                     comments.Reset(items);
+                                 });
             });
 
             GoToCommitsCommand = ReactiveCommand.CreateAsyncTask(t =>
@@ -155,18 +173,29 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             participantObs
                 .Select(x => new int?(x.Count(y => y.Approved)))
-                .ToProperty(this, x => x.ApprovalCount, out _approvals);
+                .ToProperty(this, x => x.ApprovalCount, out _approvalCount);
 
             this.WhenAnyValue(x => x.PullRequest.Description)
                 .Select(x => string.IsNullOrEmpty(x) ? null : markdownService.ConvertMarkdown(x))
                 .ToProperty(this, x => x.Description, out _description);
-        }
 
-        //public async Task AddComment(string text)
-        //{
-        //    var res = await _applicationService.Client.Repositories.PullRequests.CommentPullRequest(Username, Repository, PullRequestId, text);
-        //    var comment = await _applicationService.Client.Repositories.PullRequests.GetPullRequestComment(Username, Repository, PullRequestId, res.CommentId);
-        //    Comments.Add(comment);
-        //}
+            this.WhenAnyValue(x => x.PullRequest.Participants)
+                .Select(participants =>
+                {
+                    return (participants ?? Enumerable.Empty<Participant>())
+                        .Where(x => x.Approved)
+                        .Select(x =>
+                        {
+                            var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
+                            var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
+                            vm.GoToCommand
+                              .Select(_ => new UserViewModel(x.User))
+                              .Subscribe(NavigateTo);
+                            return vm;
+                        });
+                })
+                .Select(x => x.ToArray())
+                .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
+        }
     }
 }

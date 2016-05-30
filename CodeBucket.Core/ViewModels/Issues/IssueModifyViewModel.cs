@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using BitbucketSharp.Models;
 using ReactiveUI;
 using System.Reactive;
-using System;
 using CodeBucket.Core.Services;
 using Splat;
 
@@ -10,10 +9,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public abstract class IssueModifyViewModel : BaseViewModel, ILoadableViewModel
     {
-		public static readonly string[] Priorities = { "Trivial", "Minor", "Major", "Critical", "Blocker" };
-		public static readonly string[] Statuses = { "New", "Open", "Resolved", "On Hold", "Invalid", "Duplicate", "Wontfix" };
-		public static readonly string[] Kinds = { "Bug", "Enhancement", "Proposal", "Task" };
-
 		private string _title;
 		private string _content;
 		private UserModel _assignedTo;
@@ -114,6 +109,9 @@ namespace CodeBucket.Core.ViewModels.Issues
             IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Kind = "bug";
+            Priority = "major";
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(t => Save());
 

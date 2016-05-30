@@ -90,16 +90,20 @@ namespace CodeBucket.DialogElements
             if (newSections == null)
                 return;
 
+            var sections = newSections.Except(_sections).ToList();
+            if (sections.Count == 0)
+                return;
+
             _tableView.Get()?.BeginUpdates ();
 
             int pos = idx;
-            foreach (var s in newSections){
+            foreach (var s in sections){
                 s.Root = this;
                 _sections.Insert (pos++, s);
             }
 
-            _tableView.Get()?.InsertSections (MakeIndexSet (idx, newSections.Length), anim);
-            _tableView.Get()?.EndUpdates ();
+            _tableView.Get()?.InsertSections (MakeIndexSet (idx, sections.Count), anim);
+            _tableView.Get()?.EndUpdates();
         }
 
         public void Insert (int idx, Section section)

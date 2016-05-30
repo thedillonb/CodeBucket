@@ -15,11 +15,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly Func<string, Task<CommentModel>> _addCommentFunc;
-
-        private readonly ObservableAsPropertyHelper<string> _markdownDescription;
-        public string MarkdownDescription => _markdownDescription.Value;
-
 		private IssueModel _issueModel;
         public IssueModel Issue
         {
@@ -27,9 +22,13 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
-        public IReactiveCommand<object> GoToAssigneeCommand { get; }
+        private readonly ObservableAsPropertyHelper<string> _description;
+        public string Description => _description.Value;
 
-        public IReactiveCommand<object> GoToMilestoneCommand { get; }
+        private readonly ObservableAsPropertyHelper<string> _assigned;
+        public string Assigned => _assigned.Value;
+
+        public IReactiveCommand<object> GoToAssigneeCommand { get; }
 
         public IReactiveCommand<object> GoToEditCommand { get; }
 
@@ -38,6 +37,8 @@ namespace CodeBucket.Core.ViewModels.Issues
         public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
         public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
+
+        public NewCommentViewModel NewCommentViewModel { get; }
 
         public IssueViewModel(
             string username, string repository, IssueModel issue,
@@ -53,9 +54,6 @@ namespace CodeBucket.Core.ViewModels.Issues
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
-
-            _addCommentFunc = text => 
-                applicationService.Client.Repositories.Issues.AddComment(username, repository, issueId, text);
 
             Title = "Issue #" + issueId;
 
@@ -78,21 +76,18 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Select(_ => new IssueEditViewModel(username, repository, Issue))
                 .Subscribe(NavigateTo);
 
-            GoToMilestoneCommand = null;
-            //              return new MvxCommand(() => {
-            //                  if (Issue.Metadata != null && !string.IsNullOrEmpty(Issue.Metadata.Milestone))
-            //                      GetService<IViewModelTxService>().Add(new IssueVersion { Name = Issue.Metadata.Milestone });
-            //                  ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-            //              }); 
-
             GoToEditCommand.Subscribe(_ =>
             {
 
             });
 
+            this.WhenAnyValue(x => x.Issue)
+                .Select(x => x?.Responsible?.Username ?? "Unassigned")
+                .ToProperty(this, x => x.Assigned, out _assigned, "Unassigned");
+
             this.WhenAnyValue(x => x.Issue.Content)
-                .Select(markdownService.ConvertMarkdown)
-                .ToProperty(this, x => x.MarkdownDescription, out _markdownDescription);
+                .Select(x => string.IsNullOrEmpty(x) ? null : markdownService.ConvertMarkdown(x))
+                .ToProperty(this, x => x.Description, out _description);
 
             var comments = new ReactiveList<CommentModel>();
             Comments = comments.CreateDerivedCollection(x =>
@@ -109,6 +104,13 @@ namespace CodeBucket.Core.ViewModels.Issues
                 applicationService.Client.Repositories.Issues.GetComments(username, repository, issueId)
                                   .ToBackground(x => comments.Reset(x.Where(y => !string.IsNullOrEmpty(y.Content))));
                 Issue = await issueTask;
+            });
+
+            NewCommentViewModel = new NewCommentViewModel(async text =>
+            {
+                var comment = await applicationService.Client.Repositories.Issues.AddComment(
+                    username, repository, issueId, text);
+                comments.Add(comment);
             });
         }
     }

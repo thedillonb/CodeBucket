@@ -144,7 +144,9 @@ namespace CodeBucket.DialogElements
             cell.ContentView.AddSubview (WebView);
             cell.ContentView.Layer.MasksToBounds = true;
             cell.ContentView.AutosizesSubviews = true;
-            cell.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
+            cell.SeparatorInset = UIEdgeInsets.Zero;
+            cell.LayoutMargins = UIEdgeInsets.Zero;
+            cell.PreservesSuperviewLayoutMargins = false;
             return cell;
         }
 

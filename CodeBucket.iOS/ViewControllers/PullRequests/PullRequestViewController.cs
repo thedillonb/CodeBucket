@@ -6,28 +6,26 @@ using CodeBucket.DialogElements;
 using Humanizer;
 using CodeBucket.Core.Utils;
 using System.Collections.Generic;
-using CodeBucket.Utilities;
-using CodeBucket.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using BitbucketSharp.Models.V2;
-using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Views;
+using CodeBucket.ViewControllers.Comments;
 
 namespace CodeBucket.ViewControllers.PullRequests
 {
     public class PullRequestViewController : PrettyDialogViewController<PullRequestViewModel>
     {
-        private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
-        private HtmlElement _descriptionElement = new HtmlElement("description");
-        private HtmlElement _commentsElement = new HtmlElement("comments");
+        private readonly HtmlElement _descriptionElement = new HtmlElement("description");
+        private readonly HtmlElement _commentsElement = new HtmlElement("comments");
 
         public PullRequestViewController()
         {
             OnActivation(d =>
             {
-                //d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
-                //d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                Observable.Merge(_descriptionElement.UrlRequested, _commentsElement.UrlRequested)
+                    .Select(WebBrowserViewController.CreateWithNavbar)
+                    .Subscribe(x => PresentViewController(x, true, null))
+                    .AddTo(d);
             });
         }
 
@@ -35,8 +33,11 @@ namespace CodeBucket.ViewControllers.PullRequests
         {
             base.ViewDidLoad();
 
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 80f;
+
             var split = new SplitButtonElement();
-            var comments = split.AddButton("Comments", "-");
+            var commentCount = split.AddButton("Comments", "-");
             var participants = split.AddButton("Participants", "-");
             var approvals = split.AddButton("Approvals", "-");
 
@@ -47,7 +48,7 @@ namespace CodeBucket.ViewControllers.PullRequests
                      .Subscribe(x => approvals.Text = x?.ToString() ?? "-");
 
             this.WhenAnyValue(x => x.ViewModel.CommentCount)
-                     .Subscribe(x => comments.Text = x?.ToString() ?? "-");
+                     .Subscribe(x => commentCount.Text = x?.ToString() ?? "-");
 
             this.WhenAnyValue(x => x.ViewModel.Title)
                 .Subscribe(x => RefreshHeaderView(x));
@@ -67,115 +68,103 @@ namespace CodeBucket.ViewControllers.PullRequests
                 }
             });
 
-            ViewModel.WhenAnyValue(x => x.PullRequest).Subscribe(_ => Render(split));
-            //ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render(split));
-        }
-
-        public void Render(SplitButtonElement split)
-        {
-            if (ViewModel.PullRequest == null)
-                return;
-  
-            ICollection<Section> root = new LinkedList<Section>();
+            var root = new List<Section>();
             root.Add(new Section { split });
 
             var secDetails = new Section();
-            if (!string.IsNullOrWhiteSpace(ViewModel.Description))
-            {
-                var model = new DescriptionModel(ViewModel.Description, (int)UIFont.PreferredSubheadline.PointSize, true);
-                var content = new MarkdownView { Model = model }.GenerateString();
-                _descriptionElement.SetValue(content);
-                secDetails.Add(_descriptionElement);
-            }
+            root.Add(secDetails);
+
+            this.WhenAnyValue(x => x.ViewModel.Description)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize, true))
+                .Select(x => new MarkdownView { Model = x }.GenerateString())
+                .Subscribe(content =>
+                {
+                    _descriptionElement.SetValue(content);
+                    secDetails.Insert(0, UITableViewRowAnimation.None, _descriptionElement);
+                });
+
+            var split1 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
+            secDetails.Add(split1);
+
+            this.WhenAnyValue(x => x.ViewModel.Merged)
+                .Select(x => x ? "Merged" : "Not Merged")
+                .Subscribe(x => split1.Button2.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.PullRequest)
+                .Select(x => x?.CreatedOn.ToString("MM/dd/yy"))
+                .Subscribe(x => split1.Button1.Text = x);
 
             var commitsElement = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
             commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
-
-			var merged = ViewModel.Merged;
-
-            _split1.Button1.Text = ViewModel.PullRequest.CreatedOn.ToString("MM/dd/yy");
-            _split1.Button2.Text = merged ? "Merged" : "Not Merged";
-            secDetails.Add(_split1);
             secDetails.Add(commitsElement);
-            root.Add(secDetails);
 
-            if (!merged)
-            {
-                var mergeElement = new ButtonElement("Merge", AtlassianIcon.Approve.ToImage());
-                mergeElement.Clicked.InvokeCommand(ViewModel.MergeCommand);
-                root.Add(new Section { mergeElement });
-            }
+            var mergeElement = new ButtonElement("Merge", AtlassianIcon.Approve.ToImage());
+            mergeElement.Clicked.InvokeCommand(ViewModel.MergeCommand);
+            var mergeSection = new Section { mergeElement };
+
+            this.WhenAnyValue(x => x.ViewModel.Merged)
+                .Subscribe(x =>
+                {
+                    if (x)
+                        Root.Insert(root.IndexOf(secDetails), mergeSection);
+                    else
+                        Root.Remove(mergeSection);
+                });
 
             var approvalSection = new Section("Approvals");
             var approveElement = new LoaderButtonElement("Approve", AtlassianIcon.Approve.ToImage());
             approveElement.Accessory = UITableViewCellAccessory.None;
             approveElement.BindLoader(ViewModel.ToggleApproveButton);
-            //approveElement.BindCaption(ViewModel.Bind(x => x.Approved, true).Select(x => x ? "Unapprove" : "Approve"));
+            approveElement.BindCaption(this.WhenAnyValue(x => x.ViewModel.Approved).Select(x => x ? "Unapprove" : "Approve"));
             root.Add(approvalSection);
 
-            var participantElements = (ViewModel.PullRequest.Participants ?? Enumerable.Empty<Participant>())
-                 .Where(y => y.Approved)
-                 .Select(l =>
-                 {
-                     var avatar = new Avatar(l.User?.Links?.Avatar?.Href);
-                     var vm = new UserItemViewModel(l.User.Username, l.User.DisplayName, avatar);
-                     vm.GoToCommand.Select(_ => l.User.Username).BindCommand(ViewModel.GoToUserCommand);
-                     return new UserElement(vm);
-                 })
-                .OfType<Element>();
-
-            approvalSection.Reset(participantElements.Concat(new[] { approveElement }));
+            this.WhenAnyValue(x => x.ViewModel.Approvals)
+                .Select(x => x.Select(y => new UserElement(y)).OfType<Element>())
+                .Subscribe(x => approvalSection.Reset(x.Concat(new[] { approveElement })));
 
             var commentsSection = new Section("Comments");
             root.Add(commentsSection);
 
-            if (ViewModel.Comments.Count > 0)
-            {
-                var comments = ViewModel
-                    .Comments
-                    .Select(x => new Comment(x.Avatar.ToUrl(), x.Name, x.Content, x.CreatedOn))
-                    .ToList();
-                
-                var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
-                var content = new CommentsView { Model = commentModel }.GenerateString();
-                _commentsElement.SetValue(content);
-                commentsSection.Add(_commentsElement);
-            }
-
             var addComment = new ButtonElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
             addComment.Clicked.Subscribe(_ => AddCommentTapped());
-            commentsSection.Add(addComment);
+            commentsSection.Reset(new[] { addComment });
+
+            ViewModel
+                .Comments
+                .ChangedObservable()
+                .Subscribe(x =>
+                {
+                    if (x.Count > 0)
+                    {
+                        var comments = x.Select(y => new Comment(y.Avatar.ToUrl(), y.Name, y.Content, y.CreatedOn)).ToList();
+                        var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                        var content = new CommentsView { Model = commentModel }.GenerateString();
+                        _commentsElement.SetValue(content);
+                        commentsSection.Insert(0, UITableViewRowAnimation.None, _commentsElement);
+                    }
+                    else
+                    {
+                        commentsSection.Remove(_commentsElement);
+                    }
+                });
 
             Root.Reset(root);
         }
 
         void AddCommentTapped()
         {
-   //         var composer = new Composer();
-			//composer.NewComment(this, async (text) => {
-   //             try
-   //             {
-			//		await composer.DoWorkAsync("Commenting...", () =>  ViewModel.AddComment(text));
-			//		composer.CloseComposer();
-   //             }
-   //             catch (Exception ex)
-   //             {
-			//		AlertDialogService.ShowAlert("Unable to post comment!", ex.Message);
-   //             }
-   //             finally
-   //             {
-   //                 composer.EnableSendButton = true;
-   //             }
-   //         });
-        }
-
-        public override UIView InputAccessoryView
-        {
-            get
+            var newCommentVC = new NewCommentViewController();
+            newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
+            newCommentVC.OnActivation(d =>
             {
-                var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
-                return u;
-            }
+                newCommentVC.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                            .Switch()
+                            .Subscribe(_ => DismissViewController(true, null))
+                            .AddTo(d);
+            });
+
+            PresentViewController(new ThemedNavigationController(newCommentVC), true, null);
         }
     }
 }

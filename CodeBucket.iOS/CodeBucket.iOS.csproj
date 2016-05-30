@@ -142,7 +142,6 @@
     <Compile Include="DialogElements\SplitButtonElement.cs" />
     <Compile Include="DialogElements\UserElement.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
-    <Compile Include="DialogElements\ChangesetElement.cs" />
     <Compile Include="DialogElements\ExpandingInputElement.cs" />
     <Compile Include="DialogElements\DummyInputElement.cs" />
     <Compile Include="DialogElements\BooleanElement.cs" />
@@ -245,15 +244,15 @@
     <Compile Include="ViewControllers\Repositories\RepositoryViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoriesExploreViewController.cs" />
     <Compile Include="ViewControllers\Wikis\WikiViewController.cs" />
-    <Compile Include="ViewControllers\Issues\IssueAddView.cs" />
-    <Compile Include="ViewControllers\Issues\IssueAttributesView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueAddViewController.cs" />
+    <Compile Include="ViewControllers\Issues\IssueAttributesViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueEditView.cs" />
     <Compile Include="ViewControllers\Issues\IssueLabelsView.cs" />
-    <Compile Include="ViewControllers\Issues\IssueModifyView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueModifyViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssuesFiltersView.cs" />
     <Compile Include="ViewControllers\Issues\IssuesViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueVersionsView.cs" />
-    <Compile Include="ViewControllers\Issues\IssueView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\WebViewController.cs" />

@@ -46,6 +46,11 @@ namespace CodeBucket.ViewControllers.Issues
             });
         }
 
+        protected override void Navigate(UIViewController viewController)
+        {
+            base.Navigate(viewController);
+        }
+
         public override void ViewWillAppear(bool animated)
         {
 			base.ViewWillAppear(animated);

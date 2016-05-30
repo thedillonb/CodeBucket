@@ -101,6 +101,9 @@ namespace CodeBucket.DialogElements
             if (element == null)
                 return;
 
+            if (_elements.Contains(element))
+                return;
+
             _elements.Add (element);
             element.SetSection(this);
 
@@ -147,19 +150,26 @@ namespace CodeBucket.DialogElements
             if (newElements == null)
                 return;
 
+            var elements = newElements.Except(_elements);
+
             int pos = idx;
-            foreach (var e in newElements)
+            int inserts = 0;
+            foreach (var e in elements)
             {
+                inserts++;
                 _elements.Insert (pos++, e);
                 e.SetSection(this);
             }
+
+            if (inserts == 0)
+                return;
 
             if (Root != null && Root.TableView != null)
             {
                 if (anim == UITableViewRowAnimation.None)
                     Root.TableView.ReloadData ();
                 else
-                    InsertVisual (idx, anim, newElements.Length);
+                    InsertVisual (idx, anim, inserts);
             }
         }
 

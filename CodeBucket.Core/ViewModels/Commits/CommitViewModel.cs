@@ -229,14 +229,14 @@ namespace CodeBucket.Core.ViewModels.Commits
                     return (participants ?? Enumerable.Empty<Participant>())
                         .Where(x => x.Approved)
                         .Select(x =>
-                    {
-                        var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
-                        var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
-                        vm.GoToCommand
-                          .Select(_ => new UserViewModel(x.User))
-                          .Subscribe(NavigateTo);
-                        return vm;
-                    });
+                        {
+                            var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
+                            var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
+                            vm.GoToCommand
+                              .Select(_ => new UserViewModel(x.User))
+                              .Subscribe(NavigateTo);
+                            return vm;
+                        });
                 })
                 .Select(x => x.ToArray())
                 .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
