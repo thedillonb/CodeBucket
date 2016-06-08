@@ -86,7 +86,6 @@
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\IAccount.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Services\AccountsService.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
-    <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\FileSourceViewModel.cs" />
@@ -152,7 +150,6 @@
     <Compile Include="Extensions\ReactiveUIExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Comments\NewCommentViewModel.cs" />
-    <Compile Include="Stores\CommitStore.cs" />
     <Compile Include="Services\ILoadingIndicatorService.cs" />
     <Compile Include="Utils\LoadingMessageHandler.cs" />
   </ItemGroup>
@@ -198,7 +195,6 @@
     <Folder Include="ViewModels\Commits\" />
     <Folder Include="Extensions\" />
     <Folder Include="ViewModels\Comments\" />
-    <Folder Include="Stores\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
