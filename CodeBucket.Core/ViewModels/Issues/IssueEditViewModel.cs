@@ -25,15 +25,15 @@ namespace CodeBucket.Core.ViewModels.Issues
             {
                 this.RaiseAndSetIfChanged(ref _issue, value);
 
-				AssignedTo = _issue.Responsible;
+                Assignee.SelectedValue = _issue.Responsible?.Username;
 				Title = _issue.Title;
 				Content = _issue.Content;
 				Status = _issue.Status;
 				Priority = _issue.Priority;
 				Kind = _issue.Metadata.Kind;
-				Milestone = _issue.Metadata.Milestone;
-				Component = _issue.Metadata.Component;
-				Version = _issue.Metadata.Version;
+                Milestones.SelectedValue = _issue.Metadata.Milestone;
+				Components.SelectedValue = _issue.Metadata.Component;
+                Versions.SelectedValue = _issue.Metadata.Version;
 			}
 		}
 

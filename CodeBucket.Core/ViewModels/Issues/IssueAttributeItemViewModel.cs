@@ -1,9 +1,8 @@
-﻿using System;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssueMilestoneItemViewModel : ReactiveObject
+    public class IssueAttributeItemViewModel : ReactiveObject
     {
         private bool _isSelected;
         public bool IsSelected
@@ -16,11 +15,10 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IReactiveCommand<object> SelectCommand { get; } = ReactiveCommand.Create();
 
-        public IssueMilestoneItemViewModel(string name, bool selected = false)
+        public IssueAttributeItemViewModel(string name, bool selected = false)
         {
             Name = name;
             IsSelected = selected;
-            SelectCommand.Subscribe(x => IsSelected = !IsSelected);
         }
     }
 }

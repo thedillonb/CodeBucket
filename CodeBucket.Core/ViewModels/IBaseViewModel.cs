@@ -1,6 +1,10 @@
 ﻿namespace CodeBucket.Core.ViewModels
 {
-    public interface IBaseViewModel : IProvidesTitle, IRoutingViewModel
+    public interface IViewModel
+    {
+    }
+
+    public interface IBaseViewModel : IProvidesTitle, IRoutingViewModel, IViewModel
     {
     }
 }

@@ -1,11 +1,10 @@
 using System;
-using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using CodeBucket.TableViewSources;
 
-namespace CodeBucket.Views.Issues
+namespace CodeBucket.ViewControllers.Issues
 {
     public class IssueAttributesViewController : TableViewController
     {
@@ -38,7 +37,7 @@ namespace CodeBucket.Views.Issues
 				var capture = val;
                 var el = new CheckElement(val);
                 el.Checked = string.Equals(val, _selected, StringComparison.OrdinalIgnoreCase);
-                el.Clicked.Select(_ => capture).Subscribe(_selectedSubject);
+                el.CheckedChanged.Select(_ => capture).Subscribe(_selectedSubject);
 				sec.Add(el);
 			}
 

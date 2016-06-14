@@ -17,6 +17,15 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 {
     public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly ReactiveList<PullRequestComment> _comments = new ReactiveList<PullRequestComment>();
+        private readonly IApplicationService _applicationService;
+
+        public string Username { get; }
+
+        public string Repository { get; }
+
+        public int PullRequestId { get; }
+
         public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
@@ -40,11 +49,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         private readonly ObservableAsPropertyHelper<UserItemViewModel[]> _approvals;
         public UserItemViewModel[] Approvals => _approvals.Value;
 
-        private int? _comments;
+        private int? _commentCount;
         public int? CommentCount
         {
-            get { return _comments; }
-            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
+            get { return _commentCount; }
+            private set { this.RaiseAndSetIfChanged(ref _commentCount, value); }
         }
 
         private readonly ObservableAsPropertyHelper<int?> _participants;
@@ -65,8 +74,6 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> GoToCommitsCommand { get; }
 
-        public NewCommentViewModel NewCommentViewModel { get; }
-
         public PullRequestViewModel(
             string username, string repository, PullRequest pullRequest,
             IMarkdownService markdownService = null, IApplicationService applicationService = null)
@@ -79,13 +86,15 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             string username, string repository, int pullRequestId,
             IMarkdownService markdownService = null, IApplicationService applicationService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
             Title = $"Pull Request #{pullRequestId}";
+            Username = username;
+            Repository = repository;
+            PullRequestId = pullRequestId;
 
-            var comments = new ReactiveList<PullRequestComment>();
-            Comments = comments.CreateDerivedCollection(x =>
+            Comments = _comments.CreateDerivedCollection(x =>
             {
                 var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
                 var avatar = new Avatar(x.User.Links?.Avatar?.Href);
@@ -94,28 +103,17 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
 
-            NewCommentViewModel = new NewCommentViewModel(async text =>
-            {
-                var oldComment = await applicationService.Client.Repositories.PullRequests.AddComment(
-                    username, repository, pullRequestId, text);
-
-                var comment = await applicationService.Client.Repositories.PullRequests.GetPullRequestComment(
-                    username, repository, pullRequestId, oldComment.CommentId);
-                
-                comments.Add(comment);
-            });
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 PullRequest = await applicationService.Client.Repositories.PullRequests.GetPullRequest(username, repository, pullRequestId);
-                comments.Clear();
+                _comments.Clear();
                 await applicationService.Client
                     .ForAllItems(x => x.Repositories.PullRequests.GetPullRequestComments(username, repository, pullRequestId), 
                                  y =>
                                  {
                                      var items = y.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
                                                   .OrderBy(x => (x.CreatedOn));
-                                     comments.Reset(items);
+                                     _comments.Reset(items);
                                  });
             });
 
@@ -196,6 +194,17 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 })
                 .Select(x => x.ToArray())
                 .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
+        }
+
+        public async Task AddComment(string text)
+        {
+            var oldComment = await _applicationService.Client.Repositories.PullRequests.AddComment(
+                Username, Repository, PullRequestId, text);
+
+            var comment = await _applicationService.Client.Repositories.PullRequests.GetPullRequestComment(
+                Username, Repository, PullRequestId, oldComment.CommentId);
+
+            _comments.Add(comment);
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.DialogElements;
@@ -9,16 +8,32 @@ using CodeBucket.TableViewSources;
 using System.Reactive.Linq;
 using Humanizer;
 
-namespace CodeBucket.Views.Issues
+namespace CodeBucket.ViewControllers.Issues
 {
     public abstract class IssueModifyViewController<TViewModel> : TableViewController<TViewModel>
         where TViewModel : IssueModifyViewModel
     {
+        private readonly Lazy<IssueComponentsViewController> _componentsViewController;
+        private readonly Lazy<IssueVersionsViewController> _versionsViewController;
+        private readonly Lazy<IssueMilestonesViewController> _milestonesViewController;
+        private readonly Lazy<IssueAssigneeViewController> _assigneeViewController;
         private readonly Lazy<RootElement> _root;
 
         protected IssueModifyViewController()
         {
             _root = new Lazy<RootElement>(() => new RootElement(TableView));
+
+            _componentsViewController = new Lazy<IssueComponentsViewController>(
+                () => new IssueComponentsViewController(ViewModel.Components));
+
+            _versionsViewController = new Lazy<IssueVersionsViewController>(
+                () => new IssueVersionsViewController(ViewModel.Versions));
+
+            _milestonesViewController = new Lazy<IssueMilestonesViewController>(
+                () => new IssueMilestonesViewController(ViewModel.Milestones));
+
+            _assigneeViewController = new Lazy<IssueAssigneeViewController>(
+                () => new IssueAssigneeViewController(ViewModel.Assignee));
         }
 
         public override void ViewDidLoad()
@@ -31,7 +46,7 @@ namespace CodeBucket.Views.Issues
 
             var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
-            var title = new EntryElement("Title", string.Empty, string.Empty) { TextAlignment = UITextAlignment.Right };
+            var title = new EntryElement("Title", string.Empty, string.Empty);
             var assignedTo = new ButtonElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
             var kind = new ButtonElement("Issue Type", ViewModel.Kind, UITableViewCellStyle.Value1);
             var priority = new ButtonElement("Priority", ViewModel.Priority, UITableViewCellStyle.Value1);
@@ -47,14 +62,16 @@ namespace CodeBucket.Views.Issues
 
             OnActivation(d =>
             {
-                this.WhenAnyValue(x => x.ViewModel.IsSaving).SubscribeStatus("Saving...").AddTo(d);
+                this.WhenAnyValue(x => x.ViewModel.IsSaving)
+                    .SubscribeStatus("Saving...")
+                    .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Title)
                     .Subscribe(x => title.Value = x)
                     .AddTo(d);
                 
-                this.WhenAnyValue(x => x.ViewModel.AssignedTo)
-                    .Subscribe(x => assignedTo.Value = x == null ? "Unassigned" : x.Username)
+                this.WhenAnyValue(x => x.ViewModel.Assignee.SelectedValue)
+                    .Subscribe(x => assignedTo.Value = x ?? "Unassigned")
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Kind)
@@ -67,32 +84,57 @@ namespace CodeBucket.Views.Issues
                     .Subscribe(x => priority.Value = x)
                     .AddTo(d);
 
-                this.WhenAnyValue(x => x.ViewModel.Milestone)
+                this.WhenAnyValue(x => x.ViewModel.Milestones.SelectedValue)
                     .Subscribe(x => milestone.Value = x ?? "None")
                     .AddTo(d);
                 
-                this.WhenAnyValue(x => x.ViewModel.Component)
+                this.WhenAnyValue(x => x.ViewModel.Components.SelectedValue)
                     .Subscribe(x => component.Value = x ?? "None")
                     .AddTo(d);
                 
-                this.WhenAnyValue(x => x.ViewModel.Version)
+                this.WhenAnyValue(x => x.ViewModel.Versions.SelectedValue)
                     .Subscribe(x => version.Value = x ?? "None")
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Content)
-                    .Subscribe(x => version.Value = x)
+                    .Subscribe(x => content.Value = x)
                     .AddTo(d);
 
-                title.Changed.Subscribe(x =>  ViewModel.IssueTitle = x).AddTo(d);
-                version.Clicked.BindCommand(ViewModel.GoToVersionsCommand).AddTo(d);
-                assignedTo.Clicked.BindCommand(ViewModel.GoToAssigneeCommand).AddTo(d);
-                milestone.Clicked.BindCommand(ViewModel.GoToMilestonesCommand).AddTo(d);
-                component.Clicked.BindCommand(ViewModel.GoToComponentsCommand).AddTo(d);
+                title.Changed
+                    .Subscribe(x =>  ViewModel.IssueTitle = x)
+                    .AddTo(d);
 
-                save.GetClickedObservable().Subscribe(_ => {
-                    View.EndEditing(true);
-                    ViewModel.SaveCommand.Execute(null);
-                }).AddTo(d);
+                version
+                    .Clicked
+                    .Select(_ => _versionsViewController.Value)
+                    .Subscribe(x => NavigationController.PushViewController(x, true))
+                    .AddTo(d);
+                
+                assignedTo
+                    .Clicked
+                    .Select(_ => _assigneeViewController.Value)
+                    .Subscribe(x => NavigationController.PushViewController(x, true))
+                    .AddTo(d);
+
+                milestone
+                    .Clicked
+                    .Select(_ => _milestonesViewController.Value)
+                    .Subscribe(x => NavigationController.PushViewController(x, true))
+                    .AddTo(d);
+                
+                component
+                    .Clicked
+                    .Select(_ => _componentsViewController.Value)
+                    .Subscribe(x => NavigationController.PushViewController(x, true))
+                    .AddTo(d);
+
+                save.GetClickedObservable()
+                    .Subscribe(_ => 
+                    {
+                        View.EndEditing(true);
+                        ViewModel.SaveCommand.Execute(null);
+                    })
+                    .AddTo(d);
 
                 priority.Clicked.Subscribe(_ => 
                 {

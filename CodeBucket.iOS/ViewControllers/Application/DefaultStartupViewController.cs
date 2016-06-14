@@ -29,7 +29,7 @@ namespace CodeBucket.ViewController.Application
                 var elements = views.Select(x =>
                 {
                     var e = new CheckElement(x);
-                    e.Clicked.Subscribe(_ => ViewModel.SelectedStartupView = x);
+                    e.CheckedChanged.Subscribe(_ => ViewModel.SelectedStartupView = x);
                     e.Checked = string.Equals(ViewModel.SelectedStartupView, x);
                     return e;  
                 });

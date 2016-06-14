@@ -210,7 +210,7 @@
     <Compile Include="ViewControllers\Commits\CommitsViewController.cs" />
     <Compile Include="ViewControllers\Commits\BaseCommitsViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueComponentsViewController.cs" />
-    <Compile Include="ViewControllers\Issues\IssueMilestonesViewControllers.cs" />
+    <Compile Include="ViewControllers\Issues\IssueMilestonesViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueAssigneeViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestCommitsViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestsViewController.cs" />
@@ -246,12 +246,12 @@
     <Compile Include="ViewControllers\Wikis\WikiViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueAddViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueAttributesViewController.cs" />
-    <Compile Include="ViewControllers\Issues\IssueEditView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueEditViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueLabelsView.cs" />
     <Compile Include="ViewControllers\Issues\IssueModifyViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssuesFiltersView.cs" />
     <Compile Include="ViewControllers\Issues\IssuesViewController.cs" />
-    <Compile Include="ViewControllers\Issues\IssueVersionsView.cs" />
+    <Compile Include="ViewControllers\Issues\IssueVersionsViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
@@ -280,6 +280,7 @@
     <Compile Include="TableViewCells\SourceTreeTableViewCell.cs" />
     <Compile Include="TableViewCells\TeamTableViewCell.cs" />
     <Compile Include="TableViewSources\TeamTableViewSource.cs" />
+    <Compile Include="ViewControllers\SelectionViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -326,6 +327,9 @@
     </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>..\packages\BTProgressHUD.1.2.0.3\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

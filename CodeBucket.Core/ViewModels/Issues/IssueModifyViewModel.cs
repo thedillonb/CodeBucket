@@ -4,6 +4,7 @@ using ReactiveUI;
 using System.Reactive;
 using CodeBucket.Core.Services;
 using Splat;
+using System.Collections.Immutable;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -11,7 +12,6 @@ namespace CodeBucket.Core.ViewModels.Issues
     {
 		private string _title;
 		private string _content;
-		private UserModel _assignedTo;
 		private bool _isSaving;
 
 		public string IssueTitle
@@ -26,53 +26,13 @@ namespace CodeBucket.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
-		private string _milestone;
-		public string Milestone
-		{
-			get { return _milestone; }
-            set { this.RaiseAndSetIfChanged(ref _milestone, value); }
-		}
+        public IssueMilestonesViewModel Milestones { get; }
 
-		private bool _milestonesAvailable;
-		public bool MilestonesAvailable
-		{
-			get { return _milestonesAvailable; }
-            private set { this.RaiseAndSetIfChanged(ref _milestonesAvailable, value); }
-		}
+        public IssueComponentsViewModel Components { get; }
 
-		public UserModel AssignedTo
-		{
-			get { return _assignedTo; }
-            set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
-		}
+        public IssueVersionsViewModel Versions { get; }
 
-		private string _version;
-		public string Version
-		{
-			get { return _version; }
-            set { this.RaiseAndSetIfChanged(ref _version, value); }
-		}
-
-		private bool _versionsAvailable;
-		public bool VersionsAvailable
-		{
-			get { return _versionsAvailable; }
-            private set { this.RaiseAndSetIfChanged(ref _versionsAvailable, value); }
-		}
-
-		private string _component;
-		public string Component
-		{
-			get { return _component; }
-            set { this.RaiseAndSetIfChanged(ref _component, value); }
-		}
-
-		private bool _componentsAvailable;
-		public bool ComponentsAvailable
-		{
-			get { return _componentsAvailable; }
-            private set { this.RaiseAndSetIfChanged(ref _componentsAvailable, value); }
-		}
+        public IssueAssigneeViewModel Assignee { get; }
 
 		private string _kind;
 		public string Kind
@@ -104,14 +64,34 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
+        public IReactiveCommand<ImmutableList<IssueMilestone>> LoadMilestones { get; }
+
+        public string Username { get; }
+
+        public string Repository { get; }
+
         protected IssueModifyViewModel(
             string username, string repository,
             IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
+            Username = username;
+            Repository = repository;
             Kind = "bug";
             Priority = "major";
+
+            Milestones = new IssueMilestonesViewModel(username, repository, applicationService);
+            Versions = new IssueVersionsViewModel(username, repository, applicationService);
+            Components = new IssueComponentsViewModel(username, repository, applicationService);
+            Assignee = new IssueAssigneeViewModel(username, repository, applicationService); 
+
+            LoadMilestones = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var items = await applicationService.Client.Repositories.Issues.GetMilestones(username, repository);
+                return ImmutableList.CreateRange(items);
+            });
+
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(t => Save());
 
@@ -123,35 +103,6 @@ namespace CodeBucket.Core.ViewModels.Issues
 		protected Task Load()
 		{
 			return Task.FromResult(false);
-//			Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetMilestones(
-//
-//
-//                try
-//                {
-//                    if (Milestones == null)
-//                        Milestones = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetMilestones();
-//                }
-//                catch (Exception)
-//                {
-//                }
-//
-//                try
-//                {
-//                    if (Components == null)
-//                        Components = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetComponents();
-//                }
-//                catch (Exception)
-//                {
-//                }
-//
-//                try
-//                {
-//                    if (Versions == null)
-//                        Versions = Application.Client.Users[Username].Repositories[RepoSlug].Issues.GetVersions();
-//                }
-//                catch (Exception)
-//                {
-//                }
 		}
 
 		protected abstract Task Save();

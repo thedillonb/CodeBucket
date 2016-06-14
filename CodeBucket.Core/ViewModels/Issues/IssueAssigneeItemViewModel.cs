@@ -1,5 +1,4 @@
-﻿using System;
-using CodeBucket.Core.Utils;
+﻿using CodeBucket.Core.Utils;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Issues
@@ -24,7 +23,6 @@ namespace CodeBucket.Core.ViewModels.Issues
             Name = name;
             IsSelected = selected;
             Avatar = new Avatar(avatar);
-            SelectCommand.Subscribe(x => IsSelected = !IsSelected);
         }
     }
 }

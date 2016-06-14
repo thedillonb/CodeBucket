@@ -71,8 +71,6 @@ namespace CodeBucket.ViewControllers.Commits
             NavigationItem.RightBarButtonItem = actionButton;
             OnActivation(d => actionButton.BindCommand(ViewModel.ShowMenuCommand).AddTo(d));
 
-            ViewModel.AddCommentCommand.Subscribe(_ => AddCommentTapped());
-
             var detailSection = new Section();
             var detailsElement = new MultilinedElement();
             detailSection.Add(detailsElement);
@@ -155,7 +153,14 @@ namespace CodeBucket.ViewControllers.Commits
 
             OnActivation(d =>
             {
-                addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()).AddTo(d);
+                addCommentElement
+                    .Clicked
+                    .InvokeCommand(ViewModel.AddCommentCommand)
+                    .AddTo(d);
+
+                this.WhenAnyObservable(x => x.ViewModel.AddCommentCommand)
+                    .Subscribe(_ => NewCommentViewController.Present(this, ViewModel.AddComment))
+                    .AddTo(d);
             });
         }
 
@@ -172,21 +177,6 @@ namespace CodeBucket.ViewControllers.Commits
             var viewController = new CommitFileChangesViewController(ViewModel.CommitFiles);
             viewController.Title = "All Changes";
             NavigationController.PushViewController(viewController, true);
-        }
-
-        void AddCommentTapped()
-        {
-            var newCommentVC = new NewCommentViewController();
-            newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
-            newCommentVC.OnActivation(d =>
-            {
-                newCommentVC.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                            .Switch()
-                            .Subscribe(_ => DismissViewController(true, null))
-                            .AddTo(d);
-            });
-
-            PresentViewController(new ThemedNavigationController(newCommentVC), true, null);
         }
     }
 }

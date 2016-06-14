@@ -133,7 +133,7 @@ namespace CodeBucket.Views.Issues
 
                 addComment
                     .Clicked
-                    .Subscribe(_ => AddCommentTapped())
+                    .Subscribe(_ => NewCommentViewController.Present(this, ViewModel.AddComment))
                     .AddTo(d);
 
                 assigneeElement
@@ -159,21 +159,6 @@ namespace CodeBucket.Views.Issues
                     .Subscribe(x => watchers.Text = x.ToString())
                     .AddTo(d);
             });
-        }
-
-        void AddCommentTapped()
-        {
-            var newCommentVC = new NewCommentViewController();
-            newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
-            newCommentVC.OnActivation(d =>
-            {
-                newCommentVC.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                            .Switch()
-                            .Subscribe(_ => DismissViewController(true, null))
-                            .AddTo(d);
-            });
-
-            PresentViewController(new ThemedNavigationController(newCommentVC), true, null);
         }
     }
 }

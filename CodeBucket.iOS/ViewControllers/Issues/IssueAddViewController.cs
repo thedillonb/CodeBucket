@@ -1,6 +1,6 @@
 using CodeBucket.Core.ViewModels.Issues;
 
-namespace CodeBucket.Views.Issues
+namespace CodeBucket.ViewControllers.Issues
 {
 	public class IssueAddViewController : IssueModifyViewController<IssueAddViewModel>
     {

@@ -6,7 +6,7 @@ namespace CodeBucket.Core.ViewModels
 {
     public abstract class BaseViewModel : ReactiveObject, IBaseViewModel
     {
-        private readonly ISubject<IBaseViewModel> _requestNavigationSubject = new Subject<IBaseViewModel>();
+        private readonly ISubject<IViewModel> _requestNavigationSubject = new Subject<IViewModel>();
 
         private string _title;
         public string Title
@@ -15,12 +15,12 @@ namespace CodeBucket.Core.ViewModels
             protected set { this.RaiseAndSetIfChanged(ref _title, value); }
         }
 
-        protected void NavigateTo(IBaseViewModel viewModel)
+        protected void NavigateTo(IViewModel viewModel)
         {
             _requestNavigationSubject.OnNext(viewModel);
         }
 
-        IObservable<IBaseViewModel> IRoutingViewModel.RequestNavigation
+        IObservable<IViewModel> IRoutingViewModel.RequestNavigation
         {
             get { return _requestNavigationSubject; }
         }

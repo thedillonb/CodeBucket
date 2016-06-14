@@ -12,16 +12,20 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueAssigneeViewModel : ReactiveObject, ILoadableViewModel
     {
+        private bool _isLoaded;
+
         public IReadOnlyReactiveList<IssueAssigneeItemViewModel> Assignees { get; }
 
         private string _selectedValue;
         public string SelectedValue
         {
             get { return _selectedValue; }
-            private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
+            set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public IssueAssigneeViewModel(
             string username, string repository,
@@ -38,6 +42,8 @@ namespace CodeBucket.Core.ViewModels.Issues
             
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
+                if (_isLoaded) return;
+
                 var repo = await applicationService.Client.Repositories.GetRepository(username, repository);
 
                 try
@@ -57,6 +63,8 @@ namespace CodeBucket.Core.ViewModels.Issues
                 {
                     assignees.Reset();
                 }
+
+                _isLoaded = true;
             });
         }
 
@@ -79,7 +87,8 @@ namespace CodeBucket.Core.ViewModels.Issues
         private IssueAssigneeItemViewModel CreateItemViewModel(User item)
         {
             var vm = new IssueAssigneeItemViewModel(item.Username, item.Links?.Avatar?.Href, string.Equals(SelectedValue, item.Username));
-            vm.WhenAnyValue(y => y.IsSelected).Skip(1).Subscribe(y => SelectedValue = y ? item.Username : null);
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
             return vm;
         }
     }

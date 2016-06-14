@@ -10,12 +10,23 @@ using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Comments;
 using Humanizer;
 using System.Linq;
+using CodeBucket.Core.Messages;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
-		private IssueModel _issueModel;
+        private readonly IDisposable _issueMessageBus;
+        private readonly ReactiveList<CommentModel> _comments = new ReactiveList<CommentModel>();
+        private readonly IApplicationService _applicationService;
+
+        public string Username { get; }
+
+        public string Repository { get; }
+
+        public int IssueId { get; }
+
+        private IssueModel _issueModel;
         public IssueModel Issue
         {
             get { return _issueModel; }
@@ -42,20 +53,26 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IssueViewModel(
             string username, string repository, IssueModel issue,
-            IApplicationService applicationService = null, IMarkdownService markdownService = null)
-            : this(username, repository, issue.LocalId, applicationService, markdownService)
+            IApplicationService applicationService = null, IMarkdownService markdownService = null, 
+            IMessageService messageService = null)
+            : this(username, repository, issue.LocalId, applicationService, markdownService, messageService)
         {
             Issue = issue;
         }
 
         public IssueViewModel(
             string username, string repository, int issueId,
-            IApplicationService applicationService = null, IMarkdownService markdownService = null)
+            IApplicationService applicationService = null, IMarkdownService markdownService = null, 
+            IMessageService messageService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            messageService = messageService ?? Locator.Current.GetService<IMessageService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
             Title = "Issue #" + issueId;
+            Username = username;
+            Repository = repository;
+            IssueId = issueId;
 
             GoToWebCommand
                 .OfType<string>()
@@ -89,29 +106,31 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Select(x => string.IsNullOrEmpty(x) ? null : markdownService.ConvertMarkdown(x))
                 .ToProperty(this, x => x.Description, out _description);
 
-            var comments = new ReactiveList<CommentModel>();
-            Comments = comments.CreateDerivedCollection(x =>
-            {
-                return new CommentItemViewModel(x.AuthorInfo.Username,
-                                                new Utils.Avatar(x.AuthorInfo.Avatar),
-                                                x.UtcCreatedOn.Humanize(),
-                                                markdownService.ConvertMarkdown(x.Content));
-
-            });
+            Comments = _comments.CreateDerivedCollection(x =>
+                new CommentItemViewModel(x.AuthorInfo.Username,
+                    new Utils.Avatar(x.AuthorInfo.Avatar),
+                    x.UtcCreatedOn.Humanize(),
+                    markdownService.ConvertMarkdown(x.Content)));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 var issueTask = applicationService.Client.Repositories.Issues.GetIssue(username, repository, issueId);
                 applicationService.Client.Repositories.Issues.GetComments(username, repository, issueId)
-                                  .ToBackground(x => comments.Reset(x.Where(y => !string.IsNullOrEmpty(y.Content))));
+                                  .ToBackground(x => _comments.Reset(x.Where(y => !string.IsNullOrEmpty(y.Content))));
                 Issue = await issueTask;
             });
 
-            NewCommentViewModel = new NewCommentViewModel(async text =>
+            _issueMessageBus = messageService.Listen<IssueUpdatedMessage>(x =>
             {
-                var comment = await applicationService.Client.Repositories.Issues.AddComment(
-                    username, repository, issueId, text);
-                comments.Add(comment);
+                if (x.Username == username && x.Repository == repository && x.IssueId == issueId)
+                    Issue = x.Issue;
             });
+        }
+
+        public async Task AddComment(string text)
+        {
+            var comment = await _applicationService.Client.Repositories.Issues.AddComment(
+                Username, Repository, IssueId, text);
+            _comments.Add(comment);
         }
     }
 }

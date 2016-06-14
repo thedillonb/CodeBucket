@@ -41,15 +41,6 @@ namespace CodeBucket.ViewControllers.PullRequests
             var participants = split.AddButton("Participants", "-");
             var approvals = split.AddButton("Approvals", "-");
 
-            this.WhenAnyValue(x => x.ViewModel.ParticipantCount)
-                     .Subscribe(x => participants.Text = x?.ToString() ?? "-");
-
-            this.WhenAnyValue(x => x.ViewModel.ApprovalCount)
-                     .Subscribe(x => approvals.Text = x?.ToString() ?? "-");
-
-            this.WhenAnyValue(x => x.ViewModel.CommentCount)
-                     .Subscribe(x => commentCount.Text = x?.ToString() ?? "-");
-
             this.WhenAnyValue(x => x.ViewModel.Title)
                 .Subscribe(x => RefreshHeaderView(x));
 
@@ -127,7 +118,6 @@ namespace CodeBucket.ViewControllers.PullRequests
             root.Add(commentsSection);
 
             var addComment = new ButtonElement("Add Comment") { Image = AtlassianIcon.Addcomment.ToImage() };
-            addComment.Clicked.Subscribe(_ => AddCommentTapped());
             commentsSection.Reset(new[] { addComment });
 
             ViewModel
@@ -150,21 +140,26 @@ namespace CodeBucket.ViewControllers.PullRequests
                 });
 
             Root.Reset(root);
-        }
 
-        void AddCommentTapped()
-        {
-            var newCommentVC = new NewCommentViewController();
-            newCommentVC.ViewModel = ViewModel.NewCommentViewModel;
-            newCommentVC.OnActivation(d =>
+            OnActivation(disposable =>
             {
-                newCommentVC.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                            .Switch()
-                            .Subscribe(_ => DismissViewController(true, null))
-                            .AddTo(d);
-            });
+                addComment
+                    .Clicked
+                    .Subscribe(_ => NewCommentViewController.Present(this, ViewModel.AddComment))
+                    .AddTo(disposable);
 
-            PresentViewController(new ThemedNavigationController(newCommentVC), true, null);
+                this.WhenAnyValue(x => x.ViewModel.ParticipantCount)
+                    .Subscribe(x => participants.Text = x?.ToString() ?? "-")
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.ApprovalCount)
+                    .Subscribe(x => approvals.Text = x?.ToString() ?? "-")
+                    .AddTo(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.CommentCount)
+                    .Subscribe(x => commentCount.Text = x?.ToString() ?? "-")
+                    .AddTo(disposable);
+            });
         }
     }
 }

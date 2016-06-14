@@ -4,7 +4,7 @@ namespace CodeBucket.Core.ViewModels
 {
     public interface IRoutingViewModel
     {
-        IObservable<IBaseViewModel> RequestNavigation { get; }
+        IObservable<IViewModel> RequestNavigation { get; }
     }
 }
 

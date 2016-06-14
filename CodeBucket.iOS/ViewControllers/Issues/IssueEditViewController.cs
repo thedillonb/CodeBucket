@@ -5,9 +5,9 @@ using System;
 using ReactiveUI;
 using System.Reactive.Linq;
 
-namespace CodeBucket.Views.Issues
+namespace CodeBucket.ViewControllers.Issues
 {
-	public class IssueEditView : IssueModifyViewController<IssueEditViewModel>
+	public class IssueEditViewController : IssueModifyViewController<IssueEditViewModel>
     {
 		public override void ViewDidLoad()
 		{

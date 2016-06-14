@@ -1,4 +1,5 @@
 using System;
+using BitbucketSharp;
 using BitbucketSharp.Models;
 using CodeBucket.Core.Services;
 using ReactiveUI;
@@ -11,7 +12,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueComponentsViewModel : ReactiveObject, ILoadableViewModel
 	{
-        public IReadOnlyReactiveList<IssueComponentItemViewModel> Components { get; }
+        private bool _isLoaded;
+        public IReadOnlyReactiveList<IssueAttributeItemViewModel> Components { get; }
 
         private string _selectedValue;
         public string SelectedValue
@@ -21,6 +23,8 @@ namespace CodeBucket.Core.ViewModels.Issues
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public IssueComponentsViewModel(
             string username, string repository,
@@ -36,14 +40,18 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                components.Reset(await applicationService.Client.Repositories.Issues.GetComponents(username, repository));
+                if (_isLoaded) return;
+                var items = await applicationService.Client.AllItems(x => x.Repositories.Issues.GetComponents(username, repository));
+                components.Reset(items);
+                _isLoaded = true;
             });
         }
 
-        private IssueComponentItemViewModel CreateItemViewModel(IssueComponent component)
+        private IssueAttributeItemViewModel CreateItemViewModel(IssueComponent component)
         {
-            var vm = new IssueComponentItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
-            vm.WhenAnyValue(y => y.IsSelected).Skip(1).Subscribe(y => SelectedValue = y ? component.Name : null);
+            var vm = new IssueAttributeItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
             return vm;
         }
 	}

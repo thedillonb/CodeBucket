@@ -20,7 +20,14 @@ namespace CodeBucket.Core.ViewModels.Commits
 {
     public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly ReactiveList<CommitComment> _comments = new ReactiveList<CommitComment>();
+        private readonly IApplicationService _applicationService;
+
+        public string Username { get; }
+
         public string Repository { get; }
+
+        public string Node { get; }
 
         public bool ShowRepository { get; }
 
@@ -98,49 +105,23 @@ namespace CodeBucket.Core.ViewModels.Commits
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
             IAlertDialogService alertDialogService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
+            Username = username;
             Repository = repository;
+            Node = node;
             ShowRepository = showRepository;
 
             var shortNode = node.Substring(0, node.Length > 7 ? 7 : node.Length);
             Title = $"Commit {shortNode}";
 
-            var comments = new ReactiveList<CommitComment>();
-            Comments = comments.CreateDerivedCollection(comment =>
+            Comments = _comments.CreateDerivedCollection(comment =>
             {
                 var name = comment.User.DisplayName ?? comment.User.Username;
                 var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
                 return new CommentItemViewModel(name, avatar, comment.CreatedOn.Humanize(), comment.Content.Raw);
-            });
-
-            NewCommentViewModel = new NewCommentViewModel(async text =>
-            {
-                var model = new CreateChangesetCommentModel { Content = text };
-                var comment = await applicationService.Client.Commits.AddComment(username, repository, node, model);
-                comments.Add(new CommitComment
-                {
-                    CreatedOn = comment.UtcCreatedOn,
-                    Content = new CommitCommentContent
-                    {
-                        Raw = comment.Content,
-                        Html = comment.ContentRendered
-                    },
-                    User = new User
-                    {
-                        DisplayName = comment.DisplayName,
-                        Username = comment.Username,
-                        Links = new User.LinksModel
-                        {
-                            Avatar = new LinkModel
-                            {
-                                Href = comment.UserAvatarUrl
-                            }
-                        }
-                    }
-                });
             });
 
             GoToUserCommand
@@ -261,9 +242,36 @@ namespace CodeBucket.Core.ViewModels.Commits
                     .OnSuccess(x => Changeset = x);
      
                 applicationService.Client.AllItems(x => x.Commits.GetCommitComments(username, repository, node))
-                    .ToBackground(comments.Reset);
+                    .ToBackground(_comments.Reset);
 
                 return Task.WhenAll(commit, changeset);
+            });
+        }
+
+        public async Task AddComment(string text)
+        {
+            var model = new CreateChangesetCommentModel { Content = text };
+            var comment = await _applicationService.Client.Commits.AddComment(Username, Repository, Node, model);
+            _comments.Add(new CommitComment
+            {
+                CreatedOn = comment.UtcCreatedOn,
+                Content = new CommitCommentContent
+                {
+                    Raw = comment.Content,
+                    Html = comment.ContentRendered
+                },
+                User = new User
+                {
+                    DisplayName = comment.DisplayName,
+                    Username = comment.Username,
+                    Links = new User.LinksModel
+                    {
+                        Avatar = new LinkModel
+                        {
+                            Href = comment.UserAvatarUrl
+                        }
+                    }
+                }
             });
         }
     }

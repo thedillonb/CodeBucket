@@ -1,29 +1,29 @@
+using System;
 using BitbucketSharp.Models;
-using System.Collections.Generic;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using Splat;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueVersionsViewModel : ReactiveObject, ILoadableViewModel
 	{
-        private IList<IssueVersion> _versions;
-        public IList<IssueVersion> Versions
-        {
-            get { return _versions; }
-            private set { this.RaiseAndSetIfChanged(ref _versions, value); }
-        }
+        private bool _isLoaded;
+
+        public IReadOnlyReactiveList<IssueAttributeItemViewModel> Versions { get; }
 
         private string _selectedValue;
         public string SelectedValue
         {
             get { return _selectedValue; }
-            private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
+            set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public IssueVersionsViewModel(
             string username, string repository,
@@ -31,9 +31,28 @@ namespace CodeBucket.Core.ViewModels.Issues
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                Versions = await applicationService.Client.Repositories.Issues.GetVersions(username, repository);
+            var versions = new ReactiveList<IssueVersion>();
+            Versions = versions.CreateDerivedCollection(CreateItemViewModel);
+
+            this.WhenAnyValue(x => x.SelectedValue)
+                .SelectMany(_ => Versions)
+                .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                if (_isLoaded) return;
+                var items = await applicationService.Client.Repositories.Issues.GetVersions(username, repository);
+                versions.Reset(items);
+                _isLoaded = true;
             });
+        }
+
+        private IssueAttributeItemViewModel CreateItemViewModel(IssueVersion version)
+        {
+            var vm = new IssueAttributeItemViewModel(version.Name, string.Equals(SelectedValue, version.Name));
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
+            return vm;
         }
 	}
 }

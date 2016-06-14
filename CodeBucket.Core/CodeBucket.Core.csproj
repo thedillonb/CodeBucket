@@ -122,8 +122,7 @@
     <Compile Include="ViewModels\Repositories\RepositoryWatchersViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
     <Compile Include="ViewModels\IProvidesTitle.cs" />
-    <Compile Include="ViewModels\Issues\IssueComponentItemViewModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueMilestoneItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAttributeItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeItemViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
     <Compile Include="ViewModels\Commits\CommitItemViewModel.cs" />
@@ -152,6 +151,12 @@
     <Compile Include="ViewModels\Comments\NewCommentViewModel.cs" />
     <Compile Include="Services\ILoadingIndicatorService.cs" />
     <Compile Include="Utils\LoadingMessageHandler.cs" />
+    <Compile Include="Stores\CommitStore.cs" />
+    <Compile Include="Services\MessageService.cs" />
+    <Compile Include="Messages\IssueUpdatedMessage.cs" />
+    <Compile Include="Stores\RepositoryStore.cs" />
+    <Compile Include="Stores\LoadableResource.cs" />
+    <Compile Include="Stores\ApplicationStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -184,6 +189,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -195,6 +203,7 @@
     <Folder Include="ViewModels\Commits\" />
     <Folder Include="Extensions\" />
     <Folder Include="ViewModels\Comments\" />
+    <Folder Include="Stores\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

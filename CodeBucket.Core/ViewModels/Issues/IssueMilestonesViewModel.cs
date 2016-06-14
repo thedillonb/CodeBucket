@@ -8,18 +8,21 @@ using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssueMilestonesViewModel : ReactiveObject, ILoadableViewModel
+    public class IssueMilestonesViewModel : ReactiveObject, ILoadableViewModel, IViewModel
 	{
-        public IReadOnlyReactiveList<IssueMilestoneItemViewModel> Milestones { get; }
+        private bool _isLoaded;
+        public IReadOnlyReactiveList<IssueAttributeItemViewModel> Milestones { get; }
 
         private string _selectedValue;
 		public string SelectedValue
 		{
             get { return _selectedValue; }
-            private set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
+            set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
 		}
 
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public IssueMilestonesViewModel(
             string username, string repository,
@@ -35,14 +38,17 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                if (_isLoaded) return;
                 milestones.Reset(await applicationService.Client.Repositories.Issues.GetMilestones(username, repository));
+                _isLoaded = true;
             });
         }
 
-        private IssueMilestoneItemViewModel CreateItemViewModel(IssueMilestone component)
+        private IssueAttributeItemViewModel CreateItemViewModel(IssueMilestone milestone)
         {
-            var vm = new IssueMilestoneItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
-            vm.WhenAnyValue(y => y.IsSelected).Skip(1).Subscribe(y => SelectedValue = y ? component.Name : null);
+            var vm = new IssueAttributeItemViewModel(milestone.Name, string.Equals(SelectedValue, milestone.Name));
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
             return vm;
         }
 	}

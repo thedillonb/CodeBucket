@@ -34,8 +34,8 @@ namespace CodeBucket.Core.ViewModels.Comments
                 async _ =>
                 {
                     await doneAction(Text);
-                    Text = string.Empty;
                     DismissCommand.ExecuteIfCan();
+                    Text = string.Empty;
                 });
 
             DiscardCommand = ReactiveCommand.CreateAsyncTask(async _ =>

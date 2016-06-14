@@ -9,10 +9,10 @@ namespace CodeBucket.DialogElements
 {
     public class CheckElement : StringElement
     {
-        private readonly Subject<object> _tapped = new Subject<object>();
-        public IObservable<object> Clicked
+        private readonly Subject<bool> _checkedChanged = new Subject<bool>();
+        public IObservable<bool> CheckedChanged
         {
-            get { return _tapped.AsObservable(); }
+            get { return _checkedChanged.AsObservable(); }
         }
 
         private bool _checked;
@@ -47,7 +47,8 @@ namespace CodeBucket.DialogElements
         public override void Selected(UITableView tableView, NSIndexPath path)
         {
             base.Selected(tableView, path);
-            _tapped.OnNext(this);
+            Checked = !Checked;
+            _checkedChanged.OnNext(Checked);
         }
     }
 

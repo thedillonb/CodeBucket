@@ -5,15 +5,25 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Comments;
+using System.Threading.Tasks;
+using System.Reactive.Subjects;
+using System.Reactive;
 
 namespace CodeBucket.ViewControllers.Comments
 {
-    public class NewCommentViewController : BaseViewController<NewCommentViewModel>
+    public class NewCommentViewController : BaseViewController
     {
+        private readonly ISubject<Unit> _dismissSubject = new Subject<Unit>();
         private readonly UITextView _textView;
 
-        public NewCommentViewController()
+        public NewCommentViewModel ViewModel { get; }
+
+        public IObservable<Unit> Dismissed => _dismissSubject.AsObservable();
+
+        public NewCommentViewController(Func<string, Task> saveAction)
         {
+            ViewModel = new NewCommentViewModel(saveAction);
+
             Title = "New Comment";
             EdgesForExtendedLayout = UIRectEdge.None;
 
@@ -57,7 +67,21 @@ namespace CodeBucket.ViewControllers.Comments
                 this.WhenAnyValue(x => x.ViewModel.Text)
                     .Subscribe(x => _textView.Text = x)
                     .AddTo(d);
+
+                this.WhenAnyObservable(x => x.ViewModel.DismissCommand)
+                    .Select(_ => Unit.Default)
+                    .Subscribe(_dismissSubject)
+                    .AddTo(d);
             });
+        }
+
+        public static NewCommentViewController Present(UIViewController parent, Func<string, Task> saveAction)
+        {
+            var vc = new NewCommentViewController(saveAction);
+            var nav = new ThemedNavigationController(vc);
+            parent.PresentViewController(nav, true, null);
+            vc.Dismissed.Subscribe(_ => vc.DismissViewController(true, null));
+            return vc;
         }
 
         public override void ViewDidLoad()
