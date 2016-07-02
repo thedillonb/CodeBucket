@@ -115,7 +115,6 @@
     <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
-    <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="ViewModels\Commits\CommitViewModel.cs" />
     <Compile Include="Utils\Avatar.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
-    <Compile Include="Extensions\FunctionalExtensions.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="Extensions\ReactiveExtensions.cs" />
     <Compile Include="Extensions\ReactiveListExtensions.cs" />

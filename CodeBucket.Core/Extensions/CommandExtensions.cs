@@ -24,12 +24,6 @@ namespace ReactiveUI
             ExecuteIfCan(@this, null);
         }
 
-        public static IReactiveCommand<T> WithSubscription<T>(this IReactiveCommand<T> @this, Action<T> action)
-        {
-            @this.Subscribe(action);
-            return @this;
-        }
-
         public static IDisposable ToBarButtonItem(this IObservable<IReactiveCommand> @this, UIImage image, Action<UIBarButtonItem> assignment)
         {
             return ToBarButtonItem(@this, () => new UIBarButtonItem { Image = image }, assignment);

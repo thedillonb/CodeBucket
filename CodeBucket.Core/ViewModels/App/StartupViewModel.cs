@@ -113,7 +113,7 @@ namespace CodeBucket.Core.ViewModels.App
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to login successfully: " + e.Message).FireAndForget();
+                DisplayAlert("Unable to login successfully: " + e.Message).ToBackground();
                 GoToAccountsCommand.Execute(null);
             }
             finally

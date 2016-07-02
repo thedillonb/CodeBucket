@@ -1,6 +1,5 @@
 using System;
 using UIKit;
-using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.App;
 using Foundation;
 using SDWebImage;
@@ -87,7 +86,9 @@ namespace CodeBucket.ViewControllers
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            (UIApplication.SharedApplication.Delegate as AppDelegate).Do(y => y.Presenter.SlideoutNavigationController = slideoutController);
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
             vc.ViewModel.GoToDefaultTopView.Execute(null);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);

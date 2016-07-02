@@ -96,7 +96,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             var t2 = this.GetApplication().Client.Commits.Get(User, Repository, Node)
                          .OnSuccess(response => Commit = response);
 			await Task.WhenAll(t1, t2);
-            GetAllComments().FireAndForget();
+            GetAllComments().ToBackground();
         }
 
         private async Task GetAllComments()
@@ -124,7 +124,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to add comment: " + e.Message).FireAndForget();
+                DisplayAlert("Unable to add comment: " + e.Message).ToBackground();
 			}
         }
 
@@ -137,7 +137,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             }
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to approve commit: " + e.Message).FireAndForget();
+                DisplayAlert("Unable to approve commit: " + e.Message).ToBackground();
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to unapprove commit: " + e.Message).FireAndForget();
+                DisplayAlert("Unable to unapprove commit: " + e.Message).ToBackground();
 			}
 		}
 

@@ -214,7 +214,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 var name = await alertSerivce.PromptTextBox("Fork", "What would you like to name your fork?", Repository.Name, "Fork!");
                 await Fork(name);
             }
-            catch (TaskCanceledException e)
+            catch (TaskCanceledException)
             {
                 // Nothing to see here...
             }
