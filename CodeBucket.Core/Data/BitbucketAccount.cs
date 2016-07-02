@@ -8,7 +8,7 @@ using MvvmCross.Platform;
 
 namespace CodeBucket.Core.Data
 {
-    public class BitbucketAccount : IAccount, IDisposable
+    public class BitbucketAccount : IDisposable
     {
         private SQLiteConnection _database;
         private AccountFilters _filters;

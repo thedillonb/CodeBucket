@@ -37,7 +37,6 @@
     <Compile Include="Data\BitbucketAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
-    <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Messages\IssueAddMessage.cs" />
@@ -103,7 +102,6 @@
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\IAccount.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Services\AccountsService.cs" />
