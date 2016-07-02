@@ -110,7 +110,7 @@ namespace CodeBucket.ViewControllers
             }
         }
 
-        protected ICollection<Section> RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)
+        protected ICollection<Section> RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Func<Task> moreAction)
         {
             items = items ?? Enumerable.Empty<T>();
             var sec = new Section();
@@ -134,7 +134,7 @@ namespace CodeBucket.ViewControllers
             return new Section(text);
         }
 
-        protected ICollection<Section> RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Action moreAction)
+        protected ICollection<Section> RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Func<Task> moreAction)
         {
             var sections = new List<Section>();
 
@@ -160,9 +160,9 @@ namespace CodeBucket.ViewControllers
             return RenderSections(sections, moreAction);
         }
 
-        private static ICollection<Section> RenderSections(IEnumerable<Section> sections, Action moreAction)
+        private static ICollection<Section> RenderSections(IEnumerable<Section> sections, Func<Task> moreAction)
         {
-            var weakAction = new WeakReference<Action>(moreAction);
+            var weakAction = new WeakReference<Func<Task>>(moreAction);
             ICollection<Section> newSections = new LinkedList<Section>(sections);
 
             if (moreAction != null)
@@ -177,7 +177,7 @@ namespace CodeBucket.ViewControllers
 
                         var a = weakAction.Get();
                         if (a != null)
-                            await Task.Run(a);
+                            await a.Invoke();
 
                         var root = loadMore.GetRootElement();
                         root?.Remove(loadMore.Section, UITableViewRowAnimation.Fade);

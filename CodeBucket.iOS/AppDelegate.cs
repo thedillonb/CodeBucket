@@ -15,17 +15,19 @@ using System.Reactive.Subjects;
 
 namespace CodeBucket
 {
-	using MvvmCross.Platform;
-	using MvvmCross.Core.ViewModels;
-	using Foundation;
-	using UIKit;
+    using MvvmCross.Platform;
+    using MvvmCross.Core.ViewModels;
+    using Foundation;
+    using UIKit;
+    using System.Net.Http;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	/// The UIApplicationDelegate for the application. This class is responsible for launching the 
-	/// User Interface of the application, as well as listening (and optionally responding) to 
-	/// application events from iOS.
-	/// </summary>
-	[Register("AppDelegate")]
+    /// <summary>
+    /// The UIApplicationDelegate for the application. This class is responsible for launching the 
+    /// User Interface of the application, as well as listening (and optionally responding) to 
+    /// application events from iOS.
+    /// </summary>
+    [Register("AppDelegate")]
 	public class AppDelegate : MvxApplicationDelegate
 	{
         public override UIWindow Window { get; set; }
@@ -70,6 +72,21 @@ namespace CodeBucket
             Window.MakeKeyAndVisible();
 			return true;
 		}
+
+        class CustomHttpMessageHandler : DelegatingHandler
+        {
+            public CustomHttpMessageHandler()
+                : base(new HttpClientHandler())
+            {
+            }
+
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+            {
+                if (!string.Equals(request.Method.ToString(), "get", StringComparison.OrdinalIgnoreCase))
+                    NSUrlCache.SharedCache.RemoveAllCachedResponses();
+                return base.SendAsync(request, cancellationToken);
+            }
+        }
 
 		public override bool HandleOpenURL(UIApplication application, NSUrl url)
 		{

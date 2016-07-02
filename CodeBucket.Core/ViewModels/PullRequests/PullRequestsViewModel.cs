@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using MvvmCross.Core.ViewModels;
 using System;
 
@@ -45,14 +45,17 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 			Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
 			var state = "OPEN";
 			if (SelectedFilter == 1)
 				state = "MERGED";
 			else if (SelectedFilter == 2)
 				state = "DECLINED";
-			return PullRequests.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state, forceCacheInvalidation));
+
+            PullRequests.Items.Clear();
+            await this.GetApplication().Client.ForAllItems(x => x.PullRequests.Get(Username, Repository, state),
+                                                     PullRequests.Items.AddRange);
         }
 
         public class NavObject

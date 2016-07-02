@@ -1,8 +1,8 @@
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 
-namespace CodeBucket.Core.ViewModels.User
+namespace CodeBucket.Core.ViewModels.Users
 {
     public abstract class BaseUserCollectionViewModel : LoadableViewModel
     {

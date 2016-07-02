@@ -1,25 +1,22 @@
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.Repositories;
-using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
     class UserRepositoriesViewModel : RepositoriesViewModel
     {
-        public string Username
-        {
-            get;
-            private set;
-        }
+        public string Username { get; private set; }
 
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-			return Repositories.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation).Repositories.OrderBy(x => x.Name).ToList());
+            Repositories.Items.Clear();
+            return this.GetApplication().Client.ForAllItems(
+                x => x.Repositories.GetRepositories(Username),
+                Repositories.Items.AddRange);
         }
 
         public class NavObject

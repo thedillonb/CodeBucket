@@ -1,9 +1,8 @@
 using CodeBucket.Core.Data;
-using System.Linq;
-using BitbucketSharp;
 using System.Timers;
 using CodeBucket.Core.ViewModels.Accounts;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.Services
 {
@@ -11,7 +10,7 @@ namespace CodeBucket.Core.Services
     {
         private readonly Timer _timer;
 
-        public Client Client { get; private set; }
+        public BitbucketClient Client { get; private set; }
 		public BitbucketAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
@@ -27,7 +26,7 @@ namespace CodeBucket.Core.Services
 
                 try
                 {
-                    var ret = Client.RefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken);
+                    var ret = BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken).Result;
                     if (ret == null)
                         return;
 
@@ -35,8 +34,7 @@ namespace CodeBucket.Core.Services
                     Account.Token = ret.AccessToken;
                     accounts.Update(Account);
 
-                    UsersModel userInfo;
-                    Client = Client.BearerLogin(Account.Token, out userInfo);
+                    Client = BitbucketClient.WithBearerAuthentication(Account.Token);
                 }
                 catch
                 {
@@ -45,7 +43,7 @@ namespace CodeBucket.Core.Services
             };
         }
 
-		public void ActivateUser(BitbucketAccount account, Client client)
+		public void ActivateUser(BitbucketAccount account, BitbucketClient client)
         {
             Accounts.SetActiveAccount(account);
             Account = account;

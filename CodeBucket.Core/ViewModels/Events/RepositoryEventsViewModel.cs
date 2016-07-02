@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using BitbucketSharp.Models;
-using System.Linq;
+using CodeBucket.Client.Models;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -24,15 +23,9 @@ namespace CodeBucket.Core.ViewModels.Events
             Repository = navObject.Repository;
         }
 
-		protected override int GetTotalItemCount()
-		{
-			return this.GetApplication().Client.Users[Username].Repositories[Repository].GetEvents(0, 0).Count;
-		}
-
-		protected override List<EventModel> CreateRequest(int start, int limit)
+		protected override Task<EventsModel> CreateRequest(int start, int limit)
         {
-			var events = this.GetApplication().Client.Users[Username].Repositories[Repository].GetEvents(start, limit);
-			return events.Events.OrderByDescending(x => x.UtcCreatedOn).ToList();
+            return this.GetApplication().Client.Repositories.GetEvents(Username, Repository, start, limit);
         }
 
         public class NavObject

@@ -65,8 +65,11 @@ namespace CodeBucket.ViewControllers.Application
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), AtlassianIcon.Blogroll.ToImage()));
-			if (ViewModel.Teams != null && ViewModel.Account.ShowTeamEvents)
-                ViewModel.Teams.ForEach(team => eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), AtlassianIcon.Blogroll.ToImage())));
+            if (ViewModel.Teams != null && ViewModel.Account.ShowTeamEvents)
+            {
+                foreach (var team in ViewModel.Teams.Select(x => x.Username))
+                    eventsSection.Add(new MenuElement(team, () => ViewModel.GoToTeamEventsCommand.Execute(team), AtlassianIcon.Blogroll.ToImage()));
+            }
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
@@ -93,13 +96,15 @@ namespace CodeBucket.ViewControllers.Application
                 if (ViewModel.Groups?.Count > 0)
                 {
                     var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Groups") };
-                    ViewModel.Groups.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), AtlassianIcon.Group.ToImage())));
+                    foreach (var x in ViewModel.Groups)
+                        groupsTeamsSection.Add(new MenuElement(x.Name, () => ViewModel.GoToGroupCommand.Execute(x), AtlassianIcon.Group.ToImage()));
                     root.Add(groupsTeamsSection);
                 }
                 if (ViewModel.Teams?.Count > 0)
                 {
                     var groupsTeamsSection = new Section { HeaderView = new MenuSectionView("Teams") };
-                    ViewModel.Teams.ForEach(x => groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), AtlassianIcon.Userstatus.ToImage())));
+                    foreach (var x in ViewModel.Teams.Select(y => y.Username))
+                        groupsTeamsSection.Add(new MenuElement(x, () => ViewModel.GoToTeamCommand.Execute(x), AtlassianIcon.Userstatus.ToImage()));
                     root.Add(groupsTeamsSection);
                 }
 			}

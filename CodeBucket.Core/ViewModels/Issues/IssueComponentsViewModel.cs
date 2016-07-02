@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using System;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             var value = TxSevice.Get() as string;
             SelectedValue = value;
 
-            this.Bind(x => x.SelectedValue).Subscribe(x => SelectValue(x));
+            this.Bind(x => x.SelectedValue).Subscribe(x => SelectValue(x).ToBackground());
 		}
 
         private async Task SelectValue(string x)
@@ -65,12 +65,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 				try
 				{
 					IsSaving = true;
-                    var newIssue = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateComponent(x));
+                    var newIssue = await this.GetApplication().Client.Issues.UpdateComponent(Username, Repository, Id, x);
 					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
 				}
 				catch (Exception e)
 				{
-                    DisplayAlert("Unable to update issue component: " + e.Message);
+                    DisplayAlert("Unable to update issue component: " + e.Message).ToBackground();
 				}
 				finally
 				{
@@ -85,9 +85,10 @@ namespace CodeBucket.Core.ViewModels.Issues
 			ChangePresentation(new MvxClosePresentationHint(this));
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-            return Components.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetComponents(forceCacheInvalidation));
+            var items = await this.GetApplication().Client.Issues.GetComponents(Username, Repository);
+            Components.Items.Reset(items);
 		}
 
 		public class NavObject

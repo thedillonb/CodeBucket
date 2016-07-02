@@ -1,11 +1,11 @@
 using CodeBucket.ViewControllers;
-using CodeBucket.Core.ViewModels.User;
 using CodeBucket.DialogElements;
 using UIKit;
 using CoreGraphics;
 using CodeBucket.Core.Utils;
 using System;
 using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Views.User
 {

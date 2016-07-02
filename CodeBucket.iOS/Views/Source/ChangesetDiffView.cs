@@ -1,14 +1,11 @@
 using System;
-using CodeBucket.Views.Source;
 using UIKit;
 using Foundation;
 using System.Collections.Generic;
 using CodeBucket.Core.ViewModels.Source;
 using CodeBucket.ViewControllers;
-using CodeBucket.Utils;
 using System.Text;
 using System.Linq;
-using MvvmCross.Core.ViewModels;
 using Newtonsoft.Json;
 using WebKit;
 using CodeBucket.Utilities;
@@ -57,8 +54,8 @@ namespace CodeBucket.Views.Source
 			{
 				//Convert it to something light weight
 				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new { 
-					Id = x.CommentId, User = x.Username, Avatar = x.UserAvatarUrl, LineTo = x.LineTo, LineFrom = x.LineFrom,
-					Content = x.ContentRendered, Date = x.UtcLastUpdated
+                    Id = x.Id, User = x.User?.Username, Avatar = x?.User?.Links?.Avatar?.Href, LineTo = x?.Inline?.To, 
+                    LineFrom = x?.Inline?.From, Content = x.Content.Html, Date = x.UpdatedOn
 				}).ToList();
 
                 var c = JsonConvert.SerializeObject(slimComments);

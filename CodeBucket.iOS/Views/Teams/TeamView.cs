@@ -46,9 +46,8 @@ namespace CodeBucket.Views.Teams
                     }
                     else
                     {
-                        var name = x.FirstName + " " + x.LastName;
-                        HeaderView.SubText = string.IsNullOrWhiteSpace(name) ? x.Username : name;
-                        HeaderView.SetImage(new Avatar(x.Avatar).ToUrl(128), Images.Avatar);
+                        HeaderView.SubText = string.IsNullOrWhiteSpace(x.DisplayName) ? x.Username : x.DisplayName;
+                        HeaderView.SetImage(new Avatar(x?.Links?.Avatar?.Href).ToUrl(128), Images.Avatar);
                         RefreshHeaderView();
                     }
                 }));

@@ -5,12 +5,15 @@ namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoriesSharedViewModel : RepositoriesViewModel
     {
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            return Repositories.SimpleCollectionLoad(() => {
-                var items = this.GetApplication().Client.Account.GetRepositories(forceCacheInvalidation);
-                return items.Where(x => !string.Equals(x.Owner, this.GetApplication().Account.Username, System.StringComparison.OrdinalIgnoreCase)).OrderBy(x => x.Name).ToList();
-            });
+            var username = this.GetApplication().Account.Username;
+            Repositories.Items.Clear();
+
+            return this.GetApplication().Client.ForAllItems(
+                x => x.Repositories.GetRepositories(username), 
+                x => Repositories.Items.AddRange(x.Where(
+                    y => !string.Equals(y.Owner.Username, username, System.StringComparison.OrdinalIgnoreCase))));
         }
     }
 }

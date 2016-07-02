@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using System;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using MvvmCross.Core.ViewModels;
 
 namespace CodeBucket.Core.ViewModels.Issues
@@ -55,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			var issue = TxSevice.Get() as string;
 			SelectedMilestone = issue;
 
-            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
+            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x).ToBackground());
 		}
 
 		private async Task SelectMilestone(string x)
@@ -65,12 +65,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 				try
 				{
 					IsSaving = true;
-					var newIssue = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(x));
+                    var newIssue = await this.GetApplication().Client.Issues.UpdateMilestone(Username, Repository, Id, x);
 					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
 				}
 				catch (Exception e)
 				{
-                    DisplayAlert("Unable to update issue milestone: " + e.Message);
+                    DisplayAlert("Unable to update issue milestone: " + e.Message).ToBackground();
 				}
 				finally
 				{
@@ -85,10 +85,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 			ChangePresentation(new MvxClosePresentationHint(this));
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-			return Milestones.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetMilestones(forceCacheInvalidation));
-		}
+            var items = await this.GetApplication().Client.Issues.GetMilestones(Username, Repository);
+            Milestones.Items.Reset(items);
+        }
 
 		public class NavObject
 		{

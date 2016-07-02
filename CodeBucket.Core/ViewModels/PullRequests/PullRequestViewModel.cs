@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
@@ -13,23 +13,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         private bool _merged;
 		private readonly CollectionViewModel<PullRequestCommentModel> _comments = new CollectionViewModel<PullRequestCommentModel>();
 
-        public string User 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; private set; }
 
-        public string Repo 
-        { 
-            get; 
-            private set; 
-        }
+        public string Repository { get; private set; }
 
-        public ulong PullRequestId 
-        { 
-            get; 
-            private set; 
-        }
+        public int Id { get; private set; }
 
         public bool Merged
         {
@@ -67,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                     }
                     else
                     {
-                        ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId });
+                        ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id });
                     }
                 }); 
             }
@@ -80,28 +68,37 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public void Init(NavObject navObject)
         {
-            User = navObject.Username;
-            Repo = navObject.Repository;
-            PullRequestId = navObject.Id;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            Id = navObject.Id;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get(forceCacheInvalidation), response => PullRequest = response);
-			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetComments()).FireAndForget();
+            var t1 = this.GetApplication().Client.PullRequests.Get(Username, Repository, Id)
+                         .OnSuccess(response => PullRequest = response);
+
+            Comments.Items.Clear();
+            this.GetApplication().Client
+                .ForAllItems(x => x.PullRequests.GetComments(Username, Repository, Id), Comments.Items.AddRange)
+                .ToBackground();
+
             return t1;
         }
 
         public async Task AddComment(string text)
         {
-			await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].AddComment(text));
-            await Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetComments());
+            await this.GetApplication().Client.PullRequests.AddComment(Username, Repository, Id, text);
+
+            Comments.Items.Clear();
+            await this.GetApplication().Client
+                      .ForAllItems(x => x.PullRequests.GetComments(Username, Repository, Id), Comments.Items.AddRange);
         }
 
         public async Task Merge()
         {
-			await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Merge());
-			await this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get(true), r => PullRequest = r);
+            await this.GetApplication().Client.PullRequests.Merge(Username, Repository, Id);
+            PullRequest = await this.GetApplication().Client.PullRequests.Get(Username, Repository, Id);
         }
 
         public ICommand MergeCommand
@@ -120,7 +117,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public ulong Id { get; set; }
+            public int Id { get; set; }
         }
     }
 }

@@ -1,9 +1,9 @@
 using CodeBucket.DialogElements;
-using CodeBucket.Core.ViewModels.User;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.Utils;
 using UIKit;
 using System;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Views.User
 {

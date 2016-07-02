@@ -1,8 +1,9 @@
 using System.Windows.Input;
 using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
-using BitbucketSharp.Models.V2;
+using CodeBucket.Client.Models.V2;
 using CodeBucket.Core.Utils;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -39,12 +40,11 @@ namespace CodeBucket.Core.ViewModels.Commits
 			Repository = navObject.Repository;
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-            return Commits.RequestModel(() => GetRequest(null), response => {
-                SetMoreItems(response);
-                Commits.Items.Reset(response.Values);
-            });
+            var items = await GetRequest(null);
+            SetMoreItems(items);
+            Commits.Items.Reset(items.Values);
 		}
 
         private void SetMoreItems(Collection<CommitModel> c)
@@ -55,15 +55,15 @@ namespace CodeBucket.Core.ViewModels.Commits
             }
             else
             {
-                Commits.MoreItems = () => {
-                    var items = GetRequest(c.Next);
+                Commits.MoreItems = async () => {
+                    var items = await GetRequest(c.Next);
                     Commits.Items.AddRange(items.Values);
                     SetMoreItems(items);
                 };
             }
         }
 
-        protected abstract Collection<CommitModel> GetRequest(string next);
+        protected abstract Task<Collection<CommitModel>> GetRequest(string next);
 
 		public class NavObject
 		{

@@ -2,7 +2,7 @@ using System;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -28,13 +28,13 @@ namespace CodeBucket.Core.ViewModels.Issues
 				};
 
 				IsSaving = true;
-				var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(createIssueModel));
+                var data = await this.GetApplication().Client.Issues.Create(Username, Repository, createIssueModel);
 				Messenger.Publish(new IssueAddMessage(this) { Issue = data });
 				ChangePresentation(new MvxClosePresentationHint(this));
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to save the issue: " + e.Message);
+                DisplayAlert("Unable to save the issue: " + e.Message).ToBackground();
 			}
 			finally
 			{
@@ -42,7 +42,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			}
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override Task Load()
 		{
 			return Task.FromResult(false);
 		}

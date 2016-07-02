@@ -22,7 +22,7 @@ namespace CodeBucket.Core.ViewModels
             set { _isLoading = value; RaisePropertyChanged(() => IsLoading); }
         }
 
-        private async Task LoadResource(bool forceCacheInvalidation)
+        private async Task LoadResource()
         {
             var retry = false;
             while (true)
@@ -32,7 +32,7 @@ namespace CodeBucket.Core.ViewModels
 
                 try
                 {
-                    await Load(forceCacheInvalidation);
+                    await Load();
                     return;
                 }
                 catch (WebException)
@@ -45,22 +45,22 @@ namespace CodeBucket.Core.ViewModels
             }
         }
 
-        protected virtual Task ExecuteLoadResource(bool forceCacheInvalidation)
+        protected virtual Task ExecuteLoadResource()
         {
-            return LoadResource(forceCacheInvalidation);
+            return LoadResource();
         }
 
         protected LoadableViewModel()
         {
-            _loadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(x), _ => !IsLoading);
+            _loadCommand = new MvxCommand<object>(_ => HandleLoadCommand(), _ => !IsLoading);
         }
 
-        private async Task HandleLoadCommand(bool? forceCacheInvalidation)
+        private async Task HandleLoadCommand()
         {
             try
             {
                 IsLoading = true;
-                await ExecuteLoadResource(forceCacheInvalidation ?? false);
+                await ExecuteLoadResource();
             }
             catch (OperationCanceledException e)
             {
@@ -69,7 +69,8 @@ namespace CodeBucket.Core.ViewModels
             }
             catch (Exception e)
             {
-                DisplayAlert("The request to load this item did not complete successfuly! " + e.Message);
+                DisplayAlert("The request to load this item did not complete successfuly! " + e.Message)
+                    .ToBackground();
             }
             finally
             {
@@ -77,7 +78,7 @@ namespace CodeBucket.Core.ViewModels
             }
         }
 
-        protected abstract Task Load(bool forceCacheInvalidation);
+        protected abstract Task Load();
     }
 }
 

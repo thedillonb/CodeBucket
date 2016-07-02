@@ -19,9 +19,12 @@ namespace CodeBucket.Core.ViewModels.Teams
             get { return new MvxCommand<string>(x => ShowViewModel<TeamViewModel>(new TeamViewModel.NavObject { Name = x })); }
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			return Teams.SimpleCollectionLoad(() => this.GetApplication().Client.Account.GetPrivileges(forceCacheInvalidation).Teams.Keys.OrderBy(a => a).ToList());
+            Teams.Items.Clear();
+            await this.GetApplication().Client.ForAllItems(
+                x => x.Teams.GetAll(), 
+                x => Teams.Items.AddRange(x.Select(y => y.Username)));
         }
     }
 }

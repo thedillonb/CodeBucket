@@ -3,14 +3,14 @@ using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Repositories;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Source;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System.Collections.Generic;
 using System;
-using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.Services;
-using BitbucketSharp.Models.V2;
+using CodeBucket.Client.Models.V2;
 using System.Linq;
 using MvvmCross.Platform;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -89,10 +89,12 @@ namespace CodeBucket.Core.ViewModels.Commits
             ShowRepository = navObject.ShowRepository;
         }
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetDiffs(forceCacheInvalidation), response => Commits = response);
-            var t2 = this.RequestModel(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit(), response => Commit = response);
+            var t1 = this.GetApplication().Client.Commits.GetDiffStat(User, Repository, Node)
+                         .OnSuccess(response => Commits = response);
+            var t2 = this.GetApplication().Client.Commits.Get(User, Repository, Node)
+                         .OnSuccess(response => Commit = response);
 			await Task.WhenAll(t1, t2);
             GetAllComments().FireAndForget();
         }
@@ -100,12 +102,12 @@ namespace CodeBucket.Core.ViewModels.Commits
         private async Task GetAllComments()
         {
             var comments = new List<CommitComment>();
-            var ret = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetComments());
+            var ret = await this.GetApplication().Client.Commits.GetComments(User, Repository, Node);
             comments.AddRange(ret.Values);
 
             while (ret.Next != null)
             {
-                ret = await Task.Run(() => this.GetApplication().Client.Request2<Collection<CommitComment>>(ret.Next));
+                ret = await this.GetApplication().Client.Get<Collection<CommitComment>>(ret.Next);
                 comments.AddRange(ret.Values);
             }
 
@@ -116,7 +118,8 @@ namespace CodeBucket.Core.ViewModels.Commits
         {
 			try
 			{
-				await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Comments.Create(text));
+                var comment = new NewChangesetComment { Content = text };
+                await this.GetApplication().Client.Commits.CreateComment(User, Repository, Node, comment);
                 await GetAllComments();
 			}
 			catch (Exception e)
@@ -129,9 +132,9 @@ namespace CodeBucket.Core.ViewModels.Commits
 		{
 			try
 			{
-                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Approve());
-                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
-			}
+                await this.GetApplication().Client.Commits.Approve(User, Repository, Node);
+                Commit = await this.GetApplication().Client.Commits.Get(User, Repository, Node);
+            }
 			catch (Exception e)
 			{
                 DisplayAlert("Unable to approve commit: " + e.Message).FireAndForget();
@@ -142,8 +145,8 @@ namespace CodeBucket.Core.ViewModels.Commits
 		{
 			try
 			{
-                await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].Unapprove());
-                Commit = await Task.Run(() => this.GetApplication().Client.Users[User].Repositories[Repository].Changesets[Node].GetCommit());
+                await this.GetApplication().Client.Commits.Unapprove(User, Repository, Node);
+                Commit = await this.GetApplication().Client.Commits.Get(User, Repository, Node);
 			}
 			catch (Exception e)
 			{

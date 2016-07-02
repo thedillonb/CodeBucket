@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using MvvmCross.Core.ViewModels;
 using System.Windows.Input;
 using CodeBucket.Core.Services;
@@ -93,32 +93,31 @@ namespace CodeBucket.Core.ViewModels.Wiki
             CanEdit = true;
         }
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-			return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Wikis[Page].GetInfo(forceCacheInvalidation), x => {
-				Wiki = x;
+            var x = await this.GetApplication().Client.Repositories.GetWiki(Username, Repository);
+			Wiki = x;
 
-				string content = string.Empty;
-				if (string.Equals(x.Markup, "markdown"))
-					content = GetService<IMarkdownService>().ConvertMarkdown(x.Data);
-				else if (string.Equals(x.Markup, "creole"))
-					content = GetService<IMarkdownService>().ConvertCreole(x.Data);
-				else if (string.Equals(x.Markup, "textile"))
-					content = GetService<IMarkdownService>().ConvertTextile(x.Data);
-				else if (string.Equals(x.Markup, "rest"))
-				{
-					content = x.Data;
-				}
+			string content = string.Empty;
+			if (string.Equals(x.Markup, "markdown"))
+				content = GetService<IMarkdownService>().ConvertMarkdown(x.Data);
+			else if (string.Equals(x.Markup, "creole"))
+				content = GetService<IMarkdownService>().ConvertCreole(x.Data);
+			else if (string.Equals(x.Markup, "textile"))
+				content = GetService<IMarkdownService>().ConvertTextile(x.Data);
+			else if (string.Equals(x.Markup, "rest"))
+			{
+				content = x.Data;
+			}
 
-                var path = CreateHtmlFile(Page, content);
-				path = path.Replace(" ", "%20");
-				ContentUrl = "file://" + path + "#" + Environment.TickCount;
-			});
+            var path = CreateHtmlFile(Page, content);
+			path = path.Replace(" ", "%20");
+			ContentUrl = "file://" + path + "#" + Environment.TickCount;
 		}
 
         public async Task<string> GetData(string page)
         {
-            var x = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Wikis[page].GetInfo(true));
+            var x = await this.GetApplication().Client.Repositories.GetWiki(Username, Repository);
 
             string content = string.Empty;
             if (string.Equals(x.Markup, "markdown"))

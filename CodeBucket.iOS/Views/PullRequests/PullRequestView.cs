@@ -38,7 +38,7 @@ namespace CodeBucket.Views.PullRequests
         {
             base.ViewDidLoad();
 
-            Title = "Pull Request #" + ViewModel.PullRequestId;
+            Title = "Pull Request #" + ViewModel.Id;
 
             HeaderView.SetImage(null, Images.Avatar);
 

@@ -5,7 +5,7 @@ using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Messages;
 using MvvmCross.Plugins.Messenger;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System.Collections.Generic;
 using System;
 using CodeBucket.Core.Utils;
@@ -130,7 +130,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			return null;
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
 
             LinkedList<Tuple<string, string>> filter = new LinkedList<Tuple<string, string>>();
@@ -156,7 +156,8 @@ namespace CodeBucket.Core.ViewModels.Issues
 				filter.AddLast(new Tuple<string, string>("sort", ((IssuesFilterModel.Order)issuesFilter.OrderBy).ToString().ToLower()));
             }
 
-			return Issues.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetIssues(0, 50, filter).Issues);
+            var items = await this.GetApplication().Client.Issues.GetAll(Username, Repository, 0, 50, filter);
+            Issues.Items.Reset(items.Issues);
 
         }
 

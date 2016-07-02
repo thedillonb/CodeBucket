@@ -1,17 +1,16 @@
 using System;
 using System.Threading.Tasks;
 using MvvmCross.Platform;
-using System.Collections.Generic;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Services;
 using System.IO;
+using CodeBucket.Client.Models.V2;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
-		private readonly CollectionViewModel<ChangesetCommentModel> _comments = new CollectionViewModel<ChangesetCommentModel>();
 		private ChangesetDiffModel _commitFileModel;
 		private string _actualFilename;
 
@@ -27,10 +26,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		public string Filename { get; private set; }
 
-		public CollectionViewModel<ChangesetCommentModel> Comments
-		{
-			get { return _comments; }
-		}
+        public CollectionViewModel<CommitComment> Comments { get; } = new CollectionViewModel<CommitComment>();
 
 		public void Init(NavObject navObject)
         {
@@ -48,19 +44,19 @@ namespace CodeBucket.Core.ViewModels.Source
 			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as ChangesetDiffModel;
         }
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
 			//Make sure we have this information. If not, go get it
 			if (_commitFileModel == null)
 			{
-				var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetDiffs(forceCacheInvalidation));
+                var data = await this.GetApplication().Client.Commits.GetDiffStat(Username, Repository, Branch);
 				_commitFileModel = data.First(x => string.Equals(x.File, Filename));
 			}
 
 			if (_commitFileModel.Type == "added" || _commitFileModel.Type == "modified")
 			{
 				var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename));
-                var content = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source.GetFile(Filename));
+                var content = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, Branch, Filename);
                 var isText = content.Encoding == null;
 
 				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
@@ -88,13 +84,13 @@ namespace CodeBucket.Core.ViewModels.Source
 
 			if (_commitFileModel.Type == "removed" || _commitFileModel.Type == "modified")
 			{
-                var changeset = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].GetCommit());
+                var changeset = await this.GetApplication().Client.Commits.Get(Username, Repository, Branch);
                 if (changeset.Parents == null || changeset.Parents.Count == 0)
 					throw new Exception("Diff has no parent. Unable to generate view.");
 
                 var parent = changeset.Parents[0].Hash;
 				var filepath2 = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(Filename) + ".parent");
-                var content = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[parent].Source.GetFile(Filename));
+                var content = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, parent, Filename);
                 var isText = content.Encoding == null;
 
 				using (var stream = new System.IO.FileStream(filepath2, System.IO.FileMode.Create, System.IO.FileAccess.Write))
@@ -125,13 +121,17 @@ namespace CodeBucket.Core.ViewModels.Source
 			else if (File2 != null)
 				FilePath = File2;
 
-			Comments.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.GetComments(forceCacheInvalidation)).FireAndForget();
+            Comments.Items.Clear();
+            this.GetApplication().Client.ForAllItems(
+                x => x.Commits.GetComments(Username, Repository, Branch), Comments.Items.AddRange)
+                .ToBackground();
 		}
 
 		public async Task PostComment(string comment, int? lineFrom, int? lineTo)
 		{
-			var c = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.Create(comment, lineFrom, lineTo, filename: Filename));
-			Comments.Items.Add(c);
+            var newComment = new NewChangesetComment { Content = comment, Filename = Filename, LineFrom = lineFrom, LineTo = lineTo };
+            var c = await this.GetApplication().Client.Commits.CreateComment(Username, Repository, Branch, newComment);
+			//Comments.Items.Add(c);
 		}
 
 		public class NavObject

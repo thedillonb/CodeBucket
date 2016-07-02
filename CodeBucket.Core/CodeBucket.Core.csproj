@@ -78,11 +78,11 @@
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
-    <Compile Include="ViewModels\User\BaseUserCollectionViewModel.cs" />
-    <Compile Include="ViewModels\User\ProfileViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowersViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
-    <Compile Include="ViewModels\User\GroupMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Users\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
+    <Compile Include="ViewModels\Users\GroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\WatchersViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupViewModel.cs" />
@@ -133,7 +133,6 @@
     <Compile Include="ViewModels\Commits\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Commits\CommitViewModel.cs" />
     <Compile Include="Utils\Avatar.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Extensions\FunctionalExtensions.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
@@ -145,35 +144,15 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="RestSharp.MonoTouch">
-      <HintPath>..\lib\BitbucketSharp\lib\RestSharp.MonoTouch.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.0.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.0.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.0.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
@@ -194,6 +173,27 @@
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.0.1\lib\portable-win+net45+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform.iOS">
+      <HintPath>..\packages\MvvmCross.Platform.4.2.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform">
+      <HintPath>..\packages\MvvmCross.Platform.4.2.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Messenger">
+      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.2.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.iOS">
+      <HintPath>..\packages\MvvmCross.Core.4.2.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core">
+      <HintPath>..\packages\MvvmCross.Core.4.2.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp.MonoTouch">
+      <HintPath>..\lib\BitbucketSharp\lib\RestSharp.MonoTouch.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />
@@ -220,9 +220,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\BitbucketSharp\BitbucketSharp.MonoTouch\BitbucketSharp.MonoTouch.csproj">
-      <Project>{E0EC486D-3341-4B9C-BF4D-146A0BCB8A5A}</Project>
-      <Name>BitbucketSharp.MonoTouch</Name>
+    <ProjectReference Include="..\CodeBucket.Client\CodeBucket.Client.csproj">
+      <Project>{B0C2E314-A717-4776-BB83-61638F2A5C6D}</Project>
+      <Name>CodeBucket.Client</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

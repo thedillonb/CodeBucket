@@ -1,7 +1,7 @@
 ﻿using System;
 using Foundation;
 using UIKit;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Utils;
 using CodeBucket.TableViewCells;
 using Humanizer;

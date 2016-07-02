@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -51,23 +51,17 @@ namespace CodeBucket.Core.ViewModels.Source
 			_selectedFilter = navObject.IsShowingBranches ? 0 : 1;
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
 			if (SelectedFilter == 0)
 			{
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches.GetBranches(forceCacheInvalidation), response =>
-				{
-						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-						Items.Items.Reset(response.Values.OrderBy(x => x.Branch).Select(x => new ViewObject { Name = x.Branch, Object = x }));
-				});
+                var response = await this.GetApplication().Client.Repositories.GetBranches(Username, Repository);
+                Items.Items.Reset(response.Values.OrderBy(x => x.Branch).Select(x => new ViewObject { Name = x.Branch, Object = x }));
 			}
 			else
 			{
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags(forceCacheInvalidation), response => 
-				{
-						//this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-						Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x.Value }));
-				});
+                var response = await this.GetApplication().Client.Repositories.GetTags(Username, Repository);
+                Items.Items.Reset(response.Select(x => new ViewObject { Name = x.Key, Object = x.Value }));
 			}
 		}
 

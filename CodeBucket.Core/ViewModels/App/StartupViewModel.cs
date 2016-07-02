@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Accounts;
-using BitbucketSharp;
-using BitbucketSharp.Models;
+using CodeBucket.Client;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Utils;
 using MvvmCross.Core.ViewModels;
 
@@ -95,7 +95,7 @@ namespace CodeBucket.Core.ViewModels.App
                 IsLoggingIn = true;
                 Status = "Logging in as " + account.Username;
 
-                var ret = await Task.Run(() => Client.RefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, account.RefreshToken));
+                var ret = await BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, account.RefreshToken);
                 if (ret == null)
                 {
                     await DisplayAlert("Unable to refresh OAuth token. Please login again.");
@@ -140,11 +140,12 @@ namespace CodeBucket.Core.ViewModels.App
             _applicationService.ActivateUser(account, client);
         }
 
-        public async Task<Client> LoginAccount(BitbucketAccount account)
+        public async Task<BitbucketClient> LoginAccount(BitbucketAccount account)
         {
             //Create the client
-            UsersModel userInfo = null;
-            var client = await Task.Run(() => Client.BearerLogin(account.Token, out userInfo));
+            var client = BitbucketClient.WithBearerAuthentication(account.Token);
+            var userInfo = await client.Users.GetCurrent();
+            client.Username = userInfo.User.Username;
             account.Username = userInfo.User.Username;
             account.AvatarUrl = userInfo.User.Avatar.Replace("/avatar/32", "/avatar/64");
             _accountsService.Update(account);

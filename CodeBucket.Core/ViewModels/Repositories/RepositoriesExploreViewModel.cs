@@ -1,8 +1,7 @@
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.Repositories;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System;
 using System.Linq;
 
@@ -59,12 +58,12 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			try
 			{
 				IsSearching = true;
-				var data = await Task.Run(() => this.GetApplication().Client.Repositories.Search(SearchText).Repositories);
-                Repositories.Items.Reset(data);
+				var data = await this.GetApplication().Client.Repositories.Search(SearchText);
+                Repositories.Items.Reset(data.Repositories);
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Failed to retrieve list of repositories. " + e.Message);
+                DisplayAlert("Failed to retrieve list of repositories. " + e.Message).ToBackground();
 			}
 			finally
 			{

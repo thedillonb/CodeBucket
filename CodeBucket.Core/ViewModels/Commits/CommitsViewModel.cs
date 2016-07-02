@@ -1,4 +1,6 @@
-using BitbucketSharp.Models.V2;
+using System.Threading.Tasks;
+using CodeBucket.Client.Models;
+using CodeBucket.Client.Models.V2;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
@@ -6,11 +8,11 @@ namespace CodeBucket.Core.ViewModels.Commits
     {
         public string Branch { get; private set; }
 
-        protected override Collection<CommitModel> GetRequest(string next)
+        protected override async Task<Collection<CommitModel>> GetRequest(string next)
         {
-            return next == null ? 
-                this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets.GetCommits(Branch) : 
-                this.GetApplication().Client.Request2<Collection<CommitModel>>(next);
+            return await (next == null ? 
+                this.GetApplication().Client.Commits.GetAll(Username, Repository, Branch) :
+                this.GetApplication().Client.Get<Collection<CommitModel>>(next));
         }
 
         public void Init(NavObject navObject)

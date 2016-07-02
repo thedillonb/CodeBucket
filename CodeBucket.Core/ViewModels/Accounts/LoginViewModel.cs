@@ -1,9 +1,9 @@
 using System;
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Data;
-using BitbucketSharp;
+using CodeBucket.Client;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
@@ -59,15 +59,9 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-                var ret = await Task.Run(() => Client.GetAuthorizationCode(ClientId, ClientSecret, Code));
-                var data = await Task.Run(() => {
-                    UsersModel u;
-                    var c = Client.BearerLogin(ret.AccessToken, out u);
-                    return Tuple.Create(c, u);
-                });
-
-                var bitbucketClient = data.Item1;
-                var usersModel = data.Item2;
+                var ret = await BitbucketClient.GetAuthorizationCode(ClientId, ClientSecret, Code);
+                var bitbucketClient = BitbucketClient.WithBearerAuthentication(ret.AccessToken);
+                var usersModel = await bitbucketClient.Users.GetCurrent();
 
                 var account = _accountsService.Find(usersModel.User.Username);
                 if (account == null)

@@ -1,25 +1,15 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using BitbucketSharp.Models;
-using System.Linq;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
 	public class GroupsViewModel : LoadableViewModel
 	{
-		private readonly CollectionViewModel<GroupModel> _orgs = new CollectionViewModel<GroupModel>();
+        public CollectionViewModel<GroupModel> Groups { get; } = new CollectionViewModel<GroupModel>();
 
-		public CollectionViewModel<GroupModel> Organizations
-        {
-            get { return _orgs; }
-        }
-
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; private set; }
 
         public void Init(NavObject navObject)
         {
@@ -31,9 +21,10 @@ namespace CodeBucket.Core.ViewModels.Groups
 			get { return new MvxCommand<GroupModel>(x => ShowViewModel<GroupViewModel>(new GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name }));}
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			return Organizations.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Groups.GetGroups(forceCacheInvalidation).OrderBy(a => a.Name).ToList());
+            var response = await this.GetApplication().Client.Groups.GetGroups(Username);
+            Groups.Items.Reset(response);
         }
 
         public class NavObject

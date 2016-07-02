@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.ViewModels.Events;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
@@ -167,27 +167,28 @@ namespace CodeBucket.Core.ViewModels.Repositories
         }
 
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetInfo(forceCacheInvalidation), response => Repository = response);
+            var t1 = this.GetApplication().Client.Repositories.Get(Username, RepositorySlug)
+                         .OnSuccess(x => Repository = x);
 
-			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches.GetBranches(forceCacheInvalidation), 
-				response => Branches = response.Values.ToList()).FireAndForget();
+            this.GetApplication().Client.Repositories.GetBranches(Username, RepositorySlug)
+                .ToBackground(x => Branches = x.Values.ToList());
 
-            LoadReadme().FireAndForget();
+            LoadReadme().ToBackground();
 
-            Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Issues.GetIssues(0, 0))
-                .ContinueWith(x => { Issues = x.Result.Count; }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            this.GetApplication().Client.Issues.GetAll(Username, RepositorySlug, 0, 0)
+                .ToBackground(x => Issues = x.Count);
 
             return t1;
         }
 
         private async Task LoadReadme()
         {
-            var primaryBranch = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].GetPrimaryBranch(true));
+            var primaryBranch = await this.GetApplication().Client.Repositories.GetPrimaryBranch(Username, RepositorySlug);
             _primaryBranch = primaryBranch.Name;
-            var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[RepositorySlug].Branches[primaryBranch.Name].Source[""].GetInfo());
-            var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme"));
+            var data = await this.GetApplication().Client.Repositories.GetSourceInfo(Username, RepositorySlug, _primaryBranch, string.Empty);
+            var any = data.Files.FirstOrDefault(x => x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1).ToLower().StartsWith("readme", StringComparison.Ordinal));
             if (any != null)
             {
                 _readmeFilename = any.Path;
@@ -224,12 +225,12 @@ namespace CodeBucket.Core.ViewModels.Repositories
 			try
 			{
                 IsLoading = true;
-				var fork = await Task.Run(() => this.GetApplication().Client.Users[Repository.Owner].Repositories[Repository.Name].ForkRepository(name));
-				ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
+                var fork = await this.GetApplication().Client.Repositories.Fork(Username, RepositorySlug, name);
+				ShowViewModel<RepositoryViewModel>(new NavObject { Username = fork.Owner, RepositorySlug = fork.Slug });
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to successfully fork the repository: " + e.Message);
+                DisplayAlert("Unable to successfully fork the repository: " + e.Message).ToBackground();
 			}
             finally
             {

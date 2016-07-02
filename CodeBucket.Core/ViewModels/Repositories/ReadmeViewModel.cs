@@ -57,12 +57,11 @@ namespace CodeBucket.Core.ViewModels.Repositories
             _markdownService = markdownService;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
-            var source = this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source;
-            _htmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + Filename;
-            var file = await Task.Run(() => source.GetFile(Filename));
+            _htmlUrl = $"http://bitbucket.org/{Uri.EscapeDataString(Username)}/{Uri.EscapeDataString(Repository)}/src/{Uri.EscapeDataString(Branch)}/{Filename}";
+            var file = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, Branch, Filename);
             string readme = file.Data;
             string data;
             if (filepath.EndsWith("textile", StringComparison.Ordinal))

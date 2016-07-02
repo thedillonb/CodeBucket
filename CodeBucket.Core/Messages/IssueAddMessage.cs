@@ -1,5 +1,5 @@
 using System;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using MvvmCross.Plugins.Messenger;
 
 namespace CodeBucket.Core.Messages

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Source;
-using CodeBucket.Core.ViewModels.User;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.ViewModels.PullRequests;
 using CodeBucket.Core.ViewModels.Commits;
 using Newtonsoft.Json;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -55,28 +55,31 @@ namespace CodeBucket.Core.ViewModels.Events
 //			}
 //		}
 
-		protected abstract List<EventModel> CreateRequest(int start, int limit);
+		protected abstract Task<EventsModel> CreateRequest(int start, int limit);
 
-		protected abstract int GetTotalItemCount();
-
-//
-//		protected virtual List<EventModel> GetData(int start = 0, int limit = _dataLimit)
-//		{
-//			var events = Application.Client.Users[Username].GetEvents(start, limit);
-//			return events.Events.OrderByDescending(x => x.UtcCreatedOn).ToList();
-//		}
-//
-//		protected virtual int GetTotalItemCount()
-//		{
-//			return Application.Client.Users[Username].GetEvents(0, 0).Count;
-//		}
-
-		protected override Task Load(bool forceDataRefresh)
+        int lastItems = 0;
+        private async Task MoreItems()
         {
-			return Task.Run(() => this.RequestModel(() => CreateRequest(0, 50), response => {
-				//this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
-                Events.Items.Reset(CreateDataFromLoad(response));
-            }));
+            var items = await CreateRequest(lastItems, 50);
+            Events.Items.AddRange(CreateDataFromLoad(items.Events));
+            lastItems += items.Count;
+            if (items.Count == 50)
+                Events.MoreItems = MoreItems;
+            else
+                Events.MoreItems = null;
+        }
+
+		protected override async Task Load()
+        {
+            lastItems = 0;
+            var items = await CreateRequest(lastItems, 50);
+            Events.Items.Reset(CreateDataFromLoad(items.Events));
+            lastItems += items.Count;
+
+            if (items.Count == 50)
+                Events.MoreItems = MoreItems;
+            else
+                Events.MoreItems = null;
         }
 
         private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
@@ -184,7 +187,7 @@ namespace CodeBucket.Core.ViewModels.Events
 //            });
 //        }
 //
-		private void GoToPullRequest(RepositoryDetailedModel repo, ulong id)
+		private void GoToPullRequest(RepositoryDetailedModel repo, int id)
         {
 			if (repo == null)
 				return;

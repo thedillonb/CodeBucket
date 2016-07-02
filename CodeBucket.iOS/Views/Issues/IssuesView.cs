@@ -1,7 +1,7 @@
 using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Services;
 using MvvmCross.Platform;
 using CodeBucket.Core.Filters;

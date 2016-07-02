@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Events;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 
-namespace CodeBucket.Core.ViewModels.User
+namespace CodeBucket.Core.ViewModels.Users
 {
     public class ProfileViewModel : LoadableViewModel
     {
@@ -54,9 +54,10 @@ namespace CodeBucket.Core.ViewModels.User
             Username = navObject.Username;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			return this.RequestModel(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation), response => User = response.User);
+            var response = await this.GetApplication().Client.Users.GetUser(Username);
+            User = response.User;
         }
 
         public class NavObject

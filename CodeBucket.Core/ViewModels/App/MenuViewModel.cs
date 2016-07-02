@@ -3,17 +3,16 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
-using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
-using CodeBucket.Core.ViewModels.User;
-using System.Threading.Tasks;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.ViewModels.Teams;
 using MvvmCross.Platform;
 using CodeBucket.Core.Utils;
 using CodeBucket.Core.ViewModels.Issues;
+using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -84,15 +83,15 @@ namespace CodeBucket.Core.ViewModels.App
 
         private readonly IApplicationService _application;
 
-		private List<GroupModel> _groups;
-		public List<GroupModel> Groups
+		private IList<GroupModel> _groups;
+		public IList<GroupModel> Groups
 		{
 			get { return _groups; }
             set { this.RaiseAndSetIfChanged(ref _groups, value); }
 		}
 
-		private List<string> _teams;
-		public List<string> Teams
+        private IList<User> _teams;
+		public IList<User> Teams
 		{
 			get { return _teams; }
             set { this.RaiseAndSetIfChanged(ref _teams, value); }
@@ -196,17 +195,11 @@ namespace CodeBucket.Core.ViewModels.App
 
         private void Load()
         {
-			Task.Run(() => this.GetApplication().Client.Account.GetPrivileges()).ContinueWith(x =>
-			{
-				if (x.Result != null && x.Result.Teams != null)
-				{
-					var teams = x.Result.Teams.Keys.ToList();
-					teams.Remove(Account.Username);
-					Teams = teams;
-				}
-			}, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
+            this.GetApplication().Client.AllItems(x => x.Teams.GetAll())
+                .ToBackground(x => Teams = x.ToList());
 
-			Task.Run(() => this.GetApplication().Client.Account.Groups.GetGroups()).ContinueWith(x => Groups = x.Result, TaskScheduler.FromCurrentSynchronizationContext()).FireAndForget();
+            this.GetApplication().Client.Groups.GetGroups(Account.Username)
+                .ToBackground(x => Groups = x);
         }
     }
 }

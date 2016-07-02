@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using BitbucketSharp.Models;
+using System.Threading.Tasks;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
@@ -16,16 +16,10 @@ namespace CodeBucket.Core.ViewModels.Events
             Username = navObject.Username;
         }
 
-		protected override List<EventModel> CreateRequest(int start, int limit)
+		protected override Task<EventsModel> CreateRequest(int start, int limit)
         {
-			return this.GetApplication().Client.Users[Username].GetEvents(start, limit).Events;
+            return this.GetApplication().Client.Users.GetEvents(Username, start, limit);
         }
-
-		protected override int GetTotalItemCount()
-		{
-			return this.GetApplication().Client.Users[Username].GetEvents(0, 0).Count;
-		}
-
 
         public class NavObject
         {

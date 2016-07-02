@@ -22,7 +22,7 @@ namespace CodeBucket.Views.Groups
 
 			var vm = (GroupsViewModel) ViewModel;
             var weakVm = new WeakReference<GroupsViewModel>(vm);
-			BindCollection(vm.Organizations, x =>
+			BindCollection(vm.Groups, x =>
 			{
                 var e = new StringElement(x.Name);
                 e.Clicked.Select(_ => x).BindCommand(weakVm.Get()?.GoToGroupCommand);

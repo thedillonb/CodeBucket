@@ -102,15 +102,13 @@ namespace CodeBucket.Core.ViewModels.Source
             return _content.Filter.Ascending ? ret : ret.Reverse();
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			return Content.SimpleCollectionLoad(() => {
-				var source = new List<SourceModel>();
-				var data = this.GetApplication().Client.Users[Username].Repositories[Repository].Branches[Branch].Source[Path].GetInfo(forceCacheInvalidation);
-				source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
-				source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
-				return source;
-			});
+            var data = await this.GetApplication().Client.Repositories.GetSourceInfo(Username, Repository, Branch, Path);
+            var source = new List<SourceModel>();
+            source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
+            source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
+            Content.Items.Reset(source);
         }
 
 		public class SourceModel

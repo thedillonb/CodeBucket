@@ -1,6 +1,6 @@
 using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Repositories;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System;
 using CodeBucket.ViewControllers;
 using UIKit;
@@ -37,13 +37,13 @@ namespace CodeBucket.Views.Repositories
 
         public override Source CreateSizingSource()
         {
-            return new DialogViewController.Source(this);
+            return new Source(this);
         }
 
-		protected Element CreateElement(RepositoryDetailedModel repo)
+        protected Element CreateElement(Repository repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var sse = new RepositoryElement(repo.Name, description, repo.Owner, new Avatar(repo.Logo));
+            var sse = new RepositoryElement(repo.Name, description, repo.Owner.Username, new Avatar(repo.Owner?.Links?.Avatar?.Href));
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }

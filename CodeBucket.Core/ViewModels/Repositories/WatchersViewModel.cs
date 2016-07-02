@@ -1,23 +1,14 @@
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.User;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
 	public class WatchersViewModel : BaseUserCollectionViewModel
     {
-        public string User
-        {
-            get;
-            private set;
-        }
+        public string User { get; private set; }
 
-        public string Repository
-        {
-            get;
-            private set;
-        }
+        public string Repository { get; private set; }
 
         public void Init(NavObject navObject)
         {
@@ -25,9 +16,10 @@ namespace CodeBucket.Core.ViewModels.Repositories
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			return Users.SimpleCollectionLoad(() => this.GetApplication().Client.Users[User].Repositories[Repository].GetFollowers(forceCacheInvalidation).Followers.Cast<UserModel>().OrderBy(x => x.Username).ToList());
+            var items = await this.GetApplication().Client.Repositories.GetFollowers(User, Repository);
+            Users.Items.Reset(items.Followers.OrderBy(x => x.Username));
         }
 
         public class NavObject

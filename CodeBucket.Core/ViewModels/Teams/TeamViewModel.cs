@@ -1,18 +1,17 @@
-using System;
-using BitbucketSharp.Models;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.ViewModels.Events;
 using System.Threading.Tasks;
+using CodeBucket.Client.Models;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
     public class TeamViewModel : LoadableViewModel
     {
-        private UserModel _userModel;
+        private User _userModel;
 
         public string Name
         {
@@ -20,7 +19,7 @@ namespace CodeBucket.Core.ViewModels.Teams
             private set;
         }
 
-        public UserModel User
+        public User User
         {
             get { return _userModel; }
             private set { _userModel = value; RaisePropertyChanged(() => User); }
@@ -61,9 +60,9 @@ namespace CodeBucket.Core.ViewModels.Teams
             Name = navObject.Name;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-            return this.RequestModel(() => this.GetApplication().Client.Users[Name].GetInfo(forceCacheInvalidation), response => User = response.User);
+            User = await this.GetApplication().Client.Teams.Get(Name);
         }
 
         public class NavObject

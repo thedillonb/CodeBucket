@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Messages;
@@ -86,13 +86,13 @@ namespace CodeBucket.Core.ViewModels.Issues
                 };
 
                 IsSaving = true;
-                var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Update(createIssueModel));
+                var data = await this.GetApplication().Client.Issues.Create(Username, Repository, createIssueModel);
                 Messenger.Publish(new IssueEditMessage(this) { Issue = data });
                 ChangePresentation(new MvxClosePresentationHint(this));
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to save the issue: " + e.Message);
+                DisplayAlert("Unable to save the issue: " + e.Message).ToBackground();
             }
             finally
             {
@@ -105,12 +105,12 @@ namespace CodeBucket.Core.ViewModels.Issues
             try
             {
                 IsSaving = true;
-                await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.LocalId].Delete());
+                await this.GetApplication().Client.Issues.Delete(Username, Repository, Issue.LocalId);
                 Messenger.Publish(new IssueDeleteMessage(this) { Issue = Issue });
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to delete issue: " + e.Message);
+                DisplayAlert("Unable to delete issue: " + e.Message).ToBackground ();
             }
             finally
             {
@@ -118,11 +118,12 @@ namespace CodeBucket.Core.ViewModels.Issues
             }
         }
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-			if (forceCacheInvalidation || Issue == null)
-				return this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
-			return Task.FromResult(false);
+            if (Issue == null)
+            {
+                Issue = await this.GetApplication().Client.Issues.Get(Username, Repository, Id);
+            }
 		}
 
 		public void Init(NavObject navObject)

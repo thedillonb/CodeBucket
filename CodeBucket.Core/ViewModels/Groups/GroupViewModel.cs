@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.User;
 using System.Linq;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
@@ -16,16 +16,15 @@ namespace CodeBucket.Core.ViewModels.Groups
 			GroupName = navObject.GroupName;
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-            return Users.SimpleCollectionLoad(() => 
-                {
-                    var groups = this.GetApplication().Client.Users[Username].Groups.GetGroups(forceCacheInvalidation);
-                    var group = groups.FirstOrDefault(x => x.Name == GroupName);
-                    if (group == null)
-                        return new System.Collections.Generic.List<BitbucketSharp.Models.UserModel>();
-                    return group.Members;
-                });
+            var groups = await this.GetApplication().Client.Groups.GetGroups(Username);
+            var group = groups.FirstOrDefault(x => x.Name == GroupName);
+
+            if (group == null)
+                Users.Items.Clear();
+            else
+                Users.Items.Reset(group.Members);
         }
 
         public class NavObject

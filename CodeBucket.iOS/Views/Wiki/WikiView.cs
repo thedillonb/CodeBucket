@@ -37,12 +37,12 @@ namespace CodeBucket.Views.Wiki
             try
             {
                 var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
-                var wiki = await Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].GetInfo());
+                var wiki = await ViewModel.GetApplication().Client.Repositories.GetWiki(ViewModel.Username, ViewModel.Repository);
                 var composer = new Composer { Title = "Edit" + Title, Text = wiki.Data };
                 composer.NewComment(this, async (text) => {
                     try
                     {
-                        await composer.DoWorkAsync("Saving...", () => Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page))));
+                        //await composer.DoWorkAsync("Saving...", () => Task.Run(() => ViewModel.GetApplication().Client.Users[ViewModel.Username].Repositories[ViewModel.Repository].Wikis[page].Update(text, Uri.UnescapeDataString("/" + page))));
                         composer.CloseComposer();
                         Refresh();
                     }
@@ -81,7 +81,7 @@ namespace CodeBucket.Views.Wiki
                 {
                     if (navigationAction.Request.Url.ToString().Substring(0, 7).Equals("wiki://"))
                     {
-                        GoToPage(navigationAction.Request.Url.ToString().Substring(7));
+                        GoToPage(navigationAction.Request.Url.ToString().Substring(7)).ToBackground();
                         return false;
                     }
                 }
@@ -130,7 +130,7 @@ namespace CodeBucket.Views.Wiki
                 BeginInvokeOnMainThread(() =>
                 {
                 if (e.ButtonIndex == editButton)
-                    HandleEditButton();
+                    HandleEditButton().ToBackground();
                 else if (e.ButtonIndex == gotoButton)
                     PromptForWikiPage();
                 else if (e.ButtonIndex == showButton)
@@ -172,7 +172,7 @@ namespace CodeBucket.Views.Wiki
             {
                 if (e.ButtonIndex == gotoButton)
                 {
-                    GoToPage(alert.GetTextField(0).Text);
+                    GoToPage(alert.GetTextField(0).Text).ToBackground();
                     //ViewModel.GoToPageCommand.Execute(alert.GetTextField(0).Text);
                 }
             };

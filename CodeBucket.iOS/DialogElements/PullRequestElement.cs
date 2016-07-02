@@ -2,7 +2,7 @@
 using Foundation;
 using UIKit;
 using CodeBucket.TableViewCells;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using Humanizer;
 using CodeBucket.Core.Utils;
 

@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using BitbucketSharp.Models;
 using System.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 
@@ -39,9 +38,10 @@ namespace CodeBucket.Core.ViewModels.Source
             Repository = navObject.Repository;
         }
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
         {
-			return Branches.SimpleCollectionLoad(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Branches.GetBranches(forceCacheInvalidation).Select(x => new ViewModel { Name = x.Key, Node = x.Value.Node }).ToList());
+            var items = await this.GetApplication().Client.Repositories.GetBranches(Username, Repository);
+            Branches.Items.Reset(items.Select(x => new ViewModel { Name = x.Key, Node = x.Value.Node }));
         }
 
 		public class ViewModel

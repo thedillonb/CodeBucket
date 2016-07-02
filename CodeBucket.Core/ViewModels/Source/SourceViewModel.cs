@@ -12,12 +12,11 @@ namespace CodeBucket.Core.ViewModels.Source
 		private string _path;
 		private string _name;
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
         {
             var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
-            var source = this.GetApplication().Client.Users[_user].Repositories[_repository].Branches[_branch].Source;
-            var file = await Task.Run(() => source.GetFile(_path));
-            HtmlUrl = "http://bitbucket.org/" + source.Branch.Branches.Repository.Owner.Username + "/" + source.Branch.Branches.Repository.Slug + "/src/" + source.Branch.UrlSafeName + "/" + _path;
+            var file = await this.GetApplication().Client.Repositories.GetFile(_user, _repository, _branch, _path);
+            HtmlUrl = $"http://bitbucket.org/{Uri.EscapeDataString(_user)}/{Uri.EscapeDataString(_repository)}/src/{Uri.EscapeDataString(_branch)}/{_path}";
             IsText = file.Encoding == null;
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))

@@ -1,6 +1,6 @@
-using BitbucketSharp.Models.V2;
+using CodeBucket.Client.Models.V2;
 using CodeBucket.Core.ViewModels.Commits;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Utils;
 using System.Threading.Tasks;
 
@@ -10,11 +10,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
     {
         private PullRequestModel _pullRequest;
 
-        public ulong PullRequestId { get; private set; }
+        public int Id { get; private set; }
 
 		public void Init(NavObject navObject)
 		{
-			PullRequestId = navObject.PullRequestId;
+			Id = navObject.PullRequestId;
             base.Init(navObject);
 		}
 
@@ -31,22 +31,22 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             }
         }
 
-        protected override Collection<CommitModel> GetRequest(string next)
+        protected override async Task<Collection<CommitModel>> GetRequest(string next)
         {
-            return next == null ? 
-                this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits() : 
-                this.GetApplication().Client.Request2<Collection<CommitModel>>(next);
+            return await (next == null ? 
+                this.GetApplication().Client.PullRequests.GetCommits(Username, Repository, Id) :
+                this.GetApplication().Client.Get<Collection<CommitModel>>(next));
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-            _pullRequest = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].Get());
-            await base.Load(forceCacheInvalidation);
+            _pullRequest = await this.GetApplication().Client.PullRequests.Get(Username, Repository, Id);
+            await base.Load();
         }
 
         public new class NavObject : CommitsViewModel.NavObject
 		{
-			public ulong PullRequestId { get; set; }
+			public int PullRequestId { get; set; }
 		}
     }
 }

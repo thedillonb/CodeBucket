@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UIKit;
 using CodeBucket.Core.ViewModels.Issues;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 using CodeBucket.Utilities;

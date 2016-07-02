@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.ViewModels.User;
 using MvvmCross.Plugins.Messenger;
 using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System.Linq;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -93,15 +93,11 @@ namespace CodeBucket.Core.ViewModels.Issues
 			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
 		}
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
-			var t1 = this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetIssue(forceCacheInvalidation), response => Issue = response);
-
-			this.RequestModel(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.GetComments(forceCacheInvalidation), response => {
-                Comments.Items.Reset(response);
-			}).FireAndForget();
-
-            return t1;
+            this.GetApplication().Client.Issues.GetComments(Username, Repository, Id)
+                .ToBackground(Comments.Items.Reset);
+            Issue = await this.GetApplication().Client.Issues.Get(Username, Repository, Id);
         }
 
         public string ConvertToMarkdown(string str)
@@ -128,7 +124,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public async Task AddComment(string text)
         {
-			var comment = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Comments.Create(text));
+            var comment = await this.GetApplication().Client.Issues.CreateComment(Username, Repository, Id, text);
 			Comments.Items.Add(comment);
         }
 

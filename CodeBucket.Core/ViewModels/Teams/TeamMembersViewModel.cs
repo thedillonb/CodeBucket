@@ -1,7 +1,7 @@
-using CodeBucket.Core.ViewModels.User;
 using System.Threading.Tasks;
 using System.Linq;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
+using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
@@ -14,9 +14,9 @@ namespace CodeBucket.Core.ViewModels.Teams
             Name = navObject.Name;
         }
 
-        protected async override Task Load(bool forceCacheInvalidation)
+        protected async override Task Load()
         {
-            var members = await Task.Run(() => this.GetApplication().Client.Teams[Name].GetMembers(forceCacheInvalidation));
+            var members = await this.GetApplication().Client.Teams.GetMembers(Name);
             Users.Items.Reset(members.Values.Select(x => new UserModel { Avatar = x.Links.Avatar.Href, FirstName = x.DisplayName, IsTeam = false, Username = x.Username }));
         }
 

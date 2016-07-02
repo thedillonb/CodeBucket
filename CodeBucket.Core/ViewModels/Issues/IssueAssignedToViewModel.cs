@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 using MvvmCross.Core.ViewModels;
@@ -55,12 +55,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 			});
 		}
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override async Task Load()
 		{
-			var owner = await Task.Run(() => this.GetApplication().Client.Users[Username].GetInfo(forceCacheInvalidation));
+            var owner = await this.GetApplication().Client.Users.GetUser(Username);
 			if (owner.User.IsTeam)
 			{
-				var members = await Task.Run(() => this.GetApplication().Client.Teams[Username].GetMembers(forceCacheInvalidation));
+				var members = await this.GetApplication().Client.Teams.GetMembers(Username);
 				var users = new List<UserModel>();
 				users.AddRange(members.Values.Select(x => new UserModel { Username = x.Username, Avatar = x.Links.Avatar.Href }));
 				users.Add(owner.User);
@@ -72,12 +72,12 @@ namespace CodeBucket.Core.ViewModels.Issues
 				try
 				{
 					privileges = new List<PrivilegeModel>();
-					privileges.AddRange(await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Privileges.GetPrivileges(forceCacheInvalidation)));
+                    privileges.AddRange(await this.GetApplication().Client.Privileges.GetRepositoryPrivileges(Username, Repository));
 
 					//Get it from the group
 					try
 					{
-						var groupPrivileges = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].GroupPrivileges.GetPrivileges(forceCacheInvalidation));
+                        var groupPrivileges = await this.GetApplication().Client.Privileges.GetRepositoryGroupPrivileges(Username, Repository);
 						groupPrivileges.ForEach(x =>
 						{
 							if (x.Group == null || x.Group.Members == null)
@@ -96,7 +96,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 					}
 		
 				}
-				catch (Exception e)
+				catch
 				{
 					privileges = new List<PrivilegeModel>();
 				}

@@ -8,19 +8,14 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reactive;
+using CodeBucket.Client.Models;
 
 namespace CodeBucket.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, Func<TRequest> request, Action<TRequest> update) where TRequest : new()
-        {
-            var data = await Task.Run(() => request());
-            update(data);
-        }
-
-		public static void CreateMore<T>(this MvxViewModel viewModel, BitbucketSharp.Models.V2.Collection<T> response, 
-										 Action<Action> assignMore, Action<IEnumerable<T>> newDataAction)
+		public static void CreateMore<T>(this MvxViewModel viewModel, Collection<T> response, 
+										 Action<Func<Task>> assignMore, Action<IEnumerable<T>> newDataAction)
         {
 			if (string.IsNullOrEmpty(response.Next))
             {
@@ -28,36 +23,26 @@ namespace CodeBucket.Core.ViewModels
                 return;
             }
 
-			Action task = () => 
-			{
-				var moreResponse = Mvx.Resolve<IApplicationService>().Client.Request2<BitbucketSharp.Models.V2.Collection<T>>(response.Next);
+            assignMore(new Func<Task>(async () =>
+            {
+                var moreResponse = await Mvx.Resolve<IApplicationService>().Client.Get<Collection<T>>(response.Next);
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
-				newDataAction(moreResponse.Values);
-        	};
-
-			assignMore(task);
+                newDataAction(moreResponse.Values);
+            }));
         }
 
-		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<List<T>> request)
-        {
-			return viewModel.RequestModel(request, response => {
-				//viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
-                viewModel.Items.Reset(response);
-            });
-        }
-
-		public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, Func<BitbucketSharp.Models.V2.Collection<T>> request)
+		public static async Task SimpleCollectionLoad<T>(
+            this CollectionViewModel<T> viewModel, Func<Task<Collection<T>>> request)
 		{
             var weakVm = new WeakReference<CollectionViewModel<T>>(viewModel);
-            return viewModel.RequestModel(request, response =>
+            var response = await request();
+            weakVm.Get()?.CreateMore(response, m =>
             {
-                weakVm.Get()?.CreateMore(response, m => {
-                    var weak = weakVm.Get();
-                    if (weak != null)
-                        weak.MoreItems = m;
-                }, viewModel.Items.AddRange);
-                weakVm.Get()?.Items.Reset(response.Values);
-            });
+                var weak = weakVm.Get();
+                if (weak != null)
+                    weak.MoreItems = m;
+            }, viewModel.Items.AddRange);
+            weakVm.Get()?.Items.Reset(response.Values);
 		}
     }
 }

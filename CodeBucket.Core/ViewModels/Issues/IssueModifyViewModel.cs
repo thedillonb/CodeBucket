@@ -4,7 +4,7 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
-using BitbucketSharp.Models;
+using CodeBucket.Client.Models;
 using CodeBucket.Core.Services;
 
 namespace CodeBucket.Core.ViewModels.Issues
@@ -168,7 +168,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 			_assignedToken = messenger.SubscribeOnMainThread<SelectedAssignedToMessage>(x => AssignedTo = x.User);
 		}
 
-		protected override Task Load(bool forceCacheInvalidation)
+		protected override Task Load()
 		{
 			return Task.FromResult(false);
 //			Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetMilestones(

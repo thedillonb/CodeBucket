@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.Utils;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels
 {
@@ -13,7 +14,7 @@ namespace CodeBucket.Core.ViewModels
         private Func<IEnumerable<TItem>, IEnumerable<IGrouping<string, TItem>>> _groupingFunction;
         private Func<IEnumerable<TItem>, IEnumerable<TItem>> _sortingFunction;
         private Func<IEnumerable<TItem>, IEnumerable<TItem>> _filteringFunction;
-		private Action _moreItems;
+		private Func<Task> _moreItems;
         private int _deferLevel;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -31,7 +32,7 @@ namespace CodeBucket.Core.ViewModels
             }
         }
 
-		public Action MoreItems
+		public Func<Task> MoreItems
         {
             get { return _moreItems; }
             set 
