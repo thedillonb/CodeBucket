@@ -141,6 +141,20 @@
     <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
+    <Compile Include="ViewModels\ICanGoViewModel.cs" />
+    <Compile Include="ViewModels\Commits\CommitItemViewModel.cs" />
+    <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
+    <Compile Include="ViewModels\Groups\GroupItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
+    <Compile Include="ViewModels\Source\ReferenceItemViewModel.cs" />
+    <Compile Include="ViewModels\Source\SourceTreeItemViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamItemViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
+    <Compile Include="ViewModels\Comments\CommentItemViewModel.cs" />
+    <Compile Include="ViewModels\IListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -201,6 +215,7 @@
     <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Commits\" />
     <Folder Include="Extensions\" />
+    <Folder Include="ViewModels\Comments\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

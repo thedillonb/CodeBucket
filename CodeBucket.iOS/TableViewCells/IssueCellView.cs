@@ -1,25 +1,17 @@
 using System;
 using CoreGraphics;
 using Foundation;
-using ObjCRuntime;
 using UIKit;
-using Humanizer;
+using CodeBucket.Core.ViewModels.Issues;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class IssueCellView : UITableViewCell
+    public partial class IssueCellView : BaseTableViewCell<IssueItemViewModel>
     {
+        public static readonly UINib Nib = UINib.FromName("IssueCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("IssueCellView");
-
-        public static IssueCellView Create()
-        {
-            var views = NSBundle.MainBundle.LoadNib("IssueCellView", null, null);
-            return Runtime.GetNSObject<IssueCellView>(views.ValueAt(0));
-        }
-
-        public IssueCellView()
-        {
-        }
 
         public IssueCellView(IntPtr handle)
             : base(handle)
@@ -38,27 +30,19 @@ namespace CodeBucket.TableViewCells
             Image3.Image = Theme.CurrentTheme.IssueCellImage3;
             Image4.Image = Theme.CurrentTheme.IssueCellImage4;
             SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
-        }
 
-        public void Bind(string title, string status, string priority, string assigned, DateTimeOffset lastUpdated, string id, string kind)
-        {
-            Caption.Text = title;
-            Label1.Text = status;
-            Label2.Text = priority;
-            Label3.Text = assigned;
-            Label4.Text = lastUpdated.Humanize();
-            Number.Text = "#" + id;
-            IssueType.Text = kind;
-
-            /*
-            if (model.CommentCount > 0)
-            {
-                var ms = model.CommentCount.ToString ();
-                var ssize = ms.MonoStringLength(CountFont);
-                var boxWidth = Math.Min (22 + ssize, 18);
-                AddSubview(new CounterView(model.CommentCount) { Frame = new RectangleF(Bounds.Width-30-boxWidth, Bounds.Height / 2 - 8, boxWidth, 16) });
-            }
-            */
+            this.WhenAnyValue(x => x.ViewModel)
+                .Where(x => x != null)
+                .Subscribe(x =>
+                {
+                    Caption.Text = x.Title;
+                    Label1.Text = x.Status;
+                    Label2.Text = x.Priority;
+                    Label3.Text = x.Assigned;
+                    Label4.Text = x.LastUpdated;
+                    Number.Text = "#" + x.Id;
+                    IssueType.Text = x.Kind;
+                });
         }
 
         private class SeperatorIssues : UIView

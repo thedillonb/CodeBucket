@@ -187,7 +187,7 @@
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
-    <Compile Include="Views\Commits\BaseCommitsView.cs" />
+    <Compile Include="Views\Commits\BaseCommitsViewController.cs" />
     <Compile Include="Views\Commits\CommitsView.cs" />
     <Compile Include="Views\Commits\CommitView.cs" />
     <Compile Include="Views\ExtendedUITextView.cs" />
@@ -203,20 +203,13 @@
     <Compile Include="DialogElements\DummyInputElement.cs" />
     <Compile Include="DialogElements\BooleanElement.cs" />
     <Compile Include="DialogElements\CommentElement.cs" />
-    <Compile Include="DialogElements\CommitElement.cs" />
     <Compile Include="DialogElements\Element.cs" />
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
-    <Compile Include="DialogElements\IssueElement.cs" />
     <Compile Include="DialogElements\LabelElement.cs" />
-    <Compile Include="DialogElements\LoadMoreElement.cs" />
     <Compile Include="DialogElements\MenuElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
     <Compile Include="DialogElements\NewsFeedElement.cs" />
-    <Compile Include="DialogElements\OwnerDrawnElement.cs" />
-    <Compile Include="DialogElements\PaginateElement.cs" />
-    <Compile Include="DialogElements\PullRequestElement.cs" />
-    <Compile Include="DialogElements\RepositoryElement.cs" />
     <Compile Include="DialogElements\RootElement.cs" />
     <Compile Include="DialogElements\Section.cs" />
     <Compile Include="DialogElements\SplitViewElement.cs" />
@@ -266,6 +259,27 @@
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
     <Compile Include="ViewControllers\BasicWebViewController.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="TableViewSources\AccountTableViewSource.cs" />
+    <Compile Include="TableViewSources\BaseTableViewSource.cs" />
+    <Compile Include="TableViewSources\CommitTableViewSource.cs" />
+    <Compile Include="TableViewSources\DialogTableViewSource.cs" />
+    <Compile Include="TableViewSources\EventTableViewSource.cs" />
+    <Compile Include="TableViewSources\GroupTableViewSource.cs" />
+    <Compile Include="TableViewSources\IssueTableViewSource.cs" />
+    <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
+    <Compile Include="TableViewSources\ReferenceTableViewSource.cs" />
+    <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
+    <Compile Include="TableViewSources\SourceTreeTableViewSource.cs" />
+    <Compile Include="TableViewSources\TeamTableViewSource.cs" />
+    <Compile Include="TableViewSources\UserTableViewSource.cs" />
+    <Compile Include="TableViewCells\AccountTableViewCell.cs" />
+    <Compile Include="TableViewCells\BaseTableViewCell.cs" />
+    <Compile Include="TableViewCells\GroupTableViewCell.cs" />
+    <Compile Include="TableViewCells\ReferenceTableViewCell.cs" />
+    <Compile Include="TableViewCells\SourceTreeTableViewCell.cs" />
+    <Compile Include="TableViewCells\TeamTableViewCell.cs" />
+    <Compile Include="TableViewCells\UserTableViewCell.cs" />
+    <Compile Include="Views\EnhancedTableView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

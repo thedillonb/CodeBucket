@@ -1,24 +1,17 @@
 using System;
 using Foundation;
 using UIKit;
-using SDWebImage;
-using MvvmCross.Binding.iOS.Views;
-using ObjCRuntime;
-using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Repositories;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class RepositoryCellView : MvxTableViewCell
+    public partial class RepositoryCellView : BaseTableViewCell<RepositoryItemViewModel>
     {
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("RepositoryCellView");
         private static nfloat DefaultContentConstraint = 0f;
-
-        public static RepositoryCellView Create()
-        {
-            var views = NSBundle.MainBundle.LoadNib(Key, null, null);
-            return Runtime.GetNSObject<RepositoryCellView>(views.ValueAt(0));
-        }
 
         public RepositoryCellView(IntPtr handle)
             : base(handle)
@@ -34,22 +27,18 @@ namespace CodeBucket.TableViewCells
             RepositoryImage.Layer.MasksToBounds = true;
             RepositoryImage.Layer.CornerRadius = RepositoryImage.Bounds.Height / 2f;
             DefaultContentConstraint = ContentConstraint.Constant;
-        }
 
-        public void Bind(string name, string description, string repoOwner, Avatar logoUri)
-        {
-            RepositoryName.Text = name;
-            RepositoryOwner.Text = repoOwner;
-            RepositoryDescription.Hidden = string.IsNullOrWhiteSpace(description);
-            RepositoryDescription.Text = description ?? string.Empty;
-            ContentConstraint.Constant = RepositoryDescription.Hidden ? 0 : DefaultContentConstraint;
-
-            var uri = logoUri.ToUri(64);
-
-            if (uri == null)
-                RepositoryImage.Image = Images.RepoPlaceholder;
-            else
-                RepositoryImage.SetImage(new NSUrl(uri.AbsoluteUri), Images.RepoPlaceholder);
+            this.WhenAnyValue(x => x.ViewModel)
+                .Where(x => x != null)
+                .Subscribe(x =>
+                {
+                    RepositoryName.Text = x.Name;
+                    RepositoryOwner.Text = x.Owner;
+                    RepositoryDescription.Hidden = string.IsNullOrWhiteSpace(x.Description);
+                    RepositoryDescription.Text = x.Description ?? string.Empty;
+                    ContentConstraint.Constant = RepositoryDescription.Hidden ? 0 : DefaultContentConstraint;
+                    RepositoryImage.SetAvatar(x.Avatar);
+                });
         }
     }
 }

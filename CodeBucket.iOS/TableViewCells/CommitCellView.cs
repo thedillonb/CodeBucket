@@ -1,30 +1,26 @@
 using System;
 using Foundation;
 using UIKit;
-using SDWebImage;
-using MvvmCross.Binding.iOS.Views;
-using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Commits;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeBucket.TableViewCells
 {
-    public partial class CommitCellView : MvxTableViewCell
+    public partial class CommitCellView : BaseTableViewCell<CommitItemViewModel>
     {
         public static readonly UINib Nib = UINib.FromName("CommitCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("CommitCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
 
+        public static CommitCellView Create()
+        {
+            return Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
+        }
+
         public CommitCellView(IntPtr handle) 
             : base(handle)
         {
-        }
-
-        public static CommitCellView Create() 
-            => Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
-
-        public nint MaxContentLines
-        {
-            get { return ContentLabel.Lines; }
-            set { ContentLabel.Lines = value; }
         }
 
         public override void AwakeFromNib()
@@ -39,22 +35,18 @@ namespace CodeBucket.TableViewCells
             TimeLabel.TextColor = UIColor.Gray;
             ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
-        }
 
-        public void Bind(string name, string description, string time, Avatar avatar)
-        {
-            TitleLabel.Text = name;
-            TimeLabel.Text = time;
-            ContentLabel.Text = description;
-            ContentLabel.Hidden = string.IsNullOrWhiteSpace(description);
-            ContentConstraint.Constant = ContentLabel.Hidden ? 0 : DefaultContentConstraintSize;
-
-            var logoUri = avatar.ToUri(64);
-
-            if (logoUri == null)
-                MainImageView.Image = Images.Avatar;
-            else
-                MainImageView.SetImage(new NSUrl(logoUri.AbsoluteUri), Images.Avatar);
+            this.WhenAnyValue(x => x.ViewModel)
+                .Where(x => x != null)
+                .Subscribe(x =>
+            {
+                TitleLabel.Text = x.Name;
+                TimeLabel.Text = x.Date;
+                ContentLabel.Text = x.Description;
+                ContentLabel.Hidden = string.IsNullOrWhiteSpace(x.Description);
+                ContentConstraint.Constant = ContentLabel.Hidden ? 0 : DefaultContentConstraintSize;
+                MainImageView.SetAvatar(x.Avatar);
+            });
         }
     }
 }

@@ -1,35 +1,29 @@
 using UIKit;
-using System;
 using CodeBucket.TableViewCells;
-using CodeBucket.Core.Utils;
-using Humanizer;
+using CodeBucket.Core.ViewModels.Comments;
 
 namespace CodeBucket.DialogElements
 {
     public class CommentElement : Element
-    {   
-        private readonly string _title, _message, _date;
-        private readonly Avatar _avatar;
+    {
+        private readonly Core.ViewModels.Commits.CommitItemViewModel _viewModel;
 
-        public CommentElement(string title, string message, DateTimeOffset date, Avatar avatar)
+        public CommentElement(CommentItemViewModel viewModel)
         {
-            _title = title;
-            _message = message;
-            _date = date.Humanize();
-            _avatar = avatar;
+            _viewModel = new Core.ViewModels.Commits.CommitItemViewModel(
+                viewModel.Name, viewModel.Content, viewModel.CreatedOn, viewModel.Avatar);
         }
 
-        public override UITableViewCell GetCell (UITableView tv)
+        public override UITableViewCell GetCell(UITableView tv)
         {
             var c = tv.DequeueReusableCell(CommitCellView.Key) as CommitCellView ?? CommitCellView.Create();
-            c.Bind(_title, _message, _date, _avatar);
+            c.ViewModel = _viewModel;
             return c;
         }
 
         public override bool Matches(string text)
         {
-            return _message?.ToLower().Contains(text.ToLower()) ?? false;
+            return _viewModel.Description?.ToLower().Contains(text.ToLower()) ?? false;
         }
     }
 }
-
