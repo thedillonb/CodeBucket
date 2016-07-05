@@ -1,7 +1,6 @@
 using CodeBucket.Core.Data;
 using System.Timers;
 using CodeBucket.Core.ViewModels.Accounts;
-using CodeBucket.Client.Models;
 using CodeBucket.Client;
 
 namespace CodeBucket.Core.Services

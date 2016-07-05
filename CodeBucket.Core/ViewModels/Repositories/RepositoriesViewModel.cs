@@ -1,72 +1,62 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.Filters;
-using CodeBucket.Client.Models;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
 using CodeBucket.Core.Utils;
+using Splat;
+using System.Reactive;
+using System.Threading.Tasks;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : LoadableViewModel
+    public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<RepositoryItemViewModel>
     {
-		private readonly FilterableCollectionViewModel<Repository, RepositoriesFilterModel> _repositories;
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public bool ShowRepositoryDescription
+        public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
+
+        private string _searchText;
+        public string SearchText
         {
-			get { return this.GetApplication().Account.RepositoryDescriptionInList; }
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public FilterableCollectionViewModel<Repository, RepositoriesFilterModel> Repositories
+        protected RepositoriesViewModel(IApplicationService applicationService)
         {
-            get { return _repositories; }
-        }
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-        public ICommand GoToRepositoryCommand
-        {
-            get
+            Title = "Repositories";
+
+            var showDescription = applicationService.Account.RepositoryDescriptionInList;
+            var repositories = new ReactiveList<Repository>();
+
+            Items = repositories.CreateDerivedCollection(x =>
             {
-                return new MvxCommand<Repository>(x =>
+                var description = showDescription ? x.Description : string.Empty;
+                var viewModel = new RepositoryItemViewModel(x.Name, description, x.Owner?.Username, new Avatar(x.Owner?.Links?.Avatar?.Href));
+                viewModel.GoToCommand.Subscribe(_ =>
                 {
-                    var r = new RepositoryIdentifier(x.FullName);
-                    this.ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = r?.Owner, RepositorySlug = r?.Name });
+                    var id = RepositoryIdentifier.FromFullName(x.FullName);
+                    NavigateTo(new RepositoryViewModel(id.Owner, id.Name));
                 });
-            }
+                return viewModel;
+            }, x => x.Name.ContainsKeyword(SearchText), signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                repositories.Clear();
+                await Load(applicationService, repositories);
+            });
+
+            LoadCommand.IsExecuting.CombineLatest(repositories.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
 
-        protected RepositoriesViewModel(string filterKey = "RepositoryController")
-        {
-			_repositories = new FilterableCollectionViewModel<Repository, RepositoriesFilterModel>(filterKey);
-			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
-            _repositories.GroupingFunction = CreateGroupedItems;
-            _repositories.Bind(x => x.Filter).Subscribe(x => Repositories.Refresh());
-        }
-
-		private IEnumerable<IGrouping<string, Repository>> CreateGroupedItems(IEnumerable<Repository> model)
-        {
-            var order = Repositories.Filter.OrderBy;
-
-            if (order == RepositoriesFilterModel.Order.LastUpdated)
-            {
-                var a = model.OrderByDescending(x => x.UpdatedOn).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedOn.TotalDaysAgo()));
-                a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Updated");
-            }
-            if (order == RepositoriesFilterModel.Order.CreatedOn)
-            {
-                var a = model.OrderByDescending(x => x.CreatedOn).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedOn.TotalDaysAgo()));
-                a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
-            }
-            if (order == RepositoriesFilterModel.Order.Owner)
-            {
-                var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner.Username);
-                a = Repositories.Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return a.ToList();
-            }
-
-            return null;
-        }
+        protected abstract Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories);
     }
 }

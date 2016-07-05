@@ -90,16 +90,20 @@ namespace CodeBucket.DialogElements
             if (newSections == null)
                 return;
 
+            var sections = newSections.Except(_sections).ToList();
+            if (sections.Count == 0)
+                return;
+
             _tableView.Get()?.BeginUpdates ();
 
             int pos = idx;
-            foreach (var s in newSections){
+            foreach (var s in sections){
                 s.Root = this;
                 _sections.Insert (pos++, s);
             }
 
-            _tableView.Get()?.InsertSections (MakeIndexSet (idx, newSections.Length), anim);
-            _tableView.Get()?.EndUpdates ();
+            _tableView.Get()?.InsertSections (MakeIndexSet (idx, sections.Count), anim);
+            _tableView.Get()?.EndUpdates();
         }
 
         public void Insert (int idx, Section section)
@@ -156,40 +160,29 @@ namespace CodeBucket.DialogElements
                 _sections.Add(s);
             }
 
-            _tableView.Get()?.ReloadData();
+            ReloadData();
+        }
+
+        public void ReloadSection(Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+        {
+            if (!_sections.Contains(section))
+                return;
+
+            var index = _sections.IndexOf(section);
+            var indexSet = NSIndexSet.FromIndex(index);
+            _tableView.Get().ReloadSections(indexSet, animation);
+        }
+
+        public void ReloadData()
+        {
+            var tableView = _tableView.Get();
+            tableView?.ReloadData();
         }
 
         public void Reset(params Section[] sections)
         {
             Reset((IEnumerable<Section>)sections);
         }
-
-//        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
-//        {
-//            if (section == null)
-//                throw new ArgumentNullException ("section");
-//            if (section.Root == null || section.Root != this)
-//                throw new ArgumentException ("Section is not attached to this root");
-//
-//            int idx = 0;
-//            foreach (var sect in _sections)
-//            {
-//                if (sect == section)
-//                {
-//                    try
-//                    {
-//                        _tableView.Get()?.BeginUpdates();
-//                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
-//                    }
-//                    finally
-//                    {
-//                        _tableView.Get()?.EndUpdates();
-//                    }
-//                    return;
-//                }
-//                idx++;
-//            }
-//        }
 
         public void Reload (params Element[] elements)
         {

@@ -1,28 +1,30 @@
-using System.Threading.Tasks;
-using System.Linq;
-using CodeBucket.Client.Models;
 using CodeBucket.Core.ViewModels.Users;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Linq;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamMembersViewModel : BaseUserCollectionViewModel
+    public class TeamMembersViewModel : UsersViewModel
     {
-        public string Name { get; private set; }
+        private readonly string _name;
+        private readonly IApplicationService _applicationService;
 
-        public void Init(NavObject navObject)
+        public TeamMembersViewModel(string name, IApplicationService applicationService = null)
         {
-            Name = navObject.Name;
+            _name = name;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Members";
+            EmptyMessage = "There are no members.";
         }
 
-        protected async override Task Load()
+        protected override System.Threading.Tasks.Task Load(ReactiveList<UserItemViewModel> users)
         {
-            var members = await this.GetApplication().Client.Teams.GetMembers(Name);
-            Users.Items.Reset(members.Values.Select(x => new UserModel { Avatar = x.Links.Avatar.Href, FirstName = x.DisplayName, IsTeam = false, Username = x.Username }));
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            return _applicationService.Client.ForAllItems(x => x.Teams.GetMembers(_name),
+                                                          x => users.AddRange(x.Select(ToViewModel)));
         }
     }
 }

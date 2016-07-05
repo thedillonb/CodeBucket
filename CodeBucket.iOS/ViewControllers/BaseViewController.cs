@@ -12,7 +12,7 @@ using CodeBucket.Services;
 
 namespace CodeBucket.ViewControllers
 {
-    public abstract class BaseTableViewController<TViewModel, TItemViewModel> : BaseViewController<TViewModel>
+    public abstract class BaseTableViewController<TViewModel, TItemViewModel> : BaseViewController<TViewModel> 
         where TViewModel : class, IListViewModel<TItemViewModel>
     {
         private readonly Lazy<EnhancedTableView> _tableView;
@@ -21,7 +21,7 @@ namespace CodeBucket.ViewControllers
 
         protected BaseTableViewController(UITableViewStyle style = UITableViewStyle.Plain)
         {
-            _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(style));
+             _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(style));
         }
 
         public override void ViewDidLoad()
@@ -141,12 +141,12 @@ namespace CodeBucket.ViewControllers
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-#if DEBUG
+        #if DEBUG
         ~BaseViewController()
         {
             Console.WriteLine("All done with " + GetType().Name);
         }
-#endif
+        #endif
 
         public IObservable<bool> Appearing => _appearingSubject.AsObservable();
 
@@ -218,3 +218,4 @@ namespace CodeBucket.ViewControllers
         }
     }
 }
+

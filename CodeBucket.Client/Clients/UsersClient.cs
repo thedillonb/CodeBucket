@@ -1,10 +1,8 @@
-using CodeBucket.Client.Models;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using CodeBucket.Client;
 
-namespace CodeBucket.Clients
+namespace CodeBucket.Client
 {
     public class UsersClient
     {
@@ -15,24 +13,24 @@ namespace CodeBucket.Clients
             _client = client;
         }
 
-        public Task<UsersModel> GetUser(string username)
+        public Task<User> GetUser(string username)
         {
-            return _client.Get<UsersModel>($"{BitbucketClient.ApiUrl}/users/{Uri.EscapeDataString(username)}");
+            return _client.Get<User>($"{BitbucketClient.ApiUrl2}/users/{Uri.EscapeDataString(username)}");
         }
 
-        public Task<UsersModel> GetCurrent()
+        public Task<User> GetCurrent()
         {
-            return _client.Get<UsersModel>($"{BitbucketClient.ApiUrl}/user");
+            return _client.Get<User>($"{BitbucketClient.ApiUrl2}/user");
         }
 
-        public Task<EventsModel> GetEvents(string username, int start = 0, int limit = 25)
+        public Task<V1.EventCollection> GetEvents(string username, int start = 0, int limit = 25)
         {
-            return _client.Get<EventsModel>($"{BitbucketClient.ApiUrl}/users/{Uri.EscapeDataString(username)}/events/?start={start}&limit={limit}");
+            return _client.Get<V1.EventCollection>($"{BitbucketClient.ApiUrl}/users/{Uri.EscapeDataString(username)}/events/?start={start}&limit={limit}");
         }
 		
-        public Task<FollowersModel> GetFollowers(string username)
+        public Task<Collection<User>> GetFollowers(string username)
 		{
-            return _client.Get<FollowersModel>($"{BitbucketClient.ApiUrl}/users/{Uri.EscapeDataString(username)}/followers");
+            return _client.Get<Collection<User>>($"{BitbucketClient.ApiUrl2}/users/{Uri.EscapeDataString(username)}/followers");
 		}
 
 		public Task<Collection<User>> GetFollowing(string username, int limit = 100)
@@ -41,14 +39,14 @@ namespace CodeBucket.Clients
 			return _client.Get<Collection<User>>(uri);
 		}
 
-        public Task<List<RepositoryDetailedModel>> GetCurrentUserRepositoriesFollowing()
+        public Task<List<Repository>> GetCurrentUserRepositoriesFollowing()
         {
-            return _client.Get<List<RepositoryDetailedModel>>($"{BitbucketClient.ApiUrl}/user/follows");
+            return _client.Get<List<Repository>>($"{BitbucketClient.ApiUrl}/user/follows");
         }
 
-        public Task<AccountPrivileges> GetCurrentUserPrivileges()
+        public Task<V1.AccountPrivileges> GetCurrentUserPrivileges()
         {
-            return _client.Get<AccountPrivileges>($"{BitbucketClient.ApiUrl}/user/privileges");
+            return _client.Get<V1.AccountPrivileges>($"{BitbucketClient.ApiUrl}/user/privileges");
         }
     }
 }

@@ -1,65 +1,74 @@
-using System.Threading.Tasks;
 using System;
 using System.IO;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
+using Splat;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-	public class SourceViewModel : FileSourceViewModel
+    public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
     {
-		private string _user;
-		private string _repository;
-		private string _branch;
-		private string _path;
-		private string _name;
+        private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-		protected override async Task Load()
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
+        public bool IsMarkdown { get; }
+
+        public SourceViewModel(
+            string username, string repository, string branch, string path, string name,
+            IApplicationService applicationService = null, IActionMenuService actionMenuService = null)
         {
-            var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(_name));
-            var file = await this.GetApplication().Client.Repositories.GetFile(_user, _repository, _branch, _path);
-            HtmlUrl = $"http://bitbucket.org/{Uri.EscapeDataString(_user)}/{Uri.EscapeDataString(_repository)}/src/{Uri.EscapeDataString(_branch)}/{_path}";
-            IsText = file.Encoding == null;
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
-            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            using (var writer = new StreamWriter(stream))
+            //Create the filename
+            var fileName = Path.GetFileName(path);
+            if (fileName == null)
+                fileName = path.Substring(path.LastIndexOf('/') + 1);
+
+            //Create the temp file path
+            Title = fileName;
+
+            var extension = Path.GetExtension(path);
+            IsMarkdown = MarkdownExtensions.Any(x => x == extension);
+
+            var canExecute = this.WhenAnyValue(x => x.HtmlUrl).Select(x => x != null);
+            var canOpen = this.WhenAnyValue(x => x.FilePath).Select(x => x != null);
+
+            var openInCommand = ReactiveCommand.Create(canOpen);
+            openInCommand.Subscribe(x => actionMenuService.OpenIn(x, FilePath));
+
+            var shareCommand = ReactiveCommand.Create(canExecute);
+            shareCommand.Subscribe(x => actionMenuService.ShareUrl(x, HtmlUrl));
+
+            var canShow = Observable.CombineLatest(canExecute, canOpen, (x, y) => x && y);
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShow, sender =>
             {
-                if (IsText)
-                {
-                    await writer.WriteAsync(file.Data);
-                }
-                else if (string.Equals(file.Encoding, "base64", StringComparison.OrdinalIgnoreCase))
-                {
-                    var data = Convert.FromBase64String(file.Data);
-                    await stream.WriteAsync(data, 0, data.Length);
-                }
-            }
+                var menu = actionMenuService.Create();
+                menu.AddButton("Open In", openInCommand);
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in Bitbucket", GoToHtmlUrlCommand);
+                return menu.Show(sender);
+            });
 
-            FilePath = filePath;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(name));
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await applicationService.Client.Repositories.GetRawFile(username, repository, branch, path, stream);
+                    IsText = true;
+                }
+
+                FilePath = filePath;
+                HtmlUrl = $"https://bitbucket.org/{username}/{repository}/raw/{branch}/{path.TrimStart('/')}";
+            });
         }
-
-		public void Init(NavObject navObject)
-		{
-			_path = navObject.Path;
-			_name = navObject.Name;
-			_user = navObject.User;
-			_repository = navObject.Repository;
-			_branch = navObject.Branch;
-
-			//Create the filename
-			var fileName = System.IO.Path.GetFileName(_path);
-			if (fileName == null)
-				fileName = _path.Substring(_path.LastIndexOf('/') + 1);
-
-			//Create the temp file path
-			Title = fileName;
-		}
-
-		public class NavObject
-		{
-			public string Path { get; set; }
-			public string Name { get; set; }
-			public string User { get; set; }
-			public string Repository { get; set; }
-			public string Branch { get; set; }
-		}
     }
 }

@@ -58,3 +58,4 @@ namespace CodeBucket.Core.ViewModels.Events
         }
     }
 }
+

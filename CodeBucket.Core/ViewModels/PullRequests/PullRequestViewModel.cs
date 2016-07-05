@@ -1,123 +1,210 @@
+using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Client.Models;
 using CodeBucket.Core.Services;
+using System.Reactive;
+using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels.Users;
+using System.Linq;
+using ReactiveUI;
+using Splat;
+using CodeBucket.Core.ViewModels.Comments;
+using Humanizer;
+using CodeBucket.Core.Utils;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestViewModel : LoadableViewModel
+    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IMarkdownService _markdownService;
-        private PullRequestModel _model;
+        private readonly ReactiveList<PullRequestComment> _comments = new ReactiveList<PullRequestComment>();
+        private readonly IApplicationService _applicationService;
+
+        public string Username { get; }
+
+        public string Repository { get; }
+
+        public int PullRequestId { get; }
+
+        public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
+
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
         private bool _merged;
-		private readonly CollectionViewModel<PullRequestCommentModel> _comments = new CollectionViewModel<PullRequestCommentModel>();
-
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-        public int Id { get; private set; }
-
         public bool Merged
         {
             get { return _merged; }
-            set { _merged = value; RaisePropertyChanged(() => Merged); }
+            set { this.RaiseAndSetIfChanged(ref _merged, value); }
         }
 
-        public string Description { get; private set; }
+        private readonly ObservableAsPropertyHelper<bool> _approved;
+        public bool Approved => _approved.Value;
 
-        public PullRequestModel PullRequest 
+        private readonly ObservableAsPropertyHelper<string> _description;
+        public string Description => _description.Value;
+
+        private readonly ObservableAsPropertyHelper<int?> _approvalCount;
+        public int? ApprovalCount => _approvalCount.Value;
+
+        private readonly ObservableAsPropertyHelper<UserItemViewModel[]> _approvals;
+        public UserItemViewModel[] Approvals => _approvals.Value;
+
+        private int? _commentCount;
+        public int? CommentCount
+        {
+            get { return _commentCount; }
+            private set { this.RaiseAndSetIfChanged(ref _commentCount, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<int?> _participants;
+        public int? ParticipantCount => _participants.Value;
+
+        private PullRequest _pullRequest;
+        public PullRequest PullRequest 
         { 
-            get { return _model; }
-            set
+            get { return _pullRequest; }
+            private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
+        }
+
+        public IReactiveCommand<Unit> MergeCommand { get; }
+
+        public IReactiveCommand<Unit> ToggleApproveButton { get; }
+
+        public IReactiveCommand<object> GoToUserCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<Unit> GoToCommitsCommand { get; }
+
+        public PullRequestViewModel(
+            string username, string repository, PullRequest pullRequest,
+            IMarkdownService markdownService = null, IApplicationService applicationService = null)
+            : this(username, repository, pullRequest.Id, markdownService, applicationService)
+        {
+            PullRequest = pullRequest;
+        }
+
+        public PullRequestViewModel(
+            string username, string repository, int pullRequestId,
+            IMarkdownService markdownService = null, IApplicationService applicationService = null)
+        {
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+
+            Title = $"Pull Request #{pullRequestId}";
+            Username = username;
+            Repository = repository;
+            PullRequestId = pullRequestId;
+
+            Comments = _comments.CreateDerivedCollection(x =>
             {
-                _model = value;
-                Description = string.IsNullOrWhiteSpace(value.Description) ? null : _markdownService.ConvertMarkdown(value.Description);
-                _merged = string.Equals(value.State, "MERGED");
-                RaisePropertyChanged(() => PullRequest);
-            }
-        }
+                var name = x.User.DisplayName ?? x.User.Username ?? "Unknown";
+                var avatar = new Avatar(x.User.Links?.Avatar?.Href);
+                return new CommentItemViewModel(name, avatar, x.CreatedOn.Humanize(), x.Content.Html);
+            });
 
-		public CollectionViewModel<PullRequestCommentModel> Comments
-        {
-            get { return _comments; }
-        }
+            Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
 
-		public ICommand GoToCommitsCommand
-		{
-			get 
-            { 
-                return new MvxCommand(() => {
-                    if (PullRequest?.Source?.Repository == null)
-                    {
-                        DisplayAlert("The author has deleted the source repository for this pull request.");
-                    }
-                    else
-                    {
-                        ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id });
-                    }
-                }); 
-            }
-		}
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                PullRequest = await applicationService.Client.PullRequests.Get(username, repository, pullRequestId);
+                _comments.Clear();
+                await applicationService
+                    .Client.ForAllItems(
+                        x => x.PullRequests.GetComments(username, repository, pullRequestId), 
+                         y =>
+                         {
+                             var items = y.Where(x => !string.IsNullOrEmpty(x.Content.Raw) && x.Inline == null)
+                                          .OrderBy(x => (x.CreatedOn));
+                             _comments.Reset(items);
+                         });
+            });
 
-        public PullRequestViewModel(IMarkdownService markdownService)
-        {
-            _markdownService = markdownService;
-        }
+            GoToCommitsCommand = ReactiveCommand.CreateAsyncTask(t =>
+            {
+                if (PullRequest?.Source?.Repository == null)
+                {
+                    throw new Exception("The author has deleted the source repository for this pull request.");
+                }
 
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Id = navObject.Id;
-        }
+                var viewModel = new PullRequestCommitsViewModel(username, repository, pullRequestId);
+                NavigateTo(viewModel);
+                return Task.FromResult(Unit.Default);
+            });
 
-        protected override Task Load()
-        {
-            var t1 = this.GetApplication().Client.PullRequests.Get(Username, Repository, Id)
-                         .OnSuccess(response => PullRequest = response);
 
-            Comments.Items.Clear();
-            this.GetApplication().Client
-                .ForAllItems(x => x.PullRequests.GetComments(Username, Repository, Id), Comments.Items.AddRange)
-                .ToBackground();
+            var canMerge = this.WhenAnyValue(x => x.PullRequest).Select(x => string.Equals(x?.State, "open"));
+            MergeCommand = ReactiveCommand.CreateAsyncTask(canMerge, async t =>
+            {
+                PullRequest = await applicationService.Client.PullRequests.Merge(username, repository, pullRequestId);
+            });
 
-            return t1;
+            GoToUserCommand
+                .OfType<string>()
+                .Select(x => new UserViewModel(x))
+                .Subscribe(NavigateTo);
+
+            ToggleApproveButton = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                if (Approved)
+                    await applicationService.Client.PullRequests.Unapprove(username, repository, pullRequestId);
+                else
+                    await applicationService.Client.PullRequests.Approve(username, repository, pullRequestId);
+
+                PullRequest = await applicationService.Client.PullRequests.Get(username, repository, pullRequestId);
+            });
+
+            //ToggleApproveButton.ThrownExceptions
+            //    .Subscribe(x => DisplayAlert("Unable to approve commit: " + x.Message).ToBackground());
+
+
+            var participantObs = this.WhenAnyValue(x => x.PullRequest.Participants)
+                                     .Select(x => x ?? Enumerable.Empty<PullRequestParticipant>());
+
+            var currentUsername = applicationService.Account.Username;
+
+            participantObs
+                .Select(x => x.FirstOrDefault(y => string.Equals(y.User.Username,
+                    currentUsername, StringComparison.OrdinalIgnoreCase))?.Approved ?? false)
+                .ToProperty(this, x => x.Approved, out _approved);
+
+            participantObs
+                .Select(x => new int?(x.Count()))
+                .ToProperty(this, x => x.ParticipantCount, out _participants);
+
+            participantObs
+                .Select(x => new int?(x.Count(y => y.Approved)))
+                .ToProperty(this, x => x.ApprovalCount, out _approvalCount);
+
+            this.WhenAnyValue(x => x.PullRequest.Description)
+                .Select(x => string.IsNullOrEmpty(x) ? null : markdownService.ConvertMarkdown(x))
+                .ToProperty(this, x => x.Description, out _description);
+
+            this.WhenAnyValue(x => x.PullRequest.Participants)
+                .Select(participants =>
+                {
+                    return (participants ?? Enumerable.Empty<PullRequestParticipant>())
+                        .Where(x => x.Approved)
+                        .Select(x =>
+                        {
+                            var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
+                            var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
+                            vm.GoToCommand
+                              .Select(_ => new UserViewModel(x.User))
+                              .Subscribe(NavigateTo);
+                            return vm;
+                        });
+                })
+                .Select(x => x.ToArray())
+                .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
         }
 
         public async Task AddComment(string text)
         {
-            await this.GetApplication().Client.PullRequests.AddComment(Username, Repository, Id, text);
+            var oldComment = await _applicationService.Client.PullRequests.AddComment(
+                Username, Repository, PullRequestId, text);
 
-            Comments.Items.Clear();
-            await this.GetApplication().Client
-                      .ForAllItems(x => x.PullRequests.GetComments(Username, Repository, Id), Comments.Items.AddRange);
-        }
+            var comment = await _applicationService.Client.PullRequests.GetComment(
+                Username, Repository, PullRequestId, oldComment.CommentId);
 
-        public async Task Merge()
-        {
-            await this.GetApplication().Client.PullRequests.Merge(Username, Repository, Id);
-            PullRequest = await this.GetApplication().Client.PullRequests.Get(Username, Repository, Id);
-        }
-
-        public ICommand MergeCommand
-        {
-            get { return new MvxCommand(() => Merge(), CanMerge); }
-        }
-
-        private bool CanMerge()
-        {
-            if (PullRequest == null)
-                return false;
-			return string.Equals(PullRequest.State, "open");
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public int Id { get; set; }
+            _comments.Add(comment);
         }
     }
 }

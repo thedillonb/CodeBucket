@@ -1,19 +1,33 @@
 using System.Linq;
+using CodeBucket.Core.Services;
+using ReactiveUI;
 using System.Threading.Tasks;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoriesSharedViewModel : RepositoriesViewModel
     {
-        protected override Task Load()
-        {
-            var username = this.GetApplication().Account.Username;
-            Repositories.Items.Clear();
+        private readonly string _username;
 
-            return this.GetApplication().Client.ForAllItems(
-                x => x.Repositories.GetRepositories(username), 
-                x => Repositories.Items.AddRange(x.Where(
-                    y => !string.Equals(y.Owner.Username, username, System.StringComparison.OrdinalIgnoreCase))));
+        public RepositoriesSharedViewModel(
+            string username = null,
+            IApplicationService applicationService = null)
+            : base(applicationService)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username ?? applicationService.Account.Username;
+            Title = "Shared";
+        }
+
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
+        {
+            return applicationService.Client.ForAllItems(x => x.Repositories.GetAll(_username), repos =>
+            {
+                var shared = repos.Where(x => !string.Equals(x.Owner?.Username, _username, System.StringComparison.OrdinalIgnoreCase));
+                repositories.AddRange(shared);
+            });
         }
     }
 }

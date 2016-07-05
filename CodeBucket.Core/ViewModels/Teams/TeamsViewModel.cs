@@ -1,30 +1,58 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using System.Threading.Tasks;
-using System.Linq;
+using System;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using Splat;
+using System.Reactive;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamsViewModel : LoadableViewModel
+    public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<TeamItemViewModel>
     {
-		private readonly CollectionViewModel<string> _teams = new CollectionViewModel<string>();
+        public IReadOnlyReactiveList<TeamItemViewModel> Items { get; }
 
-		public CollectionViewModel<string> Teams
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
+        private string _searchText;
+        public string SearchText
         {
-            get { return _teams; }
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public ICommand GoToTeamCommand
-        {
-            get { return new MvxCommand<string>(x => ShowViewModel<TeamViewModel>(new TeamViewModel.NavObject { Name = x })); }
-        }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
-        protected override async Task Load()
+        public TeamsViewModel(IApplicationService applicationService = null)
         {
-            Teams.Items.Clear();
-            await this.GetApplication().Client.ForAllItems(
-                x => x.Teams.GetAll(), 
-                x => Teams.Items.AddRange(x.Select(y => y.Username)));
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Teams";
+
+            var teams = new ReactiveList<User>();
+            Items = teams.CreateDerivedCollection(team =>
+            {
+                var vm = new TeamItemViewModel(team.Username);
+                vm.GoToCommand
+                  .Select(x => new TeamViewModel(team))
+                  .Subscribe(NavigateTo);
+                return vm;
+            }, 
+            x => x.Username.ContainsKeyword(SearchText), 
+            signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                teams.Clear();
+                return applicationService.Client.ForAllItems(x => x.Teams.GetAll(), teams.AddRange);
+            });
+
+            _isEmpty = LoadCommand
+                .IsExecuting
+                .Skip(1)
+                .Select(x => !x && teams.Count == 0)
+                .ToProperty(this, x => x.IsEmpty);
         }
     }
 }

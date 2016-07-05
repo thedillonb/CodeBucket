@@ -4,11 +4,10 @@ using CodeBucket.Core.ViewModels.App;
 using Foundation;
 using SDWebImage;
 using CodeBucket.Core.Utils;
-using CodeBucket.Core.Services;
-using MvvmCross.Platform;
 using CodeBucket.ViewControllers.Accounts;
 using CodeBucket.ViewControllers.Application;
 using MonoTouch.SlideoutNavigation;
+using ReactiveUI;
 
 namespace CodeBucket.ViewControllers
 {
@@ -19,21 +18,14 @@ namespace CodeBucket.ViewControllers
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
 
-        public StartupViewModel ViewModel { get; }
-
-        public StartupViewController()
-        {
-            ViewModel = new StartupViewModel(
-                Mvx.Resolve<IAccountsService>(),
-                Mvx.Resolve<IApplicationService>());
-        }
+        public StartupViewModel ViewModel { get; } = new StartupViewModel();
 
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
 
             _imgView.Frame = new CoreGraphics.CGRect(View.Bounds.Width / 2 - imageSize / 2, View.Bounds.Height / 2 - imageSize / 2 - 30f, imageSize, imageSize);
-            _statusLabel.Frame = new CoreGraphics.CGRect(0, _imgView.Frame.Bottom + 10f, View.Bounds.Width, 15f);
+            _statusLabel.Frame = new CoreGraphics.CGRect(0, _imgView.Frame.Bottom + 10f, View.Bounds.Width, 18f);
             _activityView.Center = new CoreGraphics.CGPoint(View.Bounds.Width / 2, _statusLabel.Frame.Bottom + 16f + 16F);
         }
 
@@ -64,12 +56,12 @@ namespace CodeBucket.ViewControllers
 
             OnActivation(d =>
             {
-                d(ViewModel.Bind(x => x.Avatar).Subscribe(UpdatedImage));
-                d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
-                d(ViewModel.GoToMenuCommand.Subscribe(GoToMenu));
-                d(ViewModel.GoToAccountsCommand.Subscribe(GoToAccounts));
-                d(ViewModel.GoToLoginCommand.Subscribe(GoToNewAccount));
-                d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
+                ViewModel.WhenAnyValue(x => x.Avatar).Subscribe(UpdatedImage).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x).AddTo(d);
+                ViewModel.GoToMenuCommand.Subscribe(GoToMenu).AddTo(d);
+                ViewModel.GoToAccountsCommand.Subscribe(GoToAccounts).AddTo(d);
+                ViewModel.GoToLoginCommand.Subscribe(GoToNewAccount).AddTo(d);
+                ViewModel.WhenAnyValue(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
                         _activityView.StartAnimating();
@@ -77,7 +69,7 @@ namespace CodeBucket.ViewControllers
                         _activityView.StopAnimating();
 
                     _activityView.Hidden = !x;
-                }));
+                }).AddTo(d);
             });
         }
 
@@ -85,11 +77,11 @@ namespace CodeBucket.ViewControllers
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
-            slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
-            vc.ViewModel.GoToDefaultTopView.Execute(null);
+            slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
+            //vc.ViewModel.GoToDefaultTopView.Execute(null);
+            var vm = new Core.ViewModels.Repositories.RepositoryViewModel("thedillonb", "bitbucketbrowser");
+            vc.NavigationController.PushViewController(new Repositories.RepositoryViewController { ViewModel = vm }, true);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);
         }

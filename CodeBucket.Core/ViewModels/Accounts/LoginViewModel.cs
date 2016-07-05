@@ -1,13 +1,13 @@
 using System;
 using CodeBucket.Core.Services;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
 using CodeBucket.Core.Data;
-using CodeBucket.Client;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeBucket.Core.Messages;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
@@ -36,16 +36,18 @@ namespace CodeBucket.Core.ViewModels.Accounts
 		{
 			get
 			{
-                return string.Format("https://bitbucket.org/site/oauth2/authorize?client_id={0}&response_type=code", LoginViewModel.ClientId);
+                return string.Format("https://bitbucket.org/site/oauth2/authorize?client_id={0}&response_type=code", ClientId);
 			}
 		}
 
         public ReactiveCommand<Unit> LoginCommand { get; }
 
-        public LoginViewModel(IApplicationService applicationService, IAccountsService accountsService)
+        public LoginViewModel(
+            IApplicationService applicationService = null, 
+            IAccountsService accountsService = null)
 		{
-            _applicationService = applicationService;
-            _accountsService = accountsService;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
 
             LoginCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Code).Select(x => x != null),
@@ -60,16 +62,16 @@ namespace CodeBucket.Core.ViewModels.Accounts
 			{
 				IsLoggingIn = true;
                 var ret = await BitbucketClient.GetAuthorizationCode(ClientId, ClientSecret, Code);
-                var bitbucketClient = BitbucketClient.WithBearerAuthentication(ret.AccessToken);
-                var usersModel = await bitbucketClient.Users.GetCurrent();
+                var client = BitbucketClient.WithBearerAuthentication(ret.AccessToken);
+                var user = await client.Users.GetCurrent();
 
-                var account = _accountsService.Find(usersModel.User.Username);
+                var account = _accountsService.Find(user.Username);
                 if (account == null)
                 {
                     account = new BitbucketAccount
                     {
-                        Username = usersModel.User.Username,
-                        AvatarUrl = usersModel.User.Avatar,
+                        Username = user.Username,
+                        AvatarUrl = user.Links.Avatar.Href,
                         RefreshToken = ret.RefreshToken,
                         Token = ret.AccessToken
                     };
@@ -79,11 +81,11 @@ namespace CodeBucket.Core.ViewModels.Accounts
                 {
                     account.RefreshToken = ret.RefreshToken;
                     account.Token = ret.AccessToken;
-                    account.AvatarUrl = usersModel.User.Avatar;
+                    account.AvatarUrl = user.Links.Avatar.Href;
                     _accountsService.Update(account);
                 }
 
-                _applicationService.ActivateUser(account, bitbucketClient);
+                _applicationService.ActivateUser(account, client);
 			}
 			finally
 			{

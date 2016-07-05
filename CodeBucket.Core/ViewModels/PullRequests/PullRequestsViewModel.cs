@@ -1,67 +1,74 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using CodeBucket.Client.Models;
-using MvvmCross.Core.ViewModels;
 using System;
+using CodeBucket.Core.Services;
+using System.Reactive.Linq;
+using CodeBucket.Core.Utils;
+using Humanizer;
+using System.Linq;
+using Splat;
+using ReactiveUI;
+using System.Reactive;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : LoadableViewModel
+    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<PullRequestItemViewModel>
     {
-		private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
-		public CollectionViewModel<PullRequestModel> PullRequests
-        {
-            get { return _pullrequests; }
-        }
+        public IReadOnlyReactiveList<PullRequestItemViewModel> Items { get; }
 
-        public string Username { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public string Repository { get; private set; }
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
-		private int _selectedFilter;
-		public int SelectedFilter
+		private PullRequestState _selectedFilter;
+		public PullRequestState SelectedFilter
 		{
 			get { return _selectedFilter; }
-			set 
-			{
-				_selectedFilter = value;
-				RaisePropertyChanged(() => SelectedFilter);
-			}
+            set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
 
-        public ICommand GoToPullRequestCommand
+        private string _searchText;
+        public string SearchText
         {
-			get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Id })); }
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-		public PullRequestsViewModel()
+        public PullRequestsViewModel(string username, string repository,
+                                     IApplicationService applicationService = null)
 		{
-            this.Bind(x => x.SelectedFilter).BindCommand(LoadCommand);
-		}
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-		public void Init(NavObject navObject) 
-        {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-        }
+            Title = "Pull Requests";
 
-        protected override async Task Load()
-        {
-			var state = "OPEN";
-			if (SelectedFilter == 1)
-				state = "MERGED";
-			else if (SelectedFilter == 2)
-				state = "DECLINED";
+            var pullRequests = new ReactiveList<PullRequest>();
+            Items = pullRequests.CreateDerivedCollection(
+                pullRequest =>
+                {
+                    var avatar = new Avatar(pullRequest.Author?.Links?.Avatar?.Href);
+                    var vm = new PullRequestItemViewModel(pullRequest.Title, avatar, pullRequest.CreatedOn.Humanize());
+                    vm.GoToCommand
+                      .Select(_ => new PullRequestViewModel(username, repository, pullRequest))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                },
+                x => x.Title.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            PullRequests.Items.Clear();
-            await this.GetApplication().Client.ForAllItems(x => x.PullRequests.Get(Username, Repository, state),
-                                                     PullRequests.Items.AddRange);
-        }
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                pullRequests.Clear();
+                return applicationService.Client.ForAllItems(x => 
+                    x.PullRequests.GetAll(username, repository, SelectedFilter), 
+                    pullRequests.AddRange);
+            });
 
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            LoadCommand.IsExecuting.CombineLatest(pullRequests.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
+
+            this.WhenAnyValue(x => x.SelectedFilter)
+                .Skip(1)
+                .InvokeCommand(LoadCommand);
         }
     }
 }

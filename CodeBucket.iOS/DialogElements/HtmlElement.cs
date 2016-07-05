@@ -49,18 +49,21 @@ namespace CodeBucket.DialogElements
 
         private async Task<nfloat> GetSize()
         {
-            try
+            if (HasValue)
             {
-                var size = await WebView.EvaluateJavaScriptAsync("size();");
-                if (size != null)
+                try
                 {
-                    nfloat newsize;
-                    if (nfloat.TryParse(size.ToString(), out newsize))
-                        return newsize;
+                    var size = await WebView.EvaluateJavaScriptAsync("size();");
+                    if (size != null)
+                    {
+                        nfloat newsize;
+                        if (nfloat.TryParse(size.ToString(), out newsize))
+                            return newsize;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             return _height;
@@ -110,11 +113,11 @@ namespace CodeBucket.DialogElements
 
         public void CheckHeight()
         {
-//            var f = WebView.Frame;
-//            f.Height = 1;
-//            WebView.Frame = f;
-//            f.Height = _height = await GetSize();
-//            WebView.Frame = f;
+            //            var f = WebView.Frame;
+            //            f.Height = 1;
+            //            WebView.Frame = f;
+            //            f.Height = _height = await GetSize();
+            //            WebView.Frame = f;
             Reload();
         }
 
@@ -141,7 +144,9 @@ namespace CodeBucket.DialogElements
             cell.ContentView.AddSubview (WebView);
             cell.ContentView.Layer.MasksToBounds = true;
             cell.ContentView.AutosizesSubviews = true;
-            cell.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
+            cell.SeparatorInset = UIEdgeInsets.Zero;
+            cell.LayoutMargins = UIEdgeInsets.Zero;
+            cell.PreservesSuperviewLayoutMargins = false;
             return cell;
         }
 

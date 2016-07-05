@@ -41,9 +41,9 @@ namespace CodeBucket.ViewControllers
 
                 OnActivation(d =>
                 {
-                    d(backButton.GetClickedObservable().Subscribe(_ => Web.GoBack()));
-                    d(forwardButton.GetClickedObservable().Subscribe(_ => Web.GoForward()));
-                    d(refreshButton.GetClickedObservable().Subscribe(_ => Web.Reload()));
+                    backButton.GetClickedObservable().Subscribe(_ => Web.GoBack()).AddTo(d);
+                    forwardButton.GetClickedObservable().Subscribe(_ => Web.GoForward()).AddTo(d);
+                    refreshButton.GetClickedObservable().Subscribe(_ => Web.Reload()).AddTo(d);
                 });
 
                 ToolbarItems = new []

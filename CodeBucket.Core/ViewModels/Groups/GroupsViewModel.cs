@@ -1,35 +1,62 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Client.Models;
+using System;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Linq;
+using System.Reactive;
+using Splat;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-	public class GroupsViewModel : LoadableViewModel
+    public class GroupsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<GroupItemViewModel>
 	{
-        public CollectionViewModel<GroupModel> Groups { get; } = new CollectionViewModel<GroupModel>();
+        public IReadOnlyReactiveList<GroupItemViewModel> Items { get; }
 
-        public string Username { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public void Init(NavObject navObject)
+        private string _searchText;
+        public string SearchText
         {
-            Username = navObject.Username;
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public ICommand GoToGroupCommand
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
+
+        public GroupsViewModel(
+            string username, 
+            IApplicationService applicationService = null)
         {
-			get { return new MvxCommand<GroupModel>(x => ShowViewModel<GroupViewModel>(new GroupViewModel.NavObject { Username = x.Owner.Username, GroupName = x.Name }));}
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Groups";
+
+            var groups = new ReactiveList<Group>();
+            Items = groups.CreateDerivedCollection(
+                ToViewModel,
+                x => x.Name.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                groups.Reset(await applicationService.Client.Groups.GetGroups(username));
+            });
+
+            _isEmpty = LoadCommand
+                .IsExecuting
+                .Skip(1)
+                .Select(x => !x && groups.Count == 0)
+                .ToProperty(this, x => x.IsEmpty);
         }
 
-        protected override async Task Load()
+        private GroupItemViewModel ToViewModel(Group model)
         {
-            var response = await this.GetApplication().Client.Groups.GetGroups(Username);
-            Groups.Items.Reset(response);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            var vm = new GroupItemViewModel(model.Name);
+            vm.GoToCommand
+              .Select(x => new GroupViewModel(model.Owner.Username, model.Slug, model.Name))
+              .Subscribe(NavigateTo);
+            return vm;
         }
 	}
 }

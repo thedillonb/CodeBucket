@@ -1,38 +1,25 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <summary>
-//    Defines the AppDelegate type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using CodeBucket;
 using System;
-using Security;
-using MvvmCross.iOS.Platform;
-using ReactiveUI;
+using System.Net.Http;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
 using CodeBucket.Services;
-using System.Reactive.Subjects;
+using Foundation;
+using ReactiveUI;
+using Security;
+using UIKit;
 
 namespace CodeBucket
 {
-    using MvvmCross.Platform;
-    using MvvmCross.Core.ViewModels;
-    using Foundation;
-    using UIKit;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// The UIApplicationDelegate for the application. This class is responsible for launching the 
     /// User Interface of the application, as well as listening (and optionally responding) to 
     /// application events from iOS.
     /// </summary>
     [Register("AppDelegate")]
-	public class AppDelegate : MvxApplicationDelegate
+	public class AppDelegate : UIApplicationDelegate
 	{
         public override UIWindow Window { get; set; }
-
-        public IosViewPresenter Presenter { get; private set; }
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -56,13 +43,14 @@ namespace CodeBucket
             // Stamp the date this was installed (first run)
             StampInstallDate("CodeBucket");
 
+            //Register all services
+            ServiceRegistration.Register();
+
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;
             exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));
             
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            Presenter = new IosViewPresenter(Window);
-            new Setup(this, Presenter).Initialize();
 
 			// Setup theme
 			Theme.Setup();

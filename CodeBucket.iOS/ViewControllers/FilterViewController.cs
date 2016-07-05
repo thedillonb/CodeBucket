@@ -3,6 +3,7 @@ using System.Linq;
 using UIKit;
 using CodeBucket.DialogElements;
 using Humanizer;
+using System.Reactive.Linq;
 
 namespace CodeBucket.ViewControllers
 {
@@ -14,15 +15,18 @@ namespace CodeBucket.ViewControllers
             Title = "Filter & Sort";
 
             var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
-            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Save };
+            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
-            OnActivation(d =>
+            OnActivation(disposables =>
             {
-                d(cancel.GetClickedObservable().Subscribe(_ => DismissViewController(true, null)));
-                d(save.GetClickedObservable().Subscribe(_ => {
-                    ApplyButtonPressed();
-                    DismissViewController(true, null); 
-                }));
+                cancel.GetClickedObservable()
+                      .Subscribe(_ => DismissViewController(true, null))
+                      .AddTo(disposables);
+
+                save.GetClickedObservable()
+                    .Do(_ => ApplyButtonPressed())
+                    .Subscribe(_ => DismissViewController(true, null))
+                    .AddTo(disposables);
             });
         }
 
@@ -39,7 +43,7 @@ namespace CodeBucket.ViewControllers
             TableView.ReloadData();
         }
 
-        public class EnumChoiceElement<T> : StringElement where T : struct, IConvertible
+        public class EnumChoiceElement<T> : ButtonElement where T : struct, IConvertible
         {
             private T _value;
 
@@ -54,9 +58,8 @@ namespace CodeBucket.ViewControllers
             }
 
             public EnumChoiceElement(string title, T defaultVal)
-                : base(title, string.Empty, UITableViewCellStyle.Value1)
+                : base(title, string.Empty)
             {
-                Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 Value = defaultVal;
             }
         }
@@ -73,7 +76,7 @@ namespace CodeBucket.ViewControllers
                 var sec = new Section();
                 foreach (var x in Enum.GetValues(typeof(T)).Cast<Enum>())
                 {
-                    var e = new StringElement(x.Humanize())
+                    var e = new ButtonElement(x.Humanize())
                     { 
                         Accessory = object.Equals(x, element.Value) ? 
                             UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None 
@@ -93,14 +96,13 @@ namespace CodeBucket.ViewControllers
             return element;
         }
 
-        public class MultipleChoiceElement<T> : StringElement
+        public class MultipleChoiceElement<T> : ButtonElement
         {
             public T Obj;
             public MultipleChoiceElement(string title, T obj)
-                : base(title, CreateCaptionForMultipleChoice(obj), UITableViewCellStyle.Value1)
+                : base(title, CreateCaptionForMultipleChoice(obj))
             {
                 Obj = obj;
-                Accessory = UITableViewCellAccessory.DisclosureIndicator;
             }
         }
 

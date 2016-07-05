@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace ReactiveUI
@@ -12,6 +15,14 @@ namespace ReactiveUI
                 @this.Clear();
                 @this.AddRange(items);
             }
+        }
+
+        public static IObservable<IReadOnlyReactiveList<T>> ChangedObservable<T>(this IReadOnlyReactiveList<T> @this)
+        {
+            return @this.Changed
+                        .Select(_ => Unit.Default)
+                        .StartWith(Unit.Default)
+                        .Select(_ => @this);
         }
     }
 }

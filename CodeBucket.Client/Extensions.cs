@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CodeBucket.Client;
-using CodeBucket.Client.Models;
 
 public static class Extensions
 {

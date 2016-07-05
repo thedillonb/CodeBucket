@@ -2,7 +2,7 @@
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamItemViewModel : ICanGoToViewModel
+    public class TeamItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; }
 
@@ -14,3 +14,4 @@ namespace CodeBucket.Core.ViewModels.Teams
         }
     }
 }
+

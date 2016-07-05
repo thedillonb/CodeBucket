@@ -1,28 +1,29 @@
-using System.Linq;
+using ReactiveUI;
+using CodeBucket.Core.Services;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
     public class RepositoriesStarredViewModel : RepositoriesViewModel
     {
-        protected override async Task Load()
+        private readonly string _username;
+
+        public RepositoriesStarredViewModel(
+            string username = null,
+            IApplicationService applicationService = null)
+            : base(applicationService)
         {
-            var items = await this.GetApplication().Client.Users.GetCurrentUserRepositoriesFollowing();
-            var repos = items.Select(x =>
-            {
-                return new Repository
-                {
-                    Description = x.Description,
-                    Name = x.Name,
-                    FullName = x.Owner + "/" + x.Slug,
-                    Owner = new User
-                    {
-                        Username = x.Owner
-                    }
-                };
-            });
-            Repositories.Items.Reset(repos);
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username ?? applicationService.Account.Username;
+            Title = "Watched";
+        }
+
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
+        {
+            return applicationService
+                .Client.ForAllItems(x => x.Repositories.GetAll(_username), repositories.AddRange);
         }
     }
 }

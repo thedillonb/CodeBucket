@@ -1,26 +1,30 @@
-using System.Threading.Tasks;
+using CodeBucket.Core.Services;
+using ReactiveUI;
 using System.Linq;
+using Splat;
+using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class UserFollowersViewModel : BaseUserCollectionViewModel
+    public class UserFollowersViewModel : UsersViewModel
     {
-        public string Username { get; private set; }
+        private readonly string _username;
+        private readonly IApplicationService _applicationService;
 
-        public void Init(NavObject navObject)
+        public UserFollowersViewModel(string username, IApplicationService applicationService = null)
         {
-            Username = navObject.Username;
+            _username = username;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = "Followers";
+            EmptyMessage = "There are no followers.";
         }
 
-        protected override async Task Load()
+        protected override System.Threading.Tasks.Task Load(ReactiveList<UserItemViewModel> users)
         {
-            var items = await this.GetApplication().Client.Users.GetFollowers(Username);
-            Users.Items.Reset(items.Followers.OrderBy(x => x.Username));
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            return _applicationService.Client
+                .ForAllItems(x => x.Users.GetFollowers(_username),
+                             x => users.AddRange(x.Select(ToViewModel)));
         }
     }
 }

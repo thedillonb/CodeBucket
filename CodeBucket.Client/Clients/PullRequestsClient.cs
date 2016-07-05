@@ -1,9 +1,7 @@
 using System;
-using CodeBucket.Client.Models.V2;
-using CodeBucket.Client.Models;
 using System.Threading.Tasks;
 
-namespace CodeBucket.Client.Controllers
+namespace CodeBucket.Client
 {
     public class PullRequestsClient
     {
@@ -14,52 +12,73 @@ namespace CodeBucket.Client.Controllers
             _client = client;
         }
 
-        public Task<Collection<PullRequestModel>> Get(string username, string repository, string state = "OPEN")
+        public Task<Collection<PullRequest>> GetAll(string username, string repository, PullRequestState state)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/pullrequests";
-            return _client.Get<Collection<PullRequestModel>>($"{uri}?state={state}");
+            return _client.Get<Collection<PullRequest>>($"{uri}?state={state.ToString().ToUpper()}");
 		}
 
-        public Task<PullRequestModel> Get(string username, string repository, int id)
+        public Task<PullRequest> Get(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" + 
                 $"/pullrequests/{id}";
-            return _client.Get<PullRequestModel>(uri);
+            return _client.Get<PullRequest>(uri);
         }
 
-        public Task<PullRequestModel> Merge(string username, string repository, int id)
+        public Task<PullRequest> Merge(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/merge";
-            return _client.Post<PullRequestModel>(uri);
+            return _client.Post<PullRequest>(uri);
         }
 
-        public Task<PullRequestModel> Decline(string username, string repository, int id)
+        public Task<PullRequest> Decline(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/decline";
-            return _client.Post<PullRequestModel>(uri);
+            return _client.Post<PullRequest>(uri);
         }
 
-        public Task<Collection<PullRequestCommentModel>> GetComments(string username, string repository, int id)
+        public Task<PullRequestParticipant> Approve(string username, string repository, int id)
+        {
+            var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
+                $"/pullrequests/{id}/approve";
+            return _client.Post<PullRequestParticipant>(uri);
+        }
+
+        public Task Unapprove(string username, string repository, int id)
+        {
+            var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
+                $"/pullrequests/{id}/approve";
+            return _client.Delete(uri);
+        }
+
+        public Task<Collection<PullRequestComment>> GetComments(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/comments";
-            return _client.Get<Collection<PullRequestCommentModel>>(uri);
+            return _client.Get<Collection<PullRequestComment>>(uri);
         }
 
-        public Task<Collection<CommitModel>> GetCommits(string username, string repository, int id)
+        public Task<PullRequestComment> GetComment(string username, string repository, int pullRequestId, int commentId)
+        {
+            var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
+                $"/pullrequests/{pullRequestId}/comments/{commentId}";
+            return _client.Get<PullRequestComment>(uri);
+        }
+
+        public Task<Collection<Commit>> GetCommits(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/commits";
-            return _client.Get<Collection<CommitModel>>(uri);
+            return _client.Get<Collection<Commit>>(uri);
         }
 
-        public Task<OldPullRequestCommentModel> AddComment(string username, string repository, int id, string content)
+        public Task<V1.PullRequestComment> AddComment(string username, string repository, int id, string content)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/comments";
-            return _client.Post<OldPullRequestCommentModel>(uri, new { content });
+            return _client.Post<V1.PullRequestComment>(uri, new { content });
         }
     }
 }

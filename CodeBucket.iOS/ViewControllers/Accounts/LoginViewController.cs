@@ -5,8 +5,6 @@ using System.Linq;
 using WebKit;
 using Foundation;
 using CodeBucket.Utilities;
-using MvvmCross.Platform;
-using CodeBucket.Core.Services;
 using CodeBucket.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -21,19 +19,18 @@ namespace CodeBucket.ViewControllers.Accounts
             "https://bitbucket.org/features",
             "https://bitbucket.org/account/signup",
             "https://bitbucket.org/plans",
-            "https://bitbucket.org/product/pricing",
+            "https://bitbucket.org/product/pricing"
         };
 
-        public LoginViewModel ViewModel { get; }
+        public LoginViewModel ViewModel { get; } = new LoginViewModel();
 
         public LoginViewController()
             : base(true)
         {
-            ViewModel = new LoginViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<IAccountsService>());
             Title = "Login";
 
             Appearing.Take(1).Subscribe(_ => LoadRequest());
-            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
+            OnActivation(d => ViewModel.WhenAnyValue(x => x.IsLoggingIn).SubscribeStatus("Logging in...").AddTo(d));
         }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
@@ -41,7 +38,7 @@ namespace CodeBucket.ViewControllers.Accounts
             // Fucking BitBucket and their horrible user interface.
             if (ForbiddenRoutes.Any(navigationAction.Request.Url.AbsoluteString.StartsWith))
             {
-                AlertDialogService.ShowAlert("Invalid Request", "Sorry, due to restrictions you can not sign-up for a new account in CodeBucket.");
+                AlertDialogService.ShowAlert("Invalid Request", "Sorry, due to restrictions, you can not sign-up for a new account in CodeBucket.");
                 return false;
             }
 

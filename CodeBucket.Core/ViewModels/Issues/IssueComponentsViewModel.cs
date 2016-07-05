@@ -1,103 +1,58 @@
-using System.Threading.Tasks;
-using CodeBucket.Core.Messages;
 using System;
-using CodeBucket.Client.Models;
-using MvvmCross.Core.ViewModels;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Linq;
+using System.Reactive;
+using Splat;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssueComponentsViewModel : LoadableViewModel
+    public class IssueComponentsViewModel : ReactiveObject, ILoadableViewModel
 	{
+        private bool _isLoaded;
+        public IReadOnlyReactiveList<IssueAttributeItemViewModel> Components { get; }
+
         private string _selectedValue;
         public string SelectedValue
-		{
-			get
-			{
-                return _selectedValue;
-			}
-			set
-			{
-                _selectedValue = value;
-                RaisePropertyChanged(() => SelectedValue);
-			}
-		}
+        {
+            get { return _selectedValue; }
+            set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
+        }
 
-		private bool _isSaving;
-		public bool IsSaving
-		{
-			get { return _isSaving; }
-			private set {
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        private readonly CollectionViewModel<ComponentModel> _components = new CollectionViewModel<ComponentModel>();
-        public CollectionViewModel<ComponentModel> Components
-		{
-            get { return _components; }
-		}
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
-		public string Username  { get; private set; }
+        public IssueComponentsViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-		public string Repository { get; private set; }
+            var components = new ReactiveList<IssueComponent>();
+            Components = components.CreateDerivedCollection(CreateItemViewModel);
 
-		public int Id { get; private set; }
+            this.WhenAnyValue(x => x.SelectedValue)
+                .SelectMany(_ => Components)
+                .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
-		public bool SaveOnSelect { get; private set; }
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                if (_isLoaded) return;
+                var items = await applicationService.Client.Issues.GetComponents(username, repository);
+                components.Reset(items);
+                _isLoaded = true;
+            });
+        }
 
-		public void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Id = navObject.Id;
-			SaveOnSelect = navObject.SaveOnSelect;
-            var value = TxSevice.Get() as string;
-            SelectedValue = value;
-
-            this.Bind(x => x.SelectedValue).Subscribe(x => SelectValue(x).ToBackground());
-		}
-
-        private async Task SelectValue(string x)
-		{
-			if (SaveOnSelect)
-			{
-				try
-				{
-					IsSaving = true;
-                    var newIssue = await this.GetApplication().Client.Issues.UpdateComponent(Username, Repository, Id, x);
-					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
-				}
-				catch (Exception e)
-				{
-                    DisplayAlert("Unable to update issue component: " + e.Message).ToBackground();
-				}
-				finally
-				{
-					IsSaving = false;
-				}
-			}
-			else
-			{
-                Messenger.Publish(new SelectedComponentMessage(this) { Value = x });
-			}
-
-			ChangePresentation(new MvxClosePresentationHint(this));
-		}
-
-		protected override async Task Load()
-		{
-            var items = await this.GetApplication().Client.Issues.GetComponents(Username, Repository);
-            Components.Items.Reset(items);
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public int Id { get; set; }
-			public bool SaveOnSelect { get; set; }
-		}
+        private IssueAttributeItemViewModel CreateItemViewModel(IssueComponent component)
+        {
+            var vm = new IssueAttributeItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
+            return vm;
+        }
 	}
 }
 

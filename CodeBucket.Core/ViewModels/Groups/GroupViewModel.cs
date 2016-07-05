@@ -1,36 +1,53 @@
-using System.Threading.Tasks;
-using System.Linq;
+using System;
 using CodeBucket.Core.ViewModels.Users;
+using System.Linq;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using CodeBucket.Core.Utils;
+using System.Reactive.Linq;
+using Splat;
+using System.Threading.Tasks;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.Core.ViewModels.Groups
 {
-	public class GroupViewModel : BaseUserCollectionViewModel
+    public class GroupViewModel : UsersViewModel
 	{
-		public string Username { get; private set; }
+        private readonly string _owner, _slug;
+        private readonly IApplicationService _applicationService;
 
-		public string GroupName { get; private set; }
-
-		public void Init(NavObject navObject) 
-		{
-			Username = navObject.Username;
-			GroupName = navObject.GroupName;
-		}
-
-        protected override async Task Load()
+        public GroupViewModel(
+            Group group,
+            IApplicationService applicationService = null)
+            : this(group.Owner.Username, group.Slug, group.Name, applicationService)
         {
-            var groups = await this.GetApplication().Client.Groups.GetGroups(Username);
-            var group = groups.FirstOrDefault(x => x.Name == GroupName);
-
-            if (group == null)
-                Users.Items.Clear();
-            else
-                Users.Items.Reset(group.Members);
         }
 
-        public class NavObject
+        public GroupViewModel(string owner, string slug, string name = null,
+            IApplicationService applicationService = null)
         {
-			public string Username { get; set; }
-			public string GroupName { get; set; }
+            _owner = owner;
+            _slug = slug;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            Title = name ?? "Members";
+            EmptyMessage = "There are no members.";
+        }
+
+        protected override async Task Load(ReactiveList<UserItemViewModel> users)
+        {
+            var members = await _applicationService.Client.Groups.GetMembers(_owner, _slug);
+            var memberUsers = members.Select(x =>
+            {
+                var username = x.Username;
+                var avatar = new Avatar(x.Avatar);
+                var displayName = string.Join(" ", x.FirstName, x.LastName);
+                var vm = new UserItemViewModel(username, displayName, avatar);
+                vm.GoToCommand.Select(__ => new UserViewModel(username)).Subscribe(NavigateTo);
+                return vm;
+            });
+
+            users.Reset(memberUsers);
         }
 	}
 }

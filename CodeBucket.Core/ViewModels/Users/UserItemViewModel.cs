@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Users
 {
-    public class UserItemViewModel : ICanGoToViewModel
+    public class UserItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Username { get; }
 
@@ -21,3 +21,4 @@ namespace CodeBucket.Core.ViewModels.Users
         }
     }
 }
+

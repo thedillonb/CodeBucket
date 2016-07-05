@@ -1,33 +1,60 @@
 ﻿using System;
 using UIKit;
-using CoreGraphics;
 using Foundation;
+using CodeBucket.Views;
+using ReactiveUI;
+using System.Reactive.Linq;
+using CodeBucket.Core.ViewModels;
 
 namespace CodeBucket.ViewControllers
 {
+    public abstract class TableViewController<TViewModel> : TableViewController, IViewFor<TViewModel> where TViewModel : class
+    {
+        private TViewModel _viewModel;
+        public TViewModel ViewModel
+        {
+            get { return _viewModel; }
+            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+        }
+
+        object IViewFor.ViewModel
+        {
+            get { return ViewModel; }
+            set { ViewModel = (TViewModel)value; }
+        }
+
+        protected TableViewController(UITableViewStyle style = UITableViewStyle.Plain)
+            : base(style)
+        {
+            Appearing
+                .Take(1)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
+                .Switch()
+                .OfType<ILoadableViewModel>()
+                .Select(x => x.LoadCommand)
+                .Subscribe(x => x.ExecuteIfCan());
+
+            OnActivation(disposable =>
+            {
+                this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IProvidesTitle>()
+                    .Select(x => x.WhenAnyValue(y => y.Title))
+                    .Switch()
+                    .Subscribe(x => Title = x)
+                    .AddTo(disposable);
+            });
+        }
+    }
+
     public class TableViewController : BaseViewController
     {
-        private readonly Lazy<UITableView> _tableView;
-        private UIRefreshControl _refreshControl;
+        private readonly Lazy<EnhancedTableView> _tableView;
 
-        public UITableView TableView { get { return _tableView.Value; } }
-
-        public virtual UIRefreshControl RefreshControl
-        {
-            get { return _refreshControl; }
-            set
-            {
-                _refreshControl?.RemoveFromSuperview();
-                _refreshControl = value;
-
-                if (_refreshControl != null)
-                    TableView.AddSubview(_refreshControl);
-            }
-        }
+        public EnhancedTableView TableView { get { return _tableView.Value; } }
 
         public TableViewController(UITableViewStyle style)
         {
-            _tableView = new Lazy<UITableView>(() => new UITableView(CGRect.Empty, style));
+            _tableView = new Lazy<EnhancedTableView>(() => new EnhancedTableView(style));
         }
 
         public override void ViewDidLoad()

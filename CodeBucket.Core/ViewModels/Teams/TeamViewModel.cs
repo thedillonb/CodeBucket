@@ -1,73 +1,74 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
+using System;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
 using CodeBucket.Core.ViewModels.Events;
-using System.Threading.Tasks;
-using CodeBucket.Client.Models;
-using CodeBucket.Core.ViewModels.Users;
+using CodeBucket.Core.Services;
+using System.Reactive.Linq;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
-    public class TeamViewModel : LoadableViewModel
+    public class TeamViewModel : BaseViewModel, ILoadableViewModel
     {
-        private User _userModel;
-
-        public string Name
+        private User _team;
+        public User Team
         {
-            get;
-            private set;
+            get { return _team; }
+            private set { this.RaiseAndSetIfChanged(ref _team, value); }
         }
 
-        public User User
+        private readonly ObservableAsPropertyHelper<string> _displayName;
+        public string DisplayName => _displayName.Value;
+
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToMembersCommand { get; } = ReactiveCommand.Create();
+
+        public TeamViewModel(
+            User team,
+            IApplicationService applicationService = null)
+            : this(team.Username, applicationService)
         {
-            get { return _userModel; }
-            private set { _userModel = value; RaisePropertyChanged(() => User); }
+            Team = team;
         }
 
-        public ICommand GoToFollowersCommand
+        public TeamViewModel(
+            string name, 
+            IApplicationService applicationService = null)
         {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowersViewModel>(new UserFollowersViewModel.NavObject { Username = Name })); }
-        }
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-        public ICommand GoToFollowingCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Name = Name })); }
-        }
+            Title = name;
 
-        public ICommand GoToEventsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Name })); }
-        }
+            GoToFollowersCommand.Subscribe(_ => NavigateTo(new TeamFollowersViewModel(name)));
+            GoToFollowingCommand.Subscribe(_ => NavigateTo(new TeamFollowingsViewModel(name)));
+            GoToMembersCommand.Subscribe(_ => NavigateTo(new TeamMembersViewModel(name)));
+            GoToGroupsCommand.Subscribe(_ => NavigateTo(new GroupsViewModel(name)));
+            GoToEventsCommand.Subscribe(_ => NavigateTo(new UserEventsViewModel(name)));
+            GoToRepositoriesCommand.Subscribe(_ => NavigateTo(new UserRepositoriesViewModel(name)));
 
-        public ICommand GoToGroupsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<GroupsViewModel>(new GroupsViewModel.NavObject { Username = Name })); }
-        }
+            this.WhenAnyValue(x => x.Team.DisplayName)
+                .Select(x => string.Equals(x, name) ? null : x)
+                .ToProperty(this, x => x.DisplayName, out _displayName);
 
-        public ICommand GoToRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Name })); }
-        }
-
-        public ICommand GoToMembersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Name = Name })); }
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Name = navObject.Name;
-        }
-
-        protected override async Task Load()
-        {
-            User = await this.GetApplication().Client.Teams.Get(Name);
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                Team = await applicationService.Client.Teams.Get(name);
+            });
         }
     }
 }

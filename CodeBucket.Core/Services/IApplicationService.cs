@@ -11,6 +11,6 @@ namespace CodeBucket.Core.Services
 
         IAccountsService Accounts { get; }
 
-		void ActivateUser(BitbucketAccount account, CodeBucket.Client.BitbucketClient client);
+		void ActivateUser(BitbucketAccount account, BitbucketClient client);
     }
 }

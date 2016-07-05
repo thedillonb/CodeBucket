@@ -1,103 +1,59 @@
-using System.Threading.Tasks;
-using CodeBucket.Core.Messages;
 using System;
-using CodeBucket.Client.Models;
-using MvvmCross.Core.ViewModels;
+using CodeBucket.Core.Services;
+using ReactiveUI;
+using Splat;
+using System.Reactive;
+using System.Reactive.Linq;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
-    public class IssueVersionsViewModel : LoadableViewModel
+    public class IssueVersionsViewModel : ReactiveObject, ILoadableViewModel
 	{
+        private bool _isLoaded;
+
+        public IReadOnlyReactiveList<IssueAttributeItemViewModel> Versions { get; }
+
         private string _selectedValue;
         public string SelectedValue
-		{
-			get
-			{
-                return _selectedValue;
-			}
-			set
-			{
-                _selectedValue = value;
-                RaisePropertyChanged(() => SelectedValue);
-			}
-		}
+        {
+            get { return _selectedValue; }
+            set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
+        }
 
-		private bool _isSaving;
-		public bool IsSaving
-		{
-			get { return _isSaving; }
-			private set {
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        private readonly CollectionViewModel<VersionModel> _versions = new CollectionViewModel<VersionModel>();
-        public CollectionViewModel<VersionModel> Versions
-		{
-			get { return _versions; }
-		}
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
-		public string Username  { get; private set; }
+        public IssueVersionsViewModel(
+            string username, string repository,
+            IApplicationService applicationService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-		public string Repository { get; private set; }
+            var versions = new ReactiveList<IssueVersion>();
+            Versions = versions.CreateDerivedCollection(CreateItemViewModel);
 
-		public int Id { get; private set; }
+            this.WhenAnyValue(x => x.SelectedValue)
+                .SelectMany(_ => Versions)
+                .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
-		public bool SaveOnSelect { get; private set; }
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                if (_isLoaded) return;
+                var items = await applicationService.Client.Issues.GetVersions(username, repository);
+                versions.Reset(items);
+                _isLoaded = true;
+            });
+        }
 
-		public void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Id = navObject.Id;
-			SaveOnSelect = navObject.SaveOnSelect;
-            var value = TxSevice.Get() as string;
-            SelectedValue = value;
-
-            this.Bind(x => x.SelectedValue).Subscribe(x => SelectValue(x).ToBackground());
-		}
-
-        private async Task SelectValue(string x)
-		{
-			if (SaveOnSelect)
-			{
-				try
-				{
-					IsSaving = true;
-                    var newIssue = await this.GetApplication().Client.Issues.UpdateVersion(Username, Repository, Id, x);
-					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue });
-				}
-				catch (Exception e)
-				{
-                    DisplayAlert("Unable to update issue version: " + e.Message).ToBackground();
-				}
-				finally
-				{
-					IsSaving = false;
-				}
-			}
-			else
-			{
-                Messenger.Publish(new SelectedVersionMessage(this) { Value = x });
-			}
-
-			ChangePresentation(new MvxClosePresentationHint(this));
-		}
-
-		protected override async Task Load()
-		{
-            var items = await this.GetApplication().Client.Issues.GetVersions(Username, Repository);
-            Versions.Items.Reset(items);
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public int Id { get; set; }
-			public bool SaveOnSelect { get; set; }
-		}
+        private IssueAttributeItemViewModel CreateItemViewModel(IssueVersion version)
+        {
+            var vm = new IssueAttributeItemViewModel(version.Name, string.Equals(SelectedValue, version.Name));
+            vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
+            vm.SelectCommand.InvokeCommand(DismissCommand);
+            return vm;
+        }
 	}
 }
 

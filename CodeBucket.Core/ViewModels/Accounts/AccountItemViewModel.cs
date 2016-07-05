@@ -18,16 +18,16 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public string Domain { get; }
 
-        public IReactiveCommand<object> DeleteCommand { get; }
+        public IReactiveCommand<object> DeleteCommand { get; } = ReactiveCommand.Create();
 
         public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
 
         internal AccountItemViewModel(BitbucketAccount account)
         {
-            DeleteCommand = ReactiveCommand.Create();
             Username = account.Username;
             AvatarUrl = account.AvatarUrl;
             Domain = "https://bitbucket.org";
         }
     }
 }
+

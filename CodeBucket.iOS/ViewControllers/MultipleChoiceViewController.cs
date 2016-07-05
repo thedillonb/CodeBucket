@@ -31,7 +31,7 @@ namespace CodeBucket.ViewControllers
             {
                 var copy = s;
                 var accessory = (bool)s.GetValue(_obj) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                var e = new StringElement(s.Name) { Accessory = accessory };
+                var e = new ButtonElement(s.Name) { Accessory = accessory };
                 e.Clicked.Subscribe(_ => OnValueSelected(copy));
                 sec.Add(e);
             }

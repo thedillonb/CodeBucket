@@ -1,29 +1,29 @@
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
-using CodeBucket.Client.Models.V2;
+using CodeBucket.Core.Services;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-	public class CommitsViewModel : BaseCommitsViewModel
+    public class CommitsViewModel : BaseCommitsViewModel
     {
-        public string Branch { get; private set; }
+        private readonly IApplicationService _applicationService;
+        private readonly string _username, _repository, _branch;
 
-        protected override async Task<Collection<CommitModel>> GetRequest(string next)
+        protected override Task<Collection<Commit>> GetRequest()
         {
-            return await (next == null ? 
-                this.GetApplication().Client.Commits.GetAll(Username, Repository, Branch) :
-                this.GetApplication().Client.Get<Collection<CommitModel>>(next));
+            return _applicationService.Client.Commits.GetAll(_username, _repository, _branch);
         }
 
-        public void Init(NavObject navObject)
+        public CommitsViewModel(
+            string username, string repository, string branch,
+            IApplicationService applicationService = null)
+            : base(username, repository, applicationService)
         {
-            Branch = navObject.Branch;
-            base.Init(navObject);
-        }
-
-		public new class NavObject : BaseCommitsViewModel.NavObject
-        {
-            public string Branch { get; set; }
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username;
+            _repository = repository;
+            _branch = branch;
         }
     }
 }

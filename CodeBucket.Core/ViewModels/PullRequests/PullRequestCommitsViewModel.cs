@@ -1,53 +1,32 @@
-using CodeBucket.Client.Models.V2;
 using CodeBucket.Core.ViewModels.Commits;
-using CodeBucket.Client.Models;
-using CodeBucket.Core.Utils;
+using CodeBucket.Core.Services;
+using Splat;
+using CodeBucket.Client;
 using System.Threading.Tasks;
 
 namespace CodeBucket.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : BaseCommitsViewModel
     {
-        private PullRequestModel _pullRequest;
+        private readonly IApplicationService _applicationService;
+        private readonly string _username, _repository;
+        private readonly int _pullRequestId;
 
-        public int Id { get; private set; }
-
-		public void Init(NavObject navObject)
-		{
-			Id = navObject.PullRequestId;
-            base.Init(navObject);
-		}
-
-        protected override void GoToCommit(CommitModel x)
+        public PullRequestCommitsViewModel(
+            string username, string repository, int pullRequestId,
+            IApplicationService applicationService = null)
+            : base(username, repository, applicationService)
         {
-            if (_pullRequest?.Source?.Repository?.FullName == null)
-            {
-                DisplayAlert("Unable to locate the source repository for this pull request. It may have been deleted!");
-            }
-            else
-            {
-                var repo = new RepositoryIdentifier(_pullRequest.Source.Repository.FullName);
-                ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject { Username = repo.Owner, Repository = repo.Name, Node = x.Hash });
-            }
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _username = username;
+            _repository = repository;
+            _pullRequestId = pullRequestId;
         }
 
-        protected override async Task<Collection<CommitModel>> GetRequest(string next)
+        protected override Task<Collection<Commit>> GetRequest()
         {
-            return await (next == null ? 
-                this.GetApplication().Client.PullRequests.GetCommits(Username, Repository, Id) :
-                this.GetApplication().Client.Get<Collection<CommitModel>>(next));
+            return _applicationService.Client.PullRequests.GetCommits(_username, _repository, _pullRequestId);
         }
-
-        protected override async Task Load()
-        {
-            _pullRequest = await this.GetApplication().Client.PullRequests.Get(Username, Repository, Id);
-            await base.Load();
-        }
-
-        public new class NavObject : CommitsViewModel.NavObject
-		{
-			public int PullRequestId { get; set; }
-		}
     }
 }
 

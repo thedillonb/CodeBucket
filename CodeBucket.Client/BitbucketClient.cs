@@ -5,15 +5,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using CodeBucket.Client.Clients;
-using CodeBucket.Client.Controllers;
-using CodeBucket.Clients;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace CodeBucket.Client
 {
-    public partial class BitbucketClient
+    public class BitbucketClient
     {
         private readonly AuthenticationHeaderValue _authorizationHeader;
         public const string ApiUrl = "https://api.bitbucket.org/1.0";

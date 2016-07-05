@@ -1,70 +1,44 @@
-using System.Linq;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeBucket.Core.Services;
+using System;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels
 {
-	public abstract class FileSourceViewModel : LoadableViewModel
+    public abstract class FileSourceViewModel : BaseViewModel
     {
-		private static readonly string[] BinaryMIMEs = new string[] 
-		{ 
-			"image/", "video/", "audio/", "model/", "application/pdf", "application/zip", "application/gzip"
-		};
-
 		private string _filePath;
-		private bool _isText;
-
 		public string FilePath
 		{
 			get { return _filePath; }
-			protected set 
-			{
-				_filePath = value;
-				RaisePropertyChanged(() => FilePath);
-			}
+            protected set { this.RaiseAndSetIfChanged(ref _filePath, value); }
 		}
 
+        private bool _isText;
 		public bool IsText
 		{
             get { return _isText; }
-			protected set 
-			{
-                _isText = value;
-                RaisePropertyChanged(() => IsText);
-			}
+            protected set { this.RaiseAndSetIfChanged(ref _isText, value); }
 		}
 
-		public string Title
-		{
-			get;
-			protected set;
-		}
+        private string _htmlUrl;
+        public string HtmlUrl
+        {
+            get { return _htmlUrl; }
+            protected set { this.RaiseAndSetIfChanged(ref _htmlUrl, value); }
+        }
 
-		public string HtmlUrl
-		{
-			get;
-			protected set;
-		}
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
 
-		public ICommand GoToHtmlUrlCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = HtmlUrl }), () => !string.IsNullOrEmpty(HtmlUrl)); }
-		}
+        protected FileSourceViewModel()
+        {
+            GoToHtmlUrlCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.HtmlUrl)
+                .Select(x => !string.IsNullOrEmpty(x)));
 
-		public ICommand ShareCommand
-		{
-			get
-			{
-				return new MvxCommand(() => GetService<IShareService>().ShareUrl(HtmlUrl), () => !string.IsNullOrEmpty(HtmlUrl));
-			}
-		}
-
-		protected static bool IsBinary(string mime)
-		{
-			var lowerMime = mime.ToLower();
-		    return BinaryMIMEs.Any(lowerMime.StartsWith);
-		}
+            GoToHtmlUrlCommand
+                .Select(_ => new WebBrowserViewModel(HtmlUrl))
+                .Subscribe(NavigateTo);
+        }
     }
 }
 

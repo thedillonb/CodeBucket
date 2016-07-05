@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
 
-namespace CodeBucket.Client.Clients
+namespace CodeBucket.Client
 {
     public class GroupsClient
     {
@@ -14,16 +13,16 @@ namespace CodeBucket.Client.Clients
             _client = client;
         }
 
-        public Task<List<GroupModel>> GetGroups(string name)
+        public Task<List<V1.Group>> GetGroups(string name)
         {
             var uri = $"{BitbucketClient.ApiUrl}/groups/{Uri.EscapeDataString(name)}";
-            return _client.Get<List<GroupModel>>(uri);
+            return _client.Get<List<V1.Group>>(uri);
         }
 
-        public Task<List<UserModel>> GetMembers(string name)
+        public Task<List<V1.User>> GetMembers(string owner, string name)
         {
-            var uri = $"{BitbucketClient.ApiUrl}/groups/{Uri.EscapeDataString(name)}/members";
-            return _client.Get<List<UserModel>>(uri);
+            var uri = $"{BitbucketClient.ApiUrl}/groups/{Uri.EscapeDataString(owner)}/{Uri.EscapeDataString(name)}/members";
+            return _client.Get<List<V1.User>>(uri);
         }
     }
 }

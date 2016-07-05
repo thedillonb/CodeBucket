@@ -1,108 +1,79 @@
 using System;
-using System.Text;
-using System.Threading.Tasks;
-using MvvmCross.Core.ViewModels;
-using System.Windows.Input;
 using CodeBucket.Core.Services;
+using System.Reactive.Linq;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    public class ReadmeViewModel : LoadableViewModel
+    public class ReadmeViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IMarkdownService _markdownService;
-        private string _data;
-        private string _path;
         private string _htmlUrl;
 
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-        public string Branch { get; private set; }
-
-        public string Filename { get; private set; }
-
-        public string Data
+        private FileModel _contentModel;
+        public FileModel ContentModel
         {
-            get { return _data; }
-            set { _data = value; RaisePropertyChanged(() => Data); }
+            get { return _contentModel; }
+            private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
         }
 
-        public string Path
+        private string _contentText;
+        public string ContentText
         {
-            get { return _path; }
-            set { _path = value; RaisePropertyChanged(() => Path); }
+            get { return _contentText; }
+            private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public ICommand GoToGitHubCommand
-        {
-            get { return new MvxCommand(() => GoToUrlCommand.Execute(_htmlUrl), () => _htmlUrl != null); }
-        }
+        public IReactiveCommand ShowMenuCommand { get; }
 
-        public ICommand GoToLinkCommand
-        {
-            get { return GoToUrlCommand; }
-        }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public new ICommand ShareCommand
+        public ReadmeViewModel(
+            string username, string repository, string filename,
+            IApplicationService applicationService = null, 
+            IMarkdownService markdownService = null,
+            IActionMenuService actionMenuService = null)
         {
-            get
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
+
+            var canShowMenu = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
+
+            var gotoCommand = ReactiveCommand.Create(canShowMenu);
+            gotoCommand
+                .Select(_ => new WebBrowserViewModel(_htmlUrl))
+                .Subscribe(NavigateTo);
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => 
             {
-                return new MvxCommand(() => GetService<IShareService>().ShareUrl(_htmlUrl), () => _htmlUrl != null);
-            }
-        }
+                var shareCommand = ReactiveCommand.Create();
+                shareCommand.Subscribe(_ => actionMenuService.ShareUrl(sender, new Uri(_htmlUrl)));
 
-        public ReadmeViewModel(IMarkdownService markdownService)
-        {
-            _markdownService = markdownService;
-        }
+                var menu = actionMenuService.Create();
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in Bitbucket", gotoCommand);
+                return menu.Show(sender);
+            });
 
-        protected override async Task Load()
-        {
-            var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Filename);
-            _htmlUrl = $"http://bitbucket.org/{Uri.EscapeDataString(Username)}/{Uri.EscapeDataString(Repository)}/src/{Uri.EscapeDataString(Branch)}/{Filename}";
-            var file = await this.GetApplication().Client.Repositories.GetFile(Username, Repository, Branch, Filename);
-            string readme = file.Data;
-            string data;
-            if (filepath.EndsWith("textile", StringComparison.Ordinal))
-                data = _markdownService.ConvertTextile(readme);
-            else
-                data = _markdownService.ConvertMarkdown(readme);
-            Path = CreateHtmlFile(data);
-        }
+            Title = "Readme";
 
-        private string CreateHtmlFile(string data)
-        {
-            //Generate the markup
-            var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
-
-            var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-            using (var tmpStream = new System.IO.FileStream(tmp, System.IO.FileMode.Create))
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var fs = new System.IO.StreamWriter(tmpStream, Encoding.UTF8);
-                var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
-                fs.Write(markup.Substring(0, dataIndex));
-                fs.Write(data);
-                fs.Write(markup.Substring(dataIndex + 8));
-                fs.Flush();
-            }
-            return tmp;
-        }
+                var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
+                var mainBranch = (await applicationService.Client.Repositories.GetPrimaryBranch(username, repository)).Name;
+                ContentModel = await applicationService.Client.Repositories.GetFile(username, repository, mainBranch, filename);
 
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Branch = navObject.Branch;
-            Filename = navObject.Filename;
-        }
+                var readme = ContentModel.Data;
+                _htmlUrl = "http://bitbucket.org/" + username + "/" + repository + "/src/" + mainBranch + "/" + filename;
 
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Branch { get; set; }
-            public string Filename { get; set; }
+                if (filepath.EndsWith("textile", StringComparison.Ordinal))
+                    ContentText = markdownService.ConvertTextile(readme);
+                else
+                    ContentText = markdownService.ConvertMarkdown(readme);
+            });
         }
     }
 }

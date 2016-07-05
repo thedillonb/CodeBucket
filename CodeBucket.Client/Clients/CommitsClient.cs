@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
-using CodeBucket.Client.Models.V2;
+using CodeBucket.Client.V1;
 
-namespace CodeBucket.Client.Controllers
+namespace CodeBucket.Client
 {
     public class CommitsClient
     {
@@ -15,25 +14,25 @@ namespace CodeBucket.Client.Controllers
             _client = client;
         }
 
-        public Task<Collection<CommitModel>> GetAll(string username, string repository, string branch = null)
+        public Task<Collection<Commit>> GetAll(string username, string repository, string branch = null)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/commits/{Uri.EscapeDataString(branch)}";
-            return _client.Get<Collection<CommitModel>>(uri);
+            return _client.Get<Collection<Commit>>(uri);
         }
 
-        public Task<CommitModel> Get(string username, string repository, string node)
+        public Task<Commit> Get(string username, string repository, string node)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/commits/{node}";
-            return _client.Get<CommitModel>(uri);
+            return _client.Get<Commit>(uri);
         }
 
-        public Task<ChangesetModel> GetChangeset(string username, string repository, string node)
+        public Task<Changeset> GetChangeset(string username, string repository, string node)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/changesets/{node}";
-            return _client.Get<ChangesetModel>(uri);
+            return _client.Get<Changeset>(uri);
         }
 
         public Task<Collection<CommitComment>> GetComments(string username, string repository, string node)
@@ -43,11 +42,11 @@ namespace CodeBucket.Client.Controllers
             return _client.Get<Collection<CommitComment>>(uri);
         }
 
-        public Task<ChangesetCommentModel> CreateComment(string username, string repository, string node, NewChangesetComment comment)
+        public Task<ChangesetComment> CreateComment(string username, string repository, string node, NewChangesetComment comment)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/commit/{node}/comments";
-            return _client.Post<ChangesetCommentModel>(uri, comment);
+            return _client.Post<ChangesetComment>(uri, comment);
         }
 
 		public Task<string> GetPatch(string username, string repository, string node)
@@ -71,11 +70,11 @@ namespace CodeBucket.Client.Controllers
             return _client.Delete(uri);
         }
 
-        public Task<List<ChangesetDiffModel>> GetDiffStat(string username, string repository, string node)
+        public Task<List<ChangesetDiff>> GetDiffStat(string username, string repository, string node)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/changesets/{node}/diffstat";
-            return _client.Get<List<ChangesetDiffModel>>(uri);
+            return _client.Get<List<ChangesetDiff>>(uri);
         }
     }
 }

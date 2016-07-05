@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace CodeBucket.TableViewCells
 {
-    public class ReferenceTableViewCell : BaseTableViewCell<ReferenceItemViewModel>
+    public class ReferenceTableViewCell : BaseTableViewCell<GitReferenceItemViewModel>
     {
         public static NSString Key = new NSString("ReferenceTableViewCell");
 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
 
-namespace CodeBucket.Client.Clients
+namespace CodeBucket.Client
 {
     public class TeamsClient
     {
@@ -29,6 +28,18 @@ namespace CodeBucket.Client.Clients
         {
             var uri = $"{BitbucketClient.ApiUrl2}/teams/{Uri.EscapeDataString(teamName)}";
             return _client.Get<User>(uri);
+        }
+
+        public Task<Collection<User>> GetFollowers(string teamName)
+        {
+            var uri = $"{BitbucketClient.ApiUrl2}/teams/{Uri.EscapeDataString(teamName)}/followers";
+            return _client.Get<Collection<User>>(uri);
+        }
+
+        public Task<Collection<User>> GetFollowing(string teamName)
+        {
+            var uri = $"{BitbucketClient.ApiUrl2}/teams/{Uri.EscapeDataString(teamName)}/following";
+            return _client.Get<Collection<User>>(uri);
         }
     }
 }

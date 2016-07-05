@@ -1,4 +1,6 @@
-﻿namespace CodeBucket
+﻿using UIKit;
+
+namespace CodeBucket
 {
     public class AtlassianIcon
     {
@@ -12,6 +14,11 @@
         public static implicit operator AtlassianIcon(char d)
         {
             return new AtlassianIcon(d);
+        }
+
+        public static implicit operator UIImage(AtlassianIcon icon)
+        {
+            return icon.ToImage();
         }
 
         public static AtlassianIcon Add = (char)0xf101;
@@ -268,10 +275,10 @@
         public static AtlassianIcon Likesmall = (char)0xf174;
         public static AtlassianIcon Weblink = (char)0xf175;
         public static AtlassianIcon Link = (char)0xf176;
-        public static AtlassianIcon Listadd = (char)0xf177;
+        public static AtlassianIcon ListAdd = (char)0xf177;
 
 
-        public static AtlassianIcon Listremove = (char)0xf178;
+        public static AtlassianIcon ListRemove = (char)0xf178;
 
 
         public static AtlassianIcon Locked = (char)0xf179;
@@ -304,7 +311,7 @@
         public static AtlassianIcon Pageblogpost = (char)0xf182;
 
 
-        public static AtlassianIcon Pagedefault = (char)0xf183;
+        public static AtlassianIcon PageDefault = (char)0xf183;
 
 
         public static AtlassianIcon Pagetemplate = (char)0xf184;

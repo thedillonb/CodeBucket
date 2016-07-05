@@ -5,9 +5,9 @@ using UIKit;
 
 namespace CodeBucket.TableViewSources
 {
-    public class ReferenceTableViewSource : BaseTableViewSource<ReferenceItemViewModel>
+    public class ReferenceTableViewSource : BaseTableViewSource<GitReferenceItemViewModel>
     {
-        public ReferenceTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<ReferenceItemViewModel> collection)
+        public ReferenceTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<GitReferenceItemViewModel> collection)
             : base(tableView, collection, ReferenceTableViewCell.Key, 44)
         {
             tableView.RegisterClassForCellReuse(typeof(ReferenceTableViewCell), ReferenceTableViewCell.Key);

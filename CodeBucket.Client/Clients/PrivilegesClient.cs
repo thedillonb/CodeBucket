@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeBucket.Client.Models;
 
-namespace CodeBucket.Client.Clients
+namespace CodeBucket.Client
 {
     public class PrivilegesClient
     {
@@ -14,22 +13,22 @@ namespace CodeBucket.Client.Clients
             Client = client;
         }
 
-        public Task<AccountPrivileges> GetUserPrivileges(string username)
+        public Task<V1.AccountPrivileges> GetUserPrivileges(string username)
         {
             var uri = $"{BitbucketClient.ApiUrl}/privileges/{Uri.EscapeDataString(username)}";
-            return Client.Get<AccountPrivileges>(uri);
+            return Client.Get<V1.AccountPrivileges>(uri);
         }
 
-        public Task<List<PrivilegeModel>> GetRepositoryPrivileges(string username, string repository)
+        public Task<List<V1.PrivilegeModel>> GetRepositoryPrivileges(string username, string repository)
         {
             var uri = $"{BitbucketClient.ApiUrl}/privileges/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}";
-            return Client.Get<List<PrivilegeModel>>(uri);
+            return Client.Get<List<V1.PrivilegeModel>>(uri);
         }
 
-        public Task<List<GroupPrivilegeModel>> GetRepositoryGroupPrivileges(string username, string repository)
+        public Task<List<V1.GroupPrivilege>> GetRepositoryGroupPrivileges(string username, string repository)
         {
             var uri = $"{BitbucketClient.ApiUrl}/group-privileges/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}";
-            return Client.Get<List<GroupPrivilegeModel>>(uri);
+            return Client.Get<List<V1.GroupPrivilege>>(uri);
         }
     }
 }

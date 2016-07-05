@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -31,34 +30,33 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\CommentModel.cs" />
+    <Compile Include="Views\CommentViewModel.cs" />
+    <Compile Include="Views\DescriptionModel.cs" />
     <Compile Include="Views\SourceBrowserModel.cs" />
+    <Compile Include="Views\MarkdownView.cs">
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CommentsView.cs">
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SyntaxHighlighterView.cs">
       <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CommentsRazorView.cs">
-      <DependentUpon>CommentsRazorView.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CommentViewModel.cs" />
-    <Compile Include="Views\MarkdownRazorView.cs">
-      <DependentUpon>MarkdownRazorView.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Views\MarkdownView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
+    </None>
+    <None Include="Views\CommentsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
+    </None>
     <None Include="Views\SyntaxHighlighterView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
     </None>
-    <None Include="Views\CommentsRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommentsRazorView.cs</LastGenOutput>
-    </None>
-    <None Include="Views\MarkdownRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>MarkdownRazorView.cs</LastGenOutput>
-    </None>
   </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

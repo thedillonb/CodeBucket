@@ -1,98 +1,80 @@
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System;
 using System.Reactive.Linq;
+using ReactiveUI;
+using CodeBucket.Core.Services;
+using Splat;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class SourceTreeViewModel : LoadableViewModel
+    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<SourceTreeItemViewModel>
     {
-        public CollectionViewModel<SourceModel> Content { get; } = new CollectionViewModel<SourceModel>();
+        public IReadOnlyReactiveList<SourceTreeItemViewModel> Items { get; }
 
-		public string Username { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-		public string Path { get; private set; }
-
-		public string Branch { get; private set; }
-
-		public string Repository { get; private set; }
-
-        public ReactiveUI.IReactiveCommand<object> GoToSourceCommand { get; }
-
-
-//        public ICommand GoToSubmoduleCommand
-//        {
-//			get { return new MvxCommand<SourceModel>(GoToSubmodule);}
-//        }
-
-//		private void GoToSubmodule(SourceModel x)
-//        {
-//            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
-//            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
-//            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-//            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
-//        }
-
-        public SourceTreeViewModel()
+        private string _searchText;
+        public string SearchText
         {
-            GoToSourceCommand = ReactiveUI.ReactiveCommand.Create();
-            GoToSourceCommand.OfType<SourceModel>().Subscribe(x =>
+            get { return _searchText; }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
+
+        //		private void GoToSubmodule(SourceModel x)
+        //        {
+        //            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
+        //            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
+        //            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+        //            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+        //        }
+
+        public SourceTreeViewModel(
+            string username, string repository, string branch, string path = null,
+            IApplicationService applicationService = null)
+        {
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            branch = branch ?? "master";
+            path = path ?? "";
+
+            Title = string.IsNullOrEmpty(path) ? repository : path.Substring(path.LastIndexOf('/') + 1);
+
+            var content = new ReactiveList<SourceTreeItemViewModel>();
+            Items = content.CreateDerivedCollection(
+                x => x,
+                x => x.Name.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
+                var data = await applicationService.Client.Repositories.GetSourceDirectory(username, repository, branch, path);
+                var dirs = data.Directories.Select(x =>
                 {
-                    ShowViewModel<SourceTreeViewModel>(new NavObject
-                    {
-                        Username = Username,
-                        Branch = Branch,
-                        Repository = Repository,
-                        Path = x.Path
-                    });
-                }
-                else if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
+                    var vm = new SourceTreeItemViewModel(x, SourceTreeItemViewModel.SourceTreeItemType.Directory);
+                    vm.GoToCommand
+                      .Select(_ => new SourceTreeViewModel(username, repository, branch, path + "/" + x))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                });
+
+                var files = data.Files.Select(x =>
                 {
-                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject 
-                    { 
-                        Name = x.Name, 
-                        User = Username,
-                        Repository = Repository, 
-                        Branch = Branch, 
-                        Path = x.Path 
-                    });
-                }
+                    var name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                    var vm = new SourceTreeItemViewModel(name, SourceTreeItemViewModel.SourceTreeItemType.File);
+                    vm.GoToCommand
+                      .Select(_ => new SourceViewModel(username, repository, branch, x.Path, name))
+                      .Subscribe(NavigateTo);
+                    return vm;
+                });
+
+                content.Reset(dirs.Concat(files));
             });
-        }
 
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Branch = navObject.Branch ?? "master";
-            Path = navObject.Path ?? "";
-        }
-
-        protected override async Task Load()
-        {
-            var data = await this.GetApplication().Client.Repositories.GetSourceInfo(Username, Repository, Branch, Path);
-            var source = new List<SourceModel>();
-            source.AddRange(data.Directories.Select(x => new SourceModel { Name = x, Type = "dir", Path = Path + "/" + x }));
-            source.AddRange(data.Files.Select(x => new SourceModel { Name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1), Type = "file", Path = x.Path }));
-            Content.Items.Reset(source.OrderBy(x => x.Type).ThenBy(x => x.Name));
-        }
-
-		public class SourceModel
-		{
-			public string Name { get; set; }
-			public string Type { get; set; }
-			public string Path { get; set; }
-		}
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Branch { get; set; }
-            public string Path { get; set; }
+            LoadCommand.IsExecuting.CombineLatest(content.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
     }
 }

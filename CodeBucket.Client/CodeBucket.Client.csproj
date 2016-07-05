@@ -40,25 +40,31 @@
     <Compile Include="Clients\PullRequestsClient.cs" />
     <Compile Include="Clients\RepositoriesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
-    <Compile Include="Models\ChangesetModel.cs" />
-    <Compile Include="Models\EventModel.cs" />
-    <Compile Include="Models\FollowModel.cs" />
-    <Compile Include="Models\GroupModel.cs" />
-    <Compile Include="Models\IssueModel.cs" />
-    <Compile Include="Models\PrivilegeModel.cs" />
-    <Compile Include="Models\RepositoryModel.cs" />
-    <Compile Include="Models\SourceModel.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Models\WikiModel.cs" />
     <Compile Include="BitbucketClient.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Models\PullRequestModel.cs" />
     <Compile Include="Clients\TeamsClient.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Models\Response\Event.cs" />
+    <Compile Include="Models\Response\Misc.cs" />
+    <Compile Include="Models\Response\Group.cs" />
+    <Compile Include="Models\Response\User.cs" />
+    <Compile Include="Models\Response\Wiki.cs" />
+    <Compile Include="Models\Response\Changeset.cs" />
+    <Compile Include="Models\Response\Issue.cs" />
+    <Compile Include="Models\Response\Privilege.cs" />
+    <Compile Include="Models\Response\PullRequest.cs" />
+    <Compile Include="Models\Response\Repository.cs" />
+    <Compile Include="Models\Response\Source.cs" />
+    <Compile Include="Models\Request\NewIssue.cs" />
+    <Compile Include="Models\Request\NewChangesetComment.cs" />
+    <Compile Include="Models\Common\PullRequestState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Clients\" />
     <Folder Include="Models\" />
+    <Folder Include="Models\Request\" />
+    <Folder Include="Models\Response\" />
+    <Folder Include="Models\Common\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http">

@@ -3,67 +3,62 @@ using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Input;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Accounts;
-using CodeBucket.Client;
-using CodeBucket.Client.Models;
 using CodeBucket.Core.Utils;
-using MvvmCross.Core.ViewModels;
+using System.Reactive.Threading.Tasks;
+using ReactiveUI;
+using System.Reactive;
+using Splat;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.App
 {
-    public class StartupViewModel : BaseViewModel
+    public class StartupViewModel : ReactiveObject
     {
         private readonly IApplicationService _applicationService;
         private readonly IAccountsService _accountsService;
-        private bool _isLoggingIn;
-        private string _status;
-        private Avatar _avatar;
+        private readonly IAlertDialogService _alertDialogService;
 
+        private bool _isLoggingIn;
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
             private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
+        private string _status;
         public string Status
         {
             get { return _status; }
             private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
+        private Avatar _avatar;
         public Avatar Avatar
         {
             get { return _avatar; }
             private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
 
-        public ReactiveUI.ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
 
-        public ReactiveUI.ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveUI.ReactiveCommand.Create();
+        public ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveCommand.Create();
 
-        public ICommand StartupCommand
-        {
-            get { return new MvxAsyncCommand(Startup); }
-        }
+        public ReactiveCommand<Unit> StartupCommand { get; }
 
-        /// <summary>
-        /// Gets the default account. If there is not one assigned it will pick the first in the account list.
-        /// If there isn't one, it'll just return null.
-        /// </summary>
-        /// <returns>The default account.</returns>
-        protected BitbucketAccount GetDefaultAccount()
-        {
-            return _accountsService.GetDefault();
-        }
-
-		public StartupViewModel(IAccountsService accountsService, IApplicationService applicationService)
+        public StartupViewModel(
+            IAccountsService accountsService = null, 
+            IApplicationService applicationService = null, 
+            IAlertDialogService alertDialogService = null)
 		{
-            _accountsService = accountsService;
-			_applicationService = applicationService;
+            _accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+			_applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
+
+            StartupCommand = ReactiveCommand.CreateAsyncTask(_ => Startup());
 		}
 
         protected async Task Startup()
@@ -74,7 +69,7 @@ namespace CodeBucket.Core.ViewModels.App
 				return;
 			}
 
-			var account = GetDefaultAccount();
+            var account = _accountsService.GetDefault();
 			if (account == null)
 			{
                 GoToAccountsCommand.Execute(null);
@@ -83,7 +78,7 @@ namespace CodeBucket.Core.ViewModels.App
 
             if (string.IsNullOrEmpty(account.Token) || string.IsNullOrEmpty(account.RefreshToken))
             {
-                await AlertService.Alert("Welcome!", "CodeBucket is now OAuth compliant!\n\nFor your security, " +
+                await _alertDialogService.Alert("Welcome!", "CodeBucket is now OAuth compliant!\n\nFor your security, " +
                 "you will now be prompted to login to Bitbucket via their OAuth portal. This will swap out your credentials" +
                 " for an OAuth token you may revoke at any time!");
                 GoToLoginCommand.Execute(null);
@@ -98,7 +93,7 @@ namespace CodeBucket.Core.ViewModels.App
                 var ret = await BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, account.RefreshToken);
                 if (ret == null)
                 {
-                    await DisplayAlert("Unable to refresh OAuth token. Please login again.");
+                    await _alertDialogService.Alert("Error!", "Unable to refresh OAuth token. Please login again.");
                     GoToLoginCommand.Execute(null);
                     return;
                 }
@@ -113,8 +108,9 @@ namespace CodeBucket.Core.ViewModels.App
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to login successfully: " + e.Message).ToBackground();
-                GoToAccountsCommand.Execute(null);
+                _alertDialogService.Alert("Error!", "Unable to login successfully: " + e.Message)
+                    .ToObservable()
+                    .Subscribe(_ => GoToAccountsCommand.ExecuteIfCan());
             }
             finally
             {
@@ -144,10 +140,9 @@ namespace CodeBucket.Core.ViewModels.App
         {
             //Create the client
             var client = BitbucketClient.WithBearerAuthentication(account.Token);
-            var userInfo = await client.Users.GetCurrent();
-            client.Username = userInfo.User.Username;
-            account.Username = userInfo.User.Username;
-            account.AvatarUrl = userInfo.User.Avatar.Replace("/avatar/32", "/avatar/64");
+            var user = await client.Users.GetCurrent();
+            account.Username = user.Username;
+            account.AvatarUrl = user.Links.Avatar.Href.Replace("/avatar/32", "/avatar/64");
             _accountsService.Update(account);
             return client;
         }

@@ -80,7 +80,7 @@ namespace CodeBucket.DialogElements
                 _textEditChanged.Dispose();
 
             _textEditChanged = Observable.FromEventPattern(x => cell.TextView.Changed += x, x => cell.TextView.Changed -= x)
-                .Subscribe(x => 
+                .Subscribe(x =>
                 {
                     Value = cell.TextView.Text;
 
@@ -112,7 +112,7 @@ namespace CodeBucket.DialogElements
             {
                 HiddenSeperator = true;
                 TextView = new ExtendedUITextView()
-                { 
+                {
                     Frame = new CGRect(12, 0, ContentView.Frame.Width - 24f, ContentView.Frame.Height),
                     ScrollEnabled = false,
                     Placeholder = placeholder
@@ -140,4 +140,3 @@ namespace CodeBucket.DialogElements
         }
     }
 }
-

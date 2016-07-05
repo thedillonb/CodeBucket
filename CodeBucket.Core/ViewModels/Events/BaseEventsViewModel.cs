@@ -1,156 +1,115 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Issues;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Source;
-using CodeBucket.Client.Models;
+using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.PullRequests;
 using CodeBucket.Core.ViewModels.Commits;
+using ReactiveUI;
+using System.Reactive;
+using CodeBucket.Core.Utils;
+using Humanizer;
+using CodeBucket.Core.ViewModels.Wiki;
+using System.Reactive.Linq;
+using CodeBucket.Client.V1;
 using Newtonsoft.Json;
-using CodeBucket.Core.ViewModels.Users;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
-    public abstract class BaseEventsViewModel : LoadableViewModel
+    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<EventItemViewModel>
     {
-        private readonly CollectionViewModel<Tuple<EventModel, EventBlock>> _events = new CollectionViewModel<Tuple<EventModel, EventBlock>>();
+        int nextPage = 0;
 
-        public CollectionViewModel<Tuple<EventModel, EventBlock>> Events
+        private bool _hasMore;
+        public bool HasMore
         {
-            get { return _events; }
+            get { return _hasMore; }
+            private set { this.RaiseAndSetIfChanged(ref _hasMore, value); }
         }
 
-        public bool ReportRepository
-        {
-            get;
-            private set;
-        }
+        public IReadOnlyReactiveList<EventItemViewModel> Items { get; }
+
+        public bool ReportRepository { get; private set; } = true;
+
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<Unit> LoadMoreCommand { get; }
+
+        public string SearchText { get; set; }
+
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty => _isEmpty.Value;
 
         protected BaseEventsViewModel()
         {
-            ReportRepository = true;
+            Title = "Events";
+
+            var eventItems = new ReactiveList<EventItemViewModel>();
+            Items = eventItems.CreateDerivedCollection(x => x);
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                HasMore = false;
+                nextPage = 0;
+                eventItems.Clear();
+                var events = await GetEvents(nextPage, 40);
+                nextPage += events.Events.Count;
+                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                HasMore = nextPage < events.Count;
+            });
+
+            var hasMoreObs = this.WhenAnyValue(x => x.HasMore);
+            LoadMoreCommand = ReactiveCommand.CreateAsyncTask(hasMoreObs, async _ =>
+            {
+                HasMore = false;
+                var events = await GetEvents(nextPage, 40);
+                nextPage += events.Events.Count;
+                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                HasMore = nextPage < events.Count;
+            });
+
+            LoadCommand.IsExecuting.CombineLatest(eventItems.IsEmptyChanged, (x, y) => !x && y)
+                       .ToProperty(this, x => x.IsEmpty, out _isEmpty);
         }
 
-//		public void Update(bool force)
-//		{
-//			var sizeRequest = GetTotalItemCount();
-//			var items = CreateRequest(0, 100);
-//
-//
-//			Model = new ListModel<EventModel> { Data = GetData() };
-//			if (Model.Data.Count < _dataLimit)
-//				return;
-//
-//			if (Model.Data.Count < sizeRequest)
-//			{
-//				Model.More = () => {
-//					var data = GetData(Model.Data.Count);
-//					Model.Data.AddRange(data);
-//					if (Model.Data.Count >= sizeRequest || data.Count < _dataLimit)
-//						Model.More = null;
-//					Render();
-//				};
-//			}
-//		}
+        protected abstract Task<EventCollection> GetEvents(int start, int limit);
 
-		protected abstract Task<EventsModel> CreateRequest(int start, int limit);
-
-        int lastItems = 0;
-        private async Task MoreItems()
-        {
-            var items = await CreateRequest(lastItems, 50);
-            Events.Items.AddRange(CreateDataFromLoad(items.Events));
-            lastItems += items.Count;
-            if (items.Count == 50)
-                Events.MoreItems = MoreItems;
-            else
-                Events.MoreItems = null;
-        }
-
-		protected override async Task Load()
-        {
-            lastItems = 0;
-            var items = await CreateRequest(lastItems, 50);
-            Events.Items.Reset(CreateDataFromLoad(items.Events));
-            lastItems += items.Count;
-
-            if (items.Count == 50)
-                Events.MoreItems = MoreItems;
-            else
-                Events.MoreItems = null;
-        }
-
-        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
-        {
-			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x))).Where(x => x.Item2 != null);
-        }
-
-
-		private void GoToCommits(RepositoryDetailedModel repoModel, string branch)
+		private void GoToCommits(Repository repoModel, string branch)
         {
 			if (branch != null)
-			{
-				ShowViewModel<CommitsViewModel>(new CommitsViewModel.NavObject
-				{
-					Username = repoModel.Owner,
-					Repository = repoModel.Name,
-					Branch = branch
-				});
-			}
+                NavigateTo(new CommitsViewModel(repoModel.Owner, repoModel.Name, branch));
 			else
-			{
-				ShowViewModel<ChangesetBranchesViewModel>(new ChangesetBranchesViewModel.NavObject
-				{
-					Username = repoModel.Owner,
-					Repository = repoModel.Name
-				});
-			}
+                NavigateTo(new BranchesViewModel(repoModel.Owner, repoModel.Name));
         }
 
-		private void GoToRepository(RepositoryDetailedModel eventModel)
+		private void GoToRepository(Repository eventModel)
         {
 			if (eventModel == null)
 				return;
-
-            ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
-            {
-				Username = eventModel.Owner,
-				RepositorySlug = eventModel.Slug
-            });
+            NavigateTo(new RepositoryViewModel(eventModel.Owner, eventModel.Slug));
         }
 
-		private void GoToRepositoryIssues(RepositoryDetailedModel eventModel)
+        private void GoToRepositoryIssues(Repository eventModel)
 		{
 			if (eventModel == null)
 				return;
-
-			ShowViewModel<IssuesViewModel>(new IssuesViewModel.NavObject
-				{
-					Username = eventModel.Owner,
-					Repository = eventModel.Slug
-				});
+            NavigateTo(new IssuesViewModel(eventModel.Owner, eventModel.Slug));
 		}
 
         private void GoToUser(string username)
         {
             if (string.IsNullOrEmpty(username))
                 return;
-            ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject {Username = username});
+            NavigateTo(new UserViewModel(username));
         }
 
-		private void GoToRepositoryWiki(RepositoryDetailedModel repository, string page)
+		private void GoToRepositoryWiki(Repository repository, string page)
 		{
 			if (repository == null)
 				return;
-
-			ShowViewModel<Wiki.WikiViewModel>(new Wiki.WikiViewModel.NavObject
-			{
-				Username = repository.Owner,
-				Repository = repository.Slug,
-				Page = page
-			});
+            NavigateTo(new WikiViewModel(repository.Owner, repository.Slug, page));
 		}
 
 //
@@ -187,49 +146,42 @@ namespace CodeBucket.Core.ViewModels.Events
 //            });
 //        }
 //
-		private void GoToPullRequest(RepositoryDetailedModel repo, int id)
+//		private void GoToPullRequest(RepositoryDetailedModel repo, int id)
+//        {
+//			if (repo == null)
+//				return;
+//            ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
+//            {
+//                Username = repo.Owner,
+//                Repository = repo.Name,
+//                Id = id
+//            });
+//        }
+//
+		private void GoToPullRequests(Repository repo)
         {
-			if (repo == null)
-				return;
-            ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name,
-                Id = id
-            });
+			if (repo == null) return;
+            NavigateTo(new PullRequestsViewModel(repo.Owner, repo.Slug));
         }
 
-		private void GoToPullRequests(RepositoryDetailedModel repo)
+		private void GoToChangeset(string owner, string name, string sha)
         {
-			if (repo == null)
-				return;
-            ShowViewModel<PullRequestsViewModel>(new PullRequestsViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name
-            });
+            NavigateTo(new CommitViewModel(owner, name, sha));
         }
 
-		private void GoToChangeset(string owner, string slug, string sha)
+        private EventItemViewModel CreateEventEventTextBlocks(EventItem eventModel)
         {
-			ShowViewModel<CommitViewModel>(new CommitViewModel.NavObject
-            {
-				Username = owner,
-				Repository = slug,
-				Node = sha
-            });
-        }
-
-        private EventBlock CreateEventTextBlocks(EventModel eventModel)
-        {
-            var eventBlock = new EventBlock();
+            var avatar = new Avatar(eventModel.User?.Avatar);
+            var createdOn = eventModel.UtcCreatedOn.Humanize();
+            var eventType = eventModel.Event;
+            var eventBlock = new EventItemViewModel(avatar, eventType, createdOn);
 			var username = eventModel.User != null ? eventModel.User.Username : null;
 
             // Insert the actor
-			eventBlock.Header.Add(new AnchorBlock(username, () => GoToUser(username)));
+			eventBlock.Header.Add(new EventAnchorBlock(username, () => GoToUser(username)));
 
 
-			if (eventModel.Event == EventModel.Type.Pushed)
+			if (eventModel.Event == EventItem.Type.Pushed)
 			{
                 if (eventModel.Repository == null)
                     return null;
@@ -240,12 +192,12 @@ namespace CodeBucket.Core.ViewModels.Events
 				if (eventModel.Repository != null)
 					eventBlock.Tapped = () => GoToCommits(eventModel.Repository, null);
 
-                eventBlock.Header.Add(new TextBlock(" pushed " + commits + " commit" + (commits > 1 ? "s" : string.Empty)));
+                eventBlock.Header.Add(new EventTextBlock(" pushed " + commits + " commit" + (commits > 1 ? "s" : string.Empty)));
 
                 if (ReportRepository)
                 {
-					eventBlock.Header.Add(new TextBlock(" to "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" to "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
                 }
 
 				if (data.Commits != null)
@@ -263,8 +215,8 @@ namespace CodeBucket.Core.ViewModels.Events
 						if (shortSha.Length > 6)
 							shortSha = shortSha.Substring(0, 6);
 
-                        eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, sha)));
-						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
+						eventBlock.Body.Add(new EventAnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, sha)));
+						eventBlock.Body.Add(new EventTextBlock(" - " + desc + "\n"));
 					}
 
                     eventBlock.Multilined = true;
@@ -272,266 +224,270 @@ namespace CodeBucket.Core.ViewModels.Events
 				return eventBlock;
 			}
 
-			if (eventModel.Event == EventModel.Type.Commit)
+			if (eventModel.Event == EventItem.Type.Commit)
 			{
                 if (eventModel.Repository == null)
                     return null;
 
 				var node = eventModel.Node.Substring(0, eventModel.Node.Length > 6 ? 6 : eventModel.Node.Length);
-				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, eventModel.Node);
-				eventBlock.Header.Add(new TextBlock(" commited "));
-				eventBlock.Header.Add(new AnchorBlock(node, eventBlock.Tapped));
+				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, eventModel.Node);
+				eventBlock.Header.Add(new EventTextBlock(" commited "));
+				eventBlock.Header.Add(new EventAnchorBlock(node, eventBlock.Tapped));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
-				var desc = string.IsNullOrEmpty(eventModel.Description) ? "" : eventModel.Description.Replace("\n", " ").Trim();
-				eventBlock.Body.Add(new TextBlock(desc));
+                var description = eventModel.Description;
+                var desc = string.IsNullOrEmpty(description) ? "" : description.Replace("\n", " ").Trim();
+				eventBlock.Body.Add(new EventTextBlock(desc));
 			}
-			else if (eventModel.Event == EventModel.Type.ChangeSetCommentCreated || eventModel.Event == EventModel.Type.ChangeSetCommentDeleted ||
-			         eventModel.Event == EventModel.Type.ChangeSetCommentUpdated || eventModel.Event == EventModel.Type.ChangeSetLike || eventModel.Event == EventModel.Type.ChangeSetUnlike)
+			else if (eventModel.Event == EventItem.Type.ChangeSetCommentCreated || eventModel.Event == EventItem.Type.ChangeSetCommentDeleted ||
+			         eventModel.Event == EventItem.Type.ChangeSetCommentUpdated || eventModel.Event == EventItem.Type.ChangeSetLike || eventModel.Event == EventItem.Type.ChangeSetUnlike)
 			{
                 if (eventModel.Repository == null)
                     return null;
 				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Slug, eventModel.Node);
 				var nodeBlock = CommitBlock(eventModel);
 
-				if (eventModel.Event == EventModel.Type.ChangeSetCommentCreated)
+				if (eventModel.Event == EventItem.Type.ChangeSetCommentCreated)
 				{
-					eventBlock.Header.Add(new TextBlock(" commented on commit "));
+					eventBlock.Header.Add(new EventTextBlock(" commented on commit "));
 				}
-				else if (eventModel.Event == EventModel.Type.ChangeSetCommentDeleted)
+				else if (eventModel.Event == EventItem.Type.ChangeSetCommentDeleted)
 				{
-					eventBlock.Header.Add(new TextBlock(" deleted a comment on commit "));
+					eventBlock.Header.Add(new EventTextBlock(" deleted a comment on commit "));
 				}
-				else if (eventModel.Event == EventModel.Type.ChangeSetCommentUpdated)
+				else if (eventModel.Event == EventItem.Type.ChangeSetCommentUpdated)
 				{
-					eventBlock.Header.Add(new TextBlock(" updated a comment on commit "));
+					eventBlock.Header.Add(new EventTextBlock(" updated a comment on commit "));
 				}
-				else if (eventModel.Event == EventModel.Type.ChangeSetLike)
+				else if (eventModel.Event == EventItem.Type.ChangeSetLike)
 				{
-					eventBlock.Header.Add(new TextBlock(" approved commit "));
+					eventBlock.Header.Add(new EventTextBlock(" approved commit "));
 				}
-				else if (eventModel.Event == EventModel.Type.ChangeSetUnlike)
+				else if (eventModel.Event == EventItem.Type.ChangeSetUnlike)
 				{
-					eventBlock.Header.Add(new TextBlock(" unapproved commit "));
+					eventBlock.Header.Add(new EventTextBlock(" unapproved commit "));
 				}
 
 				eventBlock.Header.Add(nodeBlock);
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.PullRequestCreated || eventModel.Event == EventModel.Type.PullRequestRejected || eventModel.Event == EventModel.Type.PullRequestSuperseded ||
-			         eventModel.Event == EventModel.Type.PullRequestUpdated || eventModel.Event == EventModel.Type.PullRequestFulfilled || eventModel.Event == EventModel.Type.PullRequestLike || eventModel.Event == EventModel.Type.PullRequestUnlike)
+			else if (eventModel.Event == EventItem.Type.PullRequestCreated || eventModel.Event == EventItem.Type.PullRequestRejected || eventModel.Event == EventItem.Type.PullRequestSuperseded ||
+			         eventModel.Event == EventItem.Type.PullRequestUpdated || eventModel.Event == EventItem.Type.PullRequestFulfilled || eventModel.Event == EventItem.Type.PullRequestLike || eventModel.Event == EventItem.Type.PullRequestUnlike)
 			{
                 if (eventModel.Repository == null)
                     return null;
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
 
-				if (eventModel.Event == EventModel.Type.PullRequestCreated)
-					eventBlock.Header.Add(new TextBlock(" created pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestRejected)
-					eventBlock.Header.Add(new TextBlock(" rejected pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestSuperseded)
-					eventBlock.Header.Add(new TextBlock(" superseded pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestFulfilled)
-					eventBlock.Header.Add(new TextBlock(" fulfilled pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestUpdated)
-					eventBlock.Header.Add(new TextBlock(" updated pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestLike)
-					eventBlock.Header.Add(new TextBlock(" liked pull request"));
-				else if (eventModel.Event == EventModel.Type.PullRequestUnlike)
-					eventBlock.Header.Add(new TextBlock(" unliked pull request"));
+				if (eventModel.Event == EventItem.Type.PullRequestCreated)
+					eventBlock.Header.Add(new EventTextBlock(" created pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestRejected)
+					eventBlock.Header.Add(new EventTextBlock(" rejected pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestSuperseded)
+					eventBlock.Header.Add(new EventTextBlock(" superseded pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestFulfilled)
+					eventBlock.Header.Add(new EventTextBlock(" fulfilled pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestUpdated)
+					eventBlock.Header.Add(new EventTextBlock(" updated pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestLike)
+					eventBlock.Header.Add(new EventTextBlock(" approved pull request"));
+				else if (eventModel.Event == EventItem.Type.PullRequestUnlike)
+					eventBlock.Header.Add(new EventTextBlock(" unapproved pull request"));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.PullRequestCommentCreated || eventModel.Event == EventModel.Type.PullRequestCommentUpdated || eventModel.Event == EventModel.Type.PullRequestCommentDeleted)
+			else if (eventModel.Event == EventItem.Type.PullRequestCommentCreated || eventModel.Event == EventItem.Type.PullRequestCommentUpdated || eventModel.Event == EventItem.Type.PullRequestCommentDeleted)
 			{
                 if (eventModel.Repository == null)
                     return null;
 				eventBlock.Tapped = () => GoToPullRequests(eventModel.Repository);
 
-				if (eventModel.Event == EventModel.Type.PullRequestCommentCreated)
+				if (eventModel.Event == EventItem.Type.PullRequestCommentCreated)
 				{
-					eventBlock.Header.Add(new TextBlock(" commented on pull request"));
+					eventBlock.Header.Add(new EventTextBlock(" commented on pull request"));
 				}
-				else if (eventModel.Event == EventModel.Type.PullRequestCommentUpdated)
+				else if (eventModel.Event == EventItem.Type.PullRequestCommentUpdated)
 				{
-					eventBlock.Header.Add(new TextBlock(" updated comment in pull request"));
+					eventBlock.Header.Add(new EventTextBlock(" updated comment in pull request"));
 				}
-				else if (eventModel.Event == EventModel.Type.PullRequestCommentDeleted)
+				else if (eventModel.Event == EventItem.Type.PullRequestCommentDeleted)
 				{
-					eventBlock.Header.Add(new TextBlock(" deleted comment in pull request"));
+					eventBlock.Header.Add(new EventTextBlock(" deleted comment in pull request"));
 				}
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.IssueComment)
+			else if (eventModel.Event == EventItem.Type.IssueComment)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" commented on issue"));
+				eventBlock.Header.Add(new EventTextBlock(" commented on issue"));
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 				eventBlock.Tapped = () => GoToRepositoryIssues(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.IssueUpdated)
+			else if (eventModel.Event == EventItem.Type.IssueUpdated)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" updated issue"));
+				eventBlock.Header.Add(new EventTextBlock(" updated issue"));
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 				eventBlock.Tapped = () => GoToRepositoryIssues(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.IssueReported)
+			else if (eventModel.Event == EventItem.Type.IssueReported)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" reported issue"));
+				eventBlock.Header.Add(new EventTextBlock(" reported issue"));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 
 				eventBlock.Tapped = () => GoToRepositoryIssues(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.StartFollowUser)
+			else if (eventModel.Event == EventItem.Type.StartFollowUser)
 			{
-				eventBlock.Header.Add(new TextBlock(" started following a user"));
+				eventBlock.Header.Add(new EventTextBlock(" started following a user"));
 			}
-			else if (eventModel.Event == EventModel.Type.StopFollowUser)
+			else if (eventModel.Event == EventItem.Type.StopFollowUser)
 			{
-				eventBlock.Header.Add(new TextBlock(" stopped following a user"));
+				eventBlock.Header.Add(new EventTextBlock(" stopped following a user"));
 			}
-			else if (eventModel.Event == EventModel.Type.StartFollowIssue)
+			else if (eventModel.Event == EventItem.Type.StartFollowIssue)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" started following an issue"));
+				eventBlock.Header.Add(new EventTextBlock(" started following an issue"));
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.StopFollowIssue)
+			else if (eventModel.Event == EventItem.Type.StopFollowIssue)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" stopped following an issue"));
+				eventBlock.Header.Add(new EventTextBlock(" stopped following an issue"));
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.StartFollowRepo)
+			else if (eventModel.Event == EventItem.Type.StartFollowRepo)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" started following "));
+				eventBlock.Header.Add(new EventTextBlock(" started following "));
 				if (ReportRepository)
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				eventBlock.Tapped = () => GoToRepository(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.StopFollowRepo)
+			else if (eventModel.Event == EventItem.Type.StopFollowRepo)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" stopped following "));
+				eventBlock.Header.Add(new EventTextBlock(" stopped following "));
 				if (ReportRepository)
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				eventBlock.Tapped = () => GoToRepository(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.CreateRepo)
+			else if (eventModel.Event == EventItem.Type.CreateRepo)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" created repository "));
+				eventBlock.Header.Add(new EventTextBlock(" created repository "));
 				if (ReportRepository)
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				eventBlock.Tapped = () => GoToRepository(eventModel.Repository);
 			}
-			else if (eventModel.Event == EventModel.Type.DeleteRepo)
+			else if (eventModel.Event == EventItem.Type.DeleteRepo)
 			{
-				eventBlock.Header.Add(new TextBlock(" deleted a repository"));
+				eventBlock.Header.Add(new EventTextBlock(" deleted a repository"));
 			}
-			else if (eventModel.Event == EventModel.Type.WikiUpdated)
+			else if (eventModel.Event == EventItem.Type.WikiUpdated)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
-				eventBlock.Header.Add(new TextBlock(" updated wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+                var description = eventModel.Description;
+                eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
+				eventBlock.Header.Add(new EventTextBlock(" updated wiki page "));
+                eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.WikiCreated)
+			else if (eventModel.Event == EventItem.Type.WikiCreated)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description);
-				eventBlock.Header.Add(new TextBlock(" created wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+                var description = eventModel.Description;
+                eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
+				eventBlock.Header.Add(new EventTextBlock(" created wiki page "));
+                eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.WikiDeleted)
+			else if (eventModel.Event == EventItem.Type.WikiDeleted)
 			{
                 if (eventModel.Repository == null)
                     return null;
-				eventBlock.Header.Add(new TextBlock(" deleted wiki page "));
-				eventBlock.Header.Add(new AnchorBlock(eventModel.Description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, eventModel.Description)));
+				eventBlock.Header.Add(new EventTextBlock(" deleted wiki page "));
+                var description = eventModel.Description;
+                eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)
 				{
-					eventBlock.Header.Add(new TextBlock(" in "));
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(new EventTextBlock(" in "));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
 			}
-			else if (eventModel.Event == EventModel.Type.ForkRepo)
+			else if (eventModel.Event == EventItem.Type.ForkRepo)
 			{
                 if (eventModel.Repository == null)
                     return null;
 
-				eventBlock.Header.Add(new TextBlock(" forked "));
+				eventBlock.Header.Add(new EventTextBlock(" forked "));
 				eventBlock.Tapped = () => GoToRepository(eventModel.Repository);
 
 				if (ReportRepository)
-					eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repository));
+					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				else
-					eventBlock.Header.Add(new TextBlock("this repository"));
+					eventBlock.Header.Add(new EventTextBlock("this repository"));
 			}
 			else
 			{
@@ -542,68 +498,23 @@ namespace CodeBucket.Core.ViewModels.Events
 			return eventBlock;
         }
 
-		private TextBlock CreateRepositoryTextBlock(RepositoryDetailedModel repoModel)
+		private EventTextBlock CreateRepositoryEventTextBlock(Repository repoModel)
         {
             //Most likely indicates a deleted repository
             if (repoModel == null)
-                return new TextBlock("Unknown Repository");
+                return new EventTextBlock("Unknown Repository");
             if (repoModel.Name == null)
-                return new TextBlock("<Deleted Repository>");
-			return new AnchorBlock(repoModel.Owner + "/" + repoModel.Name, () => GoToRepository(repoModel));
+                return new EventTextBlock("<Deleted Repository>");
+			return new EventAnchorBlock(repoModel.Owner + "/" + repoModel.Name, () => GoToRepository(repoModel));
         }
 
-		private TextBlock CommitBlock(EventModel e)
+		private EventTextBlock CommitBlock(EventItem e)
 		{
 			var node = e.Node;
 			if (string.IsNullOrEmpty(node))
 				return null;
 			node = node.Substring(0, node.Length > 6 ? 6 : node.Length);
-			return new AnchorBlock(node, () => GoToChangeset(e.Repository.Owner, e.Repository.Slug, e.Node));
+			return new EventAnchorBlock(node, () => GoToChangeset(e.Repository.Owner, e.Repository.Slug, e.Node));
 		}
-
-
-        public class EventBlock
-        {
-            public IList<TextBlock> Header { get; private set; }
-            public IList<TextBlock> Body { get; private set; } 
-            public Action Tapped { get; set; }
-
-            public bool Multilined { get; set; }
-
-            public EventBlock()
-            {
-                Header = new List<TextBlock>(6);
-                Body = new List<TextBlock>();
-            }
-        }
-
-        public class TextBlock
-        {
-            public string Text { get; set; }
-
-            public TextBlock()
-            {
-            }
-
-            public TextBlock(string text)
-            {
-                Text = text;
-            }
-        }
-
-        public class AnchorBlock : TextBlock
-        {
-            public AnchorBlock(string text, Action tapped) : base(text)
-            {
-                Tapped = tapped;
-            }
-
-            public Action Tapped { get; set; }
-
-            public AnchorBlock(Action tapped)
-            {
-                Tapped = tapped;
-            }
-        }
     }
 }

@@ -21,3 +21,4 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         }
     }
 }
+

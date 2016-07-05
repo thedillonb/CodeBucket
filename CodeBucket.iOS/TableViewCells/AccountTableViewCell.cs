@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Disposables;
 using CodeBucket.Core.ViewModels.Accounts;
 using CoreGraphics;
 using Foundation;
@@ -35,21 +34,18 @@ namespace CodeBucket.TableViewCells
             ContentView.Add(TitleLabel);
             ContentView.Add(SubtitleLabel);
 
-            this.WhenActivated(disposable =>
+            this.WhenActivated(d =>
             {
-                this.OneWayBind(ViewModel, x => x.Username, x => x.TitleLabel.Text)
-                    .AddTo(disposable);
+                d(this.WhenAnyValue(x => x.ViewModel)
+                    .Subscribe(x =>
+                    {
+                        TitleLabel.Text = x?.Username;
+                        SubtitleLabel.Text = x?.Domain;
+                        ImageView.SetAvatar(new Core.Utils.Avatar(x?.AvatarUrl));
+                    }));
 
-                this.OneWayBind(ViewModel, x => x.Domain, x => x.SubtitleLabel.Text)
-                    .AddTo(disposable);
-
-                this.WhenAnyValue(x => x.ViewModel.AvatarUrl)
-                    .Subscribe(x => ImageView.SetAvatar(new Core.Utils.Avatar(x)))
-                    .AddTo(disposable);
-
-                this.WhenAnyValue(x => x.ViewModel.Selected)
-                    .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None)
-                    .AddTo(disposable);
+                d(this.WhenAnyValue(x => x.ViewModel.Selected)
+                     .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None));
             });
         }
 

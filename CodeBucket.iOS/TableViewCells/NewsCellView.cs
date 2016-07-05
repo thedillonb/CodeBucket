@@ -7,7 +7,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Utils;
 using System.Linq;
-using CodeBucket.Client.Models;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.TableViewCells
 {
@@ -156,47 +156,47 @@ namespace CodeBucket.TableViewCells
         {
             switch (eventName)
             {
-                case EventModel.Type.ForkRepo:
+                case EventItem.Type.ForkRepo:
                     return AtlassianIcon.Devtoolsrepositoryforked;
-                case EventModel.Type.CreateRepo:
+                case EventItem.Type.CreateRepo:
                     return AtlassianIcon.Devtoolsrepository;
-                case EventModel.Type.Commit:
-                case EventModel.Type.Pushed:
-                case EventModel.Type.PullRequestFulfilled:
+                case EventItem.Type.Commit:
+                case EventItem.Type.Pushed:
+                case EventItem.Type.PullRequestFulfilled:
                     return AtlassianIcon.Devtoolscommit;
-                case EventModel.Type.WikiUpdated:
-                case EventModel.Type.WikiCreated:
-                case EventModel.Type.PullRequestUpdated:
+                case EventItem.Type.WikiUpdated:
+                case EventItem.Type.WikiCreated:
+                case EventItem.Type.PullRequestUpdated:
                     return AtlassianIcon.Edit;
-                case EventModel.Type.WikiDeleted:
-                case EventModel.Type.DeleteRepo:
+                case EventItem.Type.WikiDeleted:
+                case EventItem.Type.DeleteRepo:
                     return AtlassianIcon.Delete;
-                case EventModel.Type.StartFollowUser:
-                case EventModel.Type.StartFollowRepo:
-                case EventModel.Type.StopFollowRepo:
-                case EventModel.Type.StartFollowIssue:
-                case EventModel.Type.StopFollowIssue:
+                case EventItem.Type.StartFollowUser:
+                case EventItem.Type.StartFollowRepo:
+                case EventItem.Type.StopFollowRepo:
+                case EventItem.Type.StartFollowIssue:
+                case EventItem.Type.StopFollowIssue:
                     return AtlassianIcon.Star;
-                case EventModel.Type.IssueComment:
-                case EventModel.Type.ChangeSetCommentCreated:
-                case EventModel.Type.ChangeSetCommentDeleted:
-                case EventModel.Type.ChangeSetCommentUpdated:
-                case EventModel.Type.PullRequestCommentCreated:
-                case EventModel.Type.PullRequestCommentUpdated:
-                case EventModel.Type.PullRequestCommentDeleted:
+                case EventItem.Type.IssueComment:
+                case EventItem.Type.ChangeSetCommentCreated:
+                case EventItem.Type.ChangeSetCommentDeleted:
+                case EventItem.Type.ChangeSetCommentUpdated:
+                case EventItem.Type.PullRequestCommentCreated:
+                case EventItem.Type.PullRequestCommentUpdated:
+                case EventItem.Type.PullRequestCommentDeleted:
                     return AtlassianIcon.Comment;
-                case EventModel.Type.IssueUpdated:
-                case EventModel.Type.IssueReported:
+                case EventItem.Type.IssueUpdated:
+                case EventItem.Type.IssueReported:
                     return AtlassianIcon.Flag;
-                case EventModel.Type.ChangeSetLike:
-                case EventModel.Type.PullRequestLike:
+                case EventItem.Type.ChangeSetLike:
+                case EventItem.Type.PullRequestLike:
                     return AtlassianIcon.Like;
-                case EventModel.Type.PullRequestUnlike:
-                case EventModel.Type.PullRequestRejected:
-                case EventModel.Type.ChangeSetUnlike:
+                case EventItem.Type.PullRequestUnlike:
+                case EventItem.Type.PullRequestRejected:
+                case EventItem.Type.ChangeSetUnlike:
                     return AtlassianIcon.Like;
-                case EventModel.Type.PullRequestCreated:
-                case EventModel.Type.PullRequestSuperseded:
+                case EventItem.Type.PullRequestCreated:
+                case EventItem.Type.PullRequestSuperseded:
                     return AtlassianIcon.Devtoolspullrequest;
                 default:
                     return AtlassianIcon.Info;

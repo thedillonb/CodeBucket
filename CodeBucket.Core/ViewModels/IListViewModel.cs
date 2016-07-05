@@ -11,3 +11,4 @@ namespace CodeBucket.Core.ViewModels
         bool IsEmpty { get; }
     }
 }
+

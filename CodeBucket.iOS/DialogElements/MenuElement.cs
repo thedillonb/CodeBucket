@@ -1,10 +1,11 @@
 ﻿using System;
 using UIKit;
 using CoreGraphics;
+using ReactiveUI;
 
 namespace CodeBucket.DialogElements
 {
-    public class MenuElement : StringElement
+    public class MenuElement : ButtonElement
     {
         private int _notificationNumber;
         public int NotificationNumber
@@ -21,9 +22,20 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) : base(title)
+        public MenuElement(string title, IReactiveCommand command, UIImage image, Uri imageUrl = null)
+            : this(title, image, imageUrl)
         {
-            Clicked.Subscribe(_ => tapped?.Invoke());
+            Clicked.InvokeCommand(command);
+        }
+
+        public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) 
+            : this(title, image, imageUrl)
+        {
+            Clicked.Subscribe(_ => tapped());
+        }
+
+        public MenuElement(string title, UIImage image, Uri imageUrl = null) : base(title)
+        {
             TextColor = UIColor.FromRGB(213, 213, 213);
             Image = image;
             ImageUri = imageUrl;

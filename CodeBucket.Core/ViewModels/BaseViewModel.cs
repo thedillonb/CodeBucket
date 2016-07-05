@@ -1,79 +1,28 @@
-using MvvmCross.Platform;
-using MvvmCross.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
-using System.Windows.Input;
-using CodeBucket.Core.Services;
-using System.Threading.Tasks;
+using ReactiveUI;
+using System.Reactive.Subjects;
+using System;
 
 namespace CodeBucket.Core.ViewModels
 {
-    /// <summary>
-    ///    Defines the BaseViewModel type.
-    /// </summary>
-    public abstract class BaseViewModel : MvxViewModel
+    public abstract class BaseViewModel : ReactiveObject, IBaseViewModel
     {
-        /// <summary>
-        /// Gets the go to URL command.
-        /// </summary>
-        /// <value>The go to URL command.</value>
-        public ICommand GoToUrlCommand
+        private readonly ISubject<IViewModel> _requestNavigationSubject = new Subject<IViewModel>();
+
+        private string _title;
+        public string Title
         {
-            get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+            get { return _title; }
+            protected set { this.RaiseAndSetIfChanged(ref _title, value); }
         }
 
-        /// <summary>
-        /// Gets the share command.
-        /// </summary>
-        /// <value>The share command.</value>
-        public ICommand ShareCommand
+        protected void NavigateTo(IViewModel viewModel)
         {
-            get { return new MvxCommand<string>(x => GetService<IShareService>().ShareUrl(x), x => !string.IsNullOrEmpty(x)); }
+            _requestNavigationSubject.OnNext(viewModel);
         }
 
-        /// <summary>
-        /// Gets the ViewModelTxService
-        /// </summary>
-        /// <value>The tx sevice.</value>
-        protected IViewModelTxService TxSevice
+        IObservable<IViewModel> IRoutingViewModel.RequestNavigation
         {
-            get { return GetService<IViewModelTxService>(); }
-        }
-
-        /// <summary>
-        /// Gets the messenger service
-        /// </summary>
-        /// <value>The messenger.</value>
-        protected IMvxMessenger Messenger
-        {
-            get { return GetService<IMvxMessenger>(); }
-        }
-
-        /// <summary>
-        /// Gets the alert service
-        /// </summary>
-        /// <value>The alert service.</value>
-        protected IAlertDialogService AlertService
-        {
-            get { return GetService<IAlertDialogService>(); }
-        }
-
-        /// <summary>
-        /// Gets the service.
-        /// </summary>
-        /// <typeparam name="TService">The type of the service.</typeparam>
-        /// <returns>An instance of the service.</returns>
-        protected TService GetService<TService>() where TService : class
-        {
-            return Mvx.Resolve<TService>();
-        }
-
-        /// <summary>
-        /// Display an error message to the user
-        /// </summary>
-        /// <param name="message">Message.</param>
-        protected Task DisplayAlert(string message)
-        {
-            return AlertService.Alert("Error!", message);
+            get { return _requestNavigationSubject; }
         }
     }
 }

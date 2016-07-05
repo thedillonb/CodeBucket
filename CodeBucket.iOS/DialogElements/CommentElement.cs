@@ -14,7 +14,7 @@ namespace CodeBucket.DialogElements
                 viewModel.Name, viewModel.Content, viewModel.CreatedOn, viewModel.Avatar);
         }
 
-        public override UITableViewCell GetCell(UITableView tv)
+        public override UITableViewCell GetCell (UITableView tv)
         {
             var c = tv.DequeueReusableCell(CommitCellView.Key) as CommitCellView ?? CommitCellView.Create();
             c.ViewModel = _viewModel;
@@ -27,3 +27,4 @@ namespace CodeBucket.DialogElements
         }
     }
 }
+

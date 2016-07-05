@@ -1,27 +1,23 @@
+using CodeBucket.Core.Services;
+using ReactiveUI;
 using System.Threading.Tasks;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Repositories
 {
-    class UserRepositoriesViewModel : RepositoriesViewModel
+    public class UserRepositoriesViewModel : RepositoriesViewModel
     {
-        public string Username { get; private set; }
+        private readonly string _username;
 
-        public void Init(NavObject navObject)
+        public UserRepositoriesViewModel(string username, IApplicationService applicationService = null)
+            : base(applicationService)
         {
-            Username = navObject.Username;
+            _username = username;
         }
 
-        protected override Task Load()
+        protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
         {
-            Repositories.Items.Clear();
-            return this.GetApplication().Client.ForAllItems(
-                x => x.Repositories.GetRepositories(Username),
-                Repositories.Items.AddRange);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            return applicationService.Client.ForAllItems(x => x.Repositories.GetAll(_username), repositories.AddRange);
         }
     }
 }

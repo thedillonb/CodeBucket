@@ -1,165 +1,273 @@
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using CodeBucket.Core.ViewModels.Repositories;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Source;
-using CodeBucket.Client.Models;
-using System.Collections.Generic;
 using System;
-using CodeBucket.Core.Services;
-using CodeBucket.Client.Models.V2;
-using System.Linq;
-using MvvmCross.Platform;
 using CodeBucket.Core.ViewModels.Users;
+using CodeBucket.Core.Services;
+using System.Reactive.Linq;
+using System.Reactive;
+using System.Linq;
+using ReactiveUI;
+using Splat;
+using CodeBucket.Core.Utils;
+using CodeBucket.Core.ViewModels.Comments;
+using Humanizer;
+using CodeBucket.Client;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
-    public class CommitViewModel : LoadableViewModel
+    public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
-		public string Node { get; private set; }
+        private readonly ReactiveList<CommitComment> _comments = new ReactiveList<CommitComment>();
+        private readonly IApplicationService _applicationService;
 
-		public string User { get; private set; }
+        public string Username { get; }
 
-		public string Repository { get; private set; }
+        public string Repository { get; }
 
-        public bool ShowRepository { get; private set; }
+        public string Node { get; }
 
-		private List<ChangesetDiffModel> _commitModel;
-		public List<ChangesetDiffModel> Commits
+        public bool ShowRepository { get; }
+
+        public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<Unit> ToggleApproveButton { get; }
+
+        public IReactiveCommand<object> GoToUserCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToRepositoryCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToAddedFiles { get; }
+
+        public IReactiveCommand<object> GoToRemovedFiles { get; }
+
+        public IReactiveCommand<object> GoToModifiedFiles { get; }
+
+        public IReactiveCommand<object> GoToAllFiles { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> ShowMenuCommand { get; }
+
+        public IReactiveCommand<object> AddCommentCommand { get; } = ReactiveCommand.Create();
+
+        public IReadOnlyReactiveList<CommitFileItemViewModel> CommitFiles { get; }
+
+        private readonly ObservableAsPropertyHelper<UserItemViewModel[]> _approvals;
+        public UserItemViewModel[] Approvals => _approvals.Value;
+
+        private Client.V1.Changeset _changeset;
+        public Client.V1.Changeset Changeset
         {
-            get { return _commitModel; }
-            private set
-            {
-                _commitModel = value;
-                RaisePropertyChanged(() => Commits);
-            }
+            get { return _changeset; }
+            private set { this.RaiseAndSetIfChanged(ref _changeset, value); }
         }
 
-        private CommitModel _commit;
-        public CommitModel Commit
+        private Commit _commit;
+        public Commit Commit
 		{
 			get { return _commit; }
-			private set {
-				_commit = value;
-				RaisePropertyChanged(() => Commit);
-			}
+            private set { this.RaiseAndSetIfChanged(ref _commit, value); }
 		}
 
-		public ICommand GoToUserCommand
-		{
-			get { return new MvxCommand<string>(x => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x })); }
-		}
+        public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
-        public ICommand GoToRepositoryCommand
+        private readonly ObservableAsPropertyHelper<int> _diffAdditions;
+        public int DiffAdditions => _diffAdditions.Value;
+
+        private readonly ObservableAsPropertyHelper<int> _diffDeletions;
+        public int DiffDeletions => _diffDeletions.Value;
+
+        private readonly ObservableAsPropertyHelper<int> _diffModifications;
+        public int DiffModifications => _diffModifications.Value;
+
+        private bool _approved;
+        public bool Approved
         {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, RepositorySlug = Repository })); }
+            get { return _approved; }
+            private set { this.RaiseAndSetIfChanged(ref _approved, value); }
         }
 
-		public ICommand GoToFileCommand
-		{
-			get
-			{ 
-				return new MvxCommand<ChangesetDiffModel>(x =>
-				{
-//						if (x. == null)
-//						{
-//							ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { GitUrl = x.ContentsUrl, HtmlUrl = x.BlobUrl, Name = x.Filename, Path = x.Filename, ForceBinary = true });
-//						}
-//						else
-//						{
-						Mvx.Resolve<IViewModelTxService>().Add(x);
-						ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = Node, Filename = x.File });
-//						}
+        public NewCommentViewModel NewCommentViewModel { get; }
 
-				});
-			}
-		}
-
-        private readonly CollectionViewModel<CommitComment> _comments = new CollectionViewModel<CommitComment>();
-        public CollectionViewModel<CommitComment> Comments
+        public CommitViewModel(
+            string username, string repository, Commit commit, bool showRepository = false,
+            IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
+            IAlertDialogService alertDialogService = null)
+            : this(username, repository, commit.Hash, showRepository, applicationService, 
+                   actionMenuService, alertDialogService)
         {
-            get { return _comments; }
+            Commit = commit;
         }
 
-        public void Init(NavObject navObject)
+        public CommitViewModel(
+            string username, string repository, string node, bool showRepository = false,
+            IApplicationService applicationService = null, IActionMenuService actionMenuService = null,
+            IAlertDialogService alertDialogService = null)
         {
-            User = navObject.Username;
-            Repository = navObject.Repository;
-            Node = navObject.Node;
-            ShowRepository = navObject.ShowRepository;
-        }
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
+            alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-		protected override async Task Load()
-        {
-            var t1 = this.GetApplication().Client.Commits.GetDiffStat(User, Repository, Node)
-                         .OnSuccess(response => Commits = response);
-            var t2 = this.GetApplication().Client.Commits.Get(User, Repository, Node)
-                         .OnSuccess(response => Commit = response);
-			await Task.WhenAll(t1, t2);
-            GetAllComments().ToBackground();
-        }
+            Username = username;
+            Repository = repository;
+            Node = node;
+            ShowRepository = showRepository;
 
-        private async Task GetAllComments()
-        {
-            var comments = new List<CommitComment>();
-            var ret = await this.GetApplication().Client.Commits.GetComments(User, Repository, Node);
-            comments.AddRange(ret.Values);
+            var shortNode = node.Substring(0, node.Length > 7 ? 7 : node.Length);
+            Title = $"Commit {shortNode}";
 
-            while (ret.Next != null)
+            Comments = _comments.CreateDerivedCollection(comment =>
             {
-                ret = await this.GetApplication().Client.Get<Collection<CommitComment>>(ret.Next);
-                comments.AddRange(ret.Values);
-            }
+                var name = comment.User.DisplayName ?? comment.User.Username;
+                var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
+                return new CommentItemViewModel(name, avatar, comment.CreatedOn.Humanize(), comment.Content.Raw);
+            });
 
-            Comments.Items.Reset(comments.OrderBy(x => x.CreatedOn));
+            GoToUserCommand
+                .OfType<string>()
+                .Select(x => new UserViewModel(x))
+                .Subscribe(NavigateTo);
+
+            GoToRepositoryCommand
+                .Select(_ => new RepositoryViewModel(username, repository))
+                .Subscribe(NavigateTo);
+
+            GoToAddedFiles = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.DiffAdditions).Select(x => x > 0));
+
+            GoToRemovedFiles = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.DiffDeletions).Select(x => x > 0));
+
+            GoToModifiedFiles = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.DiffModifications).Select(x => x > 0));
+
+            var canShowMenu = this.WhenAnyValue(x => x.Commit).Select(x => x != null);
+
+            ShowMenuCommand = ReactiveCommand.Create(canShowMenu);
+            ShowMenuCommand.Subscribe(sender =>
+            {
+                var uri = new Uri($"https://bitbucket.org/{username}/{repository}/commits/{node}");
+                var menu = actionMenuService.Create();
+                menu.AddButton("Add Comment", AddCommentCommand);
+                menu.AddButton("Copy SHA", () => actionMenuService.SendToPasteBoard(node));
+                menu.AddButton("Share", () => actionMenuService.ShareUrl(sender, uri));
+                menu.AddButton("Show In Bitbucket", () => NavigateTo(new WebBrowserViewModel(uri.AbsoluteUri)));
+                menu.Show(sender);
+            });
+
+            ToggleApproveButton = ReactiveCommand.CreateAsyncTask(async _ => 
+            {
+                if (Approved)
+                    await applicationService.Client.Commits.Unapprove(username, repository, node);
+                else
+                    await applicationService.Client.Commits.Approve(username, repository, node);
+
+                var shouldBe = !Approved;
+                var commit = await applicationService.Client.Commits.Get(username, repository, node);
+                var currentUsername = applicationService.Account.Username;
+                var me = commit.Participants.FirstOrDefault(
+                    y => string.Equals(currentUsername, y?.User?.Username, StringComparison.OrdinalIgnoreCase));
+                if (me != null)
+                    me.Approved = shouldBe;
+                Commit = commit;
+            });
+
+            ToggleApproveButton
+                .ThrownExceptions
+                .Subscribe(x => alertDialogService.Alert("Error", "Unable to approve commit: " + x.Message).ToBackground());
+
+            var changesetFiles = 
+                this.WhenAnyValue(x => x.Changeset)
+                .IsNotNull()
+                .Select(x => x.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>());
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type == FileModification.Added))
+                .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type == FileModification.Removed))
+                .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type == FileModification.Modified))
+                .ToProperty(this, x => x.DiffModifications, out _diffModifications);
+
+            var commitFiles = new ReactiveList<Client.V1.ChangesetFile>();
+            CommitFiles = commitFiles.CreateDerivedCollection(x =>
+            {
+                var vm = new CommitFileItemViewModel(x.File, x.Type);
+                vm.GoToCommand
+                  .Select(_ => new ChangesetDiffViewModel(username, repository, node, x.File))
+                  .Subscribe(NavigateTo);
+                return vm;
+            });
+
+            this.WhenAnyValue(x => x.Commit.Participants)
+                .Select(participants =>
+                {
+                    return (participants ?? Enumerable.Empty<CommitParticipant>())
+                        .Where(x => x.Approved)
+                        .Select(x =>
+                        {
+                            var avatar = new Avatar(x.User?.Links?.Avatar?.Href);
+                            var vm = new UserItemViewModel(x.User?.Username, x.User?.DisplayName, avatar);
+                            vm.GoToCommand
+                              .Select(_ => new UserViewModel(x.User))
+                              .Subscribe(NavigateTo);
+                            return vm;
+                        });
+                })
+                .Select(x => x.ToArray())
+                .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
+
+            this.WhenAnyValue(x => x.Changeset)
+                .Subscribe(x => commitFiles.Reset(x?.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>()));
+
+            this.WhenAnyValue(x => x.Commit)
+                .Subscribe(x => 
+                {
+                    var currentUsername = applicationService.Account.Username;
+                    Approved = x?.Participants
+                        ?.FirstOrDefault(y => string.Equals(currentUsername, y?.User?.Username, StringComparison.OrdinalIgnoreCase))
+                        ?.Approved ?? false;
+                });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
+            {
+                var commit = applicationService.Client.Commits.Get(username, repository, node)
+                    .OnSuccess(x => Commit = x);
+                var changeset = applicationService.Client.Commits.GetChangeset(username, repository, node)
+                    .OnSuccess(x => Changeset = x);
+     
+                applicationService.Client.AllItems(x => x.Commits.GetComments(username, repository, node))
+                    .ToBackground(_comments.Reset);
+
+                return Task.WhenAll(commit, changeset);
+            });
         }
 
         public async Task AddComment(string text)
         {
-			try
-			{
-                var comment = new NewChangesetComment { Content = text };
-                await this.GetApplication().Client.Commits.CreateComment(User, Repository, Node, comment);
-                await GetAllComments();
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to add comment: " + e.Message).ToBackground();
-			}
-        }
-
-		public async Task Approve()
-		{
-			try
-			{
-                await this.GetApplication().Client.Commits.Approve(User, Repository, Node);
-                Commit = await this.GetApplication().Client.Commits.Get(User, Repository, Node);
-            }
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to approve commit: " + e.Message).ToBackground();
-			}
-		}
-
-		public async Task Unapprove()
-		{
-			try
-			{
-                await this.GetApplication().Client.Commits.Unapprove(User, Repository, Node);
-                Commit = await this.GetApplication().Client.Commits.Get(User, Repository, Node);
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to unapprove commit: " + e.Message).ToBackground();
-			}
-		}
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Node { get; set; }
-            public bool ShowRepository { get; set; }
+            var model = new NewChangesetComment { Content = text };
+            var comment = await _applicationService.Client.Commits.CreateComment(Username, Repository, Node, model);
+            _comments.Add(new CommitComment
+            {
+                CreatedOn = comment.UtcCreatedOn,
+                Content = new CommitCommentContent
+                {
+                    Raw = comment.Content,
+                    Html = comment.ContentRendered
+                },
+                User = new User
+                {
+                    DisplayName = comment.DisplayName,
+                    Username = comment.Username,
+                    Links = new User.UserLinks
+                    {
+                        Avatar = new Link(comment.UserAvatarUrl)
+                    }
+                }
+            });
         }
     }
 }

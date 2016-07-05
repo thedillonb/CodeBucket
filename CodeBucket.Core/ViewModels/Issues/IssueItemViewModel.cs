@@ -1,4 +1,4 @@
-﻿using CodeBucket.Client.Models;
+﻿using CodeBucket.Client.V1;
 using Humanizer;
 using ReactiveUI;
 
@@ -22,7 +22,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Id { get; }
 
-        public IssueItemViewModel(IssueModel issue)
+        public IssueItemViewModel(Issue issue)
         {
             Id = issue.LocalId.ToString();
             Title = issue.Title;
@@ -37,3 +37,4 @@ namespace CodeBucket.Core.ViewModels.Issues
         }
     }
 }
+
