@@ -49,8 +49,13 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             Title = "Commits";
 
-            var commitItems = new ReactiveList<Commit>();
-            Items = commitItems.CreateDerivedCollection(ToViewModel);
+            var commitItems = new ReactiveList<Commit>(resetChangeThreshold: 1);
+            var viewModelItems = commitItems.CreateDerivedCollection(ToViewModel);
+
+            Items = viewModelItems.CreateDerivedCollection(
+                x => x,
+                x => x.Name.ContainsKeyword(SearchText) || x.Description.ContainsKeyword(SearchText),
+                signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
@@ -91,7 +96,7 @@ namespace CodeBucket.Core.ViewModels.Commits
             }
 
             var avatar = new Avatar(commit.Author?.User?.Links?.Avatar?.Href);
-            var vm = new CommitItemViewModel(username, desc, commit.Date.Humanize(), avatar);
+            var vm = new CommitItemViewModel(username, desc, commit.Date.Humanize(), avatar, commit.Hash);
             vm.GoToCommand
               .Select(_ => new CommitViewModel(_username, _repository, commit))
               .Subscribe(NavigateTo);

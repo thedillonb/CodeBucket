@@ -17,7 +17,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
         {
-            return applicationService.Client.ForAllItems(x => x.Repositories.GetAll(_username), repositories.AddRange);
+            return applicationService.Client.ForAllItems(x => x.Repositories.GetAllForUser(_username), repositories.AddRange);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             Title = "Repositories";
 
             var showDescription = applicationService.Account.RepositoryDescriptionInList;
-            var repositories = new ReactiveList<Repository>();
+            var repositories = new ReactiveList<Repository>(resetChangeThreshold: 10);
 
             Items = repositories.CreateDerivedCollection(x =>
             {

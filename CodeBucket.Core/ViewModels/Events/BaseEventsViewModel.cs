@@ -46,7 +46,7 @@ namespace CodeBucket.Core.ViewModels.Events
         {
             Title = "Events";
 
-            var eventItems = new ReactiveList<EventItemViewModel>();
+            var eventItems = new ReactiveList<EventItemViewModel>(resetChangeThreshold: 10);
             Items = eventItems.CreateDerivedCollection(x => x);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>

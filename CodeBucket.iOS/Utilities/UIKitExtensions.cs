@@ -48,6 +48,11 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
         }
 
+        public static IObservable<Unit> GetCanceledObservable(this UISearchBar @this)
+        {
+            return Observable.FromEventPattern(t => @this.CancelButtonClicked += t, t => @this.CancelButtonClicked -= t).Select(_ => Unit.Default);
+        }
+
         public static UISearchBar CreateSearchBar(this UITableView tableView)
         {
             var searchBar = new UISearchBar(new CGRect(0, 0, tableView.Bounds.Width, 44));

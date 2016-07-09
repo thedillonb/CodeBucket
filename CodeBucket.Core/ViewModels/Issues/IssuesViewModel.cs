@@ -94,7 +94,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
             Title = "Issues";
 
-            var issues = new ReactiveList<Issue>();
+            var issues = new ReactiveList<Issue>(resetChangeThreshold: 10);
             Items = issues.CreateDerivedCollection(
                 x =>
                 {

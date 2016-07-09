@@ -34,7 +34,7 @@ namespace CodeBucket.Core.ViewModels.Users
 
         protected UsersViewModel()
         {
-            var users = new ReactiveList<UserItemViewModel>();
+            var users = new ReactiveList<UserItemViewModel>(resetChangeThreshold: 1);
             Items = users.CreateDerivedCollection(
                 x => x,
                 x => x.Username.ContainsKeyword(SearchText) || x.DisplayName.ContainsKeyword(SearchText),

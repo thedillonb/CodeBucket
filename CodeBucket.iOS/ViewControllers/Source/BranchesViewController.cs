@@ -13,6 +13,7 @@ namespace CodeBucket.ViewControllers.Source
         }
 
         public BranchesViewController(string username, string repository)
+            : this()
         {
             ViewModel = new BranchesViewModel(username, repository);
         }

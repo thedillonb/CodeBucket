@@ -106,7 +106,7 @@ namespace CodeBucket.ViewControllers.Commits
                 HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
                 RefreshHeaderView();
 
-                var user = x.Author?.User?.DisplayName ?? x.Author.Raw ?? "Unknown";
+                var user = x.Author?.User?.DisplayName ?? x.Author?.Raw ?? "Unknown";
                 detailsElement.Caption = user;
                 detailsElement.Details = x.Message;
             });

@@ -24,7 +24,7 @@ namespace CodeBucket.Client
         public Task<Commit> Get(string username, string repository, string node)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
-                $"/commits/{node}";
+                $"/commit/{node}";
             return _client.Get<Commit>(uri);
         }
 
@@ -44,8 +44,8 @@ namespace CodeBucket.Client
 
         public Task<ChangesetComment> CreateComment(string username, string repository, string node, NewChangesetComment comment)
         {
-            var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
-                $"/commit/{node}/comments";
+            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
+                $"/changesets/{node}/comments";
             return _client.Post<ChangesetComment>(uri, comment);
         }
 
@@ -60,7 +60,7 @@ namespace CodeBucket.Client
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/commit/{node}/approve";
-            return _client.Post<string>(uri);
+            return _client.Post<CommitParticipant>(uri);
         }
 
         public Task Unapprove(string username, string repository, string node)

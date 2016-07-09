@@ -20,15 +20,8 @@ namespace CodeBucket.ViewControllers.Events
             TableView.EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Blogroll.ToEmptyListImage(), "There are no events."));
             var source = new EventTableViewSource(TableView, ViewModel.Items);
+            source.RequestMore.InvokeCommand(ViewModel.LoadMoreCommand);
             TableView.Source = source;
-
-            OnActivation(disposable =>
-            {
-                source
-                    .RequestMore
-                    .InvokeCommand(ViewModel.LoadMoreCommand)
-                    .AddTo(disposable);
-            });
         }
     }
 }

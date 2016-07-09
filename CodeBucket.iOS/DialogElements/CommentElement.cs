@@ -11,7 +11,7 @@ namespace CodeBucket.DialogElements
         public CommentElement(CommentItemViewModel viewModel)
         {
             _viewModel = new Core.ViewModels.Commits.CommitItemViewModel(
-                viewModel.Name, viewModel.Content, viewModel.CreatedOn, viewModel.Avatar);
+                viewModel.Name, viewModel.Content, viewModel.CreatedOn, viewModel.Avatar, null);
         }
 
         public override UITableViewCell GetCell (UITableView tv)

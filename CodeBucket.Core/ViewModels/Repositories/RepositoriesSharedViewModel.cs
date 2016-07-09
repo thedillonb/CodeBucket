@@ -23,7 +23,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
         protected override Task Load(IApplicationService applicationService, IReactiveList<Repository> repositories)
         {
-            return applicationService.Client.ForAllItems(x => x.Repositories.GetAll(_username), repos =>
+            return applicationService.Client.ForAllItems(x => x.Repositories.GetAll("member"), repos =>
             {
                 var shared = repos.Where(x => !string.Equals(x.Owner?.Username, _username, System.StringComparison.OrdinalIgnoreCase));
                 repositories.AddRange(shared);

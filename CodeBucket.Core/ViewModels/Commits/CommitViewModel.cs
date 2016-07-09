@@ -238,10 +238,8 @@ namespace CodeBucket.Core.ViewModels.Commits
                     .OnSuccess(x => Commit = x);
                 var changeset = applicationService.Client.Commits.GetChangeset(username, repository, node)
                     .OnSuccess(x => Changeset = x);
-     
                 applicationService.Client.AllItems(x => x.Commits.GetComments(username, repository, node))
                     .ToBackground(_comments.Reset);
-
                 return Task.WhenAll(commit, changeset);
             });
         }

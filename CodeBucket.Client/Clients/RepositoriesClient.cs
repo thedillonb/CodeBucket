@@ -15,7 +15,22 @@ namespace CodeBucket.Client
             _client = client;
         }
 
-        public Task<Collection<Repository>> GetAll(string username, string role = null)
+        public Task<IList<V1.Repository>> GetWatched()
+        {
+            var uri = $"{BitbucketClient.ApiUrl}/user/follows";
+            return _client.Get<IList<V1.Repository>>(uri);
+        }
+
+        public Task<Collection<Repository>> GetAll(string role = null)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{BitbucketClient.ApiUrl2}/repositories");
+            if (role != null)
+                sb.Append($"?role={role}");
+            return _client.Get<Collection<Repository>>(sb.ToString());
+        }
+
+        public Task<Collection<Repository>> GetAllForUser(string username, string role = null)
         {
             var sb = new StringBuilder();
             sb.Append($"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}");

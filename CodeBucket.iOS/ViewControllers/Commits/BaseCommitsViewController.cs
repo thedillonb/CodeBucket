@@ -7,7 +7,7 @@ namespace CodeBucket.ViewControllers.Commits
     public abstract class BaseCommitsViewController<TViewModel> : BaseTableViewController<TViewModel, CommitItemViewModel>
         where TViewModel : BaseCommitsViewModel
 	{
-		public override void ViewDidLoad()
+        public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 

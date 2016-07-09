@@ -99,10 +99,17 @@ namespace CodeBucket.Client
 
         private static async Task<T> ParseBody<T>(HttpResponseMessage message)
         {
+            #if DEBUG
+            var body = await message.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using (var reader = new StringReader(body))
+            using (var textReader = new JsonTextReader(reader))
+                return _serializer.Value.Deserialize<T>(textReader);
+            #else
             var body = await message.Content.ReadAsStreamAsync().ConfigureAwait(false);
             using (var reader = new StreamReader(body))
             using (var textReader = new JsonTextReader(reader))
                 return _serializer.Value.Deserialize<T>(textReader);
+            #endif
         }
 
         public async Task<T> Get<T>(string uri) where T : class

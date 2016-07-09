@@ -6,6 +6,7 @@ using CodeBucket.Core.Services;
 using System.Reactive;
 using Splat;
 using CodeBucket.Client.V1;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
@@ -46,7 +47,7 @@ namespace CodeBucket.Core.ViewModels.Source
                 x => x.Branch.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 branches.Clear();
                 var items = await applicationService.Client.Repositories.GetBranches(username, repository);

@@ -17,6 +17,10 @@ namespace CodeBucket.ViewControllers.Repositories
         private readonly SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
         private readonly SplitViewElement _split3 = new SplitViewElement(AtlassianIcon.Devtoolsrepository.ToImage(), AtlassianIcon.Flag.ToImage());
 
+        private readonly ButtonElement _commitsButton = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
+        private readonly ButtonElement _pullRequestsButton = new ButtonElement("Pull Requests", AtlassianIcon.Devtoolspullrequest.ToImage());
+        private readonly ButtonElement _sourceButton = new ButtonElement("Source", AtlassianIcon.Filecode.ToImage());
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -36,6 +40,21 @@ namespace CodeBucket.ViewControllers.Repositories
             {
                 watchers.Clicked
                     .BindCommand(ViewModel.GoToStargazersCommand)
+                    .AddTo(d);
+
+                _commitsButton
+                    .Clicked
+                    .BindCommand(ViewModel.GoToCommitsCommand)
+                    .AddTo(d);
+
+                _pullRequestsButton
+                    .Clicked
+                    .BindCommand(ViewModel.GoToPullRequestsCommand)
+                    .AddTo(d);
+
+                _sourceButton
+                    .Clicked
+                    .BindCommand(ViewModel.GoToSourceCommand)
                     .AddTo(d);
 
                 branches.Clicked
@@ -130,16 +149,7 @@ namespace CodeBucket.ViewControllers.Repositories
                 sec2.Add(readme);
             }
 
-            var commits = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
-            commits.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
-
-            var pullRequests = new ButtonElement("Pull Requests", AtlassianIcon.Devtoolspullrequest.ToImage());
-            pullRequests.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand);
-
-            var source = new ButtonElement("Source", AtlassianIcon.Filecode.ToImage());
-            source.Clicked.BindCommand(ViewModel.GoToSourceCommand);
-
-            var sec3 = new Section { commits, pullRequests, source };
+            var sec3 = new Section { _commitsButton, _pullRequestsButton, _sourceButton };
             foreach (var s in new[] { new Section { _split }, sec1, sec2, sec3 })
                 root.Add(s);
 

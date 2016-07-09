@@ -55,6 +55,10 @@ namespace CodeBucket.ViewControllers
                     .Subscribe(x => searchBar.Text = x)
                     .AddTo(disposable);
 
+                searchBar.GetCanceledObservable()
+                    .Subscribe(x => ViewModel.SearchText = null)
+                    .AddTo(disposable);
+
                 searchBar.GetChangedObservable()
                     .Subscribe(x => ViewModel.SearchText = x)
                     .AddTo(disposable);
@@ -68,15 +72,15 @@ namespace CodeBucket.ViewControllers
 
         protected override void Dispose(bool disposing)
         {
-            if (_tableView.IsValueCreated)
-            {
-                var tableView = _tableView.Value;
-                InvokeOnMainThread(() =>
-                {
-                    tableView.Source?.Dispose();
-                    tableView.Source = null;
-                });
-            }
+            //if (_tableView.IsValueCreated)
+            //{
+            //    var tableView = _tableView.Value;
+            //    InvokeOnMainThread(() =>
+            //    {
+            //        tableView.Source?.Dispose();
+            //        tableView.Source = null;
+            //    });
+            //}
 
             base.Dispose(disposing);
         }

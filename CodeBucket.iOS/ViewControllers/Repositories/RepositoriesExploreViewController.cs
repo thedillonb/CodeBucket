@@ -19,15 +19,6 @@ namespace CodeBucket.Views.Repositories
 
             OnActivation(d =>
             {
-                this.WhenAnyValue(x => x.ViewModel.SearchText)
-                    .Subscribe(x => search.Text = x)
-                    .AddTo(d);
-                
-                search
-                    .GetChangedObservable()
-                    .Subscribe(x => ViewModel.SearchText = x)
-                    .AddTo(d);
-
                 search
                     .GetSearchObservable()
                     .Do(_ => search.ResignFirstResponder())

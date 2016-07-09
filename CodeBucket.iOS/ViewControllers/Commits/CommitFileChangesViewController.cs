@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.DialogElements;
 using CodeBucket.TableViewSources;
-using ReactiveUI;
+using CodeBucket.ViewControllers.Source;
 
 namespace CodeBucket.ViewControllers.Commits
 {
@@ -34,7 +34,10 @@ namespace CodeBucket.ViewControllers.Commits
                 {
                     var element = new ButtonElement(y.Name, y.Type.ToString(), UIKit.UITableViewCellStyle.Subtitle);
                     element.Image = AtlassianIcon.PageDefault.ToImage();
-                    element.Clicked.InvokeCommand(y.GoToCommand);
+                    element.Clicked.Subscribe(_ =>
+                    {
+                        var viewCtrl = new ChangesetDiffViewController();
+                    });
                     return element;
                 });
 

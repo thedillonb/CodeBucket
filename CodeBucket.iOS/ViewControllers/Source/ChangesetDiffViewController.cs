@@ -10,6 +10,7 @@ using CodeBucket.Utilities;
 using CodeBucket.Services;
 using System.Reactive.Linq;
 using System.Reactive;
+using CodeBucket.Client.V1;
 
 namespace CodeBucket.ViewControllers.Source
 {
@@ -17,6 +18,15 @@ namespace CodeBucket.ViewControllers.Source
     {
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
+
+        public ChangesetDiffViewController()
+        {
+        }
+
+        public ChangesetDiffViewController(string username, string repository, string branch, ChangesetDiff model)
+        {
+            ViewModel = new ChangesetDiffViewModel(username, repository, branch, model);
+        }
 
 		public override void ViewDidLoad()
 		{

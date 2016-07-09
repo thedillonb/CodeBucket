@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
 using CoreGraphics;
+using Foundation;
 using ReactiveUI;
 using UIKit;
 
@@ -32,7 +35,22 @@ namespace CodeBucket.Views
                 {
                     (TableFooterView as UIActivityIndicatorView)?.StopAnimating();
                     TableFooterView = null;
-                    //ReloadData();
+                    ReloadLastRow().ToBackground();
+                }
+            }
+        }
+
+        private async Task ReloadLastRow()
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+
+            var sections = NumberOfSections();
+            if (sections > 0)
+            {
+                var rowsInSections = NumberOfRowsInSection(sections - 1);
+                if (rowsInSections > 0)
+                {
+                    ReloadRows(new[] { NSIndexPath.FromRowSection(rowsInSections - 1, sections - 1) }, UITableViewRowAnimation.None);
                 }
             }
         }

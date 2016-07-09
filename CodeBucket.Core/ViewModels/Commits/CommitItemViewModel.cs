@@ -13,14 +13,17 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public string Date { get; }
 
+        public string Sha { get; }
+
         public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
 
-        public CommitItemViewModel(string name, string description, string date, Avatar avatar)
+        public CommitItemViewModel(string name, string description, string date, Avatar avatar, string sha)
         {
             Name = name;
             Description = description;
             Date = date;
             Avatar = avatar;
+            Sha = sha;
         }
     }
 }

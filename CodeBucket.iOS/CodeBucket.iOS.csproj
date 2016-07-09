@@ -284,6 +284,7 @@
     <Compile Include="Views\PickerAlertView.cs" />
     <Compile Include="Services\LoadingIndicatorService.cs" />
     <Compile Include="Services\ViewLocatorService.cs" />
+    <Compile Include="TableViewSources\SimpleTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

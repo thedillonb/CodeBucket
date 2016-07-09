@@ -11,6 +11,10 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public string Parent { get; }
 
+        public string Username { get; }
+
+        public string Repository { get; }
+
         public FileModification Type { get; }
 
         internal CommitFileItemViewModel(string fullPath, FileModification type)

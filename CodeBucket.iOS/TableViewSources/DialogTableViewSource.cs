@@ -14,10 +14,16 @@ namespace CodeBucket.TableViewSources
     {
         private readonly WeakReference<RootElement> _root;
         private readonly ISubject<CGPoint> _scrolledObservable = new Subject<CGPoint>();
+        private readonly Subject<Unit> _requestMoreSubject = new Subject<Unit>();
 
         public RootElement Root
         {
             get { return _root.Get(); }
+        }
+
+        public IObservable<Unit> RequestMore
+        {
+            get { return _requestMoreSubject.AsObservable(); }
         }
 
         public IObservable<CGPoint> DidScrolled => _scrolledObservable.AsObservable();
@@ -105,6 +111,16 @@ namespace CodeBucket.TableViewSources
             var element = section?[indexPath.Row];
             var sizable = element as IElementSizing;
             return sizable?.GetHeight(tableView, indexPath) ?? tableView.RowHeight;
+        }
+
+        public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+        {
+            if (indexPath.Section == (NumberOfSections(tableView) - 1) &&
+                indexPath.Row == (RowsInSection(tableView, indexPath.Section) - 1))
+            {
+                // We need to skip an event loop to stay out of trouble
+                BeginInvokeOnMainThread(() => _requestMoreSubject.OnNext(Unit.Default));
+            }
         }
     }
 }
