@@ -8,15 +8,6 @@ namespace CodeBucket.ViewControllers.Source
 {
     public class TagsViewController : BaseTableViewController<TagsViewModel, GitReferenceItemViewModel>
     {
-        public TagsViewController()
-        {
-        }
-
-        public TagsViewController(string username, string repository)
-        {
-            ViewModel = new TagsViewModel(username, repository);
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

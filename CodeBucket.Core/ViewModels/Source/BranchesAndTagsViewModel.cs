@@ -8,6 +8,10 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public string Repository { get; }
 
+        public BranchesViewModel BranchesViewModel => BranchesViewModel.ForSource(Username, Repository);
+
+        public TagsViewModel TagsViewModel => TagsViewModel.ForSource(Username, Repository);
+
 		private int _selectedFilter;
 		public int SelectedFilter
 		{

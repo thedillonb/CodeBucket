@@ -14,7 +14,7 @@ namespace CodeBucket.ViewControllers.Source
 
             var branchesViewController = new Lazy<UIViewController>(() =>
             {
-                var vc = new BranchesViewController(ViewModel.Username, ViewModel.Repository);
+                var vc = new BranchesViewController { ViewModel = ViewModel.BranchesViewModel };
                 vc.ViewModel.LoadCommand.ExecuteIfCan();
                 vc.View.Hidden = true;
                 AddChildViewController(vc);
@@ -24,7 +24,7 @@ namespace CodeBucket.ViewControllers.Source
 
              var tagsViewController = new Lazy<UIViewController>(() =>
             {
-                var vc = new TagsViewController(ViewModel.Username, ViewModel.Repository);
+                var vc = new TagsViewController { ViewModel = ViewModel.TagsViewModel };
                 vc.ViewModel.LoadCommand.ExecuteIfCan();
                 vc.View.Hidden = true;
                 AddChildViewController(vc);

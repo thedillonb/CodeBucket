@@ -11,19 +11,24 @@ using CodeBucket.Services;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeBucket.Client.V1;
+using ReactiveUI;
+using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Source
 {
     public class ChangesetDiffViewController : WebViewController<ChangesetDiffViewModel>
     {
+        private readonly SubtitleTitleView _titleView = new SubtitleTitleView();
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
 
         public ChangesetDiffViewController()
         {
+            NavigationItem.TitleView = _titleView;
         }
 
-        public ChangesetDiffViewController(string username, string repository, string branch, ChangesetDiff model)
+        public ChangesetDiffViewController(string username, string repository, string branch, ChangesetFile model)
+            : this()
         {
             ViewModel = new ChangesetDiffViewModel(username, repository, branch, model);
         }
@@ -31,6 +36,23 @@ namespace CodeBucket.ViewControllers.Source
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.ViewModel.Title, x => x.ViewModel.ChangeType)
+                .Subscribe(x => _titleView.SetTitles(x.Item1, x.Item2));
+
+            this.WhenAnyValue(x => x.ViewModel.BinaryFilePath)
+                .IsNotNull()
+                .Subscribe(x => LoadFile(x));
+
+            this.WhenAnyValue(x => x.ViewModel.Patch)
+                .Where(x => x != null)
+                .Subscribe(x =>
+            {
+                var hunks = x.Select(y => new Hunk(y.OldStart, y.NewStart, y.Lines));
+                var view = new DiffView { Model = new DiffViewModel(hunks) }.GenerateString();
+                LoadContent(view);
+            });
+                
 
             //            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
             //			{
@@ -74,20 +96,6 @@ namespace CodeBucket.ViewControllers.Source
             //         ExecuteJavascript("var a = " + c + "; setComments(a);");
             //     });
 	    }
-
-		private bool _isLoaded;
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-
-			if (!_isLoaded)
-			{
-				var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
-				var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-				Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
-				_isLoaded = true;
-			}
-		}
 
         private class JavascriptCommentModel
         {

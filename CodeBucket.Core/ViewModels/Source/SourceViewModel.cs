@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Source
 {
-    public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
+    public class SourceViewModel : BaseViewModel, ILoadableViewModel
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
@@ -19,12 +19,43 @@ namespace CodeBucket.Core.ViewModels.Source
 
         public bool IsMarkdown { get; }
 
+        private string _filePath;
+        public string FilePath
+        {
+            get { return _filePath; }
+            protected set { this.RaiseAndSetIfChanged(ref _filePath, value); }
+        }
+
+        private bool _isText;
+        public bool IsText
+        {
+            get { return _isText; }
+            protected set { this.RaiseAndSetIfChanged(ref _isText, value); }
+        }
+
+        private string _htmlUrl;
+        public string HtmlUrl
+        {
+            get { return _htmlUrl; }
+            protected set { this.RaiseAndSetIfChanged(ref _htmlUrl, value); }
+        }
+
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
+
         public SourceViewModel(
-            string username, string repository, string branch, string path, string name,
+            string username, string repository, string branch, string path,
             IApplicationService applicationService = null, IActionMenuService actionMenuService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
+
+            GoToHtmlUrlCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.HtmlUrl)
+                .Select(x => !string.IsNullOrEmpty(x)));
+
+            GoToHtmlUrlCommand
+                .Select(_ => new WebBrowserViewModel(HtmlUrl))
+                .Subscribe(NavigateTo);
 
             //Create the filename
             var fileName = Path.GetFileName(path);
@@ -58,7 +89,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(name));
+                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(fileName));
 
                 using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                 {

@@ -69,7 +69,6 @@
     <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\FileSourceViewModel.cs" />
     <Compile Include="ViewModels\FilterGroup.cs" />
     <Compile Include="ViewModels\IBaseViewModel.cs" />
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
@@ -156,6 +155,7 @@
     <Compile Include="ViewModels\Source\TagsViewModel.cs" />
     <Compile Include="Utils\LoadingMessageHandler.cs" />
     <Compile Include="Services\ServiceRegistration.cs" />
+    <Compile Include="Services\IDiffService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -188,6 +188,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using CodeBucket.Client;
+using CodeBucket.Client.V1;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Commits
@@ -15,13 +16,26 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public string Repository { get; }
 
+        public string Node { get; }
+
+        public string ParentNode { get; }
+
+        public ChangesetFile ChangesetFile { get; }
+
         public FileModification Type { get; }
 
-        internal CommitFileItemViewModel(string fullPath, FileModification type)
+        internal CommitFileItemViewModel(string username, string repository, string parentNode, string parentCommit, ChangesetFile file)
         {
+            Username = username;
+            Repository = repository;
+            Node = parentNode;
+            ChangesetFile = file;
+            ParentNode = parentCommit;
+
+            var fullPath = file.File;
             var lastDirectoryMarker = fullPath.LastIndexOf('/');
             Name = fullPath.Substring(lastDirectoryMarker + 1);
-            Type = type;
+            Type = file.Type;
 
             var baseMarker = lastDirectoryMarker < 0 ? 0 : lastDirectoryMarker;
             Parent = "/" + fullPath.Substring(0, baseMarker);

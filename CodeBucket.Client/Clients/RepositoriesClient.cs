@@ -147,6 +147,14 @@ namespace CodeBucket.Client
                                                        $"{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/forks");
         }
 
+        public async Task<string> GetRawFile(string username, string repository, string branch, string path)
+        {
+            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}"
+                + $"/raw/{Uri.EscapeUriString(branch)}/{path?.TrimStart('/')}";
+            var response = await _client.GetRaw(uri);
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public async Task GetRawFile(string username, string repository, string branch, string path, Stream output)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}"

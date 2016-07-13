@@ -65,7 +65,7 @@ namespace CodeBucket.Core.ViewModels.Source
                     var name = x.Path.Substring(x.Path.LastIndexOf("/", StringComparison.Ordinal) + 1);
                     var vm = new SourceTreeItemViewModel(name, SourceTreeItemViewModel.SourceTreeItemType.File);
                     vm.GoToCommand
-                      .Select(_ => new SourceViewModel(username, repository, branch, x.Path, name))
+                      .Select(_ => new SourceViewModel(username, repository, branch, x.Path))
                       .Subscribe(NavigateTo);
                     return vm;
                 });

@@ -8,16 +8,6 @@ namespace CodeBucket.ViewControllers.Source
 {
     public class BranchesViewController : BaseTableViewController<BranchesViewModel, GitReferenceItemViewModel>
     {
-        public BranchesViewController()
-        {
-        }
-
-        public BranchesViewController(string username, string repository)
-            : this()
-        {
-            ViewModel = new BranchesViewModel(username, repository);
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

@@ -24,6 +24,8 @@ namespace CodeBucket.Services
             locator.RegisterLazySingleton(() => new ViewLocatorService(), typeof(IViewLocatorService));
 
             locator.RegisterLazySingleton(() => new LoadingIndicatorService(), typeof(ILoadingIndicatorService));
+
+            locator.RegisterLazySingleton(() => new DiffService(), typeof(IDiffService));
         }
     }
 }

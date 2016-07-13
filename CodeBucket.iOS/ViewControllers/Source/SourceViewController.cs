@@ -32,6 +32,13 @@ namespace CodeBucket.ViewControllers.Source
             });
         }
 
+        public SourceViewController(string username, string repository, string branch, string path)
+            : this()
+        {
+            ViewModel = new SourceViewModel(username, repository, branch, path);
+        }
+
+
         private void Load(string path)
         {
             if (path == _loadedPath)

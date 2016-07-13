@@ -285,6 +285,8 @@
     <Compile Include="Services\LoadingIndicatorService.cs" />
     <Compile Include="Services\ViewLocatorService.cs" />
     <Compile Include="TableViewSources\SimpleTableViewSource.cs" />
+    <Compile Include="Views\SubtitleTitleView.cs" />
+    <Compile Include="Services\DiffService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -391,11 +393,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Diff\app.js" />
-    <Content Include="Diff\diffindex.html" />
-    <Content Include="Diff\difflib.js" />
-    <Content Include="Diff\diffview.css" />
-    <Content Include="Diff\diffview.js" />
-    <Content Include="Diff\jquery.min.js" />
     <Content Include="Markdown\markdown.html" />
     <Content Include="Markdown\marked.js" />
     <Content Include="Markdown\textile.js" />
@@ -452,6 +449,7 @@
     <Content Include="WebResources\styles\vs.css" />
     <Content Include="WebResources\styles\xcode.css" />
     <Content Include="WebResources\styles\zenburn.css" />
+    <Content Include="WebResources\jsdiff.js" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

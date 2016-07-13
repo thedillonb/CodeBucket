@@ -81,7 +81,7 @@ namespace CodeBucket.Core.ViewModels.Events
 			if (branch != null)
                 NavigateTo(new CommitsViewModel(repoModel.Owner, repoModel.Name, branch));
 			else
-                NavigateTo(new BranchesViewModel(repoModel.Owner, repoModel.Name));
+                NavigateTo(BranchesViewModel.ForCommits(repoModel.Owner, repoModel.Name));
         }
 
 		private void GoToRepository(Repository eventModel)

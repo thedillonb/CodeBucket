@@ -43,6 +43,10 @@
     <Compile Include="Views\SyntaxHighlighterView.cs">
       <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DiffView.cs">
+      <DependentUpon>DiffView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DiffViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\MarkdownView.cshtml">
@@ -56,6 +60,10 @@
     <None Include="Views\SyntaxHighlighterView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
+    </None>
+    <None Include="Views\DiffView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>DiffView.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

@@ -195,9 +195,9 @@ namespace CodeBucket.Core.ViewModels.Commits
             var commitFiles = new ReactiveList<Client.V1.ChangesetFile>();
             CommitFiles = commitFiles.CreateDerivedCollection(x =>
             {
-                var vm = new CommitFileItemViewModel(x.File, x.Type);
+                var vm = new CommitFileItemViewModel(username, repository, node, Changeset.Parents.FirstOrDefault(), x);
                 vm.GoToCommand
-                  .Select(_ => new ChangesetDiffViewModel(username, repository, node, x.File))
+                  .Select(_ => new ChangesetDiffViewModel(username, repository, node, x))
                   .Subscribe(NavigateTo);
                 return vm;
             });

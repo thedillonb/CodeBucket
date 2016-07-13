@@ -177,7 +177,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 .Subscribe(NavigateTo);
 
             GoToBranchesCommand
-                .Select(_ => new BranchesViewModel(username, repository))
+                .Select(_ => BranchesViewModel.ForSource(username, repository))
                 .Subscribe(NavigateTo);
 
             var validWebsite = this.WhenAnyValue(x => x.Repository.Website)
@@ -194,7 +194,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                     if (_branches.Count == 1)
                         NavigateTo(new CommitsViewModel(username, repository, _branches.FirstOrDefault()?.Node));
                     else
-                        NavigateTo(new BranchesViewModel(username, repository));
+                        NavigateTo(BranchesViewModel.ForCommits(username, repository));
                 });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>

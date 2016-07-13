@@ -6,6 +6,7 @@ using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.DialogElements;
 using CodeBucket.TableViewSources;
 using CodeBucket.ViewControllers.Source;
+using UIKit;
 
 namespace CodeBucket.ViewControllers.Commits
 {
@@ -32,11 +33,12 @@ namespace CodeBucket.ViewControllers.Commits
             {
                 var elements = x.Select(y =>
                 {
-                    var element = new ButtonElement(y.Name, y.Type.ToString(), UIKit.UITableViewCellStyle.Subtitle);
+                    var element = new ButtonElement(y.Name, y.Type.ToString(), UITableViewCellStyle.Subtitle);
                     element.Image = AtlassianIcon.PageDefault.ToImage();
                     element.Clicked.Subscribe(_ =>
                     {
-                        var viewCtrl = new ChangesetDiffViewController();
+                        var viewCtrl = new ChangesetDiffViewController(y.Username, y.Repository, y.Node, y.ChangesetFile);
+                        NavigationController.PushViewController(viewCtrl, true);
                     });
                     return element;
                 });

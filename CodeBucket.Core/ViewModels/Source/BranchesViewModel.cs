@@ -26,8 +26,23 @@ namespace CodeBucket.Core.ViewModels.Source
         private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         public bool IsEmpty => _isEmpty.Value;
 
+        public static BranchesViewModel ForCommits(string username, string repository)
+        {
+            return new BranchesViewModel(
+                username, repository,
+                (vm, r) => new CommitsViewModel(username, repository, r.Node));                         
+        }
+
+        public static BranchesViewModel ForSource(string username, string repository)
+        {
+            return new BranchesViewModel(
+                username, repository,
+                (vm, r) => new SourceTreeViewModel(username, repository, r.Node));
+        }
+
         public BranchesViewModel(
             string username, string repository,
+            Func<BranchesViewModel, GitReference, IViewModel> clickFunc,
             IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
@@ -40,7 +55,7 @@ namespace CodeBucket.Core.ViewModels.Source
                 {
                 var vm = new GitReferenceItemViewModel(branch.Branch);
                     vm.GoToCommand
-                      .Select(_ => new CommitsViewModel(username, repository, branch.Node))
+                      .Select(_ => clickFunc(this, branch))
                       .Subscribe(NavigateTo);
                     return vm;
                 },
