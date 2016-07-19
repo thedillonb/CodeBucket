@@ -124,7 +124,6 @@
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\ShareService.cs" />
-    <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
@@ -217,7 +216,6 @@
     <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
     <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
     <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
-    <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\Groups\GroupViewController.cs" />
     <Compile Include="ViewControllers\Groups\GroupsViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueAddViewController.cs" />
@@ -230,7 +228,6 @@
     <Compile Include="ViewControllers\Issues\IssueModifyViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueVersionsViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueViewController.cs" />
-    <Compile Include="ViewControllers\Issues\IssuesFiltersView.cs" />
     <Compile Include="ViewControllers\Issues\IssuesViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestCommitsViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestViewController.cs" />
@@ -267,7 +264,6 @@
     <Compile Include="DialogElements\ExpandingInputElement.cs" />
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
-    <Compile Include="DialogElements\LabelElement.cs" />
     <Compile Include="DialogElements\MenuElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
     <Compile Include="DialogElements\RootElement.cs" />
@@ -287,6 +283,7 @@
     <Compile Include="TableViewSources\SimpleTableViewSource.cs" />
     <Compile Include="Views\SubtitleTitleView.cs" />
     <Compile Include="Services\DiffService.cs" />
+    <Compile Include="ViewControllers\Issues\IssuesFilterViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

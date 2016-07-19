@@ -29,14 +29,14 @@ namespace CodeBucket.Client
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/merge";
-            return _client.Post<PullRequest>(uri);
+            return _client.PostForm<PullRequest>(uri);
         }
 
         public Task<PullRequest> Decline(string username, string repository, int id)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/decline";
-            return _client.Post<PullRequest>(uri);
+            return _client.PostForm<PullRequest>(uri);
         }
 
         public Task<PullRequestParticipant> Approve(string username, string repository, int id)
@@ -76,7 +76,7 @@ namespace CodeBucket.Client
 
         public Task<V1.PullRequestComment> AddComment(string username, string repository, int id, string content)
         {
-            var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
+            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/comments";
             return _client.Post<V1.PullRequestComment>(uri, new { content });
         }

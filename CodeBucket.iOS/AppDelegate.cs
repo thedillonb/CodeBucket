@@ -105,9 +105,10 @@ namespace CodeBucket
 
         private void GoToStartupView()
         {
-            var startup = new CodeBucket.ViewControllers.StartupViewController();
+            var startup = new ViewControllers.StartupViewController();
             TransitionToViewController(startup);
-            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => startup.DismissViewController(true, null));
+            MessageBus.Current.Listen<LogoutMessage>()
+                      .Subscribe(_ => startup.DismissViewController(true, null));
         }
 
         private void TransitionToViewController(UIViewController viewController)

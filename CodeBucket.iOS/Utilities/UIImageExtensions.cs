@@ -1,6 +1,3 @@
-using System;
-using CoreGraphics;
-
 namespace UIKit
 {
     public static class UIImageHelper

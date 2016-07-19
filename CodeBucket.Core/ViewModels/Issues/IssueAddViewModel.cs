@@ -1,51 +1,44 @@
-using System;
 using System.Threading.Tasks;
+using CodeBucket.Client.V1;
+using CodeBucket.Core.Messages;
 using CodeBucket.Core.Services;
+using Splat;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
 	public class IssueAddViewModel : IssueModifyViewModel
     {
+        private readonly IApplicationService _applicationService;
+        private readonly IMessageService _messageService;
+
         public IssueAddViewModel(
             string username, string repository,
-            IApplicationService applicationService = null)
-            : base(username, repository, applicationService)
+            IApplicationService applicationService = null,
+            IMessageService messageService = null)
+            : base(username, repository)
         {
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
+
             Title = "New Issue";
         }
 
 		protected override async Task Save()
 		{
-//			try
-//			{
-//				if (string.IsNullOrEmpty(Title))
-//					throw new Exception("Issue must have a title!");
-//
-//				var createIssueModel = new CreateIssueModel 
-//				{ 
-//					Title = Title, 
-//					Content = Content ?? string.Empty, 
-//					Milestone = Milestone, 
-//					Responsible = AssignedTo != null ? AssignedTo.Username : null,
-//					Component = Component,
-//					Version = Version,
-//                    Kind = Kind != null ? Kind.ToLower() : null,
-//                    Priority = Priority != null ? Priority.ToLower() : null,
-//				};
-//
-//				IsSaving = true;
-//				var data = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(createIssueModel));
-//				Messenger.Publish(new IssueAddMessage(this) { Issue = data });
-//				ChangePresentation(new MvxClosePresentationHint(this));
-//			}
-//			catch (Exception e)
-//			{
-//                DisplayAlert("Unable to save the issue: " + e.Message);
-//			}
-//			finally
-//			{
-//				IsSaving = false;
-//			}
+			var newIssue = new NewIssue 
+			{ 
+                Title = IssueTitle, 
+				Content = Content ?? string.Empty, 
+                Milestone = Milestones.SelectedValue, 
+                Responsible = Assignee.SelectedValue,
+                Component = Components.SelectedValue,
+                Version = Versions.SelectedValue,
+                Kind = Kind?.ToLower(),
+                Priority = Priority?.ToLower()
+			};
+
+            var issue = await _applicationService.Client.Issues.Create(Username, Repository, newIssue);
+            _messageService.Send(new IssueAddMessage(issue));
 		}
     }
 }

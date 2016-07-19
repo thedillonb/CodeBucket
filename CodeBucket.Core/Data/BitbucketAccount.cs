@@ -11,7 +11,6 @@ namespace CodeBucket.Core.Data
     public class BitbucketAccount : IDisposable
     {
         private SQLiteConnection _database;
-        private AccountFilters _filters;
         private AccountPinnedRepositories _pinnedRepositories;
 
         [PrimaryKey]
@@ -71,15 +70,6 @@ namespace CodeBucket.Core.Data
             {
                 var accountsDir = Locator.Current.GetService<IAccountPreferencesService>().AccountsDir;
                 return Path.Combine(accountsDir, Id.ToString(CultureInfo.InvariantCulture));
-            }
-        }
-
-        [Ignore]
-        public AccountFilters Filters
-        {
-            get
-            {
-                return _filters ?? (_filters = new AccountFilters(Database));
             }
         }
 

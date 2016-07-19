@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Events
 {
-    public class EventItemViewModel : ReactiveObject
+    public class EventItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public Avatar Avatar { get; }
 
@@ -21,11 +21,14 @@ namespace CodeBucket.Core.ViewModels.Events
 
         public string CreatedOn { get; }
 
+        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+
         public EventItemViewModel(Avatar avatar, string eventType, string createdOn)
         {
             Avatar = avatar;
             EventType = eventType;
             CreatedOn = createdOn;
+            GoToCommand.Subscribe(_ => Tapped?.Invoke());
         }
     }
 

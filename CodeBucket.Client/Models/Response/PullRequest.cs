@@ -29,10 +29,16 @@ namespace CodeBucket.Client
         public List<User> Reviewers { get; set; }
         public User Author { get; set; }
         public List<PullRequestParticipant> Participants { get; set; }
+        public PullRequestLinks Links { get; set; }
 
         public class Target
         {
             public Repository Repository { get; set; }
+        }
+
+        public class PullRequestLinks
+        {
+            public Link Html { get; set; }
         }
     }
 

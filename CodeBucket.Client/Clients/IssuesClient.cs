@@ -20,7 +20,7 @@ namespace CodeBucket.Client
             return Client.Get<V1.IssueCollection>($"{uri}/?search={Uri.EscapeDataString(search)}");
         }
 
-        public Task<V1.IssueCollection> GetAll(string username, string repository, int start = 0, int limit = 15, IEnumerable<Tuple<string, string>> search = null)
+        public Task<V1.IssueCollection> GetAll(string username, string repository, int start = 0, int limit = 40, IEnumerable<Tuple<string, string>> search = null)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/issues" +
                 $"?start={start}&limit={limit}";
@@ -28,6 +28,9 @@ namespace CodeBucket.Client
             var searchStr =
                 string.Join("&", (search ?? Enumerable.Empty<Tuple<string, string>>())
                             .Select(x => $"{x.Item1}={Uri.EscapeDataString(x.Item2)}"));
+
+            if (!string.IsNullOrEmpty(searchStr))
+                searchStr = "&" + searchStr;
 
             return Client.Get<V1.IssueCollection>($"{uri}{searchStr}");
         }
@@ -53,7 +56,13 @@ namespace CodeBucket.Client
         public Task<V1.Issue> Create(string username, string repository, V1.NewIssue issue)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/issues";
-            return Client.Post<V1.Issue>(uri, issue);
+            return Client.PostForm<V1.Issue>(uri, issue?.GetPairs());
+        }
+
+        public Task<V1.Issue> Edit(string username, string repository, int id, V1.NewIssue issue)
+        {
+            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/issues/{id}";
+            return Client.PutForm<V1.Issue>(uri, issue?.GetPairs());
         }
 
         public Task<V1.Issue> Get(string username, string repository, int id)
@@ -101,7 +110,7 @@ namespace CodeBucket.Client
         public Task<V1.IssueComment> CreateComment(string username, string repository, int id, string content)
         {
             var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/issues/{id}/comments";
-            return Client.Post<V1.IssueComment>(uri, new { content });
+            return Client.PostForm<V1.IssueComment>(uri, new[] { new KeyValuePair<string, string>("content", content) });
         }
     }
 }

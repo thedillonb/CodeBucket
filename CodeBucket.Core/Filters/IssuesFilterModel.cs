@@ -1,11 +1,9 @@
-using System;
 using System.ComponentModel;
 
 namespace CodeBucket.Core.Filters
 {
-    public class IssuesFilterModel : FilterModel<IssuesFilterModel>
+    public class IssuesFilterModel
     {
-        public string FilterName { get; set; }
         public string AssignedTo { get; set; }
         public string ReportedBy { get; set; }
         public StatusModel Status { get; set; }
@@ -18,37 +16,35 @@ namespace CodeBucket.Core.Filters
             Kind = new KindModel();
             Status = new StatusModel();
             Priority = new PriorityModel();
-            OrderBy = (int)Order.Local_Id;
+            OrderBy = Order.Local_Id;
         }
 
-        /// <summary>
-        /// Predefined 'All' filter
-        /// </summary>
-        /// <returns>The all filter.</returns>
+        public IssuesFilterModel Clone()
+        {
+            var model = (IssuesFilterModel)MemberwiseClone();
+            model.Status = Status.Clone();
+            model.Kind = Kind.Clone();
+            model.Priority = Priority.Clone();
+            return model;
+        }
+
         public static IssuesFilterModel CreateAllFilter()
         {
             return new IssuesFilterModel();
         }
 
-        /// <summary>
-        /// Predefined 'Open' filter
-        /// </summary>
-        /// <returns>The open filter.</returns>
         public static IssuesFilterModel CreateOpenFilter()
         {
-            return new IssuesFilterModel { 
-                Status = new IssuesFilterModel.StatusModel { 
+            return new IssuesFilterModel 
+            { 
+                Status = new StatusModel 
+                { 
                     New = true, Open = true, OnHold = false, Resolved = false, 
                     Wontfix = false, Duplicate = false, Invalid = false 
                 }
             };
         }
 
-        /// <summary>
-        /// Predefined 'Mine' filter
-        /// </summary>
-        /// <returns>The mine filter.</returns>
-        /// <param name="username">Username.</param>
         public static IssuesFilterModel CreateMineFilter(string username)
         {
             return new IssuesFilterModel { AssignedTo = username };
@@ -58,15 +54,6 @@ namespace CodeBucket.Core.Filters
         public bool IsFiltering()
         {
             return !(string.IsNullOrEmpty(AssignedTo) && string.IsNullOrEmpty(ReportedBy) && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
-        }
-
-        public override IssuesFilterModel Clone()
-        {
-            var t = (IssuesFilterModel)this.MemberwiseClone();
-            t.Status = this.Status.Clone();
-            t.Priority = this.Priority.Clone();
-            t.Kind = this.Kind.Clone();
-            return t;
         }
 
         public enum Order
@@ -125,10 +112,7 @@ namespace CodeBucket.Core.Filters
                 return this.Equals(new StatusModel());
             }
 
-            public StatusModel Clone()
-            {
-                return (StatusModel)this.MemberwiseClone();
-            }
+            public StatusModel Clone() => (StatusModel)MemberwiseClone();
 
             public override bool Equals(object obj)
             {
@@ -163,15 +147,9 @@ namespace CodeBucket.Core.Filters
                 Bug = Enhancement = Proposal = Task = true;
             }
 
-            public bool IsDefault()
-            {
-                return this.Equals(new KindModel());
-            }
+            public bool IsDefault() => Equals(new KindModel());
 
-            public KindModel Clone()
-            {
-                return (KindModel)this.MemberwiseClone();
-            }
+            public KindModel Clone() => (KindModel)MemberwiseClone();
 
             public override bool Equals(object obj)
             {
@@ -207,15 +185,9 @@ namespace CodeBucket.Core.Filters
                 Trivial = Minor = Major = Critical = Blocker = true;
             }
 
-            public bool IsDefault()
-            {
-                return this.Equals(new PriorityModel());
-            }
+            public bool IsDefault() => Equals(new PriorityModel());
 
-            public PriorityModel Clone()
-            {
-                return (PriorityModel)this.MemberwiseClone();
-            }
+            public PriorityModel Clone() => (PriorityModel)MemberwiseClone();
 
             public override bool Equals(object obj)
             {

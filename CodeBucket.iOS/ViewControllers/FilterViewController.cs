@@ -15,7 +15,7 @@ namespace CodeBucket.ViewControllers
             Title = "Filter & Sort";
 
             var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
-            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
+            var search = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Search);
 
             OnActivation(disposables =>
             {
@@ -23,11 +23,16 @@ namespace CodeBucket.ViewControllers
                       .Subscribe(_ => DismissViewController(true, null))
                       .AddTo(disposables);
 
-                save.GetClickedObservable()
+                search.GetClickedObservable()
                     .Do(_ => ApplyButtonPressed())
                     .Subscribe(_ => DismissViewController(true, null))
                     .AddTo(disposables);
             });
+        }
+
+        public void Present(UIViewController presenter)
+        {
+            presenter.PresentViewController(new ThemedNavigationController(this), true, null);
         }
 
         public abstract void ApplyButtonPressed();

@@ -21,9 +21,10 @@ namespace CodeBucket.ViewControllers.Commits
         {
             OnActivation(d =>
             {
-                _commentsElement.UrlRequested
-                    .Select(WebBrowserViewController.CreateWithNavbar)
-                    .Subscribe(x => PresentViewController(x, true, null))
+                _commentsElement
+                    .UrlRequested
+                    .Select(x => new WebBrowserViewController(x))
+                    .Subscribe(x => this.PresentModal(x))
                     .AddTo(d);
             });
         }
@@ -31,9 +32,6 @@ namespace CodeBucket.ViewControllers.Commits
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
 
             HeaderView.SetImage(null, Images.Avatar);
 

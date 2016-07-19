@@ -20,21 +20,23 @@ namespace CodeBucket.ViewControllers.PullRequests
 
         public PullRequestViewController()
         {
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+            NavigationItem.RightBarButtonItem = actionButton;
+
             OnActivation(d =>
             {
                 Observable.Merge(_descriptionElement.UrlRequested, _commentsElement.UrlRequested)
-                    .Select(WebBrowserViewController.CreateWithNavbar)
-                    .Subscribe(x => PresentViewController(x, true, null))
+                    .Select(x => new WebBrowserViewController(x))
+                    .Subscribe(x => this.PresentModal(x))
                     .AddTo(d);
+
+                actionButton.Bind(ViewModel.ShowMenuCommand).AddTo(d);
             });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
 
             var split = new SplitButtonElement();
             var commentCount = split.AddButton("Comments", "-");
@@ -78,9 +80,9 @@ namespace CodeBucket.ViewControllers.PullRequests
             var split1 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Devtoolsbranch.ToImage());
             secDetails.Add(split1);
 
-            this.WhenAnyValue(x => x.ViewModel.Merged)
-                .Select(x => x ? "Merged" : "Not Merged")
-                .Subscribe(x => split1.Button2.Text = x);
+            this.WhenAnyValue(x => x.ViewModel.PullRequest.State)
+                .Select(x => x?.ToLower().Humanize(LetterCasing.Title))
+                .Subscribe(x => split1.Button2.Text = x ?? "Open");
 
             this.WhenAnyValue(x => x.ViewModel.PullRequest)
                 .Select(x => x?.CreatedOn.ToString("MM/dd/yy"))
@@ -90,18 +92,15 @@ namespace CodeBucket.ViewControllers.PullRequests
             commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
             secDetails.Add(commitsElement);
 
-            var mergeElement = new ButtonElement("Merge", AtlassianIcon.Approve.ToImage());
-            mergeElement.Clicked.InvokeCommand(ViewModel.MergeCommand);
-            var mergeSection = new Section { mergeElement };
+            var mergeElement = new LoaderButtonElement("Merge", AtlassianIcon.ListAdd.ToImage());
+            mergeElement.Accessory = UITableViewCellAccessory.None;
+            mergeElement.BindLoader(ViewModel.MergeCommand);
 
-            this.WhenAnyValue(x => x.ViewModel.Merged)
-                .Subscribe(x =>
-                {
-                    if (x)
-                        Root.Insert(root.IndexOf(secDetails), mergeSection);
-                    else
-                        Root.Remove(mergeSection);
-                });
+            var rejectElement = new LoaderButtonElement("Reject", AtlassianIcon.ListRemove.ToImage());
+            rejectElement.Accessory = UITableViewCellAccessory.None;
+            rejectElement.BindLoader(ViewModel.RejectCommand);
+
+            var mergeSection = new Section { mergeElement, rejectElement };
 
             var approvalSection = new Section("Approvals");
             var approveElement = new LoaderButtonElement("Approve", AtlassianIcon.Approve.ToImage());
@@ -140,6 +139,14 @@ namespace CodeBucket.ViewControllers.PullRequests
                 });
 
             Root.Reset(root);
+
+            this.WhenAnyValue(x => x.ViewModel.IsOpen).Subscribe(x =>
+            {
+                if (x)
+                    Root.Insert(root.IndexOf(secDetails) + 1, mergeSection);
+                else
+                    Root.Remove(mergeSection);
+            });
 
             OnActivation(disposable =>
             {

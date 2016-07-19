@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using Splat;
 using System.Reactive;
 using CodeBucket.Client;
+using System.Collections.Generic;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -44,25 +45,28 @@ namespace CodeBucket.Core.ViewModels.Issues
                 if (_isLoaded) return;
 
                 var repo = await applicationService.Client.Repositories.Get(username, repository);
+                var users = new List<User>();
 
                 try
                 {
                     if (repo.Owner.Type == "team")
                     {
                         var members = await applicationService.Client.AllItems(x => x.Teams.GetMembers(username));
-                        assignees.Reset(members);
+                        users.AddRange(members);
                     }
                     else
                     {
                         var privileges = await applicationService.Client.Privileges.GetRepositoryPrivileges(username, repository);
-                        assignees.Reset(privileges.Select(x => ConvertUserModel(x.User)));
+                        users.AddRange(privileges.Select(x => ConvertUserModel(x.User)));
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    assignees.Reset();
+                    this.Log().ErrorException("Unable to load privileges", e);
                 }
 
+                users.Add(repo.Owner);
+                assignees.Reset(users.OrderBy(x => x.Username));
                 _isLoaded = true;
             });
         }

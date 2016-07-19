@@ -33,6 +33,9 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<bool> _showDescription;
+        public bool ShowDescription => _showDescription.Value;
+
         private readonly ObservableAsPropertyHelper<string> _description;
         public string Description => _description.Value;
 
@@ -43,11 +46,19 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToEditCommand { get; }
 
+        public IReactiveCommand<Unit> DeleteCommand { get; }
+
         public IReactiveCommand<Unit> LoadCommand { get; }
+
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
 
         public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
         public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
+
+        public IReactiveCommand<object> GoToReporterCommand { get; } = ReactiveCommand.Create();
 
         public NewCommentViewModel NewCommentViewModel { get; }
 
@@ -63,11 +74,14 @@ namespace CodeBucket.Core.ViewModels.Issues
         public IssueViewModel(
             string username, string repository, int issueId,
             IApplicationService applicationService = null, IMarkdownService markdownService = null, 
-            IMessageService messageService = null)
+            IMessageService messageService = null, IAlertDialogService alertDialogService = null,
+            IActionMenuService actionMenuService = null)
         {
             _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             messageService = messageService ?? Locator.Current.GetService<IMessageService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
             Title = "Issue #" + issueId;
             Username = username;
@@ -77,6 +91,13 @@ namespace CodeBucket.Core.ViewModels.Issues
             GoToWebCommand
                 .OfType<string>()
                 .Select(x => new WebBrowserViewModel(x))
+                .Subscribe(NavigateTo);
+
+            GoToReporterCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.Issue.ReportedBy.Username).Select(x => x != null));
+            
+            GoToReporterCommand
+                .Select(_ => new UserViewModel(Issue.ReportedBy.Username))
                 .Subscribe(NavigateTo);
 
             GoToAssigneeCommand = ReactiveCommand.Create(
@@ -93,11 +114,6 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Select(_ => new IssueEditViewModel(username, repository, Issue))
                 .Subscribe(NavigateTo);
 
-            GoToEditCommand.Subscribe(_ =>
-            {
-
-            });
-
             this.WhenAnyValue(x => x.Issue)
                 .Select(x => x?.Responsible?.Username ?? "Unassigned")
                 .ToProperty(this, x => x.Assigned, out _assigned, "Unassigned");
@@ -105,6 +121,10 @@ namespace CodeBucket.Core.ViewModels.Issues
             this.WhenAnyValue(x => x.Issue.Content)
                 .Select(x => string.IsNullOrEmpty(x) ? null : markdownService.ConvertMarkdown(x))
                 .ToProperty(this, x => x.Description, out _description);
+
+            this.WhenAnyValue(x => x.Description)
+                .Select(x => !string.IsNullOrEmpty(x))
+                .ToProperty(this, x => x.ShowDescription, out _showDescription);
 
             Comments = _comments.CreateDerivedCollection(x =>
                 new CommentItemViewModel(x.AuthorInfo.Username,
@@ -119,9 +139,37 @@ namespace CodeBucket.Core.ViewModels.Issues
                 Issue = await issueTask;
             });
 
+            DeleteCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                try
+                {
+                    var prompt = await alertDialogService.PromptYesNo(
+                        "Are you sure?", "You are about to permanently delete issue #" + Issue.LocalId + ".");
+
+                    if (prompt)
+                    {
+                        await applicationService.Client.Issues.Delete(username, repository, Issue.LocalId);
+                        messageService.Send(new IssueDeleteMessage(Issue));
+                        DismissCommand.ExecuteIfCan();
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.Log().ErrorException("Error deleting issue", e);
+                }
+            });
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            {
+                var menu = actionMenuService.Create();
+                menu.AddButton("Edit", GoToEditCommand);
+                menu.AddButton("Delete", DeleteCommand);
+                return menu.Show(sender);
+            });
+
             _issueMessageBus = messageService.Listen<IssueUpdateMessage>(x =>
             {
-                if (x.Username == username && x.Repository == repository && x.Issue.LocalId == issueId)
+                if (x.Issue.LocalId == issueId)
                     Issue = x.Issue;
             });
         }

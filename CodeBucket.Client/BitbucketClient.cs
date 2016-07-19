@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -137,15 +138,24 @@ namespace CodeBucket.Client
             return await ParseBody<T>(resp).ConfigureAwait(false);
         }
 
+        public async Task<T> PutForm<T>(string uri, IEnumerable<KeyValuePair<string, string>> data = null)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, uri);
+            request.Content = new FormUrlEncodedContent(data ?? Enumerable.Empty<KeyValuePair<string, string>>());
+            request.Headers.Add("Accept", "application/json");
+            var resp = await ExecuteRequest(request).ConfigureAwait(false);
+            return await ParseBody<T>(resp).ConfigureAwait(false);
+        }
+
         public Task Put(string uri, object data)
         {
             return Put<string>(uri, data);
         }
 
-        public async Task<T> PostForm<T>(string uri, IEnumerable<KeyValuePair<string, string>> data)
+        public async Task<T> PostForm<T>(string uri, IEnumerable<KeyValuePair<string, string>> data = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = new FormUrlEncodedContent(data);
+            request.Content = new FormUrlEncodedContent(data ?? Enumerable.Empty<KeyValuePair<string, string>>());
             request.Headers.Add("Accept", "application/json");
             var resp = await ExecuteRequest(request).ConfigureAwait(false);
             return await ParseBody<T>(resp).ConfigureAwait(false);

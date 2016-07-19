@@ -42,6 +42,15 @@ namespace CodeBucket.ViewControllers
                     NSNotificationCenter.DefaultCenter.RemoveObserver(showNotification);
             });
         }
+
+        public static void PresentModal(this UIViewController presenter, UIViewController presentee)
+        {
+            var cancelButton = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+            cancelButton.GetClickedObservable().Subscribe(_ => presenter.DismissViewController(true, null));
+            presentee.NavigationItem.LeftBarButtonItem = cancelButton;
+            var nav = new ThemedNavigationController(presentee);
+            presenter.PresentViewController(nav, true, null);
+        }
     }
 }
 

@@ -16,7 +16,7 @@ namespace CodeBucket.ViewControllers.Commits
         private readonly Lazy<RootElement> _rootElement;
 
         public CommitFileChangesViewController(IEnumerable<CommitFileItemViewModel> files)
-            : base(UIKit.UITableViewStyle.Plain)
+            : base(UITableViewStyle.Plain)
         {
             _files = files.ToList();
             _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));

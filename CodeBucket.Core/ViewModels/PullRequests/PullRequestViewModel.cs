@@ -29,12 +29,8 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
-        private bool _merged;
-        public bool Merged
-        {
-            get { return _merged; }
-            set { this.RaiseAndSetIfChanged(ref _merged, value); }
-        }
+        private readonly ObservableAsPropertyHelper<bool> _open;
+        public bool IsOpen => _open.Value;
 
         private readonly ObservableAsPropertyHelper<bool> _approved;
         public bool Approved => _approved.Value;
@@ -65,7 +61,9 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
-        public IReactiveCommand<Unit> MergeCommand { get; }
+        public IReactiveCommand<PullRequest> MergeCommand { get; }
+
+        public IReactiveCommand<PullRequest> RejectCommand { get; }
 
         public IReactiveCommand<Unit> ToggleApproveButton { get; }
 
@@ -73,9 +71,12 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> GoToCommitsCommand { get; }
 
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
         public PullRequestViewModel(
             string username, string repository, PullRequest pullRequest,
-            IMarkdownService markdownService = null, IApplicationService applicationService = null)
+            IMarkdownService markdownService = null, IApplicationService applicationService = null,
+            IActionMenuService actionMenuService = null)
             : this(username, repository, pullRequest.Id, markdownService, applicationService)
         {
             PullRequest = pullRequest;
@@ -83,10 +84,12 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public PullRequestViewModel(
             string username, string repository, int pullRequestId,
-            IMarkdownService markdownService = null, IApplicationService applicationService = null)
+            IMarkdownService markdownService = null, IApplicationService applicationService = null,
+            IActionMenuService actionMenuService = null)
         {
             _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
             Title = $"Pull Request #{pullRequestId}";
             Username = username;
@@ -129,12 +132,18 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 return Task.FromResult(Unit.Default);
             });
 
+            var canMerge = this.WhenAnyValue(x => x.PullRequest)
+                               .Select(x => string.Equals(x?.State, "open", StringComparison.OrdinalIgnoreCase));
 
-            var canMerge = this.WhenAnyValue(x => x.PullRequest).Select(x => string.Equals(x?.State, "open"));
-            MergeCommand = ReactiveCommand.CreateAsyncTask(canMerge, async t =>
-            {
-                PullRequest = await applicationService.Client.PullRequests.Merge(username, repository, pullRequestId);
-            });
+            canMerge.ToProperty(this, x => x.IsOpen, out _open);
+
+            MergeCommand = ReactiveCommand.CreateAsyncTask(
+                canMerge, t => applicationService.Client.PullRequests.Merge(username, repository, pullRequestId));
+
+            RejectCommand = ReactiveCommand.CreateAsyncTask(
+                canMerge, t => applicationService.Client.PullRequests.Decline(username, repository, pullRequestId));
+
+            MergeCommand.Merge(RejectCommand).Subscribe(x => PullRequest = x);
 
             GoToUserCommand
                 .OfType<string>()
@@ -194,6 +203,15 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 })
                 .Select(x => x.ToArray())
                 .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            {
+                var menu = actionMenuService.Create();
+                menu.AddButton("Show in Bitbucket", () => {
+                    NavigateTo(new WebBrowserViewModel(PullRequest?.Links?.Html?.Href));
+                });
+                return menu.Show(sender);
+            });
         }
 
         public async Task AddComment(string text)

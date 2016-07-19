@@ -36,15 +36,12 @@
   <ItemGroup>
     <Compile Include="Data\BitbucketAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
-    <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Messages\IssueMessages.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
-    <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
-    <Compile Include="Data\Filter.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Services\AccountsService.cs" />
@@ -54,9 +51,7 @@
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IShareService.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
-    <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
-    <Compile Include="Filters\FilterModel.cs" />
     <Compile Include="Utils\Avatar.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
@@ -66,13 +61,11 @@
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\WeakReferenceExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\FilterGroup.cs" />
     <Compile Include="ViewModels\IBaseViewModel.cs" />
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
-    <Compile Include="ViewModels\IFilterableViewModel.cs" />
     <Compile Include="ViewModels\IListViewModel.cs" />
     <Compile Include="ViewModels\ILoadableViewModel.cs" />
     <Compile Include="ViewModels\IPaginatableViewModel.cs" />
@@ -156,6 +149,7 @@
     <Compile Include="Utils\LoadingMessageHandler.cs" />
     <Compile Include="Services\ServiceRegistration.cs" />
     <Compile Include="Services\IDiffService.cs" />
+    <Compile Include="ViewModels\Issues\IssueListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

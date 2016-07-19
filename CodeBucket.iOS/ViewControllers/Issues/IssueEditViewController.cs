@@ -4,6 +4,7 @@ using CodeBucket.DialogElements;
 using System;
 using ReactiveUI;
 using System.Reactive.Linq;
+using Humanizer;
 
 namespace CodeBucket.ViewControllers.Issues
 {
@@ -14,21 +15,20 @@ namespace CodeBucket.ViewControllers.Issues
 			base.ViewDidLoad();
 
             var status = new ButtonElement("Status", ViewModel.Status, UITableViewCellStyle.Value1);
-            var delete = new ButtonElement("Delete", AtlassianIcon.Delete.ToImage()) { Accessory = UITableViewCellAccessory.None };
-
-            //Root[0].Insert(1, UITableViewRowAnimation.None, status);
-            //Root.Insert(Root.Count, UITableViewRowAnimation.None, new Section { delete });
+            Root[0].Insert(1, UITableViewRowAnimation.None, status);
 
             OnActivation(d =>
             {
-                ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => status.Value = x).AddTo(d);
-                delete.Clicked.BindCommand(ViewModel.DeleteCommand).AddTo(d);
+                this.WhenAnyValue(x => x.ViewModel.Status)
+                    .Subscribe(x => status.Value = x.Humanize(LetterCasing.Title))
+                    .AddTo(d);
+                
                 status.Clicked.Subscribe(_ =>
                 {
                     var ctrl = new IssueAttributesViewController(
                         IssueAttributesViewController.Statuses, ViewModel.Status) { Title = "Status" };
                     ctrl.SelectedObservable
-                        .Do(x => ViewModel.Status = x.ToLower())
+                        .Do(x => ViewModel.Status = x)
                         .Subscribe(__ => NavigationController.PopToViewController(this, true));
                     NavigationController.PushViewController(ctrl, true);
                 }).AddTo(d);

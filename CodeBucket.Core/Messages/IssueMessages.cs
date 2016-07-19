@@ -5,19 +5,32 @@ namespace CodeBucket.Core.Messages
 {
 	public class IssueAddMessage
 	{
-		public Issue Issue;
+        public Issue Issue { get; }
+
+        public IssueAddMessage(Issue issue)
+        {
+            Issue = issue;
+        }
 	}
 
     public class IssueDeleteMessage
     {
-        public Issue Issue;
+        public Issue Issue { get; }
+
+        public IssueDeleteMessage(Issue issue)
+        {
+            Issue = issue;
+        }
     }
 
     public class IssueUpdateMessage
     {
-        public string Username;
-        public string Repository;
-        public Issue Issue;
+        public Issue Issue { get; }
+
+        public IssueUpdateMessage(Issue issue)
+        {
+            Issue = issue;
+        }
     }
 
     public class IssuesFilterMessage

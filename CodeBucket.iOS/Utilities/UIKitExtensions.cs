@@ -2,12 +2,21 @@
 using System.Reactive.Linq;
 using System.Reactive;
 using CoreGraphics;
+using ReactiveUI;
+using System.Reactive.Disposables;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
 {
     public static class UIKitExtensions
     {
+        public static IDisposable Bind<T>(this UIBarButtonItem @this, IReactiveCommand<T> cmd)
+        {
+            var d1 = @this.GetClickedObservable().InvokeCommand(cmd);
+            var d2 = cmd.CanExecuteObservable.Subscribe(x => @this.Enabled = x);
+            return new CompositeDisposable(d1, d2);
+        }
+
         public static IObservable<int> GetChangedObservable(this UISegmentedControl @this)
         {
             return Observable.FromEventPattern(t => @this.ValueChanged += t, t => @this.ValueChanged -= t).Select(_ => (int)@this.SelectedSegment);

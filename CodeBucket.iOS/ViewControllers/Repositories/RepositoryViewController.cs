@@ -84,9 +84,9 @@ namespace CodeBucket.ViewControllers.Repositories
                     .Subscribe(x => _split3.Button2.Text = "Issues".ToQuantity(x.GetValueOrDefault()))
                     .AddTo(d);
 
-                actionButton.GetClickedObservable()
-                            .InvokeCommand(ViewModel.ShowMenuCommand)
-                            .AddTo(d);
+                actionButton
+                    .Bind(ViewModel.ShowMenuCommand)
+                    .AddTo(d);
             });
         }
 

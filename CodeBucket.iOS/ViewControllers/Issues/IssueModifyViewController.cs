@@ -19,6 +19,8 @@ namespace CodeBucket.ViewControllers.Issues
         private readonly Lazy<IssueAssigneeViewController> _assigneeViewController;
         private readonly Lazy<RootElement> _root;
 
+        protected RootElement Root => _root.Value;
+
         protected IssueModifyViewController()
         {
             _root = new Lazy<RootElement>(() => new RootElement(TableView));
@@ -36,6 +38,13 @@ namespace CodeBucket.ViewControllers.Issues
                 () => new IssueAssigneeViewController(ViewModel.Assignee));
         }
 
+        public void Present(UIViewController presenter)
+        {
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+            NavigationItem.LeftBarButtonItem.GetClickedObservable().InvokeCommand(ViewModel.DiscardCommand);
+            presenter.PresentViewController(new ThemedNavigationController(this), true, null);
+        }
+
         public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
@@ -46,7 +55,7 @@ namespace CodeBucket.ViewControllers.Issues
 
             var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
-            var title = new EntryElement("Title", string.Empty, string.Empty);
+            var title = new EntryElement("Title", "(Required)", string.Empty);
             var assignedTo = new ButtonElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
             var kind = new ButtonElement("Issue Type", ViewModel.Kind, UITableViewCellStyle.Value1);
             var priority = new ButtonElement("Priority", ViewModel.Priority, UITableViewCellStyle.Value1);
@@ -62,11 +71,11 @@ namespace CodeBucket.ViewControllers.Issues
 
             OnActivation(d =>
             {
-                this.WhenAnyValue(x => x.ViewModel.IsSaving)
+                this.WhenAnyObservable(x => x.ViewModel.SaveCommand.IsExecuting)
                     .SubscribeStatus("Saving...")
                     .AddTo(d);
 
-                this.WhenAnyValue(x => x.ViewModel.Title)
+                this.WhenAnyValue(x => x.ViewModel.IssueTitle)
                     .Subscribe(x => title.Value = x)
                     .AddTo(d);
                 
@@ -94,6 +103,11 @@ namespace CodeBucket.ViewControllers.Issues
                 
                 this.WhenAnyValue(x => x.ViewModel.Versions.SelectedValue)
                     .Subscribe(x => version.Value = x ?? "None")
+                    .AddTo(d);
+
+                content
+                    .Changed
+                    .Subscribe(x => ViewModel.Content = x)
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Content)
@@ -129,11 +143,16 @@ namespace CodeBucket.ViewControllers.Issues
                     .AddTo(d);
 
                 save.GetClickedObservable()
-                    .Subscribe(_ => 
-                    {
-                        View.EndEditing(true);
-                        ViewModel.SaveCommand.Execute(null);
-                    })
+                    .Do(_ => View.EndEditing(true))
+                    .InvokeCommand(this, x => x.ViewModel.SaveCommand)
+                    .AddTo(d);
+
+                this.WhenAnyObservable(x => x.ViewModel.SaveCommand.CanExecuteObservable)
+                    .Subscribe(x => save.Enabled = x)
+                    .AddTo(d);
+
+                this.WhenAnyObservable(x => x.ViewModel.DismissCommand)
+                    .Subscribe(x => DismissViewController(true, null))
                     .AddTo(d);
 
                 priority.Clicked.Subscribe(_ => 

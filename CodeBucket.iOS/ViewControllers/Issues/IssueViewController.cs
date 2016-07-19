@@ -1,7 +1,6 @@
 using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
-using CodeBucket.ViewControllers;
 using CodeBucket.DialogElements;
 using System.Linq;
 using Humanizer;
@@ -10,8 +9,9 @@ using System.Collections.Generic;
 using ReactiveUI;
 using CodeBucket.ViewControllers.Comments;
 using System.Reactive.Linq;
+using CodeBucket.Views;
 
-namespace CodeBucket.Views.Issues
+namespace CodeBucket.ViewControllers.Issues
 {
     public class IssueViewController : PrettyDialogViewController<IssueViewModel>
     {
@@ -23,8 +23,8 @@ namespace CodeBucket.Views.Issues
             OnActivation(d =>
             {
                 Observable.Merge(_descriptionElement.UrlRequested, _commentsElement.UrlRequested)
-                    .Select(WebBrowserViewController.CreateWithNavbar)
-                    .Subscribe(x => PresentViewController(x, true, null))
+                    .Select(x => new WebBrowserViewController(x))
+                    .Subscribe(x => this.PresentModal(x))
                     .AddTo(d);
             });
 		}
@@ -33,27 +33,11 @@ namespace CodeBucket.Views.Issues
 		{
 			base.ViewDidLoad();
 
-            TableView.RowHeight = UITableView.AutomaticDimension;
-            TableView.EstimatedRowHeight = 80f;
-
             HeaderView.SetImage(null, Images.Avatar);
 
-            var compose = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose);
-   
-            this.WhenAnyValue(x => x.ViewModel.Issue).Subscribe(x =>
-            {
-                if (x != null)
-                {
-                    var avatarUrl = x?.ReportedBy?.Avatar;
-                    HeaderView.SubText = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
-                    HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
-                }
-                else
-                {
-                    HeaderView.SetImage(null, Images.Avatar);
-                    HeaderView.SubText = null;
-                }
-            });
+            var compose = new UIBarButtonItem(UIBarButtonSystemItem.Compose);
+            var more = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+            NavigationItem.RightBarButtonItems = new[] { more, compose };
 
             var split = new SplitButtonElement();
             var commentCount = split.AddButton("Comments", "-");
@@ -65,30 +49,28 @@ namespace CodeBucket.Views.Issues
             var secDetails = new Section();
             root.Add(secDetails);
 
-            this.WhenAnyValue(x => x.ViewModel.Description)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize, true))
-                    .Select(x => new MarkdownView { Model = x }.GenerateString())
-                    .Subscribe(content =>
-                    {
-                        _descriptionElement.SetValue(content);
+            this.WhenAnyValue(x => x.ViewModel.ShowDescription)
+                .DistinctUntilChanged()
+                .Subscribe(x =>
+                {
+                    if (x)
                         secDetails.Insert(0, UITableViewRowAnimation.None, _descriptionElement);
-                    });
+                    else
+                        secDetails.Remove(_descriptionElement);
+                });
+
+            this.WhenAnyValue(x => x.ViewModel.Description)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize, true))
+                .Select(x => new MarkdownView { Model = x }.GenerateString())
+                .Subscribe(_descriptionElement.SetValue);
 
             var split1 = new SplitViewElement(AtlassianIcon.Configure.ToImage(), AtlassianIcon.Error.ToImage());
             var split2 = new SplitViewElement(AtlassianIcon.Flag.ToImage(), AtlassianIcon.Spacedefault.ToImage());
             var split3 = new SplitViewElement(AtlassianIcon.Copyclipboard.ToImage(), AtlassianIcon.Calendar.ToImage());
 
-            split1.Button1.Text = ViewModel.Issue.Status;
-            split1.Button2.Text = ViewModel.Issue.Priority;
             secDetails.Add(split1);
-
-            split2.Button1.Text = ViewModel.Issue.Metadata.Kind;
-            split2.Button2.Text = ViewModel.Issue.Metadata.Component ?? "No Component";
             secDetails.Add(split2);
-
-            split3.Button1.Text = ViewModel.Issue.Metadata.Version ?? "No Version";
-            split3.Button2.Text = ViewModel.Issue.Metadata.Milestone ?? "No Milestone";
             secDetails.Add(split3);
 
             var assigneeElement = new ButtonElement("Assigned", string.Empty, UITableViewCellStyle.Value1)
@@ -126,6 +108,39 @@ namespace CodeBucket.Views.Issues
 
             OnActivation(d =>
             {
+                this.WhenAnyValue(x => x.ViewModel.Issue)
+                    .Where(x => x != null)
+                    .Subscribe(x =>
+                    {
+                        var avatarUrl = x.ReportedBy?.Avatar;
+                        HeaderView.Text = x.Title;
+                        HeaderView.SubText = "Updated " + ViewModel.Issue.UtcLastUpdated.Humanize();
+                        HeaderView.SetImage(new Avatar(avatarUrl).ToUrl(128), Images.Avatar);
+                        TableView.TableHeaderView = HeaderView;
+                    })
+                    .AddTo(d);
+
+                this.WhenAnyObservable(x => x.ViewModel.DismissCommand)
+                    .Subscribe(_ => NavigationController.PopViewController(true))
+                    .AddTo(d);
+
+                this.WhenAnyValue(x => x.ViewModel.Issue)
+                    .Subscribe(x =>
+                    {
+                        split1.Button1.Text = x?.Status;
+                        split1.Button2.Text = x?.Priority;
+                        split2.Button1.Text = x?.Metadata?.Kind;
+                        split2.Button2.Text = x?.Metadata?.Component ?? "No Component";
+                        split3.Button1.Text = x?.Metadata?.Version ?? "No Version";
+                        split3.Button2.Text = x?.Metadata?.Milestone ?? "No Milestone";
+                    })
+                    .AddTo(d);
+
+                HeaderView
+                    .Clicked
+                    .InvokeCommand(this, x => x.ViewModel.GoToReporterCommand)
+                    .AddTo(d);
+
                 compose
                     .GetClickedObservable()
                     .BindCommand(ViewModel.GoToEditCommand)
@@ -141,8 +156,17 @@ namespace CodeBucket.Views.Issues
                     .AddTo(d);
 
                 assigneeElement
+                    .BindDisclosure(
+                        this.WhenAnyValue(x => x.ViewModel.Assigned)
+                            .Select(x => !string.Equals(x, "Unassigned", StringComparison.OrdinalIgnoreCase)))
+                    .AddTo(d);
+
+                assigneeElement
                     .Clicked
                     .BindCommand(ViewModel.GoToAssigneeCommand)
+                    .AddTo(d);
+
+                more.Bind(ViewModel.ShowMenuCommand)
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Issue)
@@ -159,6 +183,15 @@ namespace CodeBucket.Views.Issues
                     .Subscribe(x => watchers.Text = x.ToString())
                     .AddTo(d);
             });
+        }
+
+        protected override void Navigate(UIViewController viewController)
+        {
+            var issueAddViewController = viewController as IssueEditViewController;
+            if (issueAddViewController != null)
+                issueAddViewController.Present(this);
+            else
+                base.Navigate(viewController);
         }
     }
 }
