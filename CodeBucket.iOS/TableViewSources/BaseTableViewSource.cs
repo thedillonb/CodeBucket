@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using CodeBucket.Core.ViewModels;
 using CoreGraphics;
@@ -14,19 +13,9 @@ namespace CodeBucket.TableViewSources
         private readonly Subject<Unit> _requestMoreSubject = new Subject<Unit>();
         private readonly Subject<CGPoint> _scrollSubject = new Subject<CGPoint>();
 
-        public IObservable<CGPoint> DidScroll
-        {
-            get { return _scrollSubject.AsObservable(); }
-        }
-
         public IObservable<Unit> RequestMore
         {
             get { return _requestMoreSubject; }
-        }
-
-        public override void Scrolled(UIScrollView scrollView)
-        {
-            _scrollSubject.OnNext(scrollView.ContentOffset);
         }
 
         ~BaseTableViewSource()

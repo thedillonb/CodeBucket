@@ -12,10 +12,10 @@ namespace CodeBucket.Client
             _client = client;
         }
 
-        public Task<Collection<PullRequest>> GetAll(string username, string repository, PullRequestState state)
+        public Task<Collection<PullRequest>> GetAll(string username, string repository, PullRequestState state, int pagelen = 50)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/pullrequests";
-            return _client.Get<Collection<PullRequest>>($"{uri}?state={state.ToString().ToUpper()}");
+            return _client.Get<Collection<PullRequest>>($"{uri}?state={state.ToString().ToUpper()}&pagelen={pagelen}");
 		}
 
         public Task<PullRequest> Get(string username, string repository, int id)

@@ -44,6 +44,8 @@ namespace CodeBucket.Utilities
     {
         private int _value;
 
+        public int Value => _value;
+
         public void Up()
         {
             _value++;

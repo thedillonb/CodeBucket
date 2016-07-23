@@ -52,6 +52,7 @@ namespace CodeBucket.ViewControllers
         where TViewModel : class
     {
         private readonly LoadingIndicator _loadingIndicator = new LoadingIndicator();
+        private IDisposable _loadingDisposable;
 
         public WKWebView Web { get; private set; }
 
@@ -67,17 +68,14 @@ namespace CodeBucket.ViewControllers
 
         public virtual void OnLoadError (NSError error)
         {
-            _loadingIndicator.Down();
         }
 
         public virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            _loadingIndicator.Up();
         }
 
         public virtual void OnLoadFinished(WKWebView webView, WKNavigation navigation)
         {
-            _loadingIndicator.Down();
         }
 
         public override void ViewDidLoad()
@@ -90,9 +88,31 @@ namespace CodeBucket.ViewControllers
             Add(Web);
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            _loadingDisposable = Web.AddObserver("estimatedProgress", NSKeyValueObservingOptions.New, ProgressObserver);
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _loadingDisposable?.Dispose();
+            _loadingDisposable = null;
+        }
+
+        public void ProgressObserver(NSObservedChange nsObservedChange)
+        {
+            var progress = Convert.ToInt32(Web.EstimatedProgress);
+            if (progress != 1 && _loadingIndicator.Value == 0)
+                _loadingIndicator.Up();
+            else if (progress == 1)
+                _loadingIndicator.Down();
+        }
+
         protected void LoadContent(string content)
         {
-            Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
+            Web.LoadHtmlString(content ?? string.Empty, NSBundle.MainBundle.BundleUrl);
         }
 
         protected string LoadFile(string path)

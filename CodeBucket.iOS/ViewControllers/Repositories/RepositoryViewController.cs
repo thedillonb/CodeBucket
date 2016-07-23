@@ -62,26 +62,26 @@ namespace CodeBucket.ViewControllers.Repositories
                    .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.BranchesCount)
-                    .Subscribe(x => branches.Text = x.ToString())
+                    .SubscribeSafe(x => branches.Text = x.ToString())
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Watchers)
-                    .Subscribe(x => watchers.Text = x.HasValue ? x.ToString() : "-")
+                    .SubscribeSafe(x => watchers.Text = x.HasValue ? x.ToString() : "-")
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Forks)
-                    .Subscribe(x => forks.Text = x.HasValue ? x.ToString() : "-")
+                    .SubscribeSafe(x => forks.Text = x.HasValue ? x.ToString() : "-")
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Repository).SelectUnit()
                     .Merge(this.WhenAnyValue(x => x.ViewModel.HasReadme).SelectUnit())
                     .Where(x => ViewModel.Repository != null)
                     .Do(_ => NavigationItem.RightBarButtonItem.Enabled = true)
-                    .Subscribe(_ => Render())
+                    .SubscribeSafe(_ => Render())
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Issues)
-                    .Subscribe(x => _split3.Button2.Text = "Issues".ToQuantity(x.GetValueOrDefault()))
+                    .SubscribeSafe(x => _split3.Button2.Text = "Issues".ToQuantity(x.GetValueOrDefault()))
                     .AddTo(d);
 
                 actionButton
@@ -93,7 +93,8 @@ namespace CodeBucket.ViewControllers.Repositories
         public void Render()
         {
             var model = ViewModel.Repository;
-            var avatar = new Avatar(model.Links.Avatar.Href).ToUrl(128);
+            var avatarHref = ViewModel.Repository.Owner?.Links?.Avatar?.Href;
+            var avatar = new Avatar(avatarHref).ToUrl(128);
             ICollection<Section> root = new LinkedList<Section>();
             HeaderView.SubText = string.IsNullOrWhiteSpace(model.Description) ? "Updated " + model.UpdatedOn.Humanize() : model.Description;
             HeaderView.SetImage(avatar, Images.RepoPlaceholder);
@@ -106,10 +107,10 @@ namespace CodeBucket.ViewControllers.Repositories
             _split1.Button2.Text = string.IsNullOrEmpty(model.Language) ? "N/A" : model.Language;
             sec1.Add(_split1);
 
-            _split3.Button1.Text = model.Scm.ApplyCase(LetterCasing.Title);
+            _split3.Button1.Text = model?.Scm?.ApplyCase(LetterCasing.Title) ?? "-";
             sec1.Add(_split3);
 
-            _split2.Button1.Text = (model.UpdatedOn).ToString("MM/dd/yy");
+            _split2.Button1.Text = model.UpdatedOn.ToString("MM/dd/yy");
             _split2.Button2.Text = model.Size.Bytes().ToString("#.##");
             sec1.Add(_split2);
 

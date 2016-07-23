@@ -284,6 +284,7 @@
     <Compile Include="Views\SubtitleTitleView.cs" />
     <Compile Include="Services\DiffService.cs" />
     <Compile Include="ViewControllers\Issues\IssuesFilterViewController.cs" />
+    <Compile Include="ViewControllers\IModalViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

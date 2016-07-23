@@ -133,7 +133,14 @@ namespace CodeBucket.ViewControllers
 
         protected virtual void Navigate(UIViewController viewController)
         {
-            NavigationController.PushViewController(viewController, true);
+            if (viewController is IModalViewController)
+            {
+                this.PresentModal(viewController);
+            }
+            else
+            {
+                NavigationController.PushViewController(viewController, true);
+            }
         }
     }
 

@@ -10,6 +10,9 @@ namespace CodeBucket.Core.Filters
         public KindModel Kind { get; set; }
         public PriorityModel Priority { get; set; }
 		public Order OrderBy { get; set; }
+        public string Milestone { get; set; }
+        public string Component { get; set; }
+        public string Version { get; set; }
 
         public IssuesFilterModel()
         {
@@ -50,12 +53,6 @@ namespace CodeBucket.Core.Filters
             return new IssuesFilterModel { AssignedTo = username };
         }
 
-
-        public bool IsFiltering()
-        {
-            return !(string.IsNullOrEmpty(AssignedTo) && string.IsNullOrEmpty(ReportedBy) && Status.IsDefault() && Kind.IsDefault() && Priority.IsDefault());
-        }
-
         public enum Order
         { 
             [Description("Number")]
@@ -81,7 +78,10 @@ namespace CodeBucket.Core.Filters
             if (obj.GetType() != typeof(IssuesFilterModel))
                 return false;
             IssuesFilterModel other = (IssuesFilterModel)obj;
-            return object.Equals(AssignedTo, other.AssignedTo) && object.Equals(ReportedBy, other.ReportedBy) && object.Equals(Status, other.Status) && object.Equals(Kind, other.Kind) && object.Equals(Priority, other.Priority) && object.Equals(OrderBy, other.OrderBy);
+            return object.Equals(AssignedTo, other.AssignedTo) && object.Equals(ReportedBy, other.ReportedBy) && 
+                   object.Equals(Status, other.Status) && object.Equals(Kind, other.Kind) && 
+                   object.Equals(Priority, other.Priority) && object.Equals(OrderBy, other.OrderBy) &&
+                   object.Equals(Milestone, other.Milestone) && object.Equals(Version, other.Version) && object.Equals(Component, other.Component);
         }
 
         public override int GetHashCode()

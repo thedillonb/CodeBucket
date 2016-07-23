@@ -7,7 +7,7 @@ using Foundation;
 
 namespace CodeBucket.ViewControllers
 {
-    public class WebBrowserViewController : WebViewController<WebBrowserViewModel>
+    public class WebBrowserViewController : WebViewController<WebBrowserViewModel>, IModalViewController
     {
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;

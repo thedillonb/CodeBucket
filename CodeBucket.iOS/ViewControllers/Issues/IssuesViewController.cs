@@ -29,7 +29,7 @@ namespace CodeBucket.ViewControllers.Issues
             this.AddTableView(TableView);
             var searchBar = TableView.CreateSearchBar();
 
-            var viewSegment = new CustomUISegmentedControl(new [] { "All", "Open", "Mine", "Custom" }, 3);
+            var viewSegment = new UISegmentedControl(new[] { "All", "Open", "Mine" });
             var segmentBarButton = new UIBarButtonItem(viewSegment);
 			segmentBarButton.Width = View.Frame.Width - 10f;
 
@@ -41,7 +41,8 @@ namespace CodeBucket.ViewControllers.Issues
             };
      
             var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
-            NavigationItem.RightBarButtonItem = addButton;
+            var searchButton = new UIBarButtonItem(UIBarButtonSystemItem.Search);
+            NavigationItem.RightBarButtonItems = new[] { addButton, searchButton };
 
             OnActivation(disposable =>
             {
@@ -55,6 +56,14 @@ namespace CodeBucket.ViewControllers.Issues
 
                 this.WhenAnyValue(x => x.TableViewSource)
                     .Subscribe(x => TableView.Source = x)
+                    .AddTo(disposable);
+
+                searchButton
+                    .GetClickedObservable()
+                    .Select(_ => ViewModel.Filter)
+                    .Select(x => new IssuesFilterViewController(ViewModel.Username, ViewModel.Repository, x, y => ViewModel.Filter = y))
+                    .Do(_ => ViewModel.SelectedFilter = -1)
+                    .Subscribe(x => x.Present(this))
                     .AddTo(disposable);
 
                 addButton
@@ -73,18 +82,6 @@ namespace CodeBucket.ViewControllers.Issues
                     .GetChangedObservable()
                     .Subscribe(x => ViewModel.SelectedFilter = x)
                     .AddTo(disposable);
-
-                viewSegment
-                    .GetChangedObservable()
-                    .Where(x => x == 3)
-                    .Subscribe(_ =>
-                    {
-                        var vc = new IssuesFilterViewController(ViewModel.Filter, x =>
-                        {
-                            ViewModel.Filter = x;
-                        });
-                        vc.Present(this);
-                    });
 
                 this.WhenAnyValue(x => x.ViewModel.SelectedFilter)
                     .Subscribe(x => viewSegment.SelectedSegment = x)
@@ -128,24 +125,6 @@ namespace CodeBucket.ViewControllers.Issues
         {
             base.ViewWillDisappear(animated);
             NavigationController.SetToolbarHidden(true, animated);
-        }
-
-        private class CustomUISegmentedControl : UISegmentedControl
-        {
-            readonly int _multipleTouchIndex;
-            public CustomUISegmentedControl(object[] args, int multipleTouchIndex)
-                : base(args)
-            {
-                this._multipleTouchIndex = multipleTouchIndex;
-            }
-
-            public override void TouchesEnded(Foundation.NSSet touches, UIEvent evt)
-            {
-                var previousSelected = SelectedSegment;
-                base.TouchesEnded(touches, evt);
-                if (previousSelected == SelectedSegment && SelectedSegment == _multipleTouchIndex)
-                    SendActionForControlEvents(UIControlEvent.ValueChanged);
-            }
         }
     }
 }

@@ -17,10 +17,10 @@ namespace CodeBucket.Core.ViewModels.Wiki
 		}
 
 		private string _content;
-        private string Content
+        public string Content
 		{
             get { return _content; }
-            set { this.RaiseAndSetIfChanged(ref _content, value); }
+            private set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
         private bool _canEdit;
@@ -36,18 +36,24 @@ namespace CodeBucket.Core.ViewModels.Wiki
 
         public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
 
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+
         public WikiViewModel(
             string username, string repository, string page = null,
-            IMarkdownService markdownService = null, IApplicationService applicationService = null)
+            IMarkdownService markdownService = null, IApplicationService applicationService = null,
+            IActionMenuService actionMenuService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
             page = page ?? "Home";
             CanEdit = true;
 
             if (page.StartsWith("/", StringComparison.Ordinal))
                 page = page.Substring(1);
+
+            Title = page;
 
             GoToWebCommand
                 .OfType<string>()
@@ -60,9 +66,20 @@ namespace CodeBucket.Core.ViewModels.Wiki
                 .Do(x => page = x)
                 .InvokeCommand(LoadCommand);
 
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            {
+                var menu = actionMenuService.Create();
+                //menu.AddButton("Fork Repository", ForkCommand);
+                menu.AddButton("Show in Bitbucket", () => {
+                    var htmlUrl = $"https://bitbucket.org/{username.ToLower()}/{repository.ToLower()}/wiki/{page}";
+                    NavigateTo(new WebBrowserViewModel(htmlUrl));
+                });
+                return menu.Show(sender);
+            });
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                Wiki = await applicationService.Client.Repositories.GetWiki(username, repository);
+                Wiki = await applicationService.Client.Repositories.GetWiki(username, repository, page);
 
                 string content = string.Empty;
                 if (string.Equals(Wiki.Markup, "markdown"))
@@ -71,10 +88,8 @@ namespace CodeBucket.Core.ViewModels.Wiki
                     content = markdownService.ConvertCreole(Wiki.Data);
                 else if (string.Equals(Wiki.Markup, "textile"))
                     content = markdownService.ConvertTextile(Wiki.Data);
-                else if (string.Equals(Wiki.Markup, "rest"))
-                {
+                else
                     content = Wiki.Data;
-                }
 
                 Content = content;
             });

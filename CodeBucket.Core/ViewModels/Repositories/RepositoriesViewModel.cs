@@ -42,7 +42,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 viewModel.GoToCommand.Subscribe(_ =>
                 {
                     var id = RepositoryIdentifier.FromFullName(x.FullName);
-                    NavigateTo(new RepositoryViewModel(id.Owner, id.Name));
+                    NavigateTo(new RepositoryViewModel(id.Owner, id.Name, x));
                 });
                 return viewModel;
             }, x => x.Name.ContainsKeyword(SearchText), signalReset: this.WhenAnyValue(x => x.SearchText));

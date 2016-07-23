@@ -94,7 +94,13 @@ namespace CodeBucket.Core.ViewModels.Source
                 using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                 {
                     await applicationService.Client.Repositories.GetRawFile(username, repository, branch, path, stream);
-                    IsText = true;
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    var buffer = new byte[1024];
+                    var read = stream.Read(buffer, 0, 1024);
+                    IsText = !buffer.Take(read).Any(x => x == 0);
                 }
 
                 FilePath = filePath;

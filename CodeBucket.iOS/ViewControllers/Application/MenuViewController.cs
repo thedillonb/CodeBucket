@@ -29,17 +29,6 @@ namespace CodeBucket.ViewControllers.Application
 
         public MenuViewModel ViewModel { get; } = new MenuViewModel();
 
-        public override string Title {
-            get {
-                return _title == null ? base.Title : " " + _title.Text;
-            }
-            set {
-                if (_title != null)
-                    _title.Text = " " + value;
-                base.Title = value;
-            }
-        }
-
         public MenuViewController()
             : base(UITableViewStyle.Plain)
         {
@@ -57,6 +46,10 @@ namespace CodeBucket.ViewControllers.Application
             OnActivation(d =>
             {
                 _profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked()).AddTo(d);
+
+                this.WhenAnyValue(x => x.ViewModel.Title)
+                    .Subscribe(x => _title.Text = x)
+                    .AddTo(d);
 
                 var updatables = new[] { 
                     ViewModel.Groups.Changed, 

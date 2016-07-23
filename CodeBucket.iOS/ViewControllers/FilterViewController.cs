@@ -14,8 +14,8 @@ namespace CodeBucket.ViewControllers
         {
             Title = "Filter & Sort";
 
-            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
-            var search = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Search);
+            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
+            var search = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
             OnActivation(disposables =>
             {
@@ -36,11 +36,6 @@ namespace CodeBucket.ViewControllers
         }
 
         public abstract void ApplyButtonPressed();
-
-        public void CloseViewController()
-        {
-            DismissViewController(true, null);
-        }
 
         public override void ViewWillAppear(bool animated)
         {
@@ -128,22 +123,13 @@ namespace CodeBucket.ViewControllers
 
         private static string CreateCaptionForMultipleChoice<T>(T o)
         {
-            var fields = o.GetType().GetFields();
-            var sb = new System.Text.StringBuilder();
-            int trueCounter = 0;
-            foreach (var f in fields)
-            {
-                if ((bool)f.GetValue(o))
-                {
-                    sb.Append(f.Name);
-                    sb.Append(", ");
-                    trueCounter++;
-                }
-            }
-            var str = sb.ToString();
-            if (str.EndsWith(", "))
-                return trueCounter == fields.Length ? "Any" : str.Substring(0, str.Length - 2);
-            return "None";
+            var fields = o.GetType().GetProperties();
+            var allTrue = fields.All(x => (bool)x.GetValue(o));
+            var allFalse = fields.All(x => !(bool)x.GetValue(o));
+
+            if (allTrue) return "Any";
+            if (allFalse) return "None";
+            return string.Join(", ", fields.Where(x => (bool)x.GetValue(o)).Select(x => x.Name));
         }
     }
 }

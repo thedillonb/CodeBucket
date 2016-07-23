@@ -42,14 +42,6 @@ namespace CodeBucket.ViewControllers.Repositories
             });
         }
 
-        protected override void Navigate(UIViewController viewController)
-        {
-            if (viewController is WebBrowserViewController)
-                this.PresentModal(viewController);
-            else
-                base.Navigate(viewController);
-        }
-
         public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             var url = navigationAction.Request.Url.AbsoluteString;

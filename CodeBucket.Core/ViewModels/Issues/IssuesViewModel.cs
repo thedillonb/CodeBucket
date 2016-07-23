@@ -10,6 +10,10 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssuesViewModel : BaseViewModel
     {
+        public string Username { get; }
+
+        public string Repository { get; }
+
         private IssueListViewModel _listViewModel;
         public IssueListViewModel Issues
         {
@@ -38,6 +42,8 @@ namespace CodeBucket.Core.ViewModels.Issues
             IApplicationService applicationService = null,
             IMessageService messageService = null)
         {
+            Username = username;
+            Repository = repository;
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             messageService = messageService ?? Locator.Current.GetService<IMessageService>();
             var currentUser = applicationService.Account.Username;

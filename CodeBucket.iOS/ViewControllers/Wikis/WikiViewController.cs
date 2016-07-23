@@ -2,17 +2,50 @@ using CodeBucket.Core.ViewModels.Wiki;
 using UIKit;
 using System.Threading.Tasks;
 using WebKit;
+using ReactiveUI;
+using System;
+using System.Reactive.Linq;
+using CodeBucket.Views;
 
 namespace CodeBucket.ViewControllers.Wikis
 {
 	public class WikiViewController : WebViewController<WikiViewModel>
     {
+        private string _content;
+        public string Content
+        {
+            get { return _content; }
+            private set { this.RaiseAndSetIfChanged(ref _content, value); }
+        }
+
         public WikiViewController()
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => {
-                var menu = CreateExtraMenu();
-                if (menu != null)
-                    menu.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+            NavigationItem.RightBarButtonItem = actionButton;
+
+            OnActivation(disposable =>
+            {
+                actionButton
+                    .GetClickedObservable()
+                    .InvokeCommand(this, x => x.ViewModel.ShowMenuCommand)
+                    .AddTo(disposable);
+            });
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.Content)
+                .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize, true))
+                .Select(x => new MarkdownView { Model = x }.GenerateString())
+                .Subscribe(LoadContent);
+
+            OnActivation(disposable =>
+            {
+                this.WhenAnyValue(x => x.ViewModel.Content)
+                    .Subscribe(x => Content = x)
+                    .AddTo(disposable);
             });
         }
 
@@ -42,20 +75,6 @@ namespace CodeBucket.ViewControllers.Wikis
 //                AlertDialogService.ShowAlert("Error", e.Message);
 //            }
         }
-
-        public async override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-
-			//Stupid but I can't put this in the ViewDidLoad...
-//			if (!_loaded)
-//			{
-//				_loaded = true;
-//                var data = await ViewModel.GetData(ViewModel.Page);
-//                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
-//			}
-		}
-
 
         public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {

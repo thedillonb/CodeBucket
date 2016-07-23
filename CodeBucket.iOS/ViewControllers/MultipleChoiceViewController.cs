@@ -20,7 +20,7 @@ namespace CodeBucket.ViewControllers
         }
 
         public MultipleChoiceViewController(string title, object obj)
-            : base (UITableViewStyle.Grouped)
+            : base (UITableViewStyle.Plain)
         {
             _obj = obj;
             Title = title;

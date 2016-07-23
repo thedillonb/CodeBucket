@@ -129,9 +129,9 @@ namespace CodeBucket.Client
             return _client.Get<V1.SourceDirectory>(uri);
         }
 
-        public Task<V1.Wiki> GetWiki(string username, string repository)
+        public Task<V1.Wiki> GetWiki(string username, string repository, string slug)
         {
-            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/wiki";
+            var uri = $"{BitbucketClient.ApiUrl}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}/wiki/{Uri.EscapeDataString(slug)}";
             return _client.Get<V1.Wiki>(uri);
         }
 

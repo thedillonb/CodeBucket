@@ -150,6 +150,7 @@
     <Compile Include="Services\ServiceRegistration.cs" />
     <Compile Include="Services\IDiffService.cs" />
     <Compile Include="ViewModels\Issues\IssueListViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -10,7 +10,12 @@ namespace CodeBucket.ViewControllers.Issues
 {
     public class IssueVersionsViewController : DialogViewController
 	{
-        private IssueVersionsViewModel ViewModel { get; }
+        public IssueVersionsViewModel ViewModel { get; }
+
+        public IssueVersionsViewController(string username, string repository)
+            : this(new IssueVersionsViewModel(username, repository))
+        {
+        }
 
         public IssueVersionsViewController(IssueVersionsViewModel viewModel)
             : base(UITableViewStyle.Plain)

@@ -62,6 +62,15 @@ namespace CodeBucket.Core.ViewModels.Issues
             if (!string.IsNullOrEmpty(_filter.ReportedBy))
                 if (model.ReportedBy == null || !object.Equals(_filter.ReportedBy, model.ReportedBy.Username))
                     return false;
+            if (!string.IsNullOrEmpty(_filter.Milestone))
+                if (model?.Metadata?.Milestone == null || !object.Equals(_filter.Milestone, model.Metadata.Milestone))
+                    return false;
+            if (!string.IsNullOrEmpty(_filter.Version))
+                if (model?.Metadata?.Version == null || !object.Equals(_filter.Version, model.Metadata.Version))
+                    return false;
+            if (!string.IsNullOrEmpty(_filter.Component))
+                if (model?.Metadata?.Component == null || !object.Equals(_filter.Component, model.Metadata.Component))
+                    return false;
 
             return true;
         }
@@ -133,6 +142,13 @@ namespace CodeBucket.Core.ViewModels.Issues
                     // That's terrible.
                     if (_filter.OrderBy != IssuesFilterModel.Order.Local_Id)
                         search.AddLast(Tuple.Create("sort", _filter.OrderBy.ToString().ToLower()));
+
+                    if (!string.IsNullOrEmpty(_filter.Milestone))
+                        search.AddLast(Tuple.Create("milestone", _filter.Milestone));
+                    if (!string.IsNullOrEmpty(_filter.Version))
+                        search.AddLast(Tuple.Create("version", _filter.Version));
+                    if (!string.IsNullOrEmpty(_filter.Component))
+                        search.AddLast(Tuple.Create("component", _filter.Component));
                 }
 
                 var x = await applicationService.Client.Issues.GetAll(username, repository, startPage, search: search);

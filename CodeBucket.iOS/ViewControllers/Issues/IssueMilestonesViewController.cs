@@ -10,7 +10,12 @@ namespace CodeBucket.ViewControllers.Issues
 {
     public class IssueMilestonesViewController : DialogViewController
     {
-        private IssueMilestonesViewModel ViewModel { get; }
+       public IssueMilestonesViewModel ViewModel { get; }
+
+       public IssueMilestonesViewController(string username, string repository)
+            : this(new IssueMilestonesViewModel(username, repository))
+        {
+        }
 
         public IssueMilestonesViewController(IssueMilestonesViewModel viewModel)
             : base(UITableViewStyle.Plain)
