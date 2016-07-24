@@ -13,7 +13,16 @@ namespace CodeBucket.Core.ViewModels.Source
 {
     public class ChangesetDiffViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly IApplicationService _applicationService;
 		private ChangesetFile _commitFileModel;
+
+        public string Username { get; }
+
+        public string Repository { get; }
+
+        public string Node { get; }
+
+        public string Filename { get; }
 
         private string _binaryFilePath;
 		public string BinaryFilePath
@@ -52,7 +61,11 @@ namespace CodeBucket.Core.ViewModels.Source
             string username, string repository, string node, string filename,
             IApplicationService applicationService = null, IDiffService diffService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            Username = username;
+            Repository = repository;
+            Node = node;
+            Filename = filename;
+            _applicationService = applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             diffService = diffService ?? Locator.Current.GetService<IDiffService>();
 
             var actualFilename = Path.GetFileName(filename);
@@ -137,8 +150,15 @@ namespace CodeBucket.Core.ViewModels.Source
 
 		public async Task PostComment(string comment, int? lineFrom, int? lineTo)
 		{
-//			var c = await Task.Run(() => this.GetApplication().Client.Users[Username].Repositories[Repository].Changesets[Branch].Comments.Create(comment, lineFrom, lineTo, filename: Filename));
-//			Comments.Items.Add(c);
+            var c = await _applicationService.Client.Commits.CreateComment(Username, Repository, Node, new Client.NewChangesetComment
+            {
+                Content = comment,
+                LineFrom = lineFrom,
+                LineTo = lineTo,
+                Filename = Filename
+            });
+
+            Comments.Add(c);
 		}
     }
 }

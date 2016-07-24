@@ -23,9 +23,9 @@ namespace CodeBucket.Services
                 return Enumerable.Empty<Hunk>();
 
             if (oldContent == null)
-                return new[] { new Hunk(0, 1, newContent.Split('\n')) };
+                return new[] { new Hunk(0, 1, newContent.Split('\n').Select(x => "+" + x).ToList()) };
             if (newContent == null)
-                return new[] { new Hunk(1, 0, oldContent.Split('\n')) };
+                return new[] { new Hunk(1, 0, oldContent.Split('\n').Select(x => "-" + x).ToList()) };
 
             var items = new { oldContent, newContent, context };
             var serialized = JsonConvert.SerializeObject(items);

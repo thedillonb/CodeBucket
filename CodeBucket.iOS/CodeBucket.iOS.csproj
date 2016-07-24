@@ -285,6 +285,28 @@
     <Compile Include="Services\DiffService.cs" />
     <Compile Include="ViewControllers\Issues\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\IModalViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\AboutViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\CardPageViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\FeedbackViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\GoProViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\PromoteViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomePageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\WelcomeViewController.xib" />
+    <Compile Include="Services\FeatureService.cs" />
+    <Compile Include="Services\InAppPurchaseService.cs" />
+    <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -364,6 +386,12 @@
     <BundleResource Include="Images\avatar%402x.png" />
     <BundleResource Include="Atlassian-icons.ttf" />
     <None Include="WebResources\LICENSE" />
+    <BundleResource Include="Briefcase.png" />
+    <BundleResource Include="CodeHubRound.png" />
+    <BundleResource Include="Feedback.png" />
+    <BundleResource Include="Heart.png" />
+    <BundleResource Include="Organizations.png" />
+    <BundleResource Include="Rocket.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -374,6 +402,7 @@
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
     <Folder Include="DialogElements\" />
+    <Folder Include="ViewControllers\Walkthrough\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBucket.Core\CodeBucket.Core.csproj">

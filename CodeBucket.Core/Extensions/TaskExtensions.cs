@@ -7,6 +7,17 @@ using ReactiveUI;
 // Analysis disable once CheckNamespace
 public static class TaskExtensions
 {
+    public static Task<T> WithTimeout<T>(this Task<T> task, TimeSpan timeout)
+    {
+        return task.ToObservable().Timeout(timeout).ToTask();
+    }
+
+    public static Task WithTimeout(this Task task, TimeSpan timeout)
+    {
+        return task.ToObservable().Timeout(timeout).ToTask();
+    }
+
+
     public static Task OnSuccess<T>(this Task<T> task, Action<T> action)
     {
         return task.ToObservable()

@@ -78,7 +78,7 @@ namespace CodeBucket.ViewControllers.Application
 
             Appearing
                 .Take(1)
-                .InvokeCommand(ViewModel.LoadCommand);
+                .InvokeCommand(this, x => x.ViewModel.LoadCommand);
         }
 
         private void CreateMenuRoot()
@@ -210,6 +210,7 @@ namespace CodeBucket.ViewControllers.Application
             base.ViewWillAppear(animated);
             UpdateProfilePicture();
             ViewModel.RefreshCommand.ExecuteIfCan();
+            CreateMenuRoot();
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

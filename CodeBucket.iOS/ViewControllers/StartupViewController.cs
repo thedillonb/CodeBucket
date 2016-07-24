@@ -77,13 +77,9 @@ namespace CodeBucket.ViewControllers
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            //vc.ViewModel.GoToDefaultTopView.Execute(null);
-            var vm = new Core.ViewModels.Repositories.RepositoryViewModel("thedillonb", "bitbucketbrowser");
-            vc.NavigationController.PushViewController(new Repositories.RepositoryViewController { ViewModel = vm }, true);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
-            PresentViewController(slideoutController, true, null);
+            PresentViewController(slideoutController, true, vc.ViewModel.GoToDefaultTopView.ExecuteIfCan);
         }
 
         private void GoToNewAccount(object o)

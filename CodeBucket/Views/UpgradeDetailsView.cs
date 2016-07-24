@@ -18,13 +18,13 @@ using System.Text;
 
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "2.6.0.0")]
-public partial class DiffView : DiffViewBase
+public partial class UpgradeDetailsView : UpgradeDetailsViewBase
 {
 
 #line hidden
 
-#line 1 "DiffView.cshtml"
-public DiffViewModel Model { get; set; }
+#line 1 "UpgradeDetailsView.cshtml"
+public UpgradeDetailsModel Model { get; set; }
 
 #line default
 #line hidden
@@ -39,283 +39,150 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<style>\nbody {\n    margin:0;\n}\n\ntable.diff {\n    border-collapse:collapse;\n   " +
-" border:1px solid darkgray;\n    white-space:pre;\n    width:100%;\n}\ntable.diff tb" +
-"ody { \n    font-family:Courier, monospace\n}\ntable.diff tbody th {\n    font-famil" +
-"y:verdana,arial,\'Bitstream Vera Sans\',helvetica,sans-serif;\n    background:#EED;" +
-"\n    font-weight:normal;\n    border:1px solid #BBC;\n    color:#886;\n    padding:" +
-".3em .3em;\n    text-align:right;\n}\ntable.diff thead {\n    border-bottom:1px soli" +
-"d #BBC;\n    background:#EFEFEF;\n    font-family:Verdana;\n}\ntable.diff thead th.t" +
-"exttitle {\n    text-align:left\n}\ntable.diff tbody td {\n    padding:.3em .4em;\n  " +
-"  width: 100%;\n}\ntable.diff .empty {\n    background-color:#DDD;\n}\ntable.diff .re" +
-"place {\n    background-color:#FD8\n}\ntable.diff .delete {\n    background-color:#E" +
-"99;\n}\ntable.diff .skip {\n    background-color:#EFEFEF;\n    border:1px solid #AAA" +
-";\n    border-right:1px solid #BBC;\n}\ntable.diff .insert {\n    background-color:#" +
-"9E9\n}\ntable.diff th.author {\n    text-align:left;\n    border-top:1px solid #BBC;" +
-"\n    background:#EFEFEF\n}\n\n.comment > td {\nbackground:#EED;\nborder:1px solid #BB" +
-"C;\n}\n\n.comment > td > div.inner {\nmargin: 10px;\nborder-radius: 3px;\nbackground:#" +
-"fff;\nborder:1px solid #BBC;\npadding: 15px 10px 10px 10px;\n}\n\n.comment > td > div" +
-".inner > header {\npadding-left:43px;\nposition:relative;\ncolor:#3b73af;\nfont-weig" +
-"ht: bold;\ndisplay:inline;\n}\n\n.comment > td > div.inner > header > img {\nposition" +
-": absolute;\ntop: 0px;\nleft: 0px;\nborder-radius: 3px;\nwidth: 32px;\nheight: 32px;\n" +
-"display: inline;\nborder: none;\n}\n\n.comment > td > div.inner > .content {\noverflo" +
-"w: hidden;\nword-wrap: break-word;\nmargin:0;\npadding:0;\npadding-left: 43px;\n}\n</s" +
-"tyle>\n</head>\n    <body>\n\t\t<table");
+WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -webkit-text-size-adjust" +
+": none;\n}\n\nbody {\n    color: #333;\n    font-family: Helvetica, Arial, sans-serif" +
+";\n    line-height: 1.42;\n    font-size: 16px;\n    line-height: 1.7;\n    word-wra" +
+"p: break-word;\n}\nh1, h2, h3, h4, h5, h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-w" +
+"eight: bold;\nline-height: 1.7;\ncursor: text;\nposition: relative;\n}\nh1 {\nfont-siz" +
+"e: 1.8em;\nborder-bottom: 1px solid #ddd;\n}\np, blockquote, ul, ol, dl, table, pre" +
+" {\nmargin: 15px 0;\n}\nh2 {\nfont-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\nul," +
+" ol {\npadding-left: 20px;\n}\na {\ncolor: #4183c4;\ntext-decoration: none;\ntext-deco" +
+"ration: none;\n}\n.highlight pre, pre {\nbackground-color: #f8f8f8;\nborder: 1px sol" +
+"id #ddd;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3p" +
+"x;\n}\npre {\nword-wrap: normal;\n}\ndl {\npadding: 0;\n}\ndl dt {\nfont-weight: bold;\nfo" +
+"nt-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\ndl dd {\nmargin-bottom: 15px;\np" +
+"adding: 0 15px;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndisplay: block;\n}\ntable t" +
+"r {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\ntable tr:nth-child(2n)" +
+" {\nbackground-color: #f8f8f8;\n}\ntable th, table td {\nborder: 1px solid #ddd;\npad" +
+"ding: 6px 13px;\n}\ntable th {\nfont-weight: bold;\n}\nimg {\nmax-width: 100%;\n-moz-bo" +
+"x-sizing: border-box;\nbox-sizing: border-box;\n}\nul.task-list > li.task-list-item" +
+" {\n  list-style-type: none;\n}\n.task-list-item-checkbox {\n  margin-left: -20px;\n " +
+" vertical-align: middle;\n}\n.btn {\n    margin-top: 1.50em;\n    margin-bottom: 1em" +
+";\n    padding: 1em 2em;\n    text-align: center;\n    display: inline-block;\n    b" +
+"order-radius: 15px;\n    border: none;\n    transform: translateY(1px);\n    color:" +
+" #fff;\n}\n#buy {\n    background-color: #2ecc71;\n    box-shadow: 0 3px #27ae60;\n}\n" +
+"#purchased {\n    background-color: #34495e;\n    box-shadow: 0 3px #2c3e50;\n}\n");
 
-WriteLiteral(" class=\"diff\"");
+WriteLiteral(@"@media (max-width: 640px) {
+    .btn, #restore {
+        display: block;
+    }
+    #restore {
+        text-align: center;
+    }
+}
 
-WriteLiteral(" width=\"100%\"");
+</style>
+    <title>Pro Version</title>
+</head>
+<body>
+    <p>
+        <b>CodeBucket Pro</b> gives you access the all the great features below:
+    </p>
 
-WriteLiteral(">\n\t\t    <thead>\n                <tr>\n                    </th></th>\n             " +
-"       </th></th>\n\t\t\t\t    </th></th>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody>\n");
+    <ul>
+        <li><a");
 
+WriteLiteral(" href=\"#private\"");
 
-#line 113 "DiffView.cshtml"
-                
+WriteLiteral(">Private Repositories</a></li>\n    </ul>\n\n    <p>\n        Before you buy please t" +
+"ake a look at the detailed description for each feature below. \n        If you\'r" +
+"e unsure about any aspect of the Pro version, please feel free to \n        <a");
 
-#line default
-#line hidden
+WriteLiteral(" href=\"#\"");
 
-#line 113 "DiffView.cshtml"
-                 foreach (var h in Model.Patch)
-                {
-                    var oLine = h.OldStart;
-                    var nLine = h.NewStart;
-                    foreach (var l in h.Lines)
-                    {
+WriteLiteral(" onclick=\"window.location=\'mailto://codebucketapp@gmail.com?Subject=CodeBucket%20" +
+"Pro%20Question\'; return false;\"");
 
+WriteLiteral(" target=\"_blank\"");
 
-#line default
-#line hidden
-WriteLiteral("                        <tr>\n");
-
-
-#line 120 "DiffView.cshtml"
-                            
-
-#line default
-#line hidden
-
-#line 120 "DiffView.cshtml"
-                              bool isAddition = l.StartsWith("+");
-
-#line default
-#line hidden
-WriteLiteral("\n");
+WriteLiteral(">contact me</a>!\n    </p>\n\n");
 
 
-#line 121 "DiffView.cshtml"
-                            
+#line 149 "UpgradeDetailsView.cshtml"
+    
 
 #line default
 #line hidden
 
-#line 121 "DiffView.cshtml"
-                              bool isDeletion = l.StartsWith("-");
-
-#line default
-#line hidden
-WriteLiteral("\n");
-
-
-#line 122 "DiffView.cshtml"
-                            
-
-#line default
-#line hidden
-
-#line 122 "DiffView.cshtml"
-                              string lineFrom = null;
-
-#line default
-#line hidden
-WriteLiteral("\n");
-
-
-#line 123 "DiffView.cshtml"
-					        
-
-#line default
-#line hidden
-
-#line 123 "DiffView.cshtml"
-                              string lineTo = null;
-
-#line default
-#line hidden
-WriteLiteral("\n");
-
-
-#line 124 "DiffView.cshtml"
-					        
-
-#line default
-#line hidden
-
-#line 124 "DiffView.cshtml"
-                             if(!isAddition)
-                            {
+#line 149 "UpgradeDetailsView.cshtml"
+     if (Model.IsPurchased)
+    {
 
 
 #line default
 #line hidden
-WriteLiteral("                                <th>");
+WriteLiteral("        <p>\n            <a");
+
+WriteLiteral(" id=\"purchased\"");
+
+WriteLiteral(" class=\"btn\"");
+
+WriteLiteral(">Pro Already Enabled!</a>\n        </p>\n");
 
 
-#line 126 "DiffView.cshtml"
-                               Write(oLine);
-
-
-#line default
-#line hidden
-WriteLiteral("</th>\n");
-
-
-#line 127 "DiffView.cshtml"
-                                lineFrom = oLine.ToString();
-                                oLine = oLine + 1;
-                            }
-                            else
-                            {
+#line 154 "UpgradeDetailsView.cshtml"
+    }
+    else
+    {
+        if (Model.Price != null)
+        {
 
 
 #line default
 #line hidden
-WriteLiteral("\t\t\t\t\t            <th>&nbsp;</th>\n");
+WriteLiteral("            <p>\n                <a");
+
+WriteLiteral(" id=\"buy\"");
+
+WriteLiteral(" href=\"app://buy\"");
+
+WriteLiteral(" class=\"btn\"");
+
+WriteLiteral(">Purchase CodeBucket Pro for ");
 
 
-#line 133 "DiffView.cshtml"
-					        }
-
-
-#line default
-#line hidden
-WriteLiteral("\t\t\t\t\t\n");
-
-
-#line 135 "DiffView.cshtml"
-                            
-
-#line default
-#line hidden
-
-#line 135 "DiffView.cshtml"
-                             if(!isDeletion)
-                            {
+#line 160 "UpgradeDetailsView.cshtml"
+                                                                                Write(Model.Price);
 
 
 #line default
 #line hidden
-WriteLiteral("                                <th>");
+WriteLiteral("</a>\n            </p>\n");
+
+WriteLiteral("            <p");
+
+WriteLiteral(" id=\"restore\"");
+
+WriteLiteral(">\n                <a");
+
+WriteLiteral(" href=\"app://restore\"");
+
+WriteLiteral(">Click here</a> to restore a previous purchase.\n            </p>\n");
 
 
-#line 137 "DiffView.cshtml"
-                               Write(nLine);
-
-
-#line default
-#line hidden
-WriteLiteral("</th>\n");
-
-
-#line 138 "DiffView.cshtml"
-                                lineTo = nLine.ToString();
-                                nLine = nLine + 1;
-                            }
-                            else
-                            {
-
-
-#line default
-#line hidden
-WriteLiteral("                                <th>&nbsp;</th>\n");
-
-
-#line 144 "DiffView.cshtml"
-                            }
+#line 165 "UpgradeDetailsView.cshtml"
+        }
+    }
 
 
 #line default
 #line hidden
-WriteLiteral("\t\t\t\t\t\n                            <td");
+WriteLiteral("\n    <h2>Feature Details</h2>\n    <p>Below are the features that are available wh" +
+"en purchasing CodeBucket Pro.</p>\n\n    <h3");
 
-WriteAttribute ("class", " class=\"", "\""
+WriteLiteral(" id=\"private\"");
 
-#line 146 "DiffView.cshtml"
- , Tuple.Create<string,object,bool> ("", isAddition ? "insert" : ""
-
-#line default
-#line hidden
-, false)
-
-#line 146 "DiffView.cshtml"
-                              , Tuple.Create<string,object,bool> (" ", isDeletion ? "delete" : ""
-
-#line default
-#line hidden
-, false)
-);
-WriteLiteral("><pre");
-
-WriteAttribute ("onclick", " onclick=\"", "\""
-, Tuple.Create<string,object,bool> ("", "window.location=\'app://comment?lineFrom=", true)
-
-#line 146 "DiffView.cshtml"
-                                                                                                                    , Tuple.Create<string,object,bool> ("", lineFrom
-
-#line default
-#line hidden
-, false)
-, Tuple.Create<string,object,bool> ("", "&lineTo=", true)
-
-#line 146 "DiffView.cshtml"
-                                                                                                                                       , Tuple.Create<string,object,bool> ("", lineTo
-
-#line default
-#line hidden
-, false)
-, Tuple.Create<string,object,bool> ("", "\'", true)
-);
-WriteLiteral(">");
-
-
-#line 146 "DiffView.cshtml"
-                                                                                                                                                                                    Write(l);
-
-
-#line default
-#line hidden
-WriteLiteral("</pre></td>\n        \t\t\t    </tr>\n");
-
-
-#line 148 "DiffView.cshtml"
-                    }
-
-                    if (Model.Patch.IndexOf(h) != Model.Patch.Count - 1)
-                    {
-
-
-#line default
-#line hidden
-WriteLiteral("                        <th>...</th>\n");
-
-WriteLiteral("                        <th>...</th>\n");
-
-WriteLiteral("                        <td");
-
-WriteLiteral(" class=\"skip\"");
-
-WriteLiteral("></td>\n");
-
-
-#line 155 "DiffView.cshtml"
-                    }
-                }
-
-
-#line default
-#line hidden
-WriteLiteral("\t\t\t</tbody>\n\t\t</table>\n    </body>\n</html>\n");
+WriteLiteral(@">Private Repositories</h3>
+    <p>
+        While CodeBucket is free for all public projects, private repositories are only availble with CodeBucket Pro.
+        The Pro edition allows access to all your private repositories and any private repositories any of your teams have.
+        Access to your private repositories is completely unrestricted. With CodeBucket Pro, anything you are able to do with your open source repositories
+        you are also capable of doing with your private repositories. Even more, access to private repositories, with CodeBucket Pro, is applied to
+        all your CodeBucket accounts.
+    </p>
+</body>
+</html>");
 
 }
 }
@@ -323,7 +190,7 @@ WriteLiteral("\t\t\t</tbody>\n\t\t</table>\n    </body>\n</html>\n");
 // NOTE: this is the default generated helper class. You may choose to extract it to a separate file 
 // in order to customize it or share it between multiple templates, and specify the template's base 
 // class via the @inherits directive.
-public abstract class DiffViewBase
+public abstract class UpgradeDetailsViewBase
 {
 
 		// This field is OPTIONAL, but used by the default implementation of Generate, Write, WriteAttribute and WriteLiteral

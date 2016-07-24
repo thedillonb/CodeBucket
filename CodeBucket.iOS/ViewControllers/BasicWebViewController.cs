@@ -59,6 +59,19 @@ namespace CodeBucket.ViewControllers
             EdgesForExtendedLayout = UIRectEdge.None;
         }
 
+        protected void LoadContent(string content)
+        {
+            Web.LoadHtmlString(content ?? string.Empty, NSBundle.MainBundle.BundleUrl);
+        }
+
+        protected string LoadFile(string path)
+        {
+            if (path == null) return string.Empty;
+            var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
+            InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
+            return uri;
+        }
+
         private class NavigationDelegate : WKNavigationDelegate
         {
             private readonly WeakReference<BasicWebViewController> _webView;

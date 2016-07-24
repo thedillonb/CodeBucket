@@ -47,6 +47,10 @@
       <DependentUpon>DiffView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Views\DiffViewModel.cs" />
+    <Compile Include="Views\UpgradeDetailsModel.cs" />
+    <Compile Include="Views\UpgradeDetailsView.cs">
+      <DependentUpon>UpgradeDetailsView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\MarkdownView.cshtml">
@@ -64,6 +68,10 @@
     <None Include="Views\DiffView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>DiffView.cs</LastGenOutput>
+    </None>
+    <None Include="Views\UpgradeDetailsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>UpgradeDetailsView.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

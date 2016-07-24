@@ -1,26 +1,21 @@
 using System;
 using UIKit;
-using Foundation;
 using System.Collections.Generic;
 using CodeBucket.Core.ViewModels.Source;
 using System.Linq;
-using Newtonsoft.Json;
 using WebKit;
-using CodeBucket.Utilities;
-using CodeBucket.Services;
 using System.Reactive.Linq;
-using System.Reactive;
 using CodeBucket.Client.V1;
 using ReactiveUI;
 using CodeBucket.Views;
+using Newtonsoft.Json;
+using CodeBucket.ViewControllers.Comments;
 
 namespace CodeBucket.ViewControllers.Source
 {
     public class ChangesetDiffViewController : WebViewController<ChangesetDiffViewModel>
     {
         private readonly SubtitleTitleView _titleView = new SubtitleTitleView();
-		private bool _domLoaded = false;
-		private List<string> _toBeExecuted = new List<string>();
 
         public ChangesetDiffViewController()
         {
@@ -52,7 +47,7 @@ namespace CodeBucket.ViewControllers.Source
                 var view = new DiffView { Model = new DiffViewModel(hunks) }.GenerateString();
                 LoadContent(view);
             });
-                
+
 
             //            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
             //			{
@@ -97,6 +92,13 @@ namespace CodeBucket.ViewControllers.Source
             //     });
 	    }
 
+        public static int? ToNullableInt(string s)
+        {
+            int i;
+            if (int.TryParse(s, out i)) return i;
+            return null;
+        }
+
         private class JavascriptCommentModel
         {
 			public int? LineFrom { get; set; }
@@ -108,17 +110,17 @@ namespace CodeBucket.ViewControllers.Source
             var url = navigationAction.Request.Url;
 			if(url != null && url.Scheme.Equals("app")) {
                 var func = url.Host;
+		
+				if(func.Equals("comment")) 
+				{
+                    var q = System.Web.HttpUtility.ParseQueryString(url.Query);
+                    var commentModel = new JavascriptCommentModel
+                    {
+                        LineFrom = ToNullableInt(q["lineFrom"]),
+                        LineTo = ToNullableInt(q["lineTo"])
+                    };
 
-				if (func.Equals("ready"))
-				{
-					_domLoaded = true;
-					foreach (var e in _toBeExecuted)
-                        webView.EvaluateJavaScript(e, null);
-				}
-				else if(func.Equals("comment")) 
-				{
-                    //var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
-					//PromptForComment(commentModel);
+					PromptForComment(commentModel);
                 }
 
 				return false;
@@ -126,14 +128,6 @@ namespace CodeBucket.ViewControllers.Source
 
             return base.ShouldStartLoad(webView, navigationAction);
         }
-
-		private void ExecuteJavascript(string data)
-		{
-			if (_domLoaded)
-                InvokeOnMainThread(() => Web.EvaluateJavaScript(data, null));
-			else
-				_toBeExecuted.Add(data);
-		}
 
         private void PromptForComment(JavascriptCommentModel model)
         {
@@ -159,19 +153,7 @@ namespace CodeBucket.ViewControllers.Source
 
 		private void ShowCommentComposer(int? lineFrom, int? lineTo)
         {
-   //         var composer = new ComposerViewController();
-			//composer.NewComment(this, async (text) => {
-			//	try
-			//	{
-			//		await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, lineFrom, lineTo));
-			//		composer.CloseComposer();
-			//	}
-			//	catch (Exception e)
-			//	{
-			//		AlertDialogService.ShowAlert("Unable to Comment", e.Message);
-			//		composer.EnableSendButton = true;
-			//	}
-   //         });
+            NewCommentViewController.Present(this, x => ViewModel.PostComment(x, lineFrom, lineTo));
         }
     }
 }

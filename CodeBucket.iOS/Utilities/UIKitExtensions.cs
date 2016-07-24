@@ -82,6 +82,13 @@ namespace UIKit
             if (view.IsDisposedOrNull())
                 return;
 
+            var tableView = view as UITableView;
+            if (tableView != null)
+            {
+                tableView.Source?.Dispose();
+                tableView.Source = null;
+            }
+
             try
             {
                 foreach (var subView in view.Subviews)

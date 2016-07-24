@@ -1,0 +1,180 @@
+﻿@model UpgradeDetailsModel
+<html><head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0"/>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: none;
+}
+
+body {
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.42;
+    font-size: 16px;
+    line-height: 1.7;
+    word-wrap: break-word;
+}
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 20px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+.btn {
+    margin-top: 1.50em;
+    margin-bottom: 1em;
+    padding: 1em 2em;
+    text-align: center;
+    display: inline-block;
+    border-radius: 15px;
+    border: none;
+    transform: translateY(1px);
+    color: #fff;
+}
+#buy {
+    background-color: #2ecc71;
+    box-shadow: 0 3px #27ae60;
+}
+#purchased {
+    background-color: #34495e;
+    box-shadow: 0 3px #2c3e50;
+}
+@@media (max-width: 640px) {
+    .btn, #restore {
+        display: block;
+    }
+    #restore {
+        text-align: center;
+    }
+}
+
+</style>
+    <title>Pro Version</title>
+</head>
+<body>
+    <p>
+        <b>CodeBucket Pro</b> gives you access the all the great features below:
+    </p>
+
+    <ul>
+        <li><a href="#private">Private Repositories</a></li>
+    </ul>
+
+    <p>
+        Before you buy please take a look at the detailed description for each feature below. 
+        If you're unsure about any aspect of the Pro version, please feel free to 
+        <a href="#" onclick="window.location='mailto://codebucketapp@gmail.com?Subject=CodeBucket%20Pro%20Question'; return false;" target="_blank">contact me</a>!
+    </p>
+
+    @if (Model.IsPurchased)
+    {
+        <p>
+            <a id="purchased" class="btn">Pro Already Enabled!</a>
+        </p>
+    }
+    else
+    {
+        if (Model.Price != null)
+        {
+            <p>
+                <a id="buy" href="app://buy" class="btn">Purchase CodeBucket Pro for @Model.Price</a>
+            </p>
+            <p id="restore">
+                <a href="app://restore">Click here</a> to restore a previous purchase.
+            </p>
+        }
+    }
+
+    <h2>Feature Details</h2>
+    <p>Below are the features that are available when purchasing CodeBucket Pro.</p>
+
+    <h3 id="private">Private Repositories</h3>
+    <p>
+        While CodeBucket is free for all public projects, private repositories are only availble with CodeBucket Pro.
+        The Pro edition allows access to all your private repositories and any private repositories any of your teams have.
+        Access to your private repositories is completely unrestricted. With CodeBucket Pro, anything you are able to do with your open source repositories
+        you are also capable of doing with your private repositories. Even more, access to private repositories, with CodeBucket Pro, is applied to
+        all your CodeBucket accounts.
+    </p>
+</body>
+</html>

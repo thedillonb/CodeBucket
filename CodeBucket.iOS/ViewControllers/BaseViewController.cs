@@ -69,21 +69,6 @@ namespace CodeBucket.ViewControllers
             });
 
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            //if (_tableView.IsValueCreated)
-            //{
-            //    var tableView = _tableView.Value;
-            //    InvokeOnMainThread(() =>
-            //    {
-            //        tableView.Source?.Dispose();
-            //        tableView.Source = null;
-            //    });
-            //}
-
-            base.Dispose(disposing);
-        }
     }
 
     public abstract class BaseViewController<TViewModel> : BaseViewController, IViewFor<TViewModel> where TViewModel : class

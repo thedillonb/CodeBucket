@@ -3,10 +3,12 @@ using System.Net.Http;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using CodeBucket.Core.Messages;
+using CodeBucket.Core.Services;
 using CodeBucket.Services;
 using Foundation;
 using ReactiveUI;
 using Security;
+using Splat;
 using UIKit;
 
 namespace CodeBucket
@@ -44,7 +46,7 @@ namespace CodeBucket
             StampInstallDate("CodeBucket");
 
             //Register all services
-            ServiceRegistration.Register();
+            CodeBucket.Services.ServiceRegistration.Register();
 
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;
@@ -52,10 +54,23 @@ namespace CodeBucket
             
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-			// Setup theme
 			Theme.Setup();
 
-            GoToStartupView();
+            var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
+
+            bool hasSeenWelcome;
+            //if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            //{
+                //defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
+                //var welcomeViewController = new CodeBucket.ViewControllers.Walkthrough.WelcomePageViewController();
+                //welcomeViewController.WantsToDimiss += GoToStartupView;
+                //TransitionToViewController(welcomeViewController);
+            //}
+            //else
+            //{
+                GoToStartupView();
+            //}
+
 
             Window.MakeKeyAndVisible();
 			return true;
