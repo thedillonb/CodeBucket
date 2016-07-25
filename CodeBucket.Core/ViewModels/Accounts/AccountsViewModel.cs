@@ -7,6 +7,7 @@ using ReactiveUI;
 using Splat;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
@@ -14,7 +15,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
     {
         public IReactiveCommand<object> AddAccountCommand { get; } = ReactiveCommand.Create();
 
-        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
+        public IReactiveCommand<object> DismissCommand { get; }
 
         public IReactiveCommand<List<BitbucketAccount>> LoadCommand { get; }
 
@@ -25,6 +26,8 @@ namespace CodeBucket.Core.ViewModels.Accounts
             accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
 
             Title = "Accounts";
+
+            var currentUsername = accountsService.ActiveAccount?.Username;
 
             var accounts = new ReactiveList<BitbucketAccount>();
             Items = accounts.CreateDerivedCollection(x =>
@@ -49,6 +52,9 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
                 return vm;
             });
+
+            DismissCommand = ReactiveCommand.Create(
+                accounts.Changed.Select(x => accounts.Any(y => y.Username == currentUsername)));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
                 Task.FromResult(new List<BitbucketAccount>(accountsService)));

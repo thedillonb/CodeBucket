@@ -140,7 +140,7 @@ namespace CodeBucket.ViewControllers.Application
 
         private void ProfileButtonClicked()
         {
-            var vc = new AccountsViewController();
+            var vc = new AccountsViewController(true);
             vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);

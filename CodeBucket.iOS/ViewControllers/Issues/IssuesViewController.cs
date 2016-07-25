@@ -29,7 +29,7 @@ namespace CodeBucket.ViewControllers.Issues
             this.AddTableView(TableView);
             var searchBar = TableView.CreateSearchBar();
 
-            var viewSegment = new UISegmentedControl(new[] { "All", "Open", "Mine" });
+            var viewSegment = new UISegmentedControl(new[] { "Open", "Mine", "All" });
             var segmentBarButton = new UIBarButtonItem(viewSegment);
 			segmentBarButton.Width = View.Frame.Width - 10f;
 

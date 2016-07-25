@@ -1,8 +1,8 @@
 using UIKit;
 using CodeBucket.Views;
 using CodeBucket.ViewControllers;
-using MonoTouch.SlideoutNavigation;
 using System.Linq;
+using CodeBucket.ViewControllers.SlideoutNavigation;
 
 namespace CodeBucket
 {

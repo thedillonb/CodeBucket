@@ -5,6 +5,7 @@ using Foundation;
 using System;
 using CodeBucket.DialogElements;
 using System.Collections.Generic;
+using ReactiveUI;
 
 namespace CodeBucket.ViewController.Application
 {
@@ -48,6 +49,10 @@ namespace CodeBucket.ViewController.Application
                     .Subscribe(e => ViewModel.SetAccount(x => x.ExpandTeamsAndGroups = e))
                     .AddTo(disposable);
 
+                this.WhenAnyValue(x => x.ViewModel.DefaultStartupViewName)
+                    .Subscribe(x => startupView.Value = x)
+                    .AddTo(disposable);
+
                 startupView
                     .Clicked
                     .Subscribe(_ => NavigationController.PushViewController(new DefaultStartupViewController(), true))
@@ -60,7 +65,7 @@ namespace CodeBucket.ViewController.Application
 
                 sourceCommand
                     .Clicked
-                    .Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeBucket")))
+                    .Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://bitbucket.org/thedillonb/codebucket")))
                     .AddTo(disposable);
 
                 twitter

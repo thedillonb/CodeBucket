@@ -9,10 +9,14 @@ namespace CodeBucket.ViewControllers.Accounts
 {
     public class AccountsViewController : TableViewController<AccountsViewModel>
     {
-        public AccountsViewController()
+        private readonly bool _backButton;
+
+        public AccountsViewController(bool backButton)
         {
             ViewModel = new AccountsViewModel();
             Appearing.InvokeCommand(ViewModel.LoadCommand);
+
+            _backButton = backButton;
         }
 
         public override void ViewDidLoad()
@@ -22,7 +26,10 @@ namespace CodeBucket.ViewControllers.Accounts
             TableView.Source = new AccountTableViewSource(TableView, ViewModel.Items);
 
             var add = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add);
-            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+            var cancel = new UIBarButtonItem { Image = Images.Buttons.Cancel };
+
+            if (_backButton)
+                NavigationItem.LeftBarButtonItem = cancel;
 
             OnActivation(disposable =>
             {
@@ -41,6 +48,10 @@ namespace CodeBucket.ViewControllers.Accounts
                 ViewModel.DismissCommand
                     .Subscribe(_ => DismissViewController(true, null))
                     .AddTo(disposable);
+
+                ViewModel.DismissCommand.CanExecuteObservable
+                         .Subscribe(x => cancel.Enabled = x)
+                         .AddTo(disposable);
             });
         }
     }

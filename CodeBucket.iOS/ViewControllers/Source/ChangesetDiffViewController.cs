@@ -1,6 +1,5 @@
 using System;
 using UIKit;
-using System.Collections.Generic;
 using CodeBucket.Core.ViewModels.Source;
 using System.Linq;
 using WebKit;
@@ -8,8 +7,8 @@ using System.Reactive.Linq;
 using CodeBucket.Client.V1;
 using ReactiveUI;
 using CodeBucket.Views;
-using Newtonsoft.Json;
 using CodeBucket.ViewControllers.Comments;
+using System.Collections.Generic;
 
 namespace CodeBucket.ViewControllers.Source
 {
@@ -39,58 +38,38 @@ namespace CodeBucket.ViewControllers.Source
                 .IsNotNull()
                 .Subscribe(x => LoadFile(x));
 
+            this.WhenAnyValue(x => x.ViewModel.Comments)
+                .Subscribe(comments =>
+                {
+                    var hunks = ViewModel.Patch?.Select(y => new Hunk(y.OldStart, y.NewStart, y.Lines))?.ToList();
+                    if (hunks == null) return;
+                    var newView = new DiffView { Model = new DiffViewModel(hunks, ConvertComments(comments)) }.GenerateString();
+                    LoadContent(newView);
+                });
+
             this.WhenAnyValue(x => x.ViewModel.Patch)
                 .Where(x => x != null)
                 .Subscribe(x =>
-            {
-                var hunks = x.Select(y => new Hunk(y.OldStart, y.NewStart, y.Lines));
-                var view = new DiffView { Model = new DiffViewModel(hunks) }.GenerateString();
-                LoadContent(view);
-            });
-
-
-            //            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
-            //			{
-            //					if (!x && (ViewModel.File1 != null || ViewModel.File2 != null))
-            //					{
-            //						var sb = new StringBuilder(2000);
-            //						sb.Append("a=\"");
-            //						if (ViewModel.File1 != null)
-            //							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File1)));
-            //						sb.Append("\";");
-            //						sb.Append("b=\"");
-            //						if (ViewModel.File2 != null)
-            //							sb.Append(JavaScriptStringEncode(System.IO.File.ReadAllText(ViewModel.File2)));
-            //						sb.Append("\";");
-            //						sb.Append("diff(b,a);");
-            //						ExecuteJavascript(sb.ToString());
-            //					}
-            //					else if (ViewModel.FilePath != null)
-            //					{
-            //						Web.LoadRequest(new NSUrlRequest(new NSUrl(new Uri("file://" + ViewModel.FilePath).AbsoluteUri)));
-            //					}
-            //			});
-
-            //ViewModel
-            //    .Comments
-            //    .ChangedObservable()
-            //     .Subscribe(comments =>
-            //     {
-            //         var slimComments = comments.Where(x => string.Equals(x.Filename, ViewModel.Filename)).Select(x => new
-            //         {
-            //             Id = x.CommentId,
-            //             User = x.Username,
-            //             Avatar = x.UserAvatarUrl,
-            //             LineTo = x.LineTo,
-            //             LineFrom = x.LineFrom,
-            //             Content = x.ContentRendered,
-            //             Date = x.UtcLastUpdated
-            //         }).ToList();
-
-            //         var c = JsonConvert.SerializeObject(slimComments);
-            //         ExecuteJavascript("var a = " + c + "; setComments(a);");
-            //     });
+                {
+                    var hunks = x.Select(y => new Hunk(y.OldStart, y.NewStart, y.Lines)).ToList();
+                    var view = new DiffView { Model = new DiffViewModel(hunks, ConvertComments(ViewModel.Comments)) }.GenerateString();
+                    LoadContent(view);
+                });
 	    }
+
+        private IEnumerable<CommitComment> ConvertComments(IEnumerable<Client.CommitComment> comments)
+        {
+            return comments.Select(y => new CommitComment
+            {
+                Avatar = y.User?.Links?.Avatar?.Href,
+                LineFrom = y.Inline.From,
+                LineTo = y.Inline.To,
+                Content = y.Content.Html,
+                Date = y.CreatedOn,
+                Username = y.User?.Username,
+                Id = y.Id
+            });
+        }
 
         public static int? ToNullableInt(string s)
         {

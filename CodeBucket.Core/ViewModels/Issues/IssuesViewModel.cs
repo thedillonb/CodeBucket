@@ -58,11 +58,11 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .Subscribe(x =>
                 {
                     if (x == 0)
-                        Filter = IssuesFilterModel.CreateAllFilter();
-                    else if (x == 1)
                         Filter = IssuesFilterModel.CreateOpenFilter();
-                    else if (x == 2)
+                    else if (x == 1)
                         Filter = IssuesFilterModel.CreateMineFilter(currentUser);
+                    else if (x == 2)
+                        Filter = IssuesFilterModel.CreateAllFilter();
                 });
 
             this.WhenAnyValue(x => x.Filter)

@@ -7,11 +7,14 @@ using CodeBucket.Core.Utils;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using ReactiveUI;
+using Splat;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.ViewControllers.Repositories
 {
     public class RepositoryViewController : PrettyDialogViewController<RepositoryViewModel>
     {
+        private IDisposable _privateView;
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement _split1 = new SplitViewElement(AtlassianIcon.Locked.ToImage(), AtlassianIcon.PageDefault.ToImage());
         private readonly SplitViewElement _split2 = new SplitViewElement(AtlassianIcon.Calendar.ToImage(), AtlassianIcon.Filezip.ToImage());
@@ -35,6 +38,8 @@ namespace CodeBucket.ViewControllers.Repositories
             var branches = _split.AddButton("Branches", "-");
 
             _split3.Button2.Text = "- Issues";
+
+            var featuresService = Locator.Current.GetService<IFeaturesService>();
  
             OnActivation(d => 
             {
@@ -76,7 +81,6 @@ namespace CodeBucket.ViewControllers.Repositories
                 this.WhenAnyValue(x => x.ViewModel.Repository).SelectUnit()
                     .Merge(this.WhenAnyValue(x => x.ViewModel.HasReadme).SelectUnit())
                     .Where(x => ViewModel.Repository != null)
-                    .Do(_ => NavigationItem.RightBarButtonItem.Enabled = true)
                     .SubscribeSafe(_ => Render())
                     .AddTo(d);
 
@@ -86,6 +90,24 @@ namespace CodeBucket.ViewControllers.Repositories
 
                 actionButton
                     .Bind(ViewModel.ShowMenuCommand)
+                    .AddTo(d);
+
+                this.WhenAnyValue(x => x.ViewModel.Repository)
+                    .Where(x => x != null)
+                    .Subscribe(x =>
+                    {
+                        if (x.IsPrivate && !featuresService.IsProEnabled)
+                        {
+                            if (_privateView == null)
+                                _privateView = this.ShowPrivateView();
+                            actionButton.Enabled = false;
+                        }
+                        else
+                        {
+                            actionButton.Enabled = true;
+                            _privateView?.Dispose();
+                        }
+                    })
                     .AddTo(d);
             });
         }

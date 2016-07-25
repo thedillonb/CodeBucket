@@ -49,6 +49,12 @@ namespace CodeBucket.Core.ViewModels.App
 
         public ReactiveCommand<Unit> StartupCommand { get; }
 
+        public void Clear()
+        {
+            Avatar = null;
+            Status = null;
+        }
+
         public StartupViewModel(
             IAccountsService accountsService = null, 
             IApplicationService applicationService = null, 

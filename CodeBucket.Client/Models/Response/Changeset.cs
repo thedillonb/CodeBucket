@@ -42,9 +42,9 @@ namespace CodeBucket.Client.V1
     {
         public string Username { get; set; }
         public string Node { get; set; }
-        public long CommentId { get; set; }
+        public int CommentId { get; set; }
         public string DisplayName { get; set; }
-        public long? ParentId { get; set; }
+        public int? ParentId { get; set; }
         public bool Deleted { get; set; }
         public DateTimeOffset UtcLastUpdated { get; set; }
         public string FilenameHash { get; set; }
@@ -52,8 +52,8 @@ namespace CodeBucket.Client.V1
         public string Content { get; set; }
         public string ContentRendered { get; set; }
         public string UserAvatarUrl { get; set; }
-        public long? LineFrom { get; set; }
-        public long? LineTo { get; set; }
+        public int? LineFrom { get; set; }
+        public int? LineTo { get; set; }
         public DateTimeOffset UtcCreatedOn { get; set; }
         public bool IsSpam { get; set; }
     }
@@ -103,7 +103,6 @@ namespace CodeBucket.Client
     public class CommitComment
     {
         public int Id { get; set; }
-        public string Filename { get; set; }
         public string Parent { get; set; }
         public CommitCommentInline Inline { get; set; }
         public User User { get; set; }

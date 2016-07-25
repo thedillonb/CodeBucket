@@ -6,8 +6,8 @@ using SDWebImage;
 using CodeBucket.Core.Utils;
 using CodeBucket.ViewControllers.Accounts;
 using CodeBucket.ViewControllers.Application;
-using MonoTouch.SlideoutNavigation;
 using ReactiveUI;
+using CodeBucket.ViewControllers.SlideoutNavigation;
 
 namespace CodeBucket.ViewControllers
 {
@@ -79,7 +79,7 @@ namespace CodeBucket.ViewControllers
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
-            PresentViewController(slideoutController, true, vc.ViewModel.GoToDefaultTopView.ExecuteIfCan);
+            PresentViewController(slideoutController, true, () => vc.ViewModel.GoToDefaultTopView.ExecuteIfCan());
         }
 
         private void GoToNewAccount(object o)
@@ -91,7 +91,7 @@ namespace CodeBucket.ViewControllers
 
         private void GoToAccounts(object o)
         {
-            var vc = new AccountsViewController();
+            var vc = new AccountsViewController(false);
             var nav = new ThemedNavigationController(vc);
             PresentViewController(nav, true, null);
         }
@@ -119,8 +119,9 @@ namespace CodeBucket.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
+            ViewModel.Clear();
+
             UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
-            AssignUnknownUserImage();
             _statusLabel.Text = "";
 
             base.ViewWillAppear(animated);

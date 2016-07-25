@@ -25,9 +25,9 @@ namespace CodeBucket.Services
             }
         }
 
-        public async Task ActivatePro()
+        public Task ActivatePro()
         {
-            await _inAppPurchaseService.PurchaseProduct(ProEdition);
+            return _inAppPurchaseService.PurchaseProduct(ProEdition);
         }
 
         public void ActivateProDirect()

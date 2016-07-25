@@ -120,7 +120,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                 var name = comment.User.DisplayName ?? comment.User.Username;
                 var avatar = new Avatar(comment.User.Links?.Avatar?.Href);
                 return new CommentItemViewModel(name, avatar, comment.CreatedOn.Humanize(), comment.Content.Raw);
-            });
+            },x => x.Inline == null);
 
             GoToUserCommand
                 .OfType<string>()

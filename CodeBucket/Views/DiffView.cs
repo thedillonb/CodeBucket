@@ -32,35 +32,28 @@ public DiffViewModel Model { get; set; }
 
 public override void Execute()
 {
-WriteLiteral("<html><head>\n<meta");
-
-WriteLiteral(" name=\"viewport\"");
-
-WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
-"=0\"");
-
-WriteLiteral("/>\n<style>\nbody {\n    margin:0;\n}\n\ntable.diff {\n    border-collapse:collapse;\n   " +
-" border:1px solid darkgray;\n    white-space:pre;\n    width:100%;\n}\ntable.diff tb" +
-"ody { \n    font-family:Courier, monospace\n}\ntable.diff tbody th {\n    font-famil" +
-"y:verdana,arial,\'Bitstream Vera Sans\',helvetica,sans-serif;\n    background:#EED;" +
-"\n    font-weight:normal;\n    border:1px solid #BBC;\n    color:#886;\n    padding:" +
-".3em .3em;\n    text-align:right;\n}\ntable.diff thead {\n    border-bottom:1px soli" +
-"d #BBC;\n    background:#EFEFEF;\n    font-family:Verdana;\n}\ntable.diff thead th.t" +
-"exttitle {\n    text-align:left\n}\ntable.diff tbody td {\n    padding:.3em .4em;\n  " +
-"  width: 100%;\n}\ntable.diff .empty {\n    background-color:#DDD;\n}\ntable.diff .re" +
-"place {\n    background-color:#FD8\n}\ntable.diff .delete {\n    background-color:#E" +
-"99;\n}\ntable.diff .skip {\n    background-color:#EFEFEF;\n    border:1px solid #AAA" +
-";\n    border-right:1px solid #BBC;\n}\ntable.diff .insert {\n    background-color:#" +
-"9E9\n}\ntable.diff th.author {\n    text-align:left;\n    border-top:1px solid #BBC;" +
-"\n    background:#EFEFEF\n}\n\n.comment > td {\nbackground:#EED;\nborder:1px solid #BB" +
-"C;\n}\n\n.comment > td > div.inner {\nmargin: 10px;\nborder-radius: 3px;\nbackground:#" +
-"fff;\nborder:1px solid #BBC;\npadding: 15px 10px 10px 10px;\n}\n\n.comment > td > div" +
-".inner > header {\npadding-left:43px;\nposition:relative;\ncolor:#3b73af;\nfont-weig" +
-"ht: bold;\ndisplay:inline;\n}\n\n.comment > td > div.inner > header > img {\nposition" +
-": absolute;\ntop: 0px;\nleft: 0px;\nborder-radius: 3px;\nwidth: 32px;\nheight: 32px;\n" +
-"display: inline;\nborder: none;\n}\n\n.comment > td > div.inner > .content {\noverflo" +
-"w: hidden;\nword-wrap: break-word;\nmargin:0;\npadding:0;\npadding-left: 43px;\n}\n</s" +
-"tyle>\n</head>\n    <body>\n\t\t<table");
+WriteLiteral("<html><head>\n<style>\nbody {\n    margin:0;\n}\n\ntable.diff {\n    border-collapse:col" +
+"lapse;\n    border:1px solid darkgray;\n    width:100%;\n}\ntable.diff tbody { \n    " +
+"font-family:Courier, monospace\n}\ntable.diff tbody th {\n    font-family:verdana,a" +
+"rial,\'Bitstream Vera Sans\',helvetica,sans-serif;\n    background:#EED;\n    font-w" +
+"eight:normal;\n    border:1px solid #BBC;\n    color:#886;\n    padding:.3em .3em;\n" +
+"    text-align:right;\n}\ntable.diff thead {\n    border-bottom:1px solid #BBC;\n   " +
+" background:#EFEFEF;\n    font-family:Verdana;\n}\ntable.diff thead th.texttitle {\n" +
+"    text-align:left\n}\ntable.diff tbody td {\n    padding:.3em .4em;\n    width: 10" +
+"0%;\n}\ntable.diff .empty {\n    background-color:#DDD;\n}\ntable.diff .replace {\n   " +
+" background-color:#FD8\n}\ntable.diff .delete {\n    background-color:#E99;\n}\ntable" +
+".diff .skip {\n    background-color:#EFEFEF;\n    border:1px solid #AAA;\n    borde" +
+"r-right:1px solid #BBC;\n}\ntable.diff .insert {\n    background-color:#9E9\n}\ntable" +
+".diff th.author {\n    text-align:left;\n    border-top:1px solid #BBC;\n    backgr" +
+"ound:#EFEFEF\n}\n\n.comment > td {\nbackground:#EED;\nborder:1px solid #BBC;\n}\n\n.comm" +
+"ent > td > div.inner {\nmargin: 5px;\nborder-radius: 3px;\nbackground:#fff;\nborder:" +
+"1px solid #BBC;\npadding: 15px 10px 10px 10px;\n}\n\n.comment > td > div.inner > hea" +
+"der {\npadding-left:43px;\nposition:relative;\ncolor:#3b73af;\nfont-weight: bold;\ndi" +
+"splay:inline;\n}\n\n.comment > td > div.inner > header > img {\nposition: absolute;\n" +
+"top: 0px;\nleft: 0px;\nborder-radius: 3px;\nwidth: 32px;\nheight: 32px;\ndisplay: inl" +
+"ine;\nborder: none;\n}\n\n.comment > td > div.inner > .content {\noverflow: hidden;\nw" +
+"ord-wrap: break-word;\nmargin:0;\npadding:0;\npadding-left: 43px;\n}\n</style>\n</head" +
+">\n    <body>\n\t\t<table");
 
 WriteLiteral(" class=\"diff\"");
 
@@ -70,13 +63,83 @@ WriteLiteral(">\n\t\t    <thead>\n                <tr>\n                    </th
 "       </th></th>\n\t\t\t\t    </th></th>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody>\n");
 
 
-#line 113 "DiffView.cshtml"
+#line 111 "DiffView.cshtml"
                 
 
 #line default
 #line hidden
 
-#line 113 "DiffView.cshtml"
+#line 111 "DiffView.cshtml"
+                 foreach (var c in Model.Comments.Where(x => !x.LineTo.HasValue && !x.LineFrom.HasValue))
+                {
+
+
+#line default
+#line hidden
+WriteLiteral("                    <tr");
+
+WriteLiteral(" class=\'comment\'");
+
+WriteLiteral(">\n                        <td");
+
+WriteLiteral(" colspan=\'3\'");
+
+WriteLiteral(">\n                            <div");
+
+WriteLiteral(" class=\'inner\'");
+
+WriteLiteral(">\n                                <header><img");
+
+WriteAttribute ("src", " src=\"", "\""
+
+#line 116 "DiffView.cshtml"
+            , Tuple.Create<string,object,bool> ("", c.Avatar
+
+#line default
+#line hidden
+, false)
+);
+WriteLiteral(" />");
+
+
+#line 116 "DiffView.cshtml"
+                                                             Write(c.Username);
+
+
+#line default
+#line hidden
+WriteLiteral("</header>\n                                <div");
+
+WriteLiteral(" class=\'content\'");
+
+WriteLiteral(">");
+
+
+#line 117 "DiffView.cshtml"
+                                                       WriteLiteral(c.Content);
+
+#line default
+#line hidden
+WriteLiteral("</div>\n                            </div>\n                        </td>\n         " +
+"           </tr>\n");
+
+
+#line 121 "DiffView.cshtml"
+                }
+
+
+#line default
+#line hidden
+WriteLiteral("\t\t\t\t\n");
+
+
+#line 123 "DiffView.cshtml"
+                
+
+#line default
+#line hidden
+
+#line 123 "DiffView.cshtml"
                  foreach (var h in Model.Patch)
                 {
                     var oLine = h.OldStart;
@@ -90,13 +153,13 @@ WriteLiteral(">\n\t\t    <thead>\n                <tr>\n                    </th
 WriteLiteral("                        <tr>\n");
 
 
-#line 120 "DiffView.cshtml"
+#line 130 "DiffView.cshtml"
                             
 
 #line default
 #line hidden
 
-#line 120 "DiffView.cshtml"
+#line 130 "DiffView.cshtml"
                               bool isAddition = l.StartsWith("+");
 
 #line default
@@ -104,13 +167,13 @@ WriteLiteral("                        <tr>\n");
 WriteLiteral("\n");
 
 
-#line 121 "DiffView.cshtml"
+#line 131 "DiffView.cshtml"
                             
 
 #line default
 #line hidden
 
-#line 121 "DiffView.cshtml"
+#line 131 "DiffView.cshtml"
                               bool isDeletion = l.StartsWith("-");
 
 #line default
@@ -118,41 +181,41 @@ WriteLiteral("\n");
 WriteLiteral("\n");
 
 
-#line 122 "DiffView.cshtml"
+#line 132 "DiffView.cshtml"
                             
 
 #line default
 #line hidden
 
-#line 122 "DiffView.cshtml"
-                              string lineFrom = null;
+#line 132 "DiffView.cshtml"
+                              int? lineFrom = null;
 
 #line default
 #line hidden
 WriteLiteral("\n");
 
 
-#line 123 "DiffView.cshtml"
+#line 133 "DiffView.cshtml"
 					        
 
 #line default
 #line hidden
 
-#line 123 "DiffView.cshtml"
-                              string lineTo = null;
+#line 133 "DiffView.cshtml"
+                              int? lineTo = null;
 
 #line default
 #line hidden
 WriteLiteral("\n");
 
 
-#line 124 "DiffView.cshtml"
+#line 134 "DiffView.cshtml"
 					        
 
 #line default
 #line hidden
 
-#line 124 "DiffView.cshtml"
+#line 134 "DiffView.cshtml"
                              if(!isAddition)
                             {
 
@@ -162,7 +225,7 @@ WriteLiteral("\n");
 WriteLiteral("                                <th>");
 
 
-#line 126 "DiffView.cshtml"
+#line 136 "DiffView.cshtml"
                                Write(oLine);
 
 
@@ -171,8 +234,8 @@ WriteLiteral("                                <th>");
 WriteLiteral("</th>\n");
 
 
-#line 127 "DiffView.cshtml"
-                                lineFrom = oLine.ToString();
+#line 137 "DiffView.cshtml"
+                                lineFrom = oLine;
                                 oLine = oLine + 1;
                             }
                             else
@@ -184,7 +247,7 @@ WriteLiteral("</th>\n");
 WriteLiteral("\t\t\t\t\t            <th>&nbsp;</th>\n");
 
 
-#line 133 "DiffView.cshtml"
+#line 143 "DiffView.cshtml"
 					        }
 
 
@@ -193,13 +256,13 @@ WriteLiteral("\t\t\t\t\t            <th>&nbsp;</th>\n");
 WriteLiteral("\t\t\t\t\t\n");
 
 
-#line 135 "DiffView.cshtml"
+#line 145 "DiffView.cshtml"
                             
 
 #line default
 #line hidden
 
-#line 135 "DiffView.cshtml"
+#line 145 "DiffView.cshtml"
                              if(!isDeletion)
                             {
 
@@ -209,7 +272,7 @@ WriteLiteral("\t\t\t\t\t\n");
 WriteLiteral("                                <th>");
 
 
-#line 137 "DiffView.cshtml"
+#line 147 "DiffView.cshtml"
                                Write(nLine);
 
 
@@ -218,8 +281,8 @@ WriteLiteral("                                <th>");
 WriteLiteral("</th>\n");
 
 
-#line 138 "DiffView.cshtml"
-                                lineTo = nLine.ToString();
+#line 148 "DiffView.cshtml"
+                                lineTo = nLine;
                                 nLine = nLine + 1;
                             }
                             else
@@ -231,7 +294,7 @@ WriteLiteral("</th>\n");
 WriteLiteral("                                <th>&nbsp;</th>\n");
 
 
-#line 144 "DiffView.cshtml"
+#line 154 "DiffView.cshtml"
                             }
 
 
@@ -241,14 +304,14 @@ WriteLiteral("\t\t\t\t\t\n                            <td");
 
 WriteAttribute ("class", " class=\"", "\""
 
-#line 146 "DiffView.cshtml"
+#line 156 "DiffView.cshtml"
  , Tuple.Create<string,object,bool> ("", isAddition ? "insert" : ""
 
 #line default
 #line hidden
 , false)
 
-#line 146 "DiffView.cshtml"
+#line 156 "DiffView.cshtml"
                               , Tuple.Create<string,object,bool> (" ", isDeletion ? "delete" : ""
 
 #line default
@@ -260,16 +323,16 @@ WriteLiteral("><pre");
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "window.location=\'app://comment?lineFrom=", true)
 
-#line 146 "DiffView.cshtml"
-                                                                                                                    , Tuple.Create<string,object,bool> ("", lineFrom
+#line 156 "DiffView.cshtml"
+                                                                                                                    , Tuple.Create<string,object,bool> ("", lineFrom.ToString()
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", "&lineTo=", true)
 
-#line 146 "DiffView.cshtml"
-                                                                                                                                       , Tuple.Create<string,object,bool> ("", lineTo
+#line 156 "DiffView.cshtml"
+                                                                                                                                                  , Tuple.Create<string,object,bool> ("", lineTo.ToString()
 
 #line default
 #line hidden
@@ -279,8 +342,8 @@ WriteAttribute ("onclick", " onclick=\"", "\""
 WriteLiteral(">");
 
 
-#line 146 "DiffView.cshtml"
-                                                                                                                                                                                    Write(l);
+#line 156 "DiffView.cshtml"
+                                                                                                                                                                                                          Write(l);
 
 
 #line default
@@ -288,7 +351,63 @@ WriteLiteral(">");
 WriteLiteral("</pre></td>\n        \t\t\t    </tr>\n");
 
 
-#line 148 "DiffView.cshtml"
+#line 158 "DiffView.cshtml"
+
+                        foreach (var c in Model.Comments.Where(x => (x.LineTo.HasValue && x.LineTo == lineTo) || (x.LineFrom.HasValue && x.LineFrom == lineFrom)))
+                        {
+
+
+#line default
+#line hidden
+WriteLiteral("                            <tr");
+
+WriteLiteral(" class=\'comment\'");
+
+WriteLiteral(">\n\t\t\t\t                <td");
+
+WriteLiteral(" colspan=\'3\'");
+
+WriteLiteral(">\n\t\t\t\t                    <div");
+
+WriteLiteral(" class=\'inner\'");
+
+WriteLiteral(">\n\t\t\t\t                        <header><img");
+
+WriteAttribute ("src", " src=\"", "\""
+
+#line 164 "DiffView.cshtml"
+                    , Tuple.Create<string,object,bool> ("", c.Avatar
+
+#line default
+#line hidden
+, false)
+);
+WriteLiteral(" />");
+
+
+#line 164 "DiffView.cshtml"
+                                                                     Write(c.Username);
+
+
+#line default
+#line hidden
+WriteLiteral("</header>\n                                        <div");
+
+WriteLiteral(" class=\'content\'");
+
+WriteLiteral(">");
+
+
+#line 165 "DiffView.cshtml"
+                                                               WriteLiteral(c.Content);
+
+#line default
+#line hidden
+WriteLiteral("</div>\n\t\t\t\t\t\t            </div>\n\t\t\t\t\t            </td>\n\t\t\t\t            </tr>\n");
+
+
+#line 169 "DiffView.cshtml"
+                        }
                     }
 
                     if (Model.Patch.IndexOf(h) != Model.Patch.Count - 1)
@@ -308,7 +427,7 @@ WriteLiteral(" class=\"skip\"");
 WriteLiteral("></td>\n");
 
 
-#line 155 "DiffView.cshtml"
+#line 177 "DiffView.cshtml"
                     }
                 }
 

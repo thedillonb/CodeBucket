@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using CodeBucket.Client;
 using CodeBucket.Client.V1;
 using CodeBucket.Core.Services;
 using ReactiveUI;
@@ -31,7 +32,12 @@ namespace CodeBucket.Core.ViewModels.Source
             private set { this.RaiseAndSetIfChanged(ref _binaryFilePath, value); }
         }
 
-        public ReactiveList<ChangesetComment> Comments { get; } = new ReactiveList<ChangesetComment>();
+        private List<CommitComment> _comments = new List<CommitComment>();
+        public List<CommitComment> Comments
+        {
+            get { return _comments; }
+            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
+        }
 
         public IReactiveCommand<Unit> LoadCommand { get; }
 
@@ -145,12 +151,14 @@ namespace CodeBucket.Core.ViewModels.Source
 
                 Patch = diffService.CreateDiff(oldText, newText, 5).ToList();
 
+                var items = await applicationService.Client.AllItems(x => x.Commits.GetComments(username, repository, node));
+                Comments = items.Where(x => x.Inline?.Path == filename).ToList();
             });
         }
 
 		public async Task PostComment(string comment, int? lineFrom, int? lineTo)
 		{
-            var c = await _applicationService.Client.Commits.CreateComment(Username, Repository, Node, new Client.NewChangesetComment
+            var c = await _applicationService.Client.Commits.CreateComment(Username, Repository, Node, new NewChangesetComment
             {
                 Content = comment,
                 LineFrom = lineFrom,
@@ -158,7 +166,33 @@ namespace CodeBucket.Core.ViewModels.Source
                 Filename = Filename
             });
 
-            Comments.Add(c);
+            var newComment = new CommitComment
+            {
+                Content = new CommitCommentContent
+                {
+                    Html = c.ContentRendered,
+                    Raw = c.Content
+                },
+                CreatedOn = c.UtcCreatedOn,
+                Id = c.CommentId,
+                UpdatedOn = c.UtcLastUpdated,
+                Inline = new CommitCommentInline
+                {
+                    From = c.LineFrom,
+                    Path = c.Filename,
+                    To = c.LineTo
+                },
+                User = new Client.User
+                {
+                    Username = c.Username,
+                    Links = new Client.User.UserLinks
+                    {
+                        Avatar = new Link(c.UserAvatarUrl)
+                    }
+                }
+            };
+
+            Comments = new List<CommitComment>(Comments.Concat(Enumerable.Repeat(newComment, 1)));
 		}
     }
 }

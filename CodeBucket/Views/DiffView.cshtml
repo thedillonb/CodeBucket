@@ -1,6 +1,5 @@
 ﻿@model DiffViewModel
 <html><head>
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0"/>
 <style>
 body {
     margin:0;
@@ -9,7 +8,6 @@ body {
 table.diff {
     border-collapse:collapse;
     border:1px solid darkgray;
-    white-space:pre;
     width:100%;
 }
 table.diff tbody { 
@@ -65,7 +63,7 @@ border:1px solid #BBC;
 }
 
 .comment > td > div.inner {
-margin: 10px;
+margin: 5px;
 border-radius: 3px;
 background:#fff;
 border:1px solid #BBC;
@@ -110,6 +108,18 @@ padding-left: 43px;
 				</tr>
 			</thead>
 			<tbody>
+                @foreach (var c in Model.Comments.Where(x => !x.LineTo.HasValue && !x.LineFrom.HasValue))
+                {
+                    <tr class='comment'>
+                        <td colspan='3'>
+                            <div class='inner'>
+                                <header><img src="@(c.Avatar)" />@(c.Username)</header>
+                                <div class='content'>@{WriteLiteral(c.Content);}</div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+				
                 @foreach (var h in Model.Patch)
                 {
                     var oLine = h.OldStart;
@@ -119,12 +129,12 @@ padding-left: 43px;
                         <tr>
                             @{bool isAddition = l.StartsWith("+");}
                             @{bool isDeletion = l.StartsWith("-");}
-                            @{string lineFrom = null;}
-					        @{string lineTo = null;}
+                            @{int? lineFrom = null;}
+					        @{int? lineTo = null;}
 					        @if(!isAddition)
                             {
                                 <th>@oLine</th>
-                                lineFrom = oLine.ToString();
+                                lineFrom = oLine;
                                 oLine = oLine + 1;
                             }
                             else
@@ -135,7 +145,7 @@ padding-left: 43px;
                             @if(!isDeletion)
                             {
                                 <th>@nLine</th>
-                                lineTo = nLine.ToString();
+                                lineTo = nLine;
                                 nLine = nLine + 1;
                             }
                             else
@@ -143,8 +153,20 @@ padding-left: 43px;
                                 <th>&nbsp;</th>
                             }
 					
-                            <td class="@(isAddition ? "insert" : "") @(isDeletion ? "delete" : "")"><pre onclick="window.location='app://comment?lineFrom=@(lineFrom)&lineTo=@(lineTo)'">@l</pre></td>
+                            <td class="@(isAddition ? "insert" : "") @(isDeletion ? "delete" : "")"><pre onclick="window.location='app://comment?lineFrom=@(lineFrom.ToString())&lineTo=@(lineTo.ToString())'">@l</pre></td>
         			    </tr>
+
+                        foreach (var c in Model.Comments.Where(x => (x.LineTo.HasValue && x.LineTo == lineTo) || (x.LineFrom.HasValue && x.LineFrom == lineFrom)))
+                        {
+                            <tr class='comment'>
+				                <td colspan='3'>
+				                    <div class='inner'>
+				                        <header><img src="@(c.Avatar)" />@(c.Username)</header>
+                                        <div class='content'>@{WriteLiteral(c.Content);}</div>
+						            </div>
+					            </td>
+				            </tr>
+                        }
                     }
 
                     if (Model.Patch.IndexOf(h) != Model.Patch.Count - 1)

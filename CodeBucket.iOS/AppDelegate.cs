@@ -43,32 +43,53 @@ namespace CodeBucket
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
             // Stamp the date this was installed (first run)
-            StampInstallDate("CodeBucket");
+            var stampedDate = StampInstallDate("CodeBucket");
 
             //Register all services
             CodeBucket.Services.ServiceRegistration.Register();
 
+            var culture = new System.Globalization.CultureInfo("en");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;
             exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));
+
+            var purchaseService = Locator.Current.GetService<IInAppPurchaseService>();
+            purchaseService.ThrownExceptions.Subscribe(ex =>
+            {
+                AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
+            });
             
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
 			Theme.Setup();
 
-            var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
+            var featuresService = Locator.Current.GetService<IFeaturesService>();
 
-            bool hasSeenWelcome;
+            //if (stampedDate <= new DateTime(2016, 7, 30, 0, 0, 0))
+            //{
+            //    featuresService.ActivateProDirect();
+            //}
+
+#if DEBUG
+            featuresService.ActivateProDirect();
+#endif
+
+            //var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
+
+            //bool hasSeenWelcome;
             //if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             //{
-                //defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
-                //var welcomeViewController = new CodeBucket.ViewControllers.Walkthrough.WelcomePageViewController();
-                //welcomeViewController.WantsToDimiss += GoToStartupView;
-                //TransitionToViewController(welcomeViewController);
+            //defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
+            //var welcomeViewController = new CodeBucket.ViewControllers.Walkthrough.WelcomePageViewController();
+            //welcomeViewController.WantsToDimiss += GoToStartupView;
+            //TransitionToViewController(welcomeViewController);
             //}
             //else
             //{
-                GoToStartupView();
+            GoToStartupView();
             //}
 
 
