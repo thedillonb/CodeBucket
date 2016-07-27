@@ -56,7 +56,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 eventItems.Clear();
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
-                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                eventItems.AddRange(events.Events.Select(TryCatchEventBlockCreation).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
 
@@ -66,7 +66,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 HasMore = false;
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
-                eventItems.AddRange(events.Events.Select(CreateEventEventTextBlocks).Where(x => x != null));
+                eventItems.AddRange(events.Events.Select(TryCatchEventBlockCreation).Where(x => x != null));
                 HasMore = nextPage < events.Count;
             });
 
@@ -169,6 +169,18 @@ namespace CodeBucket.Core.ViewModels.Events
             NavigateTo(new CommitViewModel(owner, name, sha));
         }
 
+        private EventItemViewModel TryCatchEventBlockCreation(EventItem eventModel)
+        {
+            try
+            {
+                return CreateEventEventTextBlocks(eventModel);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private EventItemViewModel CreateEventEventTextBlocks(EventItem eventModel)
         {
             var avatar = new Avatar(eventModel.User?.Avatar);
@@ -176,9 +188,11 @@ namespace CodeBucket.Core.ViewModels.Events
             var eventType = eventModel.Event;
             var eventBlock = new EventItemViewModel(avatar, eventType, createdOn);
 			var username = eventModel.User != null ? eventModel.User.Username : null;
+            var description = eventModel.Description?.ToString() ?? string.Empty;
+
 
             // Insert the actor
-			eventBlock.Header.Add(new EventAnchorBlock(username, () => GoToUser(username)));
+            eventBlock.Header.Add(new EventAnchorBlock(username, () => GoToUser(username)));
 
 
 			if (eventModel.Event == EventItem.Type.Pushed)
@@ -186,7 +200,7 @@ namespace CodeBucket.Core.ViewModels.Events
                 if (eventModel.Repository == null)
                     return null;
 
-                var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(eventModel.Description);
+                var data = JsonConvert.DeserializeObject<PushedEventDescriptionModel>(description);
                 var commits = data.Commits.Count;
 
 				if (eventModel.Repository != null)
@@ -215,7 +229,8 @@ namespace CodeBucket.Core.ViewModels.Events
 						if (shortSha.Length > 6)
 							shortSha = shortSha.Substring(0, 6);
 
-						eventBlock.Body.Add(new EventAnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, sha)));
+                        var repoName = eventModel.Repository.Name?.ToLower();
+						eventBlock.Body.Add(new EventAnchorBlock(shortSha, () => GoToChangeset(eventModel.Repository.Owner, repoName, sha)));
 						eventBlock.Body.Add(new EventTextBlock(" - " + desc + "\n"));
 					}
 
@@ -230,7 +245,8 @@ namespace CodeBucket.Core.ViewModels.Events
                     return null;
 
 				var node = eventModel.Node.Substring(0, eventModel.Node.Length > 6 ? 6 : eventModel.Node.Length);
-				eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, eventModel.Repository.Name, eventModel.Node);
+                var repoName = eventModel.Repository.Name?.ToLower();
+                eventBlock.Tapped = () => GoToChangeset(eventModel.Repository.Owner, repoName, eventModel.Node);
 				eventBlock.Header.Add(new EventTextBlock(" commited "));
 				eventBlock.Header.Add(new EventAnchorBlock(node, eventBlock.Tapped));
 
@@ -239,7 +255,6 @@ namespace CodeBucket.Core.ViewModels.Events
 					eventBlock.Header.Add(new EventTextBlock(" in "));
 					eventBlock.Header.Add(CreateRepositoryEventTextBlock(eventModel.Repository));
 				}
-                var description = eventModel.Description;
                 var desc = string.IsNullOrEmpty(description) ? "" : description.Replace("\n", " ").Trim();
 				eventBlock.Body.Add(new EventTextBlock(desc));
 			}
@@ -436,7 +451,6 @@ namespace CodeBucket.Core.ViewModels.Events
 			{
                 if (eventModel.Repository == null)
                     return null;
-                var description = eventModel.Description;
                 eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
 				eventBlock.Header.Add(new EventTextBlock(" updated wiki page "));
                 eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
@@ -451,7 +465,6 @@ namespace CodeBucket.Core.ViewModels.Events
 			{
                 if (eventModel.Repository == null)
                     return null;
-                var description = eventModel.Description;
                 eventBlock.Tapped = () => GoToRepositoryWiki(eventModel.Repository, description);
 				eventBlock.Header.Add(new EventTextBlock(" created wiki page "));
                 eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
@@ -467,7 +480,6 @@ namespace CodeBucket.Core.ViewModels.Events
                 if (eventModel.Repository == null)
                     return null;
 				eventBlock.Header.Add(new EventTextBlock(" deleted wiki page "));
-                var description = eventModel.Description;
                 eventBlock.Header.Add(new EventAnchorBlock(description.TrimStart('/'), () => GoToRepositoryWiki(eventModel.Repository, description)));
 
 				if (ReportRepository)

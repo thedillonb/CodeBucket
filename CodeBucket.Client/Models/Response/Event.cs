@@ -12,7 +12,7 @@ namespace CodeBucket.Client.V1
     public class EventItem
     {
         public string Node { get; set; }
-        public string Description { get; set; }
+        public object Description { get; set; }
         public Repository Repository { get; set; }
         public string CreatedOn { get; set; }
         public User User { get; set; }
