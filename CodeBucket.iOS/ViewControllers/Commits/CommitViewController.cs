@@ -24,7 +24,7 @@ namespace CodeBucket.ViewControllers.Commits
                 _commentsElement
                     .UrlRequested
                     .Select(x => new WebBrowserViewController(x))
-                    .Subscribe(x => this.PresentModal(x))
+                    .Subscribe(x => PresentViewController(x, true, null))
                     .AddTo(d);
             });
         }

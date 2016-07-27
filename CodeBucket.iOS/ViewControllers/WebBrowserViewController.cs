@@ -1,142 +1,74 @@
-﻿using System;
-using CodeBucket.Services;
-using CodeBucket.Core.ViewModels;
-using UIKit;
-using WebKit;
+﻿using CodeBucket.Core.ViewModels;
 using Foundation;
+using UIKit;
 
 namespace CodeBucket.ViewControllers
 {
-    public class WebBrowserViewController : WebViewController<WebBrowserViewModel>, IModalViewController
+    public class WebBrowserViewController : BaseViewController<WebBrowserViewModel>, IModalViewController
     {
-        protected UIBarButtonItem BackButton;
-        protected UIBarButtonItem RefreshButton;
-        protected UIBarButtonItem ForwardButton;
+        private UIStatusBarStyle _statusBarStyle;
 
         public WebBrowserViewController()
         {
-            BackButton = new UIBarButtonItem{ Image = Images.Web.Back, Enabled = false };
-            ForwardButton = new UIBarButtonItem { Image = Images.Web.Forward, Enabled = false };
-            RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh) { Enabled = false };
-
-            BackButton.TintColor = Theme.CurrentTheme.WebButtonTint;
-            ForwardButton.TintColor = Theme.CurrentTheme.WebButtonTint;
-            RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
-
-            OnActivation(disposable =>
-            {
-                BackButton
-                    .GetClickedObservable()
-                    .Subscribe(_ => Web.GoBack())
-                    .AddTo(disposable);
-
-                ForwardButton
-                    .GetClickedObservable()
-                    .Subscribe(_ => Web.GoForward())
-                    .AddTo(disposable);
-
-                RefreshButton
-                    .GetClickedObservable()
-                    .Subscribe(_ => Web.Reload())
-                    .AddTo(disposable);
-            });
-
-            ToolbarItems = new[]
-            {
-                BackButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                ForwardButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                RefreshButton
-            };
         }
 
         public WebBrowserViewController(string url)
-            : this()
         {
             ViewModel = new WebBrowserViewModel(url);
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            try
-            {
-                if (!string.IsNullOrEmpty(ViewModel.Url))
-                    Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.Url)));
-            }
-            catch (Exception e)
-            {
-                AlertDialogService.ShowAlert("Unable to process request!", e.Message);
-            }
-        }
-
-        public override void OnLoadError(NSError error)
-        {
-            base.OnLoadError(error);
-            BackButton.Enabled = Web.CanGoBack;
-            ForwardButton.Enabled = Web.CanGoForward;
-            RefreshButton.Enabled = true;
-        }
-
-        public override void OnLoadStarted(object sender, EventArgs e)
-        {
-            base.OnLoadStarted(sender, e);
-            RefreshButton.Enabled = false;
-        }
-
-        public override void OnLoadFinished(WKWebView webView, WKNavigation navigation)
-        {
-            base.OnLoadFinished(webView, navigation);
-            BackButton.Enabled = Web.CanGoBack;
-            ForwardButton.Enabled = Web.CanGoForward;
-            RefreshButton.Enabled = true;
-            GetTitle();
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
-        }
-
-        protected static string JavaScriptStringEncode(string data)
-        {
-            return System.Web.HttpUtility.JavaScriptStringEncode(data);
-        }
-
-        protected static string UrlDecode(string data)
-        {
-            return System.Web.HttpUtility.UrlDecode(data);
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
 
-            //var bounds = View.Bounds;
-            //if (_navigationToolbar)
-            //    bounds.Height -= NavigationController.Toolbar.Frame.Height;
-            //Web.Frame = bounds;
+            _statusBarStyle = UIApplication.SharedApplication.StatusBarStyle;
+            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.Default, animated);
 
-
-            BackButton.Enabled = Web.CanGoBack;
-            ForwardButton.Enabled = Web.CanGoForward;
-            RefreshButton.Enabled = !Web.IsLoading;
-
-            GetTitle();
-
-            NavigationController.SetToolbarHidden(false, animated);
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+            {
+                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft ||
+                    UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
+                {
+                    UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Slide);
+                }
+            }
         }
 
-        private void GetTitle()
+        public override void ViewWillDisappear(bool animated)
         {
-            Web.EvaluateJavaScript("document.title", (o, _) =>
+            base.ViewWillDisappear(animated);
+            UIApplication.SharedApplication.SetStatusBarStyle(_statusBarStyle, animated);
+            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Slide);
+        }
+
+        public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+        {
+            base.WillRotate(toInterfaceOrientation, duration);
+
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
-                ViewModel.PageTitle = o as NSString;
-            });
+
+                if (toInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft ||
+                    toInterfaceOrientation == UIInterfaceOrientation.LandscapeRight)
+                {
+                    UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Slide);
+                }
+                else
+                {
+                    UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Slide);
+                }
+            }
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            var safariBrowser = new SafariServices.SFSafariViewController(new NSUrl(ViewModel.Url));
+            safariBrowser.View.Frame = View.Bounds;
+            safariBrowser.View.AutoresizingMask = UIKit.UIViewAutoresizing.All;
+            AddChildViewController(safariBrowser);
+            Add(safariBrowser.View);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace CodeBucket.ViewControllers.Repositories
             if (!url.StartsWith("file://", StringComparison.Ordinal))
             {
                 var webBrowser = new WebBrowserViewController(url);
-                this.PresentModal(webBrowser);
+                PresentViewController(webBrowser, true, null);
                 return false;
             }
 

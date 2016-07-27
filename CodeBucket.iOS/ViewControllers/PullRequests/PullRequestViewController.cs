@@ -27,7 +27,7 @@ namespace CodeBucket.ViewControllers.PullRequests
             {
                 Observable.Merge(_descriptionElement.UrlRequested, _commentsElement.UrlRequested)
                     .Select(x => new WebBrowserViewController(x))
-                    .Subscribe(x => this.PresentModal(x))
+                    .Subscribe(x => PresentViewController(x, true, null))
                     .AddTo(d);
 
                 actionButton.Bind(ViewModel.ShowMenuCommand).AddTo(d);

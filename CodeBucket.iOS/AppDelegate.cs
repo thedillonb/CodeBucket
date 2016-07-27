@@ -68,10 +68,10 @@ namespace CodeBucket
 
             var featuresService = Locator.Current.GetService<IFeaturesService>();
 
-            //if (stampedDate <= new DateTime(2016, 7, 30, 0, 0, 0))
-            //{
-            //    featuresService.ActivateProDirect();
-            //}
+            if (stampedDate <= new DateTime(2016, 7, 30, 0, 0, 0))
+            {
+                featuresService.ActivateProDirect();
+            }
 
 #if DEBUG
             featuresService.ActivateProDirect();

@@ -105,9 +105,7 @@ namespace CodeBucket.ViewControllers.Application
             if (url.Scheme.Equals("http") || url.Scheme.Equals("https"))
             {
                 var view = new WebBrowserViewController(url.AbsoluteString);
-                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Buttons.Cancel, UIBarButtonItemStyle.Done,
-                    (s, e) => DismissViewController(true, null));
-                PresentViewController(new ThemedNavigationController(view), true, null);
+                PresentViewController(view, true, null);
                 return false;
             }
 
