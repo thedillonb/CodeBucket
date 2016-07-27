@@ -51,9 +51,9 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CFBundleVersion</key>
-	<string>2.5.0.1</string>
+	<string>2.5.1.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.5.0</string>
+	<string>2.5.1</string>
 	<key>MinimumOSVersion</key>
 	<string>9.0</string>
 	<key>UILaunchStoryboardName</key>
