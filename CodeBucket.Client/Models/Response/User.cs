@@ -32,7 +32,7 @@ namespace CodeBucket.Client
         public string Website { get; set; }
         public string DisplayName { get; set; }
         public string Location { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTimeOffset CreatedOn { get; set; }
         public UserLinks Links { get; set; }
 
         public class UserLinks

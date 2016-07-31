@@ -86,8 +86,8 @@ namespace CodeBucket.Core.ViewModels.Source
                 BinaryFilePath = null;
 
                 var currentFilePath = Path.Combine(Path.GetTempPath(), actualFilename);
-                var hasCurrent = _commitFileModel.Type == Client.FileModification.Added || _commitFileModel.Type == Client.FileModification.Modified;
-                var hasPast = _commitFileModel.Type == Client.FileModification.Removed || _commitFileModel.Type == Client.FileModification.Modified;
+                var hasCurrent = _commitFileModel.Type != "removed";
+                var hasPast = _commitFileModel.Type != "added";
                 var isBinary = false;
 
                 if (hasCurrent)

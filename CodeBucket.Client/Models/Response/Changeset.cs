@@ -28,13 +28,13 @@ namespace CodeBucket.Client.V1
 
     public class ChangesetFile
     {
-        public FileModification Type { get; set; }
+        public string Type { get; set; }
         public string File { get; set; }
     }
 
     public class ChangesetLike
     {
-        public DateTime UtcLikedOn { get; set; }
+        public DateTimeOffset UtcLikedOn { get; set; }
         public User User { get; set; }
     }
 
@@ -135,12 +135,5 @@ namespace CodeBucket.Client
         public string Role { get; set; }
         public bool Approved { get; set; }
         public User User { get; set; }
-    }
-
-    public enum FileModification
-    {
-        Added,
-        Removed,
-        Modified
     }
 }

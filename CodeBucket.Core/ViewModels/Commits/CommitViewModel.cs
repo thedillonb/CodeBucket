@@ -181,15 +181,15 @@ namespace CodeBucket.Core.ViewModels.Commits
                 .Select(x => x.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>());
 
             changesetFiles
-                .Select(x => x.Count(y => y.Type == FileModification.Added))
+                .Select(x => x.Count(y => y.Type == "added"))
                 .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
 
             changesetFiles
-                .Select(x => x.Count(y => y.Type == FileModification.Removed))
+                .Select(x => x.Count(y => y.Type == "removed"))
                 .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
 
             changesetFiles
-                .Select(x => x.Count(y => y.Type == FileModification.Modified))
+                .Select(x => x.Count(y => y.Type != "added" && y.Type != "removed"))
                 .ToProperty(this, x => x.DiffModifications, out _diffModifications);
 
             var commitFiles = new ReactiveList<Client.V1.ChangesetFile>();

@@ -143,9 +143,9 @@ namespace CodeBucket.ViewControllers.Commits
                 .Take(1)
                 .Subscribe(_ => Root.Reset(headerSection, detailsSection, approvalSection, commentsSection));
 
-            ViewModel.GoToAddedFiles.Select(_ => FileModification.Added).Subscribe(GoToFiles);
-            ViewModel.GoToRemovedFiles.Select(_ => FileModification.Removed).Subscribe(GoToFiles);
-            ViewModel.GoToModifiedFiles.Select(_ => FileModification.Modified).Subscribe(GoToFiles);
+            ViewModel.GoToAddedFiles.Select(_ => CommitFileType.Added).Subscribe(GoToFiles);
+            ViewModel.GoToRemovedFiles.Select(_ => CommitFileType.Removed).Subscribe(GoToFiles);
+            ViewModel.GoToModifiedFiles.Select(_ => CommitFileType.Modified).Subscribe(GoToFiles);
             ViewModel.GoToAllFiles.Subscribe(_ => GoToAllFiles());
 
             OnActivation(d =>
@@ -166,11 +166,11 @@ namespace CodeBucket.ViewControllers.Commits
             });
         }
 
-        private void GoToFiles(FileModification commitFileType)
+        private void GoToFiles(CommitFileType commitFileType)
         {
             var files = ViewModel.CommitFiles.Where(x => x.Type == commitFileType);
             var viewController = new CommitFileChangesViewController(files);
-            viewController.Title = commitFileType.ToString();
+            viewController.Title = commitFileType.Humanize(LetterCasing.Title);
             NavigationController.PushViewController(viewController, true);
         }
 
