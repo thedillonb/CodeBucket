@@ -92,9 +92,8 @@ namespace CodeBucket.ViewControllers.PullRequests
             commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
             secDetails.Add(commitsElement);
 
-            var mergeElement = new LoaderButtonElement("Merge", AtlassianIcon.ListAdd.ToImage());
+            var mergeElement = new ButtonElement("Merge", AtlassianIcon.ListAdd.ToImage());
             mergeElement.Accessory = UITableViewCellAccessory.None;
-            mergeElement.BindLoader(ViewModel.MergeCommand);
 
             var rejectElement = new LoaderButtonElement("Reject", AtlassianIcon.ListRemove.ToImage());
             rejectElement.Accessory = UITableViewCellAccessory.None;
@@ -150,6 +149,11 @@ namespace CodeBucket.ViewControllers.PullRequests
 
             OnActivation(disposable =>
             {
+                mergeElement
+                    .Clicked
+                    .InvokeCommand(this, x => x.ViewModel.MergeCommand)
+                    .AddTo(disposable);
+
                 addComment
                     .Clicked
                     .Subscribe(_ => NewCommentViewController.Present(this, ViewModel.AddComment))
@@ -165,6 +169,20 @@ namespace CodeBucket.ViewControllers.PullRequests
 
                 this.WhenAnyValue(x => x.ViewModel.CommentCount)
                     .Subscribe(x => commentCount.Text = x?.ToString() ?? "-")
+                    .AddTo(disposable);
+
+                this.WhenAnyObservable(x => x.ViewModel.MergeCommand)
+                    .Subscribe(_ =>
+                    {
+                        var vc = new PullRequestApproveViewController(
+                            ViewModel.Username, ViewModel.Repository, ViewModel.PullRequestId);
+                        vc.DeleteSourceBranch = ViewModel.PullRequest.CloseSourceBranch;
+                        vc.MergeCommand
+                          .Do(x => ViewModel.PullRequest = x)
+                          .Do(x => DismissViewController(true, null))
+                          .Subscribe();
+                        this.PresentModal(vc);
+                    })
                     .AddTo(disposable);
             });
         }

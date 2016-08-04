@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CodeBucket.Client
@@ -25,11 +26,15 @@ namespace CodeBucket.Client
             return _client.Get<PullRequest>(uri);
         }
 
-        public Task<PullRequest> Merge(string username, string repository, int id)
+        public Task<PullRequest> Merge(string username, string repository, int id, string message = null, bool closeSourceBranch = false)
         {
             var uri = $"{BitbucketClient.ApiUrl2}/repositories/{Uri.EscapeDataString(username)}/{Uri.EscapeDataString(repository)}" +
                 $"/pullrequests/{id}/merge";
-            return _client.PostForm<PullRequest>(uri);
+            var pairs = new[] {
+                new KeyValuePair<string, string>("message", message),
+                new KeyValuePair<string, string>("close_source_branch", closeSourceBranch ? "true" : "false")
+            };
+            return _client.PostForm<PullRequest>(uri, pairs);
         }
 
         public Task<PullRequest> Decline(string username, string repository, int id)

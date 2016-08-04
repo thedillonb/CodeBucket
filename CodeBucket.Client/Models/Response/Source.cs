@@ -4,7 +4,13 @@ namespace CodeBucket.Client.V1
 {
     public class GitReference
     {
-        public string Name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name ?? Branch; }
+            set { _name = value; }
+        }
+
         public string Node { get; set; }
         public List<ChangesetFile> Files { get; set; }
         public string RawAuthor { get; set; }

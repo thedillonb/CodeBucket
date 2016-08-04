@@ -316,6 +316,7 @@
     <Compile Include="ViewControllers\Repositories\PrivateRepositoryViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Repositories\PrivateRepositoryViewController.xib" />
     <Compile Include="ViewControllers\SlideoutNavigationController.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestApproveViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

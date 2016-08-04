@@ -53,7 +53,7 @@ namespace CodeBucket.Core.ViewModels.Source
             Items = branches.CreateDerivedCollection(
                 branch =>
                 {
-                var vm = new GitReferenceItemViewModel(branch.Branch);
+                var vm = new GitReferenceItemViewModel(branch.Name);
                     vm.GoToCommand
                       .Select(_ => clickFunc(this, branch))
                       .Subscribe(NavigateTo);

@@ -58,10 +58,10 @@ namespace CodeBucket.Core.ViewModels.PullRequests
         public PullRequest PullRequest 
         { 
             get { return _pullRequest; }
-            private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
+            set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
-        public IReactiveCommand<PullRequest> MergeCommand { get; }
+        public IReactiveCommand<object> MergeCommand { get; }
 
         public IReactiveCommand<PullRequest> RejectCommand { get; }
 
@@ -137,13 +137,12 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             canMerge.ToProperty(this, x => x.IsOpen, out _open);
 
-            MergeCommand = ReactiveCommand.CreateAsyncTask(
-                canMerge, t => applicationService.Client.PullRequests.Merge(username, repository, pullRequestId));
+            MergeCommand = ReactiveCommand.Create(canMerge);
 
             RejectCommand = ReactiveCommand.CreateAsyncTask(
                 canMerge, t => applicationService.Client.PullRequests.Decline(username, repository, pullRequestId));
 
-            MergeCommand.Merge(RejectCommand).Subscribe(x => PullRequest = x);
+            RejectCommand.Subscribe(x => PullRequest = x);
 
             GoToUserCommand
                 .OfType<string>()
