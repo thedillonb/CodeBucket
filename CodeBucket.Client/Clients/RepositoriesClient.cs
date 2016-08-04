@@ -15,10 +15,10 @@ namespace CodeBucket.Client
             _client = client;
         }
 
-        public Task<IList<V1.Repository>> GetWatched()
+        public Task<List<V1.Repository>> GetWatched()
         {
             var uri = $"{BitbucketClient.ApiUrl}/user/follows";
-            return _client.Get<IList<V1.Repository>>(uri);
+            return _client.Get<List<V1.Repository>>(uri);
         }
 
         public Task<Collection<Repository>> GetAll(string role = null)

@@ -67,7 +67,7 @@ namespace CodeBucket.Client
         public User Owner { get; set; }
         public string Name { get; set; }
         public DateTimeOffset UpdatedOn { get; set; }
-        public int Size { get; set; }
+        public long Size { get; set; }
         public bool IsPrivate { get; set; }
         public string Scm { get; set; }
         public RepositoryLinks Links { get; set; }
