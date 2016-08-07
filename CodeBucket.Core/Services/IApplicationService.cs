@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CodeBucket.Client;
 using CodeBucket.Core.Data;
 
@@ -12,5 +13,7 @@ namespace CodeBucket.Core.Services
         IAccountsService Accounts { get; }
 
 		void ActivateUser(BitbucketAccount account, BitbucketClient client);
+
+        Task RefreshToken();
     }
 }

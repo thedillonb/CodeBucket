@@ -11,6 +11,20 @@ using CodeBucket.Client.V1;
 
 namespace CodeBucket.TableViewCells
 {
+    [Register("UILabelWithLinks")]
+    public class UILabelWithLinks : Xamarin.TTTAttributedLabel.TTTAttributedLabel
+    {
+        public UILabelWithLinks(IntPtr ptr)
+            : base(ptr)
+        {
+        }
+
+        public UILabelWithLinks(NSCoder coder)
+            : base(coder)
+        {
+        }
+    }
+
     public partial class NewsCellView : BaseTableViewCell<EventItemViewModel>
     {
         public static readonly UINib Nib = UINib.FromName("NewsCellView", NSBundle.MainBundle);
@@ -38,13 +52,14 @@ namespace CodeBucket.TableViewCells
             Image.Layer.MasksToBounds = true;
             Image.Layer.CornerRadius = Image.Bounds.Height / 2f;
 
+            var linkAttributes = new NSMutableDictionary();
+            linkAttributes.Add(UIStringAttributeKey.UnderlineStyle, NSNumber.FromBoolean(true));
+
             Body.LinkAttributes = new NSDictionary();
-            Body.ActiveLinkAttributes = new NSMutableDictionary();
-            Body.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+            Body.ActiveLinkAttributes = linkAttributes;
 
             Header.LinkAttributes = new NSDictionary();
-            Header.ActiveLinkAttributes = new NSMutableDictionary();
-            Header.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+            Header.ActiveLinkAttributes = linkAttributes;
 
             DefaultContentConstraint = ContentConstraint.Constant;
 
@@ -95,7 +110,7 @@ namespace CodeBucket.TableViewCells
             return new Tuple<NSMutableAttributedString, List<Link>>(attributedString, links);
         }
 
-        class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate {
+        class LabelDelegate : Xamarin.TTTAttributedLabel.TTTAttributedLabelDelegate {
 
             private readonly List<Link> _links;
 
@@ -104,7 +119,7 @@ namespace CodeBucket.TableViewCells
                 _links = links;
             }
 
-            public override void DidSelectLinkWithURL (MonoTouch.TTTAttributedLabel.TTTAttributedLabel label, NSUrl url)
+            public override void DidSelectLinkWithURL (Xamarin.TTTAttributedLabel.TTTAttributedLabel label, NSUrl url)
             {
                 try
                 {

@@ -97,6 +97,12 @@ namespace CodeBucket
 			return true;
 		}
 
+        public override void WillEnterForeground(UIApplication application)
+        {
+            var applicationService = Locator.Current.GetService<IApplicationService>();
+            applicationService.RefreshToken().ToBackground();
+        }
+
         class CustomHttpMessageHandler : DelegatingHandler
         {
             public CustomHttpMessageHandler()

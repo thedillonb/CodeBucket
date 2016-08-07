@@ -2,6 +2,7 @@ using CodeBucket.Core.Data;
 using System.Timers;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Client;
+using System.Threading.Tasks;
 
 namespace CodeBucket.Core.Services
 {
@@ -19,27 +20,30 @@ namespace CodeBucket.Core.Services
 
             _timer = new Timer(1000 * 60 * 45); // 45 minutes
             _timer.AutoReset = true;
-            _timer.Elapsed += (sender, e) => {
+            _timer.Elapsed += (sender, e) => RefreshToken().RunSynchronously();
+        }
+
+        public async Task RefreshToken()
+        {
+            try
+            {
                 if (Account == null)
                     return;
+                
+                var ret = await BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken);
+                if (ret == null)
+                    return;
 
-                try
-                {
-                    var ret = BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken).Result;
-                    if (ret == null)
-                        return;
+                Account.RefreshToken = ret.RefreshToken;
+                Account.Token = ret.AccessToken;
+                Accounts.Update(Account);
 
-                    Account.RefreshToken = ret.RefreshToken;
-                    Account.Token = ret.AccessToken;
-                    accounts.Update(Account);
-
-                    Client = BitbucketClient.WithBearerAuthentication(Account.Token);
-                }
-                catch
-                {
-                    // Do nothing....
-                }
-            };
+                Client = BitbucketClient.WithBearerAuthentication(Account.Token);
+            }
+            catch
+            {
+                // Do nothing....
+            }
         }
 
 		public void ActivateUser(BitbucketAccount account, BitbucketClient client)

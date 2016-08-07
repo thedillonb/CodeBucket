@@ -164,7 +164,7 @@ namespace CodeBucket.Services
                 }
             }
 
-            public override void PaymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue queue)
+            public override void RestoreCompletedTransactionsFinished(SKPaymentQueue queue)
             {
                 this.Log().Debug("Payment queue restore complete");
                 _inAppPurchases._restoreSource?.TrySetResult(true);

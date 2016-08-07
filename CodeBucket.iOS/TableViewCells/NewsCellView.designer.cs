@@ -16,13 +16,13 @@ namespace CodeBucket.TableViewCells
 		UIKit.UIImageView ActionImage { get; set; }
 
 		[Outlet]
-		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
+		UILabelWithLinks Body { get; set; }
 
 		[Outlet]
 		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
 
 		[Outlet]
-		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
+		UILabelWithLinks Header { get; set; }
 
 		[Outlet]
 		UIKit.UIImageView Image { get; set; }
