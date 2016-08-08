@@ -84,7 +84,7 @@ namespace CodeBucket.ViewControllers.Wikis
                 {
                     if (navigationAction.Request.Url.ToString().Substring(0, 7).Equals("wiki://"))
                     {
-                        GoToPage(navigationAction.Request.Url.ToString().Substring(7));
+                        //GoToPage(navigationAction.Request.Url.ToString().Substring(7));
                         return false;
                     }
                 }
@@ -142,19 +142,6 @@ namespace CodeBucket.ViewControllers.Wikis
             return sheet;
         }
 
-        private async Task GoToPage(string page)
-        {
-//            try
-//            {
-//                var data = await ViewModel.GetData(page);
-//                Web.LoadRequest(new NSUrlRequest(new NSUrl(data)));
-//            }
-//            catch (Exception e)
-//            {
-//                AlertDialogService.ShowAlert("Error", e.Message);
-//            }
-        }
-
         private void PromptForWikiPage()
         {
             var alert = new UIAlertView
@@ -171,7 +158,7 @@ namespace CodeBucket.ViewControllers.Wikis
             {
                 if (e.ButtonIndex == gotoButton)
                 {
-                    GoToPage(alert.GetTextField(0).Text);
+                    //GoToPage(alert.GetTextField(0).Text);
                     //ViewModel.GoToPageCommand.Execute(alert.GetTextField(0).Text);
                 }
             };
