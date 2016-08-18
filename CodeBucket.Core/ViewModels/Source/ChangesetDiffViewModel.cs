@@ -152,7 +152,17 @@ namespace CodeBucket.Core.ViewModels.Source
                 Patch = diffService.CreateDiff(oldText, newText, 5).ToList();
 
                 var items = await applicationService.Client.AllItems(x => x.Commits.GetComments(username, repository, node));
-                Comments = items.Where(x => x.Inline?.Path == filename).ToList();
+                var comments = items.Where(x => x.Inline?.Path == filename).ToList();
+                var commentsMap = comments.ToDictionary(x => x.Id);
+                foreach (var comment in comments.Where(x => x.Parent != null))
+                {
+                    var parentComment = commentsMap[comment.Parent.Id];
+                    while (parentComment?.Parent != null)
+                        parentComment = commentsMap[parentComment.Parent.Id];
+                    comment.Inline = parentComment.Inline;
+                }
+
+                Comments = comments;
             });
         }
 

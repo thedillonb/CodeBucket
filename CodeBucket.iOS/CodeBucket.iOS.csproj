@@ -317,6 +317,13 @@
     <InterfaceDefinition Include="ViewControllers\Repositories\PrivateRepositoryViewController.xib" />
     <Compile Include="ViewControllers\SlideoutNavigationController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestApproveViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
+    <Compile Include="Utilities\EasyLayout.cs" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\StashLoginViewController.xib" />
+    <Compile Include="ViewControllers\Accounts\StashLoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\StashLoginViewController.designer.cs">
+      <DependentUpon>StashLoginViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -370,23 +377,16 @@
     <BundleResource Include="Images\Buttons\cancel%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
     <BundleResource Include="Images\Buttons\check%402x.png" />
-    <BundleResource Include="Images\Buttons\fork.png" />
-    <BundleResource Include="Images\Buttons\fork%402x.png" />
-    <BundleResource Include="Images\Buttons\grey_button.png" />
-    <BundleResource Include="Images\Buttons\grey_button%402x.png" />
     <BundleResource Include="Images\Buttons\save.png" />
     <BundleResource Include="Images\Buttons\save%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
-    <BundleResource Include="Images\Buttons\view.png" />
-    <BundleResource Include="Images\Buttons\view%402x.png" />
     <BundleResource Include="Images\Web\back.png" />
     <BundleResource Include="Images\Web\back%402x.png" />
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
-    <BundleResource Include="Images\Logos\bitbucket.png" />
     <BundleResource Include="CodeBucketIcon.png" />
     <None Include="packages.config" />
     <BundleResource Include="Images\repository_placeholder%402x.png" />
@@ -399,11 +399,12 @@
     <BundleResource Include="Heart.png" />
     <BundleResource Include="Organizations.png" />
     <BundleResource Include="Rocket.png" />
+    <BundleResource Include="Images\bitbucket-logo%402x.png" />
+    <BundleResource Include="Images\stash-logo%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Images\" />
-    <Folder Include="Images\Logos\" />
     <Folder Include="Services\" />
     <Folder Include="Markdown\" />
     <Folder Include="WebResources\" />

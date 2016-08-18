@@ -103,12 +103,17 @@ namespace CodeBucket.Client
     public class CommitComment
     {
         public int Id { get; set; }
-        public string Parent { get; set; }
+        public CommitCommentParent Parent { get; set; }
         public CommitCommentInline Inline { get; set; }
         public User User { get; set; }
         public CommitCommentContent Content { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public DateTimeOffset UpdatedOn { get; set; }
+    }
+
+    public class CommitCommentParent
+    {
+        public int Id { get; set; }
     }
 
     public class CommitCommentInline
