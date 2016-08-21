@@ -34,18 +34,13 @@
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Data\BitbucketAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Messages\IssueMessages.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
-    <Compile Include="Data\AccountPinnedRepositories.cs" />
-    <Compile Include="Data\PinnedRepository.cs" />
-    <Compile Include="Data\SQLite.cs" />
     <Compile Include="Services\AccountsService.cs" />
-    <Compile Include="Services\IAccountPreferencesService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
@@ -153,6 +148,8 @@
     <Compile Include="ViewModels\PullRequests\PullRequestListViewModel.cs" />
     <Compile Include="Services\IFeatureService.cs" />
     <Compile Include="ViewModels\Accounts\StashLoginViewModel.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -185,6 +182,9 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

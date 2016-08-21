@@ -1,12 +1,10 @@
-using CodeFramework.Core.Data;
 using SQLite;
 using System.IO;
 using System;
-using CodeBucket.Core.Services;
 using System.Globalization;
 using Splat;
 
-namespace CodeBucket.Core.Data
+namespace CodeBucket.Data
 {
     public class BitbucketAccount : IDisposable
     {
@@ -17,31 +15,18 @@ namespace CodeBucket.Core.Data
         [AutoIncrement]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        /// <value>The username.</value>
         public string Username { get; set; }
 
-        /// <summary>
-        /// Gets or sets the avatar URL.
-        /// </summary>
-        /// <value>The avatar URL.</value>
+        public string Password { get; set; }
+
         public string AvatarUrl { get; set; }
 
-        /// <summary>
-        /// Gets or sets the name of the startup view when the account is loaded
-        /// </summary>
-        /// <value>The startup view.</value>
         public string DefaultStartupView { get; set; }
 
         public string Token { get; set; }
 
         public string RefreshToken { get; set; }
 
-        /// <summary>
-        /// Gets or sets whether teams should be listed in the menu controller under 'events'
-        /// </summary>
         public bool DontShowTeamEvents { get; set; }
 
         [Ignore]
@@ -68,7 +53,8 @@ namespace CodeBucket.Core.Data
         {
             get
             {
-                var accountsDir = Locator.Current.GetService<IAccountPreferencesService>().AccountsDir;
+                var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "..");
+                var accountsDir = Path.Combine(baseDir, "Documents/accounts");
                 return Path.Combine(accountsDir, Id.ToString(CultureInfo.InvariantCulture));
             }
         }

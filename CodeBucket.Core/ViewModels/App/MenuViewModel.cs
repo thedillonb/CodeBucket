@@ -13,8 +13,8 @@ using CodeBucket.Core.ViewModels.Groups;
 using Splat;
 using ReactiveUI;
 using System.Reactive;
-using CodeFramework.Core.Data;
 using CodeBucket.Client;
+using CodeBucket.Core.Data;
 
 namespace CodeBucket.Core.ViewModels.App
 {
@@ -61,7 +61,7 @@ namespace CodeBucket.Core.ViewModels.App
             {
                 var vm = new PinnedRepositoryItemViewModel(x.Name, new Avatar(x.ImageUri));
                 vm.DeleteCommand
-                  .Do(_ => accountsService.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id))
+                  .Do(_ => account.PinnedRepositories.RemoveAll(y => y.Id == x.Id))
                   .Subscribe(_ => repos.Remove(x));
                 vm.GoToCommand
                   .Select(_ => new RepositoryViewModel(x.Owner, x.Slug))
@@ -71,7 +71,7 @@ namespace CodeBucket.Core.ViewModels.App
 
             RefreshCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                repos.Reset(accountsService.ActiveAccount.PinnnedRepositories);
+                repos.Reset(applicationService.Account.PinnedRepositories);
                 return Task.FromResult(Unit.Default);
             });
 
@@ -149,7 +149,7 @@ namespace CodeBucket.Core.ViewModels.App
 
             GoToDefaultTopView.Subscribe(_ =>
             {
-                var startupViewName = accountsService.ActiveAccount.DefaultStartupView;
+                var startupViewName = applicationService.Account.DefaultStartupView;
                 if (!string.IsNullOrEmpty(startupViewName))
                 {
                     var props = from p in GetType().GetProperties()

@@ -11,8 +11,6 @@ namespace CodeBucket.Services
 
             var locator = Locator.CurrentMutable;
 
-            locator.RegisterLazySingleton(() => new AccountPreferencesService(), typeof(IAccountPreferencesService));
-
             locator.RegisterLazySingleton(() => new ActionMenuService(), typeof(IActionMenuService));
 
             locator.RegisterLazySingleton(() => new AlertDialogService(), typeof(IAlertDialogService));

@@ -25,24 +25,24 @@ namespace CodeBucket.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _startupViews, value); }
         }
 
-		public DefaultStartupViewModel(IAccountsService accountsService = null)
+        public DefaultStartupViewModel(IApplicationService applicationService = null)
 		{
-            accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
             var props = from p in typeof(MenuViewModel).GetProperties()
                         let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
                         where attr.Length == 1
                         select attr[0] as PotentialStartupViewAttribute;
 
-            SelectedStartupView = accountsService.ActiveAccount.DefaultStartupView;
+            SelectedStartupView = applicationService.Account.DefaultStartupView;
             StartupViews = props.Select(x => x.Name).ToList();
 
             this.WhenAnyValue(x => x.SelectedStartupView)
-                .Where(x => x != accountsService.ActiveAccount.DefaultStartupView)
+                .Where(x => x != applicationService.Account.DefaultStartupView)
                 .Subscribe(x =>
                 {
-                    accountsService.ActiveAccount.DefaultStartupView = x;
-                    accountsService.Update(accountsService.ActiveAccount);
+                    applicationService.Account.DefaultStartupView = x;
+                    applicationService.SaveAccount().ToBackground();
                 });
 		}
     }

@@ -46,11 +46,13 @@ namespace CodeBucket
             var stampedDate = StampInstallDate("CodeBucket");
 
             //Register all services
-            CodeBucket.Services.ServiceRegistration.Register();
+            Services.ServiceRegistration.Register();
 
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
             System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            Data.Migration.Migrate();
 
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;

@@ -1,20 +1,18 @@
-using SQLite;
+﻿using System;
 
-namespace CodeFramework.Core.Data
+namespace CodeBucket.Core.Data
 {
     public class PinnedRepository
     {
-        [PrimaryKey]
-        [AutoIncrement]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-		public string Owner { get; set; }
+        public string Owner { get; set; }
 
-		public string Slug { get; set; }
+        public string Slug { get; set; }
 
-		public string Name { get; set; }
+        public string Name { get; set; }
 
-		public string ImageUri { get; set; }
+        public string ImageUri { get; set; }
     }
 }
 

@@ -8,13 +8,11 @@ namespace CodeBucket.Core.Services
         {
             var locator = Locator.CurrentMutable;
 
-            locator.RegisterLazySingleton(() => new AccountsService(
-                locator.GetService<IDefaultValueService>(),
-                locator.GetService<IAccountPreferencesService>()),
-                                          typeof(IAccountsService));
+            locator.RegisterLazySingleton(() => new AccountsService(), typeof(IAccountsService));
 
             locator.RegisterLazySingleton(() => new ApplicationService(
-                locator.GetService<IAccountsService>()),
+                locator.GetService<IAccountsService>(),
+                locator.GetService<IDefaultValueService>()),
                 typeof(IApplicationService));
 
             locator.RegisterLazySingleton(() => new MessageService(),

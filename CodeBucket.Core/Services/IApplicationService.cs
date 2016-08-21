@@ -8,11 +8,15 @@ namespace CodeBucket.Core.Services
     {
 		BitbucketClient Client { get; }
  
-		BitbucketAccount Account { get; }
+        Account Account { get; }
 
-        IAccountsService Accounts { get; }
+        Task<Account> GetDefaultAccount();
 
-		void ActivateUser(BitbucketAccount account, BitbucketClient client);
+        void SetDefaultAccount(Account account);
+
+        Task SaveAccount();
+
+		void ActivateUser(Account account, BitbucketClient client);
 
         Task RefreshToken();
     }

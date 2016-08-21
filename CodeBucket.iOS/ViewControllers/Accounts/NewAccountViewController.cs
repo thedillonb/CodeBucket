@@ -65,15 +65,15 @@ namespace CodeBucket.ViewControllers.Accounts
 
         private void EnterpriseButtonTouch()
         {
-            //var features = Locator.Current.GetService<IFeaturesService>();
-            //if (features.IsProEnabled)
+            var features = Locator.Current.GetService<IFeaturesService>();
+            if (features.IsProEnabled)
             {
                 NavigationController.PushViewController(new StashLoginViewController(), true);
             }
-            //else
-            //{
-            //    this.PresentUpgradeViewController();
-            //}
+            else
+            {
+                this.PresentUpgradeViewController();
+            }
         }
 
         private class AccountButton : UIButton

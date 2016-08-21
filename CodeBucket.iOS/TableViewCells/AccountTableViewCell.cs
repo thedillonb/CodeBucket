@@ -44,7 +44,7 @@ namespace CodeBucket.TableViewCells
                         ImageView.SetAvatar(new Core.Utils.Avatar(x?.AvatarUrl));
                     }));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Selected)
+                d(this.WhenAnyValue(x => x.ViewModel.IsSelected)
                      .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None));
             });
         }

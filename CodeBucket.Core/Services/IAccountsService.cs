@@ -1,59 +1,19 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CodeBucket.Core.Data;
 
 namespace CodeBucket.Core.Services
 {
-    public interface IAccountsService : IEnumerable<BitbucketAccount>
+    public interface IAccountsService
     {
-        /// <summary>
-        /// Gets the active account
-        /// </summary>
-        BitbucketAccount ActiveAccount { get; }
+        Task<IEnumerable<Account>> GetAccounts();
 
-        /// <summary>
-        /// Sets the active account
-        /// </summary>
-        /// <param name="account"></param>
-        void SetActiveAccount(BitbucketAccount account);
+        Task Save(Account account);
 
-        /// <summary>
-        /// Gets the default account
-        /// </summary>
-        BitbucketAccount GetDefault();
+        Task Remove(Account account);
 
-        /// <summary>
-        /// Sets the default account
-        /// </summary>
-        void SetDefault(BitbucketAccount account);
+        Task<Account> Get(string domain, string username);
 
-        /// <summary>
-        /// Insert the specified account.
-        /// </summary>
-        void Insert(BitbucketAccount account);
-
-        /// <summary>
-        /// Remove the specified account.
-        /// </summary>
-        void Remove(BitbucketAccount account);
-
-        /// <summary>
-        /// Update this instance in the database
-        /// </summary>
-        void Update(BitbucketAccount account);
-
-        /// <summary>
-        /// Checks to see whether a specific account exists (Username comparison)
-        /// </summary>
-        bool Exists(BitbucketAccount account);
-
-        /// <summary>
-        /// Find the specified account via it's username
-        /// </summary>
-        BitbucketAccount Find(int id);
-
-        /// <summary>
-        /// Find the specified account via it's username
-        /// </summary>
-        BitbucketAccount Find(string username);
+        Task<Account> Get(string key);
     }
 }

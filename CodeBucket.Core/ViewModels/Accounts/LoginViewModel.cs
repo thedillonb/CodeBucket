@@ -13,6 +13,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
 {
     public class LoginViewModel : ReactiveObject
     {
+        private const string Domain = "bitbucket.org";
 		public const string ClientId = "gtAAHvjnAp9W45Gk6P";
 		public const string ClientSecret = "bRYpfaTt7ZwsCkpu2DPehfDNPLKGNJ5z";
         private readonly IAccountsService _accountsService;
@@ -65,24 +66,25 @@ namespace CodeBucket.Core.ViewModels.Accounts
                 var client = BitbucketClient.WithBearerAuthentication(ret.AccessToken);
                 var user = await client.Users.GetCurrent();
 
-                var account = _accountsService.Find(user.Username);
+                var account = await _accountsService.Get(Domain, user.Username);
                 if (account == null)
                 {
-                    account = new BitbucketAccount
+                    account = new Account
                     {
                         Username = user.Username,
                         AvatarUrl = user.Links.Avatar.Href,
                         RefreshToken = ret.RefreshToken,
                         Token = ret.AccessToken
                     };
-                    _accountsService.Insert(account);
+
+                    await _accountsService.Save(account);
                 }
                 else
                 {
                     account.RefreshToken = ret.RefreshToken;
                     account.Token = ret.AccessToken;
                     account.AvatarUrl = user.Links.Avatar.Href;
-                    _accountsService.Update(account);
+                    await _accountsService.Save(account);
                 }
 
                 _applicationService.ActivateUser(account, client);

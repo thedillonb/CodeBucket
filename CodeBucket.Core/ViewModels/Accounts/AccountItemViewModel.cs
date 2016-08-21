@@ -6,7 +6,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
     public class AccountItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         private bool _selected;
-        public bool Selected
+        public bool IsSelected
         {
             get { return _selected; }
             internal set { this.RaiseAndSetIfChanged(ref _selected, value); }
@@ -22,11 +22,11 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
 
-        internal AccountItemViewModel(BitbucketAccount account)
+        internal AccountItemViewModel(Account account)
         {
             Username = account.Username;
             AvatarUrl = account.AvatarUrl;
-            Domain = "https://bitbucket.org";
+            Domain = account.Domain;
         }
     }
 }

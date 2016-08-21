@@ -6,7 +6,6 @@ using CodeBucket.Core.Messages;
 using ReactiveUI;
 using Splat;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Accounts
@@ -17,30 +16,36 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public IReactiveCommand<object> DismissCommand { get; }
 
-        public IReactiveCommand<List<BitbucketAccount>> LoadCommand { get; }
+        public IReactiveCommand<List<Account>> LoadCommand { get; }
 
         public IReadOnlyReactiveList<AccountItemViewModel> Items { get; }
 
-        public AccountsViewModel(IAccountsService accountsService = null) 
+        public AccountsViewModel(
+            IApplicationService applicationService = null,
+            IAccountsService accountsService = null) 
         {
             accountsService = accountsService ?? Locator.Current.GetService<IAccountsService>();
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
             Title = "Accounts";
 
-            var currentUsername = accountsService.ActiveAccount?.Username;
+            var activeAccount = applicationService.Account;
+            var currentUsername = activeAccount?.Username;
 
-            var accounts = new ReactiveList<BitbucketAccount>();
+            var accounts = new ReactiveList<Account>();
             Items = accounts.CreateDerivedCollection(x =>
             {
                 var vm = new AccountItemViewModel(x);
 
-                if (accountsService.ActiveAccount?.Id == x.Id)
+                if (activeAccount?.Id == x.Id)
+                {
                     vm.GoToCommand.InvokeCommand(DismissCommand);
+                    vm.IsSelected = true;
+                }
                 else
                 {
                     vm.GoToCommand
-                      .Select(_ => x)
-                      .Do(accountsService.SetActiveAccount)
+                      .Do(_ => applicationService.SetDefaultAccount(x))
                       .Subscribe(_ => MessageBus.Current.SendMessage(new LogoutMessage()));
                 }
 
@@ -56,8 +61,11 @@ namespace CodeBucket.Core.ViewModels.Accounts
             DismissCommand = ReactiveCommand.Create(
                 accounts.Changed.Select(x => accounts.Any(y => y.Username == currentUsername)));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
-                Task.FromResult(new List<BitbucketAccount>(accountsService)));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var allAccounts = await accountsService.GetAccounts();
+                return allAccounts.ToList();
+            });
             LoadCommand.Subscribe(x => accounts.Reset(x));
         }
     }

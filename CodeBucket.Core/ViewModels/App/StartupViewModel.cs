@@ -69,13 +69,15 @@ namespace CodeBucket.Core.ViewModels.App
 
         protected async Task Startup()
 		{
-			if (!_applicationService.Accounts.Any())
+            var accounts = (await _accountsService.GetAccounts()).ToList();
+
+			if (!accounts.Any())
 			{
                 GoToLoginCommand.Execute(null);
 				return;
 			}
 
-            var account = _accountsService.GetDefault();
+            var account = await _applicationService.GetDefaultAccount();
 			if (account == null)
 			{
                 GoToAccountsCommand.Execute(null);
@@ -84,9 +86,6 @@ namespace CodeBucket.Core.ViewModels.App
 
             if (string.IsNullOrEmpty(account.Token) || string.IsNullOrEmpty(account.RefreshToken))
             {
-                await _alertDialogService.Alert("Welcome!", "CodeBucket is now OAuth compliant!\n\nFor your security, " +
-                "you will now be prompted to login to Bitbucket via their OAuth portal. This will swap out your credentials" +
-                " for an OAuth token you may revoke at any time!");
                 GoToLoginCommand.Execute(null);
                 return;
             }
@@ -106,8 +105,7 @@ namespace CodeBucket.Core.ViewModels.App
 
                 account.RefreshToken = ret.RefreshToken;
                 account.Token = ret.AccessToken;
-                _accountsService.Update(account);
-
+                await _accountsService.Save(account);
                 await AttemptLogin(account);
 
                 GoToMenuCommand.Execute(null);
@@ -124,7 +122,7 @@ namespace CodeBucket.Core.ViewModels.App
             }
 		}
 
-        private async Task AttemptLogin(BitbucketAccount account)
+        private async Task AttemptLogin(Account account)
         {
             Uri accountAvatarUri = null;
             var avatarUrl = account.AvatarUrl;
@@ -142,14 +140,14 @@ namespace CodeBucket.Core.ViewModels.App
             _applicationService.ActivateUser(account, client);
         }
 
-        public async Task<BitbucketClient> LoginAccount(BitbucketAccount account)
+        public async Task<BitbucketClient> LoginAccount(Account account)
         {
             //Create the client
             var client = BitbucketClient.WithBearerAuthentication(account.Token);
             var user = await client.Users.GetCurrent();
             account.Username = user.Username;
             account.AvatarUrl = user.Links.Avatar.Href.Replace("/avatar/32", "/avatar/64");
-            _accountsService.Update(account);
+            await _accountsService.Save(account);
             return client;
         }
     }

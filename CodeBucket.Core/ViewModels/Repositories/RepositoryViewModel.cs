@@ -203,7 +203,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
             {
                 var menu = actionMenuService.Create();
-                var isPinned = applicationService.Account.PinnnedRepositories.GetPinnedRepository(username, repositoryName) != null;
+                var isPinned = applicationService
+                    .Account.PinnedRepositories
+                    .Any(x => string.Equals(x.Owner, username, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Slug, repositoryName, StringComparison.OrdinalIgnoreCase));
                 var pinned = isPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu";
                 menu.AddButton(pinned, PinRepository);
                 menu.AddButton("Fork Repository", ForkCommand);
@@ -220,14 +222,22 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var repoInfo = RepositoryIdentifier.FromFullName(Repository.FullName);
 
             //Is it pinned already or not?
-            var pinnedRepo = _applicationService.Account.PinnnedRepositories.GetPinnedRepository(repoInfo.Owner, repoInfo.Name);
+            var pinnedRepo = _applicationService.Account.PinnedRepositories.Find(
+                x => string.Equals(x.Owner, repoInfo.Owner, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(x.Slug, repoInfo.Name, StringComparison.OrdinalIgnoreCase));
             if (pinnedRepo == null)
             {
                 var avatar = new Avatar(Repository.Links.Avatar.Href).ToUrl();
-                _applicationService.Account.PinnnedRepositories.AddPinnedRepository(repoInfo.Owner, repoInfo.Name, Repository.Name, avatar);
+                _applicationService.Account.PinnedRepositories.Add(new Data.PinnedRepository
+                {
+                    Owner = repoInfo.Owner,
+                    Slug = repoInfo.Name,
+                    ImageUri = avatar,
+                    Name = repoInfo.Name
+                });
             }
             else
-				_applicationService.Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
+                _applicationService.Account.PinnedRepositories.RemoveAll(x => x.Id == pinnedRepo.Id);
         }
 
         private async Task LoadReadme(string username, string repository)

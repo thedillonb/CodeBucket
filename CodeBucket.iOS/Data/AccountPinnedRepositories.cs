@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SQLite;
 
-namespace CodeFramework.Core.Data
+namespace CodeBucket.Data
 {
     public class AccountPinnedRepositories : IEnumerable<PinnedRepository>
     {
