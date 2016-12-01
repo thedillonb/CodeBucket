@@ -32,8 +32,14 @@ namespace CodeBucket.Views
             _imageView = new UIImageView(new CGRect(new CGPoint(0, 0), this.Frame.Size));
             _imageView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             _imageView.Layer.MasksToBounds = true;
-            _imageView.Layer.CornerRadius = 4.0f;
+
            AddSubview(_imageView);
+        }
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            _imageView.Layer.CornerRadius = Frame.Width / 2;
         }
     }
 }

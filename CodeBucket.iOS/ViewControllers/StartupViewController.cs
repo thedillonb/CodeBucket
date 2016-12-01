@@ -84,7 +84,7 @@ namespace CodeBucket.ViewControllers
 
         private void GoToNewAccount(object o)
         {
-            var vc = new NewAccountViewController();
+            var vc = new LoginViewController();
             var nav = new ThemedNavigationController(vc);
             PresentViewController(nav, true, null);
         }

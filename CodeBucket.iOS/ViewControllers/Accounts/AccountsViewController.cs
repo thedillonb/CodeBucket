@@ -42,7 +42,7 @@ namespace CodeBucket.ViewControllers.Accounts
                     .AddTo(disposable);
 
                 ViewModel.AddAccountCommand
-                    .Subscribe(_ => NavigationController.PushViewController(new NewAccountViewController(), true))
+                         .Subscribe(_ => NavigationController.PushViewController(new LoginViewController(), true))
                     .AddTo(disposable);
                 
                 ViewModel.DismissCommand

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using Akavache;
 using CodeBucket.Core.Services;
 using Splat;
 using SQLite;
@@ -20,6 +23,24 @@ namespace CodeBucket.Data
 
             if (!File.Exists(accountsDbPath))
             {
+                try
+                {
+                    var accs = BlobCache.LocalMachine.GetAllObjects<Core.Data.Account>().ToTask().Result.ToList();
+                    foreach (var a in accs)
+                    {
+                        accounts.Save(a).Wait();
+                    }
+
+                    if (accs.Count > 0)
+                    {
+                        BlobCache.LocalMachine.InvalidateAll().Wait();
+                    }
+                }
+                catch
+                {
+                    // Do nothing.
+                }
+
                 return;
             }
 

@@ -94,7 +94,7 @@
     </IpaPackageName>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchLink>Full</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
     <MtouchExtraArgs>--linkskip=CodeBucketiOS --linkskip=CodeBucket.Core --linkskip=CodeBucket.Client</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
