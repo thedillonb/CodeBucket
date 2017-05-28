@@ -10,6 +10,8 @@ using ReactiveUI;
 using Security;
 using Splat;
 using UIKit;
+using System.Linq;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeBucket
 {
@@ -21,6 +23,9 @@ namespace CodeBucket
     [Register("AppDelegate")]
 	public class AppDelegate : UIApplicationDelegate
 	{
+        private Lazy<IApplicationService> _applicationService =
+            new Lazy<IApplicationService>(() => Locator.Current.GetService<IApplicationService>());
+            
         public override UIWindow Window { get; set; }
 
 		/// <summary>
@@ -103,8 +108,7 @@ namespace CodeBucket
 
         public override void WillEnterForeground(UIApplication application)
         {
-            var applicationService = Locator.Current.GetService<IApplicationService>();
-            applicationService.RefreshToken().ToBackground();
+            _applicationService.Value.RefreshToken().ToBackground();
         }
 
         class CustomHttpMessageHandler : DelegatingHandler
@@ -126,24 +130,19 @@ namespace CodeBucket
 		{
 			if (url == null)
 				return false;
-			var uri = new System.Uri(url.ToString());
 
-//			if (Slideout != null)
-//			{
-//				if (!string.IsNullOrEmpty(uri.Host))
-//				{
-//					string username = uri.Host;
-//					string repo = null;
-//
-//					if (uri.Segments.Length > 1)
-//						repo = uri.Segments[1].Replace("/", "");
-//
-//					if (repo == null)
-//						Slideout.SelectView(new CodeBucket.ViewControllers.ProfileViewController(username));
-//					else
-//						Slideout.SelectView(new CodeBucket.ViewControllers.RepositoryInfoViewController(username, repo, repo));
-//				}
-//			}
+            if (string.Equals(url.Host, "login", StringComparison.OrdinalIgnoreCase))
+            {
+                var code = url.Query.Split('&')
+                   .Select(x => x.Split('='))
+                   .Where(x => string.Equals(x.FirstOrDefault(), "code", StringComparison.OrdinalIgnoreCase))
+                   .Select(x => x.LastOrDefault())
+                   .FirstOrDefault();
+
+                _applicationService
+                    .Value.Login(code).ToObservable()
+                    .Subscribe(_ => MessageBus.Current.SendMessage(new LogoutMessage()));
+            }
 
 			return true;
 		}

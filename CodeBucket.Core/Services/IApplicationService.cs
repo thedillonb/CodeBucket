@@ -19,5 +19,7 @@ namespace CodeBucket.Core.Services
 		void ActivateUser(Account account, BitbucketClient client);
 
         Task RefreshToken();
+
+        Task Login(string code);
     }
 }

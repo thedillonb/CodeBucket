@@ -95,7 +95,9 @@ namespace CodeBucket.Core.ViewModels.App
                 IsLoggingIn = true;
                 Status = "Logging in as " + account.Username;
 
-                var ret = await BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, account.RefreshToken);
+                var ret = await BitbucketClient.GetRefreshToken(
+                    Secrets.ClientId, Secrets.ClientSecret, account.RefreshToken);
+                
                 if (ret == null)
                 {
                     await _alertDialogService.Alert("Error!", "Unable to refresh OAuth token. Please login again.");

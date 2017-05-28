@@ -8,6 +8,8 @@ namespace CodeBucket.Core.Services
 {
     public class ApplicationService : IApplicationService
     {
+        private static string Domain = "bitbucket.org";
+
         private readonly IDefaultValueService _defaultValueService;
         private readonly IAccountsService _accountsService;
         private readonly Timer _timer;
@@ -32,7 +34,9 @@ namespace CodeBucket.Core.Services
                 if (Account == null)
                     return;
                 
-                var ret = await BitbucketClient.GetRefreshToken(LoginViewModel.ClientId, LoginViewModel.ClientSecret, Account.RefreshToken);
+                var ret = await BitbucketClient.GetRefreshToken(
+                    Secrets.ClientId, Secrets.ClientSecret, Account.RefreshToken);
+                
                 if (ret == null)
                     return;
 
@@ -79,6 +83,38 @@ namespace CodeBucket.Core.Services
             Client = client;
             _timer.Stop();
             _timer.Start();
+        }
+
+        public async Task Login(string code)
+        {
+            var ret = await BitbucketClient.GetAuthorizationCode(
+                Secrets.ClientId, Secrets.ClientSecret, code);
+            
+            var client = BitbucketClient.WithBearerAuthentication(ret.AccessToken);
+            var user = await client.Users.GetCurrent();
+
+            var account = await _accountsService.Get(Domain, user.Username);
+            if (account == null)
+            {
+                account = new Account
+                {
+                    Username = user.Username,
+                    AvatarUrl = user.Links.Avatar.Href,
+                    RefreshToken = ret.RefreshToken,
+                    Token = ret.AccessToken
+                };
+
+                await _accountsService.Save(account);
+            }
+            else
+            {
+                account.RefreshToken = ret.RefreshToken;
+                account.Token = ret.AccessToken;
+                account.AvatarUrl = user.Links.Avatar.Href;
+                await _accountsService.Save(account);
+            }
+
+            ActivateUser(account, client);
         }
     }
 }

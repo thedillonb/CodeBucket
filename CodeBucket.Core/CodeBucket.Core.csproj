@@ -69,7 +69,6 @@
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
-    <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\App\PinnedRepositoryItemViewModel.cs" />
@@ -150,6 +149,7 @@
     <Compile Include="ViewModels\Accounts\StashLoginViewModel.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -197,7 +197,10 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
+            <inheritsSet />
+            <inheritsScope />
+          </DotNetNamingPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>
