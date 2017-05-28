@@ -115,7 +115,7 @@
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchExtraArgs>--linkskip=CodeBucketiOS --linkskip=CodeBucket.Core --linkskip=CodeBucket.Client</MtouchExtraArgs>
-    <MtouchLink>Full</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
