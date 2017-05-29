@@ -1,4 +1,5 @@
-﻿using CodeBucket.Core.Utils;
+﻿using System.Reactive;
+using CodeBucket.Core.Utils;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Users
@@ -11,7 +12,7 @@ namespace CodeBucket.Core.ViewModels.Users
 
         public Avatar Avatar { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public UserItemViewModel(string username, string displayName, Avatar avatar)
         {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Views;
 using CodeBucket.Core.ViewModels.App;
 using UIKit;
@@ -15,6 +15,7 @@ using CodeBucket.Core.ViewModels;
 using Splat;
 using CodeBucket.TableViewSources;
 using CodeBucket.Services;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.ViewControllers.Application
 {
@@ -70,15 +71,17 @@ namespace CodeBucket.ViewControllers.Application
                       .Switch()
                       .Subscribe(x =>
                       {
-                          var viewFor = Locator.Current.GetService<IViewLocatorService>().GetView(x);
-                          NavigationController.PushViewController(viewFor as UIViewController, true);
+                          var serv = Locator.Current.GetService<IViewLocatorService>();
+                          //var viewFor = serv.GetView(x);
+                          //NavigationController.PushViewController(viewFor as UIViewController, true);
                       })
                       .AddTo(d);
             });
 
             Appearing
                 .Take(1)
-                .InvokeCommand(this, x => x.ViewModel.LoadCommand);
+                .SelectUnit()
+                .BindCommand(ViewModel.LoadCommand);
         }
 
         private void CreateMenuRoot()
@@ -89,7 +92,7 @@ namespace CodeBucket.ViewControllers.Application
 
             var teamEvents = ViewModel.TeamEvents
                 .Where(_ => ViewModel.ShowTeamEvents)
-                .Select(team => new MenuElement(team.Name, team.GoToCommand.ExecuteIfCan, AtlassianIcon.Blogroll.ToImage()));
+                .Select(team => new MenuElement(team.Name, team.GoToCommand, AtlassianIcon.Blogroll.ToImage()));
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(ViewModel.Username, ViewModel.GoToMyEvents, AtlassianIcon.Blogroll.ToImage()));
@@ -174,19 +177,19 @@ namespace CodeBucket.ViewControllers.Application
 
 		private class PinnedRepoElement : MenuElement
 		{
-            public IReactiveCommand<object> DeleteCommand { get; }
+            public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
             public PinnedRepoElement(PinnedRepositoryItemViewModel viewModel)
                 : base(viewModel.Name, Images.RepoPlaceholder, viewModel.Avatar.ToUri())
 			{
-                Clicked.InvokeCommand(viewModel.GoToCommand);
+                Clicked.SelectUnit().BindCommand(viewModel.GoToCommand);
                 DeleteCommand = viewModel.DeleteCommand;
 			}
 		}
 
 		private void DeletePinnedRepo(PinnedRepoElement el)
 		{
-            el.DeleteCommand.ExecuteIfCan();
+            el.DeleteCommand.ExecuteNow();
 
 			if (_favoriteRepoSection.Elements.Count == 1)
 			{
@@ -209,7 +212,7 @@ namespace CodeBucket.ViewControllers.Application
         {
             base.ViewWillAppear(animated);
             UpdateProfilePicture();
-            ViewModel.RefreshCommand.ExecuteIfCan();
+            ViewModel.RefreshCommand.ExecuteNow();
             CreateMenuRoot();
         }
 

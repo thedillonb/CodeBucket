@@ -35,7 +35,7 @@ namespace CodeBucket.ViewControllers.Source
                 .Subscribe(x => _titleView.SetTitles(x.Item1, x.Item2));
 
             this.WhenAnyValue(x => x.ViewModel.BinaryFilePath)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Subscribe(x => LoadFile(x));
 
             this.WhenAnyValue(x => x.ViewModel.Comments)

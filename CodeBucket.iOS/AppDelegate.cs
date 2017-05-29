@@ -12,6 +12,7 @@ using Splat;
 using UIKit;
 using System.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace CodeBucket
 {
@@ -133,26 +134,42 @@ namespace CodeBucket
 
             if (string.Equals(url.Host, "login", StringComparison.OrdinalIgnoreCase))
             {
-                var code = url.Query.Split('&')
-                   .Select(x => x.Split('='))
-                   .Where(x => string.Equals(x.FirstOrDefault(), "code", StringComparison.OrdinalIgnoreCase))
-                   .Select(x => x.LastOrDefault())
-                   .FirstOrDefault();
+                var queries = url
+                    .Query.Split('&')
+                    .Select(x => x.Split('='))
+                    .ToDictionary(x => x.FirstOrDefault(), x => x.LastOrDefault(), StringComparer.OrdinalIgnoreCase);
 
-                _applicationService
-                    .Value.Login(code).ToObservable()
-                    .Subscribe(_ => MessageBus.Current.SendMessage(new LogoutMessage()));
+                var showError = new Action<string>(msg => AlertDialogService.ShowAlert(
+                    "Error",
+                    $"There was a problem attempting to login: {msg}."));
+
+                if (queries.TryGetValue("code", out string code))
+                {
+                    _applicationService
+                        .Value.Login(code).ToObservable()
+                        .Select(_ => new LogoutMessage())
+                        .Subscribe(x => MessageBus.Current.SendMessage(x),
+                                   err => showError(err.Message));
+                }
+                else if (queries.TryGetValue("error", out string error))
+                {
+                    var errorDescription = "unknown error";
+                    if (error == "access_denied")
+                        errorDescription = "access denied";
+
+                    showError(errorDescription);
+                }
             }
 
 			return true;
 		}
-
 
         private void GoToStartupView()
         {
             var startup = new ViewControllers.StartupViewController();
             TransitionToViewController(startup);
             MessageBus.Current.Listen<LogoutMessage>()
+                      .ObserveOn(RxApp.MainThreadScheduler)
                       .Subscribe(_ => startup.DismissViewController(true, null));
         }
 

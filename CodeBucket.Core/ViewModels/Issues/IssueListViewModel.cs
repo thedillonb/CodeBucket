@@ -21,7 +21,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public IReadOnlyReactiveList<IssueItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadMoreCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
 
         private string _searchText;
         public string SearchText
@@ -117,9 +117,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             int startPage = 0;
             HasMoreIssues = true;
 
-            LoadMoreCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.HasMoreIssues),
-                async _ =>
+            LoadMoreCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 var search = new LinkedList<Tuple<string, string>>();
                 if (_filter != null)
@@ -155,7 +153,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 startPage += x.Issues.Count;
                 issues.AddRange(x.Issues);
                 HasMoreIssues = !(startPage == x.Count);
-            });
+            }, this.WhenAnyValue(x => x.HasMoreIssues));
 
             LoadMoreCommand.IsExecuting.CombineLatest(issues.IsEmptyChanged, (x, y) => !x && y)
                 .ToProperty(this, x => x.IsEmpty, out _isEmpty);

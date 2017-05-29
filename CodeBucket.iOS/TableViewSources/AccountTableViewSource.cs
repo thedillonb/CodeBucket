@@ -27,7 +27,7 @@ namespace CodeBucket.TableViewSources
         public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
         {
             var vm = ItemAt(indexPath) as AccountItemViewModel;
-            vm?.DeleteCommand.ExecuteIfCan();
+            vm?.DeleteCommand.ExecuteNow();
         }
     }
 }

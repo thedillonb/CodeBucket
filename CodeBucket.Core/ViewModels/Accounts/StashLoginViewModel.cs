@@ -43,16 +43,17 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public string TwoFactor { get; set; }
 
-        public IReactiveCommand<Unit> LoginCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoginCommand { get; }
 
         public StashLoginViewModel(IApplicationService application = null)
         {
             _application = application ?? Locator.Current.GetService<IApplicationService>();
 
-            LoginCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Username, x => x.Password)
-                .Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2)),
-                _ => Login());
+            var canLogin = this
+                .WhenAnyValue(x => x.Username, x => x.Password)
+                .Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2));
+            
+            LoginCommand = ReactiveCommand.CreateFromTask(Login, canLogin);
         }
 
         private async Task Login()

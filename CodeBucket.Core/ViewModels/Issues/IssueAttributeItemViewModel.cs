@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using System.Reactive;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -13,7 +14,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
         public string Name { get; }
 
-        public IReactiveCommand<object> SelectCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> SelectCommand { get; } = ReactiveCommandFactory.Empty();
 
         public IssueAttributeItemViewModel(string name, bool selected = false)
         {

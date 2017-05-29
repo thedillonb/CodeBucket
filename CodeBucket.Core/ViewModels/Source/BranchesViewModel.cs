@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Commits;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -14,7 +14,7 @@ namespace CodeBucket.Core.ViewModels.Source
     {
         public IReadOnlyReactiveList<GitReferenceItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private string _searchText;
         public string SearchText
@@ -62,7 +62,7 @@ namespace CodeBucket.Core.ViewModels.Source
                 x => x.Branch.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 branches.Clear();
                 var items = await applicationService.Client.Repositories.GetBranches(username, repository);

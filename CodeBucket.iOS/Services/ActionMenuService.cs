@@ -69,14 +69,14 @@ namespace CodeBucket.Services
         private class ActionMenu : IActionMenu
         {
             private readonly string _title;
-            private readonly IList<Tuple<string, IReactiveCommand>> _buttonActions = new List<Tuple<string, IReactiveCommand>>();
+            private readonly IList<Tuple<string, Action<object>>> _buttonActions = new List<Tuple<string, Action<object>>>();
 
             public ActionMenu(string title)
             {
                 _title = title;
             }
 
-            public void AddButton(string title, IReactiveCommand command)
+            public void AddButton(string title, Action<object> command)
             {
                 _buttonActions.Add(Tuple.Create(title, command));
             }
@@ -93,7 +93,7 @@ namespace CodeBucket.Services
                 foreach (var b in _buttonActions)
                 {
                     sheet.AddAction(UIAlertAction.Create(b.Item1, UIAlertActionStyle.Default, x => {
-                        b.Item2.ExecuteIfCan(sender);
+                        b.Item2.Invoke(sender);
                         cleanup(x);
                     }));
                 }

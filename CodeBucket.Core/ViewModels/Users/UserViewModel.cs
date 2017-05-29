@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
@@ -34,19 +34,19 @@ namespace CodeBucket.Core.ViewModels.Users
         private readonly ObservableAsPropertyHelper<bool> _isWebsiteAvailable;
         public bool IsWebsiteAvailable => _isWebsiteAvailable.Value;
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToFollowersCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToFollowingCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToEventsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToGroupsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToWebsiteCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToWebsiteCommand { get; }
 
         public UserViewModel(User user, IApplicationService applicationService = null)
             : this(user.Username, applicationService)
@@ -72,14 +72,15 @@ namespace CodeBucket.Core.ViewModels.Users
                 .Select(x => string.Equals(x, username) ? null : x)
                 .ToProperty(this, x => x.DisplayName, out _displayName);
 
-            GoToWebsiteCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.IsWebsiteAvailable));
-            GoToWebsiteCommand.Subscribe(_ => NavigateTo(new WebBrowserViewModel(User.Website)));
+            GoToWebsiteCommand = ReactiveCommand.Create(
+                () => NavigateTo(new WebBrowserViewModel(User.Website)),
+                this.WhenAnyValue(x => x.IsWebsiteAvailable));
 
             ShouldShowGroups = string.Equals(username, applicationService.Account.Username, StringComparison.OrdinalIgnoreCase);
 
             Title = username;
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => 
+            LoadCommand = ReactiveCommand.CreateFromTask(async t => 
             {
                 if (!string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase))
                 {

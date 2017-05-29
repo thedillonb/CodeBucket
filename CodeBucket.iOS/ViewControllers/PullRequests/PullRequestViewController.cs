@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
@@ -89,7 +89,7 @@ namespace CodeBucket.ViewControllers.PullRequests
                 .Subscribe(x => split1.Button1.Text = x);
 
             var commitsElement = new ButtonElement("Commits", AtlassianIcon.Devtoolscommit.ToImage());
-            commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
+            commitsElement.Clicked.SelectUnit().BindCommand(ViewModel.GoToCommitsCommand);
             secDetails.Add(commitsElement);
 
             var mergeElement = new ButtonElement("Merge", AtlassianIcon.ListAdd.ToImage());
@@ -151,7 +151,8 @@ namespace CodeBucket.ViewControllers.PullRequests
             {
                 mergeElement
                     .Clicked
-                    .InvokeCommand(this, x => x.ViewModel.MergeCommand)
+                    .SelectUnit()
+                    .BindCommand(this, x => x.ViewModel.MergeCommand)
                     .AddTo(disposable);
 
                 addComment

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using CodeBucket.Core.Services;
 using ReactiveUI;
@@ -13,9 +13,9 @@ namespace CodeBucket.Core.ViewModels.Source
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+        public ReactiveCommand<object, Unit> ShowMenuCommand { get; }
 
         public bool IsMarkdown { get; }
 
@@ -40,7 +40,7 @@ namespace CodeBucket.Core.ViewModels.Source
             protected set { this.RaiseAndSetIfChanged(ref _htmlUrl, value); }
         }
 
-        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToHtmlUrlCommand { get; }
 
         public SourceViewModel(
             string username, string repository, string branch, string path,
@@ -50,12 +50,8 @@ namespace CodeBucket.Core.ViewModels.Source
             actionMenuService = actionMenuService ?? Locator.Current.GetService<IActionMenuService>();
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(
-                this.WhenAnyValue(x => x.HtmlUrl)
-                .Select(x => !string.IsNullOrEmpty(x)));
-
-            GoToHtmlUrlCommand
-                .Select(_ => new WebBrowserViewModel(HtmlUrl))
-                .Subscribe(NavigateTo);
+                () => NavigateTo(new WebBrowserViewModel(HtmlUrl)),
+                this.WhenAnyValue(x => x.HtmlUrl).Select(x => !string.IsNullOrEmpty(x)));
 
             //Create the filename
             var fileName = Path.GetFileName(path);
@@ -71,23 +67,17 @@ namespace CodeBucket.Core.ViewModels.Source
             var canExecute = this.WhenAnyValue(x => x.HtmlUrl).Select(x => x != null);
             var canOpen = this.WhenAnyValue(x => x.FilePath).Select(x => x != null);
 
-            var openInCommand = ReactiveCommand.Create(canOpen);
-            openInCommand.Subscribe(x => actionMenuService.OpenIn(x, FilePath));
-
-            var shareCommand = ReactiveCommand.Create(canExecute);
-            shareCommand.Subscribe(x => actionMenuService.ShareUrl(x, HtmlUrl));
-
             var canShow = Observable.CombineLatest(canExecute, canOpen, (x, y) => x && y);
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShow, sender =>
+            ShowMenuCommand = ReactiveCommand.CreateFromTask<object>(sender =>
             {
                 var menu = actionMenuService.Create();
-                menu.AddButton("Open In", openInCommand);
-                menu.AddButton("Share", shareCommand);
-                menu.AddButton("Show in Bitbucket", GoToHtmlUrlCommand);
+                menu.AddButton("Open In", x => actionMenuService.OpenIn(x, FilePath));
+                menu.AddButton("Share", x => actionMenuService.ShareUrl(x, HtmlUrl));
+                menu.AddButton("Show in Bitbucket", _ => GoToHtmlUrlCommand.ExecuteNow());
                 return menu.Show(sender);
-            });
+            }, canShow);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(fileName));
 

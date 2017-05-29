@@ -17,11 +17,11 @@ namespace CodeBucket.Core.ViewModels.Comments
             set { this.RaiseAndSetIfChanged(ref _text, value); }
         }
 
-        public IReactiveCommand<Unit> DoneCommand { get; }
+        public ReactiveCommand<Unit, Unit> DoneCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DismissCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<Unit> DiscardCommand { get; }
+        public ReactiveCommand<Unit, Unit> DiscardCommand { get; }
 
         public NewCommentViewModel(
             Func<string, Task> doneAction,
@@ -29,16 +29,14 @@ namespace CodeBucket.Core.ViewModels.Comments
         {
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            DoneCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Text).Select(x => x?.Length > 0),
-                async _ =>
-                {
-                    await doneAction(Text);
-                    DismissCommand.ExecuteIfCan();
-                    Text = string.Empty;
-                });
+            DoneCommand = ReactiveCommand.CreateFromTask(async _ =>
+            {
+                await doneAction(Text);
+                DismissCommand.ExecuteNow();
+                Text = string.Empty;
+            }, this.WhenAnyValue(x => x.Text).Select(x => x?.Length > 0));
 
-            DiscardCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            DiscardCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 if (Text?.Length > 0)
                 {
@@ -49,7 +47,7 @@ namespace CodeBucket.Core.ViewModels.Comments
                 }
 
                 Text = string.Empty;
-                DismissCommand.ExecuteIfCan();
+                DismissCommand.ExecuteNow();
             });
         }
     }

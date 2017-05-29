@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.Services;
 using System;
@@ -42,23 +42,23 @@ namespace CodeBucket.Core.ViewModels.Issues
         private readonly ObservableAsPropertyHelper<string> _assigned;
         public string Assigned => _assigned.Value;
 
-        public IReactiveCommand<object> GoToAssigneeCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToAssigneeCommand { get; }
 
-        public IReactiveCommand<object> GoToEditCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToEditCommand { get; }
 
-        public IReactiveCommand<Unit> DeleteCommand { get; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowMenuCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DismissCommand { get; } = ReactiveCommandFactory.Empty();
 
         public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
-        public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<string, Unit> GoToWebCommand { get; }
 
-        public IReactiveCommand<object> GoToReporterCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToReporterCommand { get; } = ReactiveCommandFactory.Empty();
 
         public NewCommentViewModel NewCommentViewModel { get; }
 
@@ -88,31 +88,20 @@ namespace CodeBucket.Core.ViewModels.Issues
             Repository = repository;
             IssueId = issueId;
 
-            GoToWebCommand
-                .OfType<string>()
-                .Select(x => new WebBrowserViewModel(x))
-                .Subscribe(NavigateTo);
+            GoToWebCommand = ReactiveCommand.Create<string>(
+                url => NavigateTo(new WebBrowserViewModel(url)));
 
             GoToReporterCommand = ReactiveCommand.Create(
+                () => NavigateTo(new UserViewModel(Issue.ReportedBy.Username)),
                 this.WhenAnyValue(x => x.Issue.ReportedBy.Username).Select(x => x != null));
             
-            GoToReporterCommand
-                .Select(_ => new UserViewModel(Issue.ReportedBy.Username))
-                .Subscribe(NavigateTo);
-
             GoToAssigneeCommand = ReactiveCommand.Create(
+                () => NavigateTo(new UserViewModel(Issue.Responsible.Username)),
                 this.WhenAnyValue(x => x.Issue.Responsible.Username).Select(x => x != null));
             
-            GoToAssigneeCommand
-                .Select(_ => new UserViewModel(Issue.Responsible.Username))
-                .Subscribe(NavigateTo);
-
             GoToEditCommand = ReactiveCommand.Create(
+                () => NavigateTo(new IssueEditViewModel(username, repository, Issue)),
                 this.WhenAnyValue(x => x.Issue).Select(x => x != null));
-
-            GoToEditCommand
-                .Select(_ => new IssueEditViewModel(username, repository, Issue))
-                .Subscribe(NavigateTo);
 
             this.WhenAnyValue(x => x.Issue)
                 .Select(x => x?.Responsible?.Username ?? "Unassigned")
@@ -132,14 +121,14 @@ namespace CodeBucket.Core.ViewModels.Issues
                     x.UtcCreatedOn.Humanize(),
                     markdownService.ConvertMarkdown(x.Content)));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+            LoadCommand = ReactiveCommand.CreateFromTask(async t => {
                 var issueTask = applicationService.Client.Issues.Get(username, repository, issueId);
                 applicationService.Client.Issues.GetComments(username, repository, issueId)
                                   .ToBackground(x => _comments.Reset(x.Where(y => !string.IsNullOrEmpty(y.Content))));
                 Issue = await issueTask;
             });
 
-            DeleteCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            DeleteCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 try
                 {
@@ -150,7 +139,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                     {
                         await applicationService.Client.Issues.Delete(username, repository, Issue.LocalId);
                         messageService.Send(new IssueDeleteMessage(Issue));
-                        DismissCommand.ExecuteIfCan();
+                        DismissCommand.ExecuteNow();
                     }
                 }
                 catch (Exception e)
@@ -159,11 +148,11 @@ namespace CodeBucket.Core.ViewModels.Issues
                 }
             });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            ShowMenuCommand = ReactiveCommand.CreateFromTask(sender =>
             {
                 var menu = actionMenuService.Create();
-                menu.AddButton("Edit", GoToEditCommand);
-                menu.AddButton("Delete", DeleteCommand);
+                menu.AddButton("Edit", _ => GoToEditCommand.ExecuteNow());
+                menu.AddButton("Delete", _ => DeleteCommand.ExecuteNow());
                 return menu.Show(sender);
             });
 

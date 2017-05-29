@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive;
 using CodeBucket.Core.Utils;
 using ReactiveUI;
 
@@ -21,7 +22,7 @@ namespace CodeBucket.Core.ViewModels.Events
 
         public string CreatedOn { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public EventItemViewModel(Avatar avatar, string eventType, string createdOn)
         {

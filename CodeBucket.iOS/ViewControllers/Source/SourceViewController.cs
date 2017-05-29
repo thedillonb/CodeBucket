@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Source;
@@ -22,11 +22,12 @@ namespace CodeBucket.ViewControllers.Source
             {
                 _actionButton
                     .GetClickedObservable()
-                    .InvokeCommand(ViewModel.ShowMenuCommand)
+                    .Select(x => (object)x)
+                    .BindCommand(ViewModel.ShowMenuCommand)
                     .AddTo(disposable);
 
                 this.WhenAnyValue(x => x.ViewModel.FilePath)
-                    .IsNotNull()
+                    .Where(x => x != null)
                     .Subscribe(Load)
                     .AddTo(disposable);
             });

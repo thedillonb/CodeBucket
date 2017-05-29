@@ -1,4 +1,4 @@
-using UIKit;
+﻿using UIKit;
 using CodeBucket.Core.ViewModels.Users;
 using ReactiveUI;
 using CodeBucket.TableViewCells;
@@ -24,7 +24,7 @@ namespace CodeBucket.DialogElements
         public override void Selected(UITableView tableView, Foundation.NSIndexPath path)
         {
             base.Selected(tableView, path);
-            _viewModel.GoToCommand.ExecuteIfCan();
+            _viewModel.GoToCommand.ExecuteNow();
         }
     }
 }

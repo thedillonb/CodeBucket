@@ -2,22 +2,23 @@
 using ReactiveUI;
 using UIKit;
 using System.Reactive.Disposables;
+using System.Reactive;
 
 namespace CodeBucket.DialogElements
 {
     public static class ElementExtensions
     {
-        public static IDisposable BindLoader<T>(this LoaderButtonElement @this, IReactiveCommand<T> cmd)
+        public static IDisposable BindLoader<T>(this LoaderButtonElement @this, ReactiveCommand<Unit, T> cmd)
         {
-            var invoke = @this.Clicked.InvokeCommand(cmd);
-            var canExecute = cmd.CanExecuteObservable.Subscribe(x => @this.Enabled = x);
+            var invoke = @this.Clicked.SelectUnit().BindCommand(cmd);
+            var canExecute = cmd.CanExecute.Subscribe(x => @this.Enabled = x);
             var isExecuting = cmd.IsExecuting.Subscribe(x => @this.IsLoading = x);
             return new CompositeDisposable(isExecuting, invoke, canExecute);
         }
 
-        public static IDisposable BindClick<T>(this ButtonElement @this, IReactiveCommand<T> cmd)
+        public static IDisposable BindClick(this ButtonElement @this, ReactiveCommand<Unit, Unit> cmd)
         {
-            return @this.Clicked.InvokeCommand(cmd);
+            return @this.Clicked.SelectUnit().BindCommand(cmd);
         }
 
         public static IDisposable BindCaption<T>(this StringElement stringElement, IObservable<T> caption)

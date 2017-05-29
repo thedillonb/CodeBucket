@@ -1,4 +1,5 @@
-﻿using CodeBucket.Core.Data;
+﻿using System.Reactive;
+using CodeBucket.Core.Data;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Accounts
@@ -18,9 +19,9 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
         public string Domain { get; }
 
-        public IReactiveCommand<object> DeleteCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; } = ReactiveCommand.Create(() => { });
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommand.Create(() => { });
 
         internal AccountItemViewModel(Account account)
         {

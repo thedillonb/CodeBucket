@@ -1,4 +1,4 @@
-using CodeBucket.Core.ViewModels.Wiki;
+﻿using CodeBucket.Core.ViewModels.Wiki;
 using UIKit;
 using System.Threading.Tasks;
 using WebKit;
@@ -27,7 +27,8 @@ namespace CodeBucket.ViewControllers.Wikis
             {
                 actionButton
                     .GetClickedObservable()
-                    .InvokeCommand(this, x => x.ViewModel.ShowMenuCommand)
+                    .SelectUnit()
+                    .BindCommand(this, x => x.ViewModel.ShowMenuCommand)
                     .AddTo(disposable);
             });
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Views;
 using UIKit;
@@ -33,7 +33,8 @@ namespace CodeBucket.ViewControllers.Repositories
             {
                 actionButton
                     .GetClickedObservable()
-                    .InvokeCommand(this, x => x.ViewModel.ShowMenuCommand)
+                    .SelectUnit()
+                    .BindCommand(this, x => x.ViewModel.ShowMenuCommand)
                     .AddTo(disposable);
 
                 this.WhenAnyValue(x => x.ViewModel.ContentText)

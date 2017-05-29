@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using CodeBucket.Client;
 using CodeBucket.Core.Services;
 using CodeBucket.DialogElements;
@@ -13,7 +14,7 @@ namespace CodeBucket.ViewControllers.PullRequests
     public class PullRequestApproveViewController : TableViewController
     {
         private readonly Lazy<RootElement> _root;
-        public IReactiveCommand<PullRequest> MergeCommand { get; }
+        public ReactiveCommand<Unit, PullRequest> MergeCommand { get; }
 
         private string _message;
         public string Message
@@ -41,7 +42,7 @@ namespace CodeBucket.ViewControllers.PullRequests
 
             Title = "Approve";
 
-            MergeCommand = ReactiveCommand.CreateAsyncTask(t =>
+            MergeCommand = ReactiveCommand.CreateFromTask(t =>
             {
                 return applicationService.Client.PullRequests.Merge(
                     username, repository, pullRequestId, Message, DeleteSourceBranch);
@@ -54,12 +55,13 @@ namespace CodeBucket.ViewControllers.PullRequests
 
             OnActivation(d =>
             {
-                this.WhenAnyObservable(x => x.MergeCommand.CanExecuteObservable)
+                this.WhenAnyObservable(x => x.MergeCommand.CanExecute)
                     .Subscribe(x => merge.Enabled = x)
                     .AddTo(d);
 
                 merge.GetClickedObservable()
-                     .InvokeCommand(this, x => x.MergeCommand)
+                     .SelectUnit()
+                     .BindCommand(this, x => x.MergeCommand)
                      .AddTo(d);
             });
         }

@@ -1,4 +1,4 @@
-using CodeBucket.Core.ViewModels.Issues;
+﻿using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.TableViewSources;
 using ReactiveUI;
@@ -68,14 +68,15 @@ namespace CodeBucket.ViewControllers.Issues
 
                 addButton
                     .GetClickedObservable()
-                    .InvokeCommand(ViewModel.GoToNewIssueCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.GoToNewIssueCommand)
                     .AddTo(disposable);
 
                 this.WhenAnyValue(x => x.TableViewSource)
                     .Select(x => x.RequestMore)
                     .Switch()
                     .Where(x => ViewModel.Issues.HasMoreIssues)
-                    .Subscribe(x => ViewModel.Issues.LoadMoreCommand.ExecuteIfCan())
+                    .Subscribe(x => ViewModel.Issues.LoadMoreCommand.ExecuteNow())
                     .AddTo(disposable);
 
                 viewSegment

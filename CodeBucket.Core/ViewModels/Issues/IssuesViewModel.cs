@@ -1,10 +1,11 @@
-using System.Linq;
+﻿using System.Linq;
 using System;
 using CodeBucket.Core.Services;
 using Splat;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeBucket.Core.Filters;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Issues
 {
@@ -21,7 +22,7 @@ namespace CodeBucket.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _listViewModel, value); }
         }
 
-        public IReactiveCommand<object> GoToNewIssueCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToNewIssueCommand { get; } = ReactiveCommandFactory.Empty();
 
         private int _selectedFilter;
         public int SelectedFilter
@@ -67,7 +68,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 
             this.WhenAnyValue(x => x.Filter)
                 .Select(x => new IssueListViewModel(username, repository, x))
-                .Do(x => x.LoadMoreCommand.ExecuteIfCan())
+                .Do(x => x.LoadMoreCommand.ExecuteNow())
                 .Subscribe(x => Issues = x);
 
             this.WhenAnyValue(x => x.Issues)

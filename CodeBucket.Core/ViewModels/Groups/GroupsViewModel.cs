@@ -1,4 +1,4 @@
-using System;
+﻿﻿using System;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -13,7 +13,7 @@ namespace CodeBucket.Core.ViewModels.Groups
 	{
         public IReadOnlyReactiveList<GroupItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private string _searchText;
         public string SearchText
@@ -39,7 +39,7 @@ namespace CodeBucket.Core.ViewModels.Groups
                 x => x.Name.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+            LoadCommand = ReactiveCommand.CreateFromTask(async t => {
                 groups.Reset(await applicationService.Client.Groups.GetGroups(username));
             });
 

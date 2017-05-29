@@ -1,4 +1,5 @@
-﻿using CodeBucket.Client.V1;
+﻿using System.Reactive;
+using CodeBucket.Client.V1;
 using Humanizer;
 using ReactiveUI;
 
@@ -6,7 +7,7 @@ namespace CodeBucket.Core.ViewModels.Issues
 {
     public class IssueItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public string Title { get; }
 

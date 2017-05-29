@@ -2,6 +2,7 @@
 using UIKit;
 using CoreGraphics;
 using ReactiveUI;
+using System.Reactive;
 
 namespace CodeBucket.DialogElements
 {
@@ -22,10 +23,10 @@ namespace CodeBucket.DialogElements
             }
         }
 
-        public MenuElement(string title, IReactiveCommand command, UIImage image, Uri imageUrl = null)
+        public MenuElement(string title, ReactiveCommand<Unit, Unit> command, UIImage image, Uri imageUrl = null)
             : this(title, image, imageUrl)
         {
-            Clicked.InvokeCommand(command);
+            Clicked.SelectUnit().BindCommand(command);
         }
 
         public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) 

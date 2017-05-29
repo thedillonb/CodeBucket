@@ -17,7 +17,6 @@ public static class TaskExtensions
         return task.ToObservable().Timeout(timeout).ToTask();
     }
 
-
     public static Task OnSuccess<T>(this Task<T> task, Action<T> action)
     {
         return task.ToObservable()
@@ -30,21 +29,26 @@ public static class TaskExtensions
     {
         return task.ToObservable()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(action, e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
+            .Subscribe(action, HandleError);
     }
 
     public static IDisposable ToBackground<T>(this Task<T> task)
     {
         return task.ToObservable()
             .ObserveOn (RxApp.MainThreadScheduler)
-            .Subscribe(a => {}, e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
+            .Subscribe(a => {}, HandleError);
     }
 
     public static IDisposable ToBackground(this Task task)
     {
         return task.ToObservable()
             .ObserveOn (RxApp.MainThreadScheduler)
-            .Subscribe(a => {}, e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
+            .Subscribe(a => {}, HandleError);
+    }
+
+    private static void HandleError(Exception e)
+    {
+        System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message);
     }
 }
 

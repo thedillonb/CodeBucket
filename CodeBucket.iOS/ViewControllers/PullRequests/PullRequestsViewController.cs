@@ -1,4 +1,4 @@
-using CodeBucket.Core.ViewModels.PullRequests;
+﻿using CodeBucket.Core.ViewModels.PullRequests;
 using UIKit;
 using System;
 using CodeBucket.Views;
@@ -49,7 +49,7 @@ namespace CodeBucket.ViewControllers.PullRequests
                     .Select(x => x.RequestMore)
                     .Switch()
                     .Where(x => ViewModel.PullRequests.HasMoreItems)
-                    .Subscribe(x => ViewModel.PullRequests.LoadMoreCommand.ExecuteIfCan())
+                    .Subscribe(x => ViewModel.PullRequests.LoadMoreCommand.ExecuteNow())
                     .AddTo(disposable);
                 
                 viewSegment.GetChangedObservable()

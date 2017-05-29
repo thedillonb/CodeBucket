@@ -17,9 +17,12 @@ namespace CodeBucket.Services
 
             locator.RegisterLazySingleton(() => new DefaultValueService(), typeof(IDefaultValueService));
 
-            locator.RegisterLazySingleton(() => new MarkdownService(), typeof(IMarkdownService));
+            //locator.RegisterLazySingleton(() => new MarkdownService(), typeof(IMarkdownService));
+            locator.RegisterConstant(new MarkdownService(), typeof(IMarkdownService));
 
-            locator.RegisterLazySingleton(() => new ViewLocatorService(), typeof(IViewLocatorService));
+            //locator.RegisterLazySingleton(() => new ViewLocatorService(), typeof(IViewLocatorService));
+
+            locator.RegisterConstant(new ViewLocatorService(), typeof(IViewLocatorService));
 
             locator.RegisterLazySingleton(() => new LoadingIndicatorService(), typeof(ILoadingIndicatorService));
 

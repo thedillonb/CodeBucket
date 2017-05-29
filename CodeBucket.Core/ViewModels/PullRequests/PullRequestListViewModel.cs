@@ -20,7 +20,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReadOnlyReactiveList<PullRequestItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadMoreCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
 
         private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         public bool IsEmpty => _isEmpty.Value;
@@ -69,25 +69,23 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             string nextPage = null;
             HasMoreItems = true;
 
-            LoadMoreCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.HasMoreItems),
-                async _ =>
+            LoadMoreCommand = ReactiveCommand.CreateFromTask(async _ =>
+            {
+                if (nextPage == null)
                 {
-                    if (nextPage == null)
-                    {
-                        var x = await applicationService.Client.PullRequests.GetAll(username, repository, state);
-                        pullRequests.Reset(x.Values);
-                        nextPage = x.Next;
-                    }
-                    else
-                    {
-                        var x = await applicationService.Client.Get<Collection<PullRequest>>(nextPage);
-                        pullRequests.AddRange(x.Values);
-                        nextPage = x.Next;
-                    }
+                    var x = await applicationService.Client.PullRequests.GetAll(username, repository, state);
+                    pullRequests.Reset(x.Values);
+                    nextPage = x.Next;
+                }
+                else
+                {
+                    var x = await applicationService.Client.Get<Collection<PullRequest>>(nextPage);
+                    pullRequests.AddRange(x.Values);
+                    nextPage = x.Next;
+                }
 
-                    HasMoreItems = nextPage != null;
-                });
+                HasMoreItems = nextPage != null;
+            }, this.WhenAnyValue(x => x.HasMoreItems));
 
             LoadMoreCommand.IsExecuting.CombineLatest(pullRequests.IsEmptyChanged, (x, y) => !x && y)
                 .ToProperty(this, x => x.IsEmpty, out _isEmpty);

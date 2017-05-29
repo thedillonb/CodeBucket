@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -45,19 +45,19 @@ namespace CodeBucket.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _priority, value); }
 		}
 
-        public IReactiveCommand<object> GoToMilestonesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToMilestonesCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToVersionsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToVersionsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToComponentsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToComponentsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToAssigneeCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToAssigneeCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DismissCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<Unit> DiscardCommand { get; }
+        public ReactiveCommand<Unit, Unit> DiscardCommand { get; }
 
-        public IReactiveCommand<Unit> SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         public string Username { get; }
 
@@ -75,15 +75,15 @@ namespace CodeBucket.Core.ViewModels.Issues
             Milestones = new IssueMilestonesViewModel(username, repository);
             Versions = new IssueVersionsViewModel(username, repository);
             Components = new IssueComponentsViewModel(username, repository);
-            Assignee = new IssueAssigneeViewModel(username, repository); 
+            Assignee = new IssueAssigneeViewModel(username, repository);
 
-            SaveCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.IssueTitle).Select(y => !string.IsNullOrEmpty(y)),
-                t => Save());
+            SaveCommand = ReactiveCommand.CreateFromTask(
+                t => Save(),
+                this.WhenAnyValue(x => x.IssueTitle).Select(y => !string.IsNullOrEmpty(y)));
 
-            SaveCommand.InvokeCommand(DismissCommand);
+            SaveCommand.BindCommand(DismissCommand);
 
-            DiscardCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            DiscardCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 if (Content?.Length > 0 || IssueTitle?.Length > 0)
                 {
@@ -93,7 +93,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                         return;
                 }
 
-                DismissCommand.ExecuteIfCan();
+                DismissCommand.ExecuteNow();
             });
         }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Events;
@@ -63,35 +63,35 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _issues, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToOwnerCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToOwnerCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToForkParentCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToForkParentCommand { get; }
 
-        public IReactiveCommand<object> GoToStargazersCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToStargazersCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToEventsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToIssuesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToIssuesCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToPullRequestsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToPullRequestsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToWikiCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToWikiCommand { get; }
 
-        public IReactiveCommand<object> GoToCommitsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommitsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToSourceCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToSourceCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToBranchesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToBranchesCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToWebsiteCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToWebsiteCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowMenuCommand { get; }
 
-        public IReactiveCommand<object> GoToReadmeCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToReadmeCommand { get; }
 
-        public IReactiveCommand<Unit> ForkCommand { get; }
+        public ReactiveCommand<Unit, Unit> ForkCommand { get; }
 
         public RepositoryViewModel(
             string username, string repositoryName, Repository repository = null,
@@ -110,7 +110,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 .StartWith(repositoryName)
                 .Subscribe(x => Title = x);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ => {
                 Repository = await applicationService.Client.Repositories.Get(username, repositoryName);
 
                 _applicationService.Client.Repositories.GetWatchers(username, repositoryName)
@@ -133,31 +133,28 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 LoadReadme(username, repositoryName).ToBackground();
             });
 
-            ForkCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+            ForkCommand = ReactiveCommand.CreateFromTask(async _ => {
                 var fork = await applicationService.Client.Repositories.Fork(username, repositoryName);
                 NavigateTo(new RepositoryViewModel(fork.Owner, fork.Slug));
             });
 
             var canGoToFork = this.WhenAnyValue(x => x.Repository).Select(x => x.Parent != null);
-            GoToForkParentCommand = ReactiveCommand.Create(canGoToFork);
-            GoToForkParentCommand
-                .Select(_ => RepositoryIdentifier.FromFullName(Repository.Parent.FullName))
-                .Select(x => new RepositoryViewModel(x.Owner, x.Name))
-                .Subscribe(NavigateTo);
+            GoToForkParentCommand = ReactiveCommand.Create(() => {
+                var id = RepositoryIdentifier.FromFullName(Repository.Parent.FullName);
+                NavigateTo(new RepositoryViewModel(id.Owner, id.Name));
+            }, canGoToFork);
 
-            GoToReadmeCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.HasReadme));
-            GoToReadmeCommand
-                .Select(_ => new ReadmeViewModel(username, repositoryName, _readmeFilename))
-                .Subscribe(NavigateTo);
+            GoToReadmeCommand = ReactiveCommand.Create(
+                () => NavigateTo(new ReadmeViewModel(username, repositoryName, _readmeFilename)),
+                this.WhenAnyValue(x => x.HasReadme));
 
             GoToPullRequestsCommand
                 .Select(_ => new PullRequestsViewModel(username, repositoryName))
                 .Subscribe(NavigateTo);
 
-            GoToWikiCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository.HasWiki));
-            GoToWikiCommand
-                .Select(_ => new WikiViewModel(username, repositoryName))
-                .Subscribe(NavigateTo);
+            GoToWikiCommand = ReactiveCommand.Create(
+                () => NavigateTo(new WikiViewModel(username, repositoryName)),
+                this.WhenAnyValue(x => x.Repository.HasWiki));
 
             GoToSourceCommand
                 .Select(_ => new BranchesAndTagsViewModel(username, repositoryName))
@@ -186,10 +183,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
             var validWebsite = this.WhenAnyValue(x => x.Repository.Website)
                                    .Select(x => !string.IsNullOrEmpty(x));
 
-            GoToWebsiteCommand = ReactiveCommand.Create(validWebsite);
-            GoToWebsiteCommand
-                .Select(_ => new WebBrowserViewModel(Repository.Website))
-                .Subscribe(NavigateTo);
+            GoToWebsiteCommand = ReactiveCommand.Create(
+                () => NavigateTo(new WebBrowserViewModel(Repository.Website)),
+                validWebsite);
 
             GoToCommitsCommand
                 .Subscribe(_ =>
@@ -200,16 +196,17 @@ namespace CodeBucket.Core.ViewModels.Repositories
                         NavigateTo(BranchesViewModel.ForCommits(username, repositoryName));
                 });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            ShowMenuCommand = ReactiveCommand.CreateFromTask(sender =>
             {
                 var menu = actionMenuService.Create();
                 var isPinned = applicationService
                     .Account.PinnedRepositories
                     .Any(x => string.Equals(x.Owner, username, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Slug, repositoryName, StringComparison.OrdinalIgnoreCase));
                 var pinned = isPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu";
-                menu.AddButton(pinned, PinRepository);
-                menu.AddButton("Fork Repository", ForkCommand);
-                menu.AddButton("Show in Bitbucket", () => {
+                menu.AddButton(pinned, _ => PinRepository());
+                menu.AddButton("Fork Repository", _ => ForkCommand.ExecuteNow());
+                menu.AddButton("Show in Bitbucket", _ => 
+                {
                     var htmlUrl = ("https://bitbucket.org/" + username + "/" + repositoryName).ToLower();
                     NavigateTo(new WebBrowserViewModel(htmlUrl));
                 });

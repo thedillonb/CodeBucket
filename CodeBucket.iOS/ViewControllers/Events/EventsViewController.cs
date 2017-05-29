@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.TableViewSources;
 using CodeBucket.Views;
@@ -20,7 +20,7 @@ namespace CodeBucket.ViewControllers.Events
             TableView.EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(AtlassianIcon.Blogroll.ToEmptyListImage(), "There are no events."));
             var source = new EventTableViewSource(TableView, ViewModel.Items);
-            source.RequestMore.InvokeCommand(ViewModel.LoadMoreCommand);
+            source.RequestMore.BindCommand(ViewModel.LoadMoreCommand);
             TableView.Source = source;
         }
     }

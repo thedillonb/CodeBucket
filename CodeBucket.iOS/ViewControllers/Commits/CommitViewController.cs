@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using System.Linq;
 using System.Reactive.Linq;
@@ -90,10 +90,10 @@ namespace CodeBucket.ViewControllers.Commits
                 };
 
                 detailSection.Add(repo);
-                repo.Clicked.BindCommand(ViewModel.GoToRepositoryCommand);
+                repo.Clicked.SelectUnit().BindCommand(ViewModel.GoToRepositoryCommand);
             }
 
-            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(x => {
+            ViewModel.WhenAnyValue(x => x.Commit).Where(x => x != null).Subscribe(x => {
                 participants.Text = x?.Participants?.Count.ToString() ?? "-";
                 approvals.Text = x?.Participants?.Count(y => y.Approved).ToString() ?? "-";
 
@@ -139,7 +139,7 @@ namespace CodeBucket.ViewControllers.Commits
                 });
 
             ViewModel.WhenAnyValue(x => x.Commit)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Take(1)
                 .Subscribe(_ => Root.Reset(headerSection, detailsSection, approvalSection, commentsSection));
 
@@ -152,12 +152,14 @@ namespace CodeBucket.ViewControllers.Commits
             {
                 actionButton
                     .GetClickedObservable()
-                    .InvokeCommand(ViewModel.ShowMenuCommand)
+                    .Select(x => (object)x)
+                    .BindCommand(ViewModel.ShowMenuCommand)
                     .AddTo(d);
 
                 addCommentElement
                     .Clicked
-                    .InvokeCommand(ViewModel.AddCommentCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.AddCommentCommand)
                     .AddTo(d);
 
                 this.WhenAnyObservable(x => x.ViewModel.AddCommentCommand)

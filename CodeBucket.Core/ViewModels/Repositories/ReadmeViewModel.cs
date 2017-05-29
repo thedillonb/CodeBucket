@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -26,9 +26,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public IReactiveCommand ShowMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowMenuCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         public ReadmeViewModel(
             string username, string repository, string filename,
@@ -42,25 +42,17 @@ namespace CodeBucket.Core.ViewModels.Repositories
 
             var canShowMenu = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
 
-            var gotoCommand = ReactiveCommand.Create(canShowMenu);
-            gotoCommand
-                .Select(_ => new WebBrowserViewModel(_htmlUrl))
-                .Subscribe(NavigateTo);
-
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => 
+            ShowMenuCommand = ReactiveCommand.CreateFromTask(sender => 
             {
-                var shareCommand = ReactiveCommand.Create();
-                shareCommand.Subscribe(_ => actionMenuService.ShareUrl(sender, new Uri(_htmlUrl)));
-
                 var menu = actionMenuService.Create();
-                menu.AddButton("Share", shareCommand);
-                menu.AddButton("Show in Bitbucket", gotoCommand);
+                menu.AddButton("Share", x => actionMenuService.ShareUrl(x, new Uri(_htmlUrl)));
+                menu.AddButton("Show in Bitbucket", _ => NavigateTo(new WebBrowserViewModel(_htmlUrl)));
                 return menu.Show(sender);
-            });
+            }, canShowMenu);
 
             Title = "Readme";
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
                 var mainBranch = (await applicationService.Client.Repositories.GetPrimaryBranch(username, repository)).Name;

@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive;
 using Splat;
-using System.Reactive.Linq;
 
 namespace CodeBucket.Core.ViewModels.Wiki
 {
@@ -30,13 +29,13 @@ namespace CodeBucket.Core.ViewModels.Wiki
             set { this.RaiseAndSetIfChanged(ref _canEdit, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        private IReactiveCommand<object> GoToPageCommand { get; } = ReactiveCommand.Create();
+        private ReactiveCommand<string, Unit> GoToPageCommand { get; }
 
-        public IReactiveCommand<object> GoToWebCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<string, Unit> GoToWebCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowMenuCommand { get; }
 
         public WikiViewModel(
             string username, string repository, string page = null,
@@ -55,29 +54,29 @@ namespace CodeBucket.Core.ViewModels.Wiki
 
             Title = page;
 
-            GoToWebCommand
-                .OfType<string>()
-                .Select(x => string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", username, repository, x))
-                .Select(x => new WebBrowserViewModel(x))
-                .Subscribe(NavigateTo);
+            GoToWebCommand = ReactiveCommand.Create<string>(path =>
+            {
+                var url = string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", username, repository, path);
+                NavigateTo(new WebBrowserViewModel(url));
+            });
 
-            GoToPageCommand
-                .OfType<string>()
-                .Do(x => page = x)
-                .InvokeCommand(LoadCommand);
+            GoToWebCommand = ReactiveCommand.Create<string>(url => page = url);
+            GoToWebCommand.BindCommand(LoadCommand);
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            ShowMenuCommand = ReactiveCommand.CreateFromTask(sender =>
             {
                 var menu = actionMenuService.Create();
                 //menu.AddButton("Fork Repository", ForkCommand);
-                menu.AddButton("Show in Bitbucket", () => {
+                menu.AddButton("Show in Bitbucket", _ => 
+                {
                     var htmlUrl = $"https://bitbucket.org/{username.ToLower()}/{repository.ToLower()}/wiki/{page}";
                     NavigateTo(new WebBrowserViewModel(htmlUrl));
                 });
+
                 return menu.Show(sender);
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 Wiki = await applicationService.Client.Repositories.GetWiki(username, repository, page);
 

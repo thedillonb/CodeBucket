@@ -1,5 +1,4 @@
-﻿using ReactiveUI;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 
@@ -20,7 +19,7 @@ namespace CodeBucket.Core.Services
 
     public interface IActionMenu
     {
-        void AddButton(string title, IReactiveCommand clickAction);
+        void AddButton(string title, Action<object> clickAction);
 
         Task Show(object sender);
     }
@@ -39,16 +38,6 @@ namespace CodeBucket.Core.Services
         public static void ShareUrl(this IActionMenuService @this, object sender, string uri)
         {
             @this.ShareUrl(sender, new Uri(uri));
-        }
-    }
-
-    public static class ActionMenuExtensions
-    {
-        public static void AddButton(this IActionMenu @this, string title, Action action)
-        {
-            var command = ReactiveCommand.Create();
-            command.Subscribe(_ => action());
-            @this.AddButton(title, command);
         }
     }
 }

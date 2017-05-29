@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using System.Reactive;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Teams
 {
@@ -6,7 +7,7 @@ namespace CodeBucket.Core.ViewModels.Teams
     {
         public string Name { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
                                                                               
         public TeamItemViewModel(string name)
         {

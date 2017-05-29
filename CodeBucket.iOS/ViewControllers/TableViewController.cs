@@ -32,7 +32,7 @@ namespace CodeBucket.ViewControllers
                 .Switch()
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand)
-                .Subscribe(x => x.ExecuteIfCan());
+                .Subscribe(x => x.ExecuteNow());
 
             OnActivation(disposable =>
             {

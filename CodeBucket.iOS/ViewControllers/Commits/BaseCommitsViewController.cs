@@ -1,4 +1,4 @@
-using CodeBucket.Core.ViewModels.Commits;
+﻿using CodeBucket.Core.ViewModels.Commits;
 using CodeBucket.TableViewSources;
 using ReactiveUI;
 
@@ -12,7 +12,7 @@ namespace CodeBucket.ViewControllers.Commits
 			base.ViewDidLoad();
 
             var tableSource = new CommitTableViewSource(TableView, ViewModel.Items);
-            tableSource.RequestMore.InvokeCommand(ViewModel.LoadMoreCommand);
+            tableSource.RequestMore.BindCommand(ViewModel.LoadMoreCommand);
             TableView.Source = tableSource;
 		}
 	}

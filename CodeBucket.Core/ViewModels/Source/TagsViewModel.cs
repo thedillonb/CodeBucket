@@ -13,7 +13,7 @@ namespace CodeBucket.Core.ViewModels.Source
     {
         public IReadOnlyReactiveList<GitReferenceItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private string _searchText;
         public string SearchText
@@ -60,7 +60,7 @@ namespace CodeBucket.Core.ViewModels.Source
                 x => x.Name.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 tags.Clear();
                 var items = await applicationService.Client.Repositories.GetTags(username, repository);

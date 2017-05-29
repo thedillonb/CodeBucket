@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Users;
 using CodeBucket.Core.ViewModels.Repositories;
 using CodeBucket.Core.ViewModels.Groups;
@@ -24,19 +24,19 @@ namespace CodeBucket.Core.ViewModels.Teams
         private readonly ObservableAsPropertyHelper<string> _displayName;
         public string DisplayName => _displayName.Value;
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToFollowersCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToFollowersCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToFollowingCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToFollowingCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToEventsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToEventsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToGroupsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToMembersCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToMembersCommand { get; } = ReactiveCommandFactory.Empty();
 
         public TeamViewModel(
             User team,
@@ -65,7 +65,7 @@ namespace CodeBucket.Core.ViewModels.Teams
                 .Select(x => string.Equals(x, name) ? null : x)
                 .ToProperty(this, x => x.DisplayName, out _displayName);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 Team = await applicationService.Client.Teams.Get(name);
             });

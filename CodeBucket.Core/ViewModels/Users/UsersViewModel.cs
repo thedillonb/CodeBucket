@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ namespace CodeBucket.Core.ViewModels.Users
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         public IReadOnlyReactiveList<UserItemViewModel> Items { get; }
 
@@ -40,7 +40,7 @@ namespace CodeBucket.Core.ViewModels.Users
                 x => x.Username.ContainsKeyword(SearchText) || x.DisplayName.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 users.Clear();
                 await Load(users);

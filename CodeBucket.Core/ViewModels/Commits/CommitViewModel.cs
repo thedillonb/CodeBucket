@@ -1,4 +1,4 @@
-using CodeBucket.Core.ViewModels.Repositories;
+﻿using CodeBucket.Core.ViewModels.Repositories;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Source;
 using System;
@@ -29,25 +29,25 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public bool ShowRepository { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> ToggleApproveButton { get; }
+        public ReactiveCommand<Unit, Unit> ToggleApproveButton { get; }
 
-        public IReactiveCommand<object> GoToUserCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<string, Unit> GoToUserCommand { get; }
 
-        public IReactiveCommand<object> GoToRepositoryCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToRepositoryCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToAddedFiles { get; }
+        public ReactiveCommand<Unit, Unit> GoToAddedFiles { get; }
 
-        public IReactiveCommand<object> GoToRemovedFiles { get; }
+        public ReactiveCommand<Unit, Unit> GoToRemovedFiles { get; }
 
-        public IReactiveCommand<object> GoToModifiedFiles { get; }
+        public ReactiveCommand<Unit, Unit> GoToModifiedFiles { get; }
 
-        public IReactiveCommand<object> GoToAllFiles { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToAllFiles { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> ShowMenuCommand { get; }
+        public ReactiveCommand<object, Unit> ShowMenuCommand { get; }
 
-        public IReactiveCommand<object> AddCommentCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> AddCommentCommand { get; } = ReactiveCommandFactory.Empty();
 
         public IReadOnlyReactiveList<CommitFileItemViewModel> CommitFiles { get; }
 
@@ -122,39 +122,38 @@ namespace CodeBucket.Core.ViewModels.Commits
                 return new CommentItemViewModel(name, avatar, comment.CreatedOn.Humanize(), comment.Content.Raw);
             },x => x.Inline == null);
 
-            GoToUserCommand
-                .OfType<string>()
-                .Select(x => new UserViewModel(x))
-                .Subscribe(NavigateTo);
+            GoToUserCommand = ReactiveCommand.Create<string>(user => NavigateTo(new UserViewModel(user)));
 
             GoToRepositoryCommand
                 .Select(_ => new RepositoryViewModel(username, repository))
                 .Subscribe(NavigateTo);
 
             GoToAddedFiles = ReactiveCommand.Create(
+                () => { },
                 this.WhenAnyValue(x => x.DiffAdditions).Select(x => x > 0));
 
             GoToRemovedFiles = ReactiveCommand.Create(
+                () => { },
                 this.WhenAnyValue(x => x.DiffDeletions).Select(x => x > 0));
 
             GoToModifiedFiles = ReactiveCommand.Create(
+                () => { },
                 this.WhenAnyValue(x => x.DiffModifications).Select(x => x > 0));
 
             var canShowMenu = this.WhenAnyValue(x => x.Commit).Select(x => x != null);
 
-            ShowMenuCommand = ReactiveCommand.Create(canShowMenu);
-            ShowMenuCommand.Subscribe(sender =>
+            ShowMenuCommand = ReactiveCommand.Create<object>(sender =>
             {
                 var uri = new Uri($"https://bitbucket.org/{username}/{repository}/commits/{node}");
                 var menu = actionMenuService.Create();
-                menu.AddButton("Add Comment", AddCommentCommand);
-                menu.AddButton("Copy SHA", () => actionMenuService.SendToPasteBoard(node));
-                menu.AddButton("Share", () => actionMenuService.ShareUrl(sender, uri));
-                menu.AddButton("Show In Bitbucket", () => NavigateTo(new WebBrowserViewModel(uri.AbsoluteUri)));
+                menu.AddButton("Add Comment", _ => AddCommentCommand.ExecuteNow());
+                menu.AddButton("Copy SHA", _ => actionMenuService.SendToPasteBoard(node));
+                menu.AddButton("Share", x => actionMenuService.ShareUrl(x, uri));
+                menu.AddButton("Show In Bitbucket", _ => NavigateTo(new WebBrowserViewModel(uri.AbsoluteUri)));
                 menu.Show(sender);
-            });
+            }, canShowMenu);
 
-            ToggleApproveButton = ReactiveCommand.CreateAsyncTask(async _ => 
+            ToggleApproveButton = ReactiveCommand.CreateFromTask(async _ => 
             {
                 if (Approved)
                     await applicationService.Client.Commits.Unapprove(username, repository, node);
@@ -177,7 +176,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 
             var changesetFiles = 
                 this.WhenAnyValue(x => x.Changeset)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Select(x => x.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>());
 
             changesetFiles
@@ -232,7 +231,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                         ?.Approved ?? false;
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => 
+            LoadCommand = ReactiveCommand.CreateFromTask(_ => 
             {
                 var commit = applicationService.Client.Commits.Get(username, repository, node)
                     .OnSuccess(x => Commit = x);

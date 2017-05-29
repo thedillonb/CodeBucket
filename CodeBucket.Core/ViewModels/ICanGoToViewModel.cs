@@ -1,10 +1,11 @@
-﻿using ReactiveUI;
+﻿using System.Reactive;
+using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels
 {
     public interface ICanGoToViewModel
     {
-        IReactiveCommand<object> GoToCommand { get; }
+        ReactiveCommand<Unit, Unit> GoToCommand { get; }
     }
 }
 

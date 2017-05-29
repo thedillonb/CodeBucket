@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using CodeBucket.DialogElements;
 using CodeBucket.Core.ViewModels.Issues;
@@ -49,14 +49,14 @@ namespace CodeBucket.ViewControllers.Issues
                     .AddTo(disposable);
             });
 
-            ViewModel.LoadCommand.ExecuteIfCan();
+            ViewModel.LoadCommand.ExecuteNow();
         }
 
         private static CheckElement CreateElement(IssueAttributeItemViewModel attribute)
         {
             var element = new CheckElement(attribute.Name);
             attribute.WhenAnyValue(x => x.IsSelected).Subscribe(x => element.Checked = x);
-            element.CheckedChanged.InvokeCommand(attribute.SelectCommand);
+            element.CheckedChanged.SelectUnit().BindCommand(attribute.SelectCommand);
             return element;
         }
 	}

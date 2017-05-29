@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using CodeBucket.ViewControllers;
 using CodeBucket.Core.ViewModels.Repositories;
@@ -22,7 +22,7 @@ namespace CodeBucket.Views.Repositories
                 search
                     .GetSearchObservable()
                     .Do(_ => search.ResignFirstResponder())
-                    .InvokeCommand(ViewModel.SearchCommand)
+                    .BindCommand(ViewModel.SearchCommand)
                     .AddTo(d);
             });
         }

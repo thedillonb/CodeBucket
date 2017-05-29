@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -21,9 +21,9 @@ namespace CodeBucket.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _selectedValue, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DismissCommand { get; } = ReactiveCommandFactory.Empty();
 
         public IssueComponentsViewModel(
             string username, string repository,
@@ -38,7 +38,7 @@ namespace CodeBucket.Core.ViewModels.Issues
                 .SelectMany(_ => Components)
                 .Subscribe(x => x.IsSelected = string.Equals(x.Name, SelectedValue));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ => {
                 if (_isLoaded) return;
                 var items = await applicationService.Client.Issues.GetComponents(username, repository);
                 components.Reset(items);
@@ -50,7 +50,7 @@ namespace CodeBucket.Core.ViewModels.Issues
         {
             var vm = new IssueAttributeItemViewModel(component.Name, string.Equals(SelectedValue, component.Name));
             vm.SelectCommand.Subscribe(y => SelectedValue = !vm.IsSelected ? vm.Name : null);
-            vm.SelectCommand.InvokeCommand(DismissCommand);
+            vm.SelectCommand.BindCommand(DismissCommand);
             return vm;
         }
 	}

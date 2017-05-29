@@ -1,4 +1,5 @@
-﻿using CodeBucket.Core.Utils;
+﻿using System.Reactive;
+using CodeBucket.Core.Utils;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Commits
@@ -15,7 +16,7 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public string Sha { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public CommitItemViewModel(string name, string description, string date, Avatar avatar, string sha)
         {

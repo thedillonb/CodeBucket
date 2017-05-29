@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CodeBucket.Core.Utils;
 using System;
 using ReactiveUI;
@@ -19,9 +19,9 @@ namespace CodeBucket.Core.ViewModels.Commits
 
         public IReadOnlyReactiveList<CommitItemViewModel> Items { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> LoadMoreCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
 
         private bool _hasMore;
         public bool HasMore
@@ -57,7 +57,7 @@ namespace CodeBucket.Core.ViewModels.Commits
                 x => x.Name.ContainsKeyword(SearchText) || x.Description.ContainsKeyword(SearchText),
                 signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 HasMore = false;
                 commitItems.Clear();
@@ -68,14 +68,14 @@ namespace CodeBucket.Core.ViewModels.Commits
             });
 
             var hasMoreObs = this.WhenAnyValue(x => x.HasMore);
-            LoadMoreCommand = ReactiveCommand.CreateAsyncTask(hasMoreObs, async _ =>
+            LoadMoreCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 HasMore = false;
                 var commits = await applicationService.Client.Get<Collection<Commit>>(_nextUrl);
                 commitItems.AddRange(commits.Values);
                 _nextUrl = commits.Next;
                 HasMore = !string.IsNullOrEmpty(_nextUrl);
-            });
+            }, hasMoreObs);
         }
 
         private CommitItemViewModel ToViewModel(Commit commit)

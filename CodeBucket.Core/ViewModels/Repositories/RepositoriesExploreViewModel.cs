@@ -1,4 +1,4 @@
-using ReactiveUI;
+﻿using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
 using CodeBucket.Core.Services;
@@ -23,7 +23,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public IReactiveCommand<Unit> SearchCommand { get; }
+        public ReactiveCommand<Unit, Unit> SearchCommand { get; }
 
         public bool IsEmpty => false;
 
@@ -50,7 +50,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
             });
 
             var canSearch = this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x));
-            SearchCommand = ReactiveCommand.CreateAsyncTask(canSearch, async _ =>
+            SearchCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 repositories.Clear();
 
@@ -76,7 +76,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                         Slug = x.Slug
                     };
                 }));
-            });
+            }, canSearch);
         }
 
         private class RepositorySearch

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Repositories;
 using UIKit;
 using CodeBucket.DialogElements;
@@ -49,16 +49,19 @@ namespace CodeBucket.ViewControllers.Repositories
 
                 _commitsButton
                     .Clicked
+                    .SelectUnit()
                     .BindCommand(ViewModel.GoToCommitsCommand)
                     .AddTo(d);
 
                 _pullRequestsButton
                     .Clicked
+                    .SelectUnit()
                     .BindCommand(ViewModel.GoToPullRequestsCommand)
                     .AddTo(d);
 
                 _sourceButton
                     .Clicked
+                    .SelectUnit()
                     .BindCommand(ViewModel.GoToSourceCommand)
                     .AddTo(d);
 
@@ -137,38 +140,38 @@ namespace CodeBucket.ViewControllers.Repositories
             sec1.Add(_split2);
 
             var owner = new ButtonElement("Owner", model.Owner.Username) { Image = AtlassianIcon.User.ToImage() };
-            owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
+            owner.Clicked.SelectUnit().BindCommand(ViewModel.GoToOwnerCommand);
             sec1.Add(owner);
 
             if (model.Parent != null)
             {
                 var parent = new ButtonElement("Forked From", model.Parent.Name) { Image = AtlassianIcon.Devtoolsfork.ToImage() };
-                parent.Clicked.BindCommand(ViewModel.GoToForkParentCommand);
+                parent.Clicked.SelectUnit().BindCommand(ViewModel.GoToForkParentCommand);
                 sec1.Add(parent);
             }
 
             var events = new ButtonElement("Events", AtlassianIcon.Blogroll.ToImage());
-            events.Clicked.BindCommand(ViewModel.GoToEventsCommand);
+            events.Clicked.SelectUnit().BindCommand(ViewModel.GoToEventsCommand);
             var sec2 = new Section { events };
 
             if (model.HasWiki)
             {
                 var wiki = new ButtonElement("Wiki", AtlassianIcon.Edit.ToImage());
-                wiki.Clicked.BindCommand(ViewModel.GoToWikiCommand);
+                wiki.Clicked.SelectUnit().BindCommand(ViewModel.GoToWikiCommand);
                 sec2.Add(wiki);
             }
 
             if (model.HasIssues)
             {
                 var issues = new ButtonElement("Issues", AtlassianIcon.Flag.ToImage());
-                issues.Clicked.BindCommand(ViewModel.GoToIssuesCommand);
+                issues.Clicked.SelectUnit().BindCommand(ViewModel.GoToIssuesCommand);
                 sec2.Add(issues);
             }
 
             if (ViewModel.HasReadme)
             {
                 var readme = new ButtonElement("Readme", AtlassianIcon.PageDefault.ToImage());
-                readme.Clicked.BindCommand(ViewModel.GoToReadmeCommand);
+                readme.Clicked.SelectUnit().BindCommand(ViewModel.GoToReadmeCommand);
                 sec2.Add(readme);
             }
 
@@ -179,7 +182,7 @@ namespace CodeBucket.ViewControllers.Repositories
             if (!string.IsNullOrEmpty(ViewModel.Repository.Website))
             {
                 var website = new ButtonElement("Website", AtlassianIcon.Weblink.ToImage());
-                website.Clicked.InvokeCommand(ViewModel.GoToWebsiteCommand);
+                website.Clicked.SelectUnit().BindCommand(ViewModel.GoToWebsiteCommand);
                 root.Add(new Section { website });
             }
 

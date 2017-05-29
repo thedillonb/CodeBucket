@@ -1,11 +1,12 @@
-﻿using CodeBucket.Client.V1;
+﻿using System.Reactive;
+using CodeBucket.Client.V1;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.Commits
 {
     public class CommitFileItemViewModel : ReactiveObject
     {
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public string Name { get; }
 

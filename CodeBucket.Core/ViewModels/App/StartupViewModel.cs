@@ -1,10 +1,9 @@
-using System;
+﻿﻿using System;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.Core.Utils;
 using System.Reactive.Threading.Tasks;
 using ReactiveUI;
@@ -41,13 +40,13 @@ namespace CodeBucket.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
 
-        public ReactiveCommand<object> GoToMenuCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToMenuCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public ReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToAccountsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public ReactiveCommand<object> GoToLoginCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToLoginCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public ReactiveCommand<Unit> StartupCommand { get; }
+        public ReactiveCommand<Unit, Unit> StartupCommand { get; }
 
         public void Clear()
         {
@@ -64,7 +63,7 @@ namespace CodeBucket.Core.ViewModels.App
 			_applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            StartupCommand = ReactiveCommand.CreateAsyncTask(_ => Startup());
+            StartupCommand = ReactiveCommand.CreateFromTask(_ => Startup());
 		}
 
         protected async Task Startup()
@@ -73,20 +72,20 @@ namespace CodeBucket.Core.ViewModels.App
 
 			if (!accounts.Any())
 			{
-                GoToLoginCommand.Execute(null);
+                GoToLoginCommand.ExecuteNow();
 				return;
 			}
 
             var account = await _applicationService.GetDefaultAccount();
 			if (account == null)
 			{
-                GoToAccountsCommand.Execute(null);
+                GoToAccountsCommand.ExecuteNow();
 				return;
 			}
 
             if (string.IsNullOrEmpty(account.Token) || string.IsNullOrEmpty(account.RefreshToken))
             {
-                GoToLoginCommand.Execute(null);
+                GoToLoginCommand.ExecuteNow();
                 return;
             }
 
@@ -101,7 +100,7 @@ namespace CodeBucket.Core.ViewModels.App
                 if (ret == null)
                 {
                     await _alertDialogService.Alert("Error!", "Unable to refresh OAuth token. Please login again.");
-                    GoToLoginCommand.Execute(null);
+                    GoToLoginCommand.ExecuteNow();
                     return;
                 }
 
@@ -110,13 +109,14 @@ namespace CodeBucket.Core.ViewModels.App
                 await _accountsService.Save(account);
                 await AttemptLogin(account);
 
-                GoToMenuCommand.Execute(null);
+                GoToMenuCommand.ExecuteNow();
             }
             catch (Exception e)
             {
-                _alertDialogService.Alert("Error!", "Unable to login successfully: " + e.Message)
+                _alertDialogService
+                    .Alert("Error!", "Unable to login successfully: " + e.Message)
                     .ToObservable()
-                    .Subscribe(_ => GoToAccountsCommand.ExecuteIfCan());
+                    .BindCommand(GoToAccountsCommand);
             }
             finally
             {

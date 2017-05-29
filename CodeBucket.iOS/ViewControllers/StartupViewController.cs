@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using CodeBucket.Core.ViewModels.App;
 using Foundation;
@@ -8,6 +8,7 @@ using CodeBucket.ViewControllers.Accounts;
 using CodeBucket.ViewControllers.Application;
 using ReactiveUI;
 using CodeBucket.ViewControllers.SlideoutNavigation;
+using System.Reactive;
 
 namespace CodeBucket.ViewControllers
 {
@@ -73,23 +74,23 @@ namespace CodeBucket.ViewControllers
             });
         }
 
-        private void GoToMenu(object o)
+        private void GoToMenu(Unit o)
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
-            PresentViewController(slideoutController, true, () => vc.ViewModel.GoToDefaultTopView.ExecuteIfCan());
+            PresentViewController(slideoutController, true, () => vc.ViewModel.GoToDefaultTopView.ExecuteNow());
         }
 
-        private void GoToNewAccount(object o)
+        private void GoToNewAccount(Unit o)
         {
             var vc = new LoginViewController();
             var nav = new ThemedNavigationController(vc);
             PresentViewController(nav, true, null);
         }
 
-        private void GoToAccounts(object o)
+        private void GoToAccounts(Unit o)
         {
             var vc = new AccountsViewController(false);
             var nav = new ThemedNavigationController(vc);
@@ -136,7 +137,7 @@ namespace CodeBucket.ViewControllers
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			ViewModel.StartupCommand.Execute(null);
+            ViewModel.StartupCommand.ExecuteNow();
 		}
 
         public override void ViewDidDisappear(bool animated)

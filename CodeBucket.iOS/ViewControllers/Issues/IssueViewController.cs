@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.DialogElements;
@@ -138,11 +138,12 @@ namespace CodeBucket.ViewControllers.Issues
 
                 HeaderView
                     .Clicked
-                    .InvokeCommand(this, x => x.ViewModel.GoToReporterCommand)
+                    .BindCommand(this, x => x.ViewModel.GoToReporterCommand)
                     .AddTo(d);
 
                 compose
                     .GetClickedObservable()
+                    .SelectUnit()
                     .BindCommand(ViewModel.GoToEditCommand)
                     .AddTo(d);
 
@@ -163,6 +164,7 @@ namespace CodeBucket.ViewControllers.Issues
 
                 assigneeElement
                     .Clicked
+                    .SelectUnit()
                     .BindCommand(ViewModel.GoToAssigneeCommand)
                     .AddTo(d);
 

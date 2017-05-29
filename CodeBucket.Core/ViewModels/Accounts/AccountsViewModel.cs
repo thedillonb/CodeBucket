@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Data;
 using CodeBucket.Core.Services;
 using System.Reactive.Linq;
@@ -7,16 +7,17 @@ using ReactiveUI;
 using Splat;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 
 namespace CodeBucket.Core.ViewModels.Accounts
 {
     public class AccountsViewModel : BaseViewModel
     {
-        public IReactiveCommand<object> AddAccountCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> AddAccountCommand { get; } = ReactiveCommand.Create(() => { });
 
-        public IReactiveCommand<object> DismissCommand { get; }
+        public ReactiveCommand<Unit, Unit> DismissCommand { get; }
 
-        public IReactiveCommand<List<Account>> LoadCommand { get; }
+        public ReactiveCommand<Unit, List<Account>> LoadCommand { get; }
 
         public IReadOnlyReactiveList<AccountItemViewModel> Items { get; }
 
@@ -39,7 +40,7 @@ namespace CodeBucket.Core.ViewModels.Accounts
 
                 if (activeAccount?.Id == x.Id)
                 {
-                    vm.GoToCommand.InvokeCommand(DismissCommand);
+                    vm.GoToCommand.BindCommand(DismissCommand);
                     vm.IsSelected = true;
                 }
                 else
@@ -59,9 +60,10 @@ namespace CodeBucket.Core.ViewModels.Accounts
             });
 
             DismissCommand = ReactiveCommand.Create(
+                () => { },
                 accounts.Changed.Select(x => accounts.Any(y => y.Username == currentUsername)));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 var allAccounts = await accountsService.GetAccounts();
                 return allAccounts.ToList();

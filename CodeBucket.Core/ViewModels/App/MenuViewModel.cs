@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Services;
 using CodeBucket.Core.ViewModels.Events;
 using CodeBucket.Core.ViewModels.Repositories;
@@ -22,9 +22,9 @@ namespace CodeBucket.Core.ViewModels.App
     {
         private readonly IApplicationService _applicationService;
 
-        public IReactiveCommand<object> GoToDefaultTopView { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToDefaultTopView { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<Unit> RefreshCommand { get; }
+        public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
 
         public ReactiveList<GroupItemViewModel> Groups { get; } = new ReactiveList<GroupItemViewModel>();
 
@@ -69,7 +69,7 @@ namespace CodeBucket.Core.ViewModels.App
                 return vm;
             });
 
-            RefreshCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            RefreshCommand = ReactiveCommand.CreateFromTask(_ =>
             {
                 repos.Reset(applicationService.Account.PinnedRepositories);
                 return Task.FromResult(Unit.Default);
@@ -94,7 +94,7 @@ namespace CodeBucket.Core.ViewModels.App
                 return viewModel;
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateFromTask(t =>
             {
                 applicationService.Client
                                   .AllItems(x => x.Teams.GetAll())
@@ -159,10 +159,10 @@ namespace CodeBucket.Core.ViewModels.App
 
 
                     var match = props.FirstOrDefault(x => string.Equals(startupViewName, x.Attribute.Name));
-                    var cmd = match?.Property.GetValue(this) as IReactiveCommand;
+                    var cmd = match?.Property.GetValue(this) as ReactiveCommand<Unit, Unit>;
                     if (cmd != null)
                     {
-                        cmd.ExecuteIfCan();
+                        cmd.ExecuteNow();
                         return;
                     }
                 }
@@ -174,9 +174,9 @@ namespace CodeBucket.Core.ViewModels.App
                               select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
 
                 //That shouldn't happen...
-                var bCmd = deprop?.Property.GetValue(this) as IReactiveCommand;
+                var bCmd = deprop?.Property.GetValue(this) as ReactiveCommand<Unit, Unit>;
                 if (bCmd != null)
-                    bCmd.ExecuteIfCan();
+                    bCmd.ExecuteNow();
             });
         }
 
@@ -190,35 +190,35 @@ namespace CodeBucket.Core.ViewModels.App
         }
 
         [PotentialStartupView("Profile")]
-        public IReactiveCommand<object> GoToProfileCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToProfileCommand { get; } = ReactiveCommandFactory.Empty();
 
         [DefaultStartupView]
         [PotentialStartupView("My Events")]
-        public IReactiveCommand<object> GoToMyEvents { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToMyEvents { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("Starred Repositories")]
-        public IReactiveCommand<object> GoToStarredRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToStarredRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("My Repositories")]
-        public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToOwnedRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("Shared Repositories")]
-        public IReactiveCommand<object> GoToSharedRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToSharedRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("Explore Repositories")]
-        public IReactiveCommand<object> GoToExploreRepositoriesCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToExploreRepositoriesCommand { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("Organizations")]
-        public IReactiveCommand<object> GoToGroupsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToGroupsCommand { get; } = ReactiveCommandFactory.Empty();
 
         [PotentialStartupView("Teams")]
-        public IReactiveCommand<object> GoToTeamsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToTeamsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToSettingsCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToSettingsCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToFeedbackCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToFeedbackCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         ViewModelActivator ISupportsActivation.Activator { get; } = new ViewModelActivator();
     }

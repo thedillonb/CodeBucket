@@ -10,10 +10,10 @@ namespace UIKit
 {
     public static class UIKitExtensions
     {
-        public static IDisposable Bind<T>(this UIBarButtonItem @this, IReactiveCommand<T> cmd)
+        public static IDisposable Bind(this UIBarButtonItem @this, ReactiveCommand<Unit, Unit> cmd)
         {
-            var d1 = @this.GetClickedObservable().InvokeCommand(cmd);
-            var d2 = cmd.CanExecuteObservable.Subscribe(x => @this.Enabled = x);
+            var d1 = @this.GetClickedObservable().SelectUnit().BindCommand(cmd);
+            var d2 = cmd.CanExecute.Subscribe(x => @this.Enabled = x);
             return new CompositeDisposable(d1, d2);
         }
 

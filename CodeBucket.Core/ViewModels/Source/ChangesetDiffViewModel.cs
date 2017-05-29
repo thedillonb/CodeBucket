@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace CodeBucket.Core.ViewModels.Source
             private set { this.RaiseAndSetIfChanged(ref _comments, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private string _changeType;
         public string ChangeType
@@ -80,7 +80,7 @@ namespace CodeBucket.Core.ViewModels.Source
 
             Title = actualFilename;
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 Patch = null;
                 BinaryFilePath = null;

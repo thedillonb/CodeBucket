@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using CodeBucket.Core.Services;
 using System.Reactive;
@@ -27,7 +27,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
         public IReadOnlyReactiveList<CommentItemViewModel> Comments { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private readonly ObservableAsPropertyHelper<bool> _open;
         public bool IsOpen => _open.Value;
@@ -61,17 +61,17 @@ namespace CodeBucket.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
-        public IReactiveCommand<object> MergeCommand { get; }
+        public ReactiveCommand<Unit, Unit> MergeCommand { get; }
 
-        public IReactiveCommand<PullRequest> RejectCommand { get; }
+        public ReactiveCommand<Unit, PullRequest> RejectCommand { get; }
 
-        public IReactiveCommand<Unit> ToggleApproveButton { get; }
+        public ReactiveCommand<Unit, Unit> ToggleApproveButton { get; }
 
-        public IReactiveCommand<object> GoToUserCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<string, Unit> GoToUserCommand { get; }
 
-        public IReactiveCommand<Unit> GoToCommitsCommand { get; }
+        public ReactiveCommand<Unit, Unit> GoToCommitsCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowMenuCommand { get; }
 
         public PullRequestViewModel(
             string username, string repository, PullRequest pullRequest,
@@ -105,7 +105,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             Comments.Changed.Subscribe(_ => CommentCount = Comments.Count);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 PullRequest = await applicationService.Client.PullRequests.Get(username, repository, pullRequestId);
                 _comments.Clear();
@@ -120,7 +120,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                          });
             });
 
-            GoToCommitsCommand = ReactiveCommand.CreateAsyncTask(t =>
+            GoToCommitsCommand = ReactiveCommand.CreateFromTask(t =>
             {
                 if (PullRequest?.Source?.Repository == null)
                 {
@@ -137,19 +137,17 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             canMerge.ToProperty(this, x => x.IsOpen, out _open);
 
-            MergeCommand = ReactiveCommand.Create(canMerge);
+            MergeCommand = ReactiveCommand.Create(() => { }, canMerge);
 
-            RejectCommand = ReactiveCommand.CreateAsyncTask(
-                canMerge, t => applicationService.Client.PullRequests.Decline(username, repository, pullRequestId));
+            RejectCommand = ReactiveCommand.CreateFromTask(
+                t => applicationService.Client.PullRequests.Decline(username, repository, pullRequestId),
+                canMerge);
 
             RejectCommand.Subscribe(x => PullRequest = x);
 
-            GoToUserCommand
-                .OfType<string>()
-                .Select(x => new UserViewModel(x))
-                .Subscribe(NavigateTo);
+            GoToUserCommand = ReactiveCommand.Create<string>(user => NavigateTo(new UserViewModel(user)));
 
-            ToggleApproveButton = ReactiveCommand.CreateAsyncTask(async _ =>
+            ToggleApproveButton = ReactiveCommand.CreateFromTask(async _ =>
             {
                 if (Approved)
                     await applicationService.Client.PullRequests.Unapprove(username, repository, pullRequestId);
@@ -203,10 +201,11 @@ namespace CodeBucket.Core.ViewModels.PullRequests
                 .Select(x => x.ToArray())
                 .ToProperty(this, x => x.Approvals, out _approvals, new UserItemViewModel[0]);
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
+            ShowMenuCommand = ReactiveCommand.CreateFromTask(sender =>
             {
                 var menu = actionMenuService.Create();
-                menu.AddButton("Show in Bitbucket", () => {
+                menu.AddButton("Show in Bitbucket", _ =>
+                {
                     NavigateTo(new WebBrowserViewModel(PullRequest?.Links?.Html?.Href));
                 });
                 return menu.Show(sender);

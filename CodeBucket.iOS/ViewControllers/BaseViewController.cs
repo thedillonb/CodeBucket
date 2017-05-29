@@ -8,7 +8,7 @@ using UIKit;
 using CodeBucket.Views;
 using System.Reactive.Disposables;
 using Splat;
-using CodeBucket.Services;
+using CodeBucket.Core.Services;
 
 namespace CodeBucket.ViewControllers
 {
@@ -94,7 +94,7 @@ namespace CodeBucket.ViewControllers
                 .Switch()
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand)
-                .Subscribe(x => x.ExecuteIfCan());
+                .Subscribe(x => x.ExecuteNow());
 
             OnActivation(disposable =>
             {

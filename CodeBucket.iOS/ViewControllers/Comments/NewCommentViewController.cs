@@ -45,10 +45,11 @@ namespace CodeBucket.ViewControllers.Comments
             {
                 discardButton
                     .GetClickedObservable()
-                    .InvokeCommand(ViewModel.DiscardCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.DiscardCommand)
                     .AddTo(d);
 
-                this.WhenAnyValue(x => x.ViewModel.DoneCommand.CanExecuteObservable)
+                this.WhenAnyValue(x => x.ViewModel.DoneCommand.CanExecute)
                     .Switch()
                     .Subscribe(x => doneButton.Enabled = x)
                     .AddTo(d);
@@ -56,7 +57,8 @@ namespace CodeBucket.ViewControllers.Comments
                 doneButton
                     .GetClickedObservable()
                     .Do(_ => _textView.ResignFirstResponder())
-                    .InvokeCommand(ViewModel.DoneCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.DoneCommand)
                     .AddTo(d);
 
                 _textView

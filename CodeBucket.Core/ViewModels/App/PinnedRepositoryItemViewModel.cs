@@ -1,4 +1,5 @@
-﻿using CodeBucket.Core.Utils;
+﻿using System.Reactive;
+using CodeBucket.Core.Utils;
 using ReactiveUI;
 
 namespace CodeBucket.Core.ViewModels.App
@@ -9,9 +10,9 @@ namespace CodeBucket.Core.ViewModels.App
 
         public Avatar Avatar { get; }
 
-        public IReactiveCommand<object> DeleteCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; } = ReactiveCommandFactory.Empty();
 
-        public IReactiveCommand<object> GoToCommand { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToCommand { get; } = ReactiveCommandFactory.Empty();
 
         public PinnedRepositoryItemViewModel(string name, Avatar avatar)
         {

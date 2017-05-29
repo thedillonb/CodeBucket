@@ -33,7 +33,7 @@ namespace CodeBucket.Core.ViewModels.PullRequests
 
             this.WhenAnyValue(x => x.SelectedFilter)
                 .Select(x => new PullRequestListViewModel(username, repository, x))
-                .Do(x => x.LoadMoreCommand.ExecuteIfCan())
+                .Do(x => x.LoadMoreCommand.ExecuteNow())
                 .Subscribe(x => PullRequests = x);
 
             this.WhenAnyValue(x => x.PullRequests)

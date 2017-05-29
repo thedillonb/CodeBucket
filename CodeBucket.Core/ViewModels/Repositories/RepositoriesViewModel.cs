@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -12,7 +12,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
 {
     public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel, IListViewModel<RepositoryItemViewModel>
     {
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; }
 
@@ -47,7 +47,7 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 return viewModel;
             }, x => x.Name.ContainsKeyword(SearchText), signalReset: this.WhenAnyValue(x => x.SearchText));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 repositories.Clear();
                 await Load(applicationService, repositories);

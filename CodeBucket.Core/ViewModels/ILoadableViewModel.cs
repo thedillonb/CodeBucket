@@ -5,7 +5,7 @@ namespace CodeBucket.Core.ViewModels
 {
     public interface ILoadableViewModel
     {
-        IReactiveCommand<Unit> LoadCommand { get; }
+        ReactiveCommand<Unit, Unit> LoadCommand { get; }
     }
 }
 

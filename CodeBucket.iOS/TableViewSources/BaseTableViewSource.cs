@@ -51,7 +51,7 @@ namespace CodeBucket.TableViewSources
         public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             var item = ItemAt(indexPath) as ICanGoToViewModel;
-            item?.GoToCommand.ExecuteIfCan();
+            item?.GoToCommand.ExecuteNow();
             base.RowSelected(tableView, indexPath);
             tableView.DeselectRow(indexPath, true);
         }

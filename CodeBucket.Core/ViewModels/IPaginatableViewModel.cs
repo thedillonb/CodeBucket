@@ -5,7 +5,7 @@ namespace CodeBucket.Core.ViewModels
 {
     public interface IPaginatableViewModel
     {
-        IReactiveCommand<Unit> LoadMoreCommand { get; }
+        ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
     }
 }
 

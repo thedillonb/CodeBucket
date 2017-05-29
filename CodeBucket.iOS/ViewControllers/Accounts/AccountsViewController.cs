@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reactive.Linq;
 using CodeBucket.Core.ViewModels.Accounts;
 using CodeBucket.TableViewSources;
@@ -13,10 +13,8 @@ namespace CodeBucket.ViewControllers.Accounts
 
         public AccountsViewController(bool backButton)
         {
-            ViewModel = new AccountsViewModel();
-            Appearing.InvokeCommand(ViewModel.LoadCommand);
-
             _backButton = backButton;
+            ViewModel = new AccountsViewModel();
         }
 
         public override void ViewDidLoad()
@@ -34,25 +32,33 @@ namespace CodeBucket.ViewControllers.Accounts
             OnActivation(disposable =>
             {
                 add.GetClickedObservable()
-                    .InvokeCommand(ViewModel.AddAccountCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.AddAccountCommand)
                     .AddTo(disposable);
 
                 cancel.GetClickedObservable()
-                    .InvokeCommand(ViewModel.DismissCommand)
+                    .SelectUnit()
+                    .BindCommand(ViewModel.DismissCommand)
                     .AddTo(disposable);
 
                 ViewModel.AddAccountCommand
-                         .Subscribe(_ => NavigationController.PushViewController(new LoginViewController(), true))
+                    .Subscribe(_ => NavigationController.PushViewController(new LoginViewController(), true))
                     .AddTo(disposable);
                 
                 ViewModel.DismissCommand
                     .Subscribe(_ => DismissViewController(true, null))
                     .AddTo(disposable);
 
-                ViewModel.DismissCommand.CanExecuteObservable
-                         .Subscribe(x => cancel.Enabled = x)
-                         .AddTo(disposable);
+                ViewModel.DismissCommand.CanExecute
+                    .Subscribe(x => cancel.Enabled = x)
+                    .AddTo(disposable);
             });
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            ViewModel.LoadCommand.ExecuteNow();
         }
     }
 }

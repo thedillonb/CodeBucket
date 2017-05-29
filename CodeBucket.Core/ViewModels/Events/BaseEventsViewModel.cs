@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeBucket.Core.ViewModels.Issues;
@@ -33,9 +33,9 @@ namespace CodeBucket.Core.ViewModels.Events
 
         public bool ReportRepository { get; private set; } = true;
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> LoadMoreCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
 
         public string SearchText { get; set; }
 
@@ -49,7 +49,7 @@ namespace CodeBucket.Core.ViewModels.Events
             var eventItems = new ReactiveList<EventItemViewModel>(resetChangeThreshold: 10);
             Items = eventItems.CreateDerivedCollection(x => x);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 HasMore = false;
                 nextPage = 0;
@@ -61,14 +61,14 @@ namespace CodeBucket.Core.ViewModels.Events
             });
 
             var hasMoreObs = this.WhenAnyValue(x => x.HasMore);
-            LoadMoreCommand = ReactiveCommand.CreateAsyncTask(hasMoreObs, async _ =>
+            LoadMoreCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 HasMore = false;
                 var events = await GetEvents(nextPage, 40);
                 nextPage += events.Events.Count;
                 eventItems.AddRange(events.Events.Select(TryCatchEventBlockCreation).Where(x => x != null));
                 HasMore = nextPage < events.Count;
-            });
+            }, hasMoreObs);
 
             LoadCommand.IsExecuting.CombineLatest(eventItems.IsEmptyChanged, (x, y) => !x && y)
                        .ToProperty(this, x => x.IsEmpty, out _isEmpty);

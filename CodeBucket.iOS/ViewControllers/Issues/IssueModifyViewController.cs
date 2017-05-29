@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeBucket.Core.ViewModels.Issues;
 using UIKit;
 using CodeBucket.DialogElements;
@@ -41,7 +41,11 @@ namespace CodeBucket.ViewControllers.Issues
         public void Present(UIViewController presenter)
         {
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.Cancel };
-            NavigationItem.LeftBarButtonItem.GetClickedObservable().InvokeCommand(ViewModel.DiscardCommand);
+            NavigationItem.LeftBarButtonItem
+                .GetClickedObservable()
+                .SelectUnit()
+                .BindCommand(ViewModel.DiscardCommand);
+            
             presenter.PresentViewController(new ThemedNavigationController(this), true, null);
         }
 
@@ -144,10 +148,11 @@ namespace CodeBucket.ViewControllers.Issues
 
                 save.GetClickedObservable()
                     .Do(_ => View.EndEditing(true))
-                    .InvokeCommand(this, x => x.ViewModel.SaveCommand)
+                    .SelectUnit()
+                    .BindCommand(this, x => x.ViewModel.SaveCommand)
                     .AddTo(d);
 
-                this.WhenAnyObservable(x => x.ViewModel.SaveCommand.CanExecuteObservable)
+                this.WhenAnyObservable(x => x.ViewModel.SaveCommand.CanExecute)
                     .Subscribe(x => save.Enabled = x)
                     .AddTo(d);
 
