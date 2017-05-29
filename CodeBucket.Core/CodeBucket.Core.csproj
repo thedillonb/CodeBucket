@@ -150,6 +150,7 @@
     <Compile Include="Secrets.cs" />
     <Compile Include="Extensions\ReactiveUIExtensions.cs" />
     <Compile Include="Services\IViewLocatorService.cs" />
+    <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
