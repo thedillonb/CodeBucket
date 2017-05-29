@@ -27,6 +27,7 @@
     </MtouchI18n>
     <MtouchArch>i386</MtouchArch>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -277,7 +278,7 @@
     <Compile Include="Services\ActionMenuService.cs" />
     <Compile Include="Views\PickerAlertView.cs" />
     <Compile Include="Services\LoadingIndicatorService.cs" />
-    <Compile Include="Services\ViewLocatorService.cs" />
+    <Compile Include="Services\ViewService.cs" />
     <Compile Include="TableViewSources\SimpleTableViewSource.cs" />
     <Compile Include="Views\SubtitleTitleView.cs" />
     <Compile Include="Services\DiffService.cs" />

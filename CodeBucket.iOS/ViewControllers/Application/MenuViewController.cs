@@ -71,9 +71,8 @@ namespace CodeBucket.ViewControllers.Application
                       .Switch()
                       .Subscribe(x =>
                       {
-                          var serv = Locator.Current.GetService<IViewLocatorService>();
-                          //var viewFor = serv.GetView(x);
-                          //NavigationController.PushViewController(viewFor as UIViewController, true);
+                          var viewFor = Locator.Current.GetService<IViewLocatorService>().GetView(x);
+                          NavigationController.PushViewController(viewFor as UIViewController, true);
                       })
                       .AddTo(d);
             });
