@@ -138,7 +138,9 @@ namespace CodeBucket.Core.ViewModels.Repositories
                 NavigateTo(new RepositoryViewModel(fork.Owner, fork.Slug));
             });
 
-            var canGoToFork = this.WhenAnyValue(x => x.Repository).Select(x => x.Parent != null);
+            var canGoToFork = this.WhenAnyValue(x => x.Repository)
+                                  .Select(x => x?.Parent != null);
+            
             GoToForkParentCommand = ReactiveCommand.Create(() => {
                 var id = RepositoryIdentifier.FromFullName(Repository.Parent.FullName);
                 NavigateTo(new RepositoryViewModel(id.Owner, id.Name));

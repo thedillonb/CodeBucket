@@ -115,6 +115,23 @@ namespace CodeBucket.Core.ViewModels.Commits
             var shortNode = node.Substring(0, node.Length > 7 ? 7 : node.Length);
             Title = $"Commit {shortNode}";
 
+            var changesetFiles =
+                this.WhenAnyValue(x => x.Changeset)
+                .Where(x => x != null)
+                .Select(x => x.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>());
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type == "added"))
+                .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type == "removed"))
+                .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
+
+            changesetFiles
+                .Select(x => x.Count(y => y.Type != "added" && y.Type != "removed"))
+                .ToProperty(this, x => x.DiffModifications, out _diffModifications);
+
             Comments = _comments.CreateDerivedCollection(comment =>
             {
                 var name = comment.User.DisplayName ?? comment.User.Username;
@@ -173,23 +190,6 @@ namespace CodeBucket.Core.ViewModels.Commits
             ToggleApproveButton
                 .ThrownExceptions
                 .Subscribe(x => alertDialogService.Alert("Error", "Unable to approve commit: " + x.Message).ToBackground());
-
-            var changesetFiles = 
-                this.WhenAnyValue(x => x.Changeset)
-                .Where(x => x != null)
-                .Select(x => x.Files ?? Enumerable.Empty<Client.V1.ChangesetFile>());
-
-            changesetFiles
-                .Select(x => x.Count(y => y.Type == "added"))
-                .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
-
-            changesetFiles
-                .Select(x => x.Count(y => y.Type == "removed"))
-                .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
-
-            changesetFiles
-                .Select(x => x.Count(y => y.Type != "added" && y.Type != "removed"))
-                .ToProperty(this, x => x.DiffModifications, out _diffModifications);
 
             var commitFiles = new ReactiveList<Client.V1.ChangesetFile>();
             CommitFiles = commitFiles.CreateDerivedCollection(x =>

@@ -9,6 +9,7 @@ using CodeBucket.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 using SafariServices;
+using System.Collections.Generic;
 
 namespace CodeBucket.ViewControllers.Accounts
 {
@@ -40,6 +41,14 @@ namespace CodeBucket.ViewControllers.Accounts
             });
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            // Fake the user-agent so that social apps don't bitch.
+            Web.CustomUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) AppleWebKit/602.1.38 (KHTML, like Gecko) Version/10.0 Mobile/14A5297c Safari/602.1";
+        }
+
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             // Fucking BitBucket and their horrible user interface.
@@ -50,30 +59,38 @@ namespace CodeBucket.ViewControllers.Accounts
             }
 
             //We're being redirected to our redirect URL so we must have been successful
-            if (navigationAction.Request.Url.Host == "codebucket")
+            if (navigationAction.Request.Url.Scheme == "codebucket")
             {
-                var code = navigationAction.Request.Url.Query.Split('=')[1];
-                ViewModel.LoginCommand.Execute(code).Subscribe();
-                return false;
+                var queryParams = navigationAction
+                    .Request.Url.Query.Split('&')
+	                .Select(x => x.Split('=').Select(Uri.EscapeDataString).ToArray())
+	                .Where(x => x.Length >= 2)
+	                .ToDictionary(x => x[0], x => x[1]);
+                
+                if (queryParams.TryGetValue("code", out string code))
+                {
+                    ViewModel.LoginCommand.Execute(code).LoggedCatch(this).Subscribe();
+                    return false;
+                }
             }
 
-            if (navigationAction.Request.Url.Path.StartsWith("/socialauth", StringComparison.Ordinal))
-            {
-                var safari = new SFSafariViewController(new NSUrl(ViewModel.LoginUrl));
-                PresentViewController(safari, true, null);
-                return false;
-            }
+            //if (navigationAction.Request.Url.Path.StartsWith("/socialauth", StringComparison.Ordinal))
+            //{
+            //    var safari = new SFSafariViewController(new NSUrl(ViewModel.LoginUrl));
+            //    PresentViewController(safari, true, null);
+            //    return false;
+            //}
 
             return base.ShouldStartLoad(webView, navigationAction);
         }
 
-        protected override void OnLoadError(NSError e)
+        protected override void OnLoadError(NSError error)
 		{
-            base.OnLoadError(e);
+            base.OnLoadError(error);
 
 			//Frame interrupted error
-            if (e.Code == 102 || e.Code == -999) return;
-			AlertDialogService.ShowAlert("Error", "Unable to communicate with Bitbucket. " + e.LocalizedDescription);
+            if (error.Code == 102 || error.Code == -999) return;
+			AlertDialogService.ShowAlert("Error", "Unable to communicate with Bitbucket. " + error.LocalizedDescription);
 		}
 
         protected override void OnLoadFinished(WKWebView webView, WKNavigation navigation)

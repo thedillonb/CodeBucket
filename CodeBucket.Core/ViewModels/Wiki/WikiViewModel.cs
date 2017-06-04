@@ -3,6 +3,7 @@ using CodeBucket.Core.Services;
 using ReactiveUI;
 using System.Reactive;
 using Splat;
+using System.Linq;
 
 namespace CodeBucket.Core.ViewModels.Wiki
 {
@@ -54,14 +55,11 @@ namespace CodeBucket.Core.ViewModels.Wiki
 
             Title = page;
 
-            GoToWebCommand = ReactiveCommand.Create<string>(path =>
-            {
-                var url = string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", username, repository, path);
-                NavigateTo(new WebBrowserViewModel(url));
-            });
-
-            GoToWebCommand = ReactiveCommand.Create<string>(url => page = url);
-            GoToWebCommand.BindCommand(LoadCommand);
+            //GoToWebCommand = ReactiveCommand.Create<string>(path =>
+            //{
+            //    var url = string.Format("https://bitbucket.org/{0}/{1}/wiki/{2}", username, repository, path);
+            //    NavigateTo(new WebBrowserViewModel(url));
+            //});
 
             ShowMenuCommand = ReactiveCommand.CreateFromTask(sender =>
             {
@@ -91,6 +89,21 @@ namespace CodeBucket.Core.ViewModels.Wiki
                     content = Wiki.Data;
 
                 Content = content;
+            });
+
+            GoToWebCommand = ReactiveCommand.Create<string>(uri => {
+                if (Uri.TryCreate(uri, UriKind.Absolute, out Uri result))
+                {
+                    if (new []{ "http", "https" }.Contains(result.Scheme))
+                    {
+                        NavigateTo(new WebBrowserViewModel(result.AbsoluteUri));
+                    }
+                    else if (result.Scheme == "file")
+                    {
+                        page = result.AbsolutePath.Split('/').LastOrDefault();
+                        LoadCommand.ExecuteNow();
+                    }
+                }
             });
         }
     }

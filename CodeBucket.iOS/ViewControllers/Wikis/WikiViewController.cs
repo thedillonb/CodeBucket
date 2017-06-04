@@ -83,11 +83,8 @@ namespace CodeBucket.ViewControllers.Wikis
             {
                 if (navigationAction.NavigationType == WKNavigationType.LinkActivated) 
                 {
-                    if (navigationAction.Request.Url.ToString().Substring(0, 7).Equals("wiki://"))
-                    {
-                        //GoToPage(navigationAction.Request.Url.ToString().Substring(7));
-                        return false;
-                    }
+                    ViewModel.GoToWebCommand.ExecuteNow(navigationAction.Request.Url.ToString());
+                    return false;
                 }
             }
             catch
