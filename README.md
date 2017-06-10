@@ -8,15 +8,14 @@ CodeBucket is the best way to browse and maintain your Bitbucket repositories on
 Screenshots
 ------------------
 
-<img alt="Repository View" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/RepositoryView.png" width="180">
-&nbsp;&nbsp;
-<img alt="Slideout" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Slideout.png" width="180">
-&nbsp;&nbsp;
-<img alt="Repositories" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Repositories.png" width="180">
-&nbsp;&nbsp;
-<img alt="Change Sets" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/ChangeSets.png" width="180">
-&nbsp;&nbsp;
-<img alt="Issues" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Issues.png" width="180">
+<img alt="Repository View" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/RepositoryView.png" width="240">&nbsp;
+<img alt="Slideout" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Slideout.png" width="240">
+&nbsp;
+<img alt="Repositories" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Repositories.png" width="240">
+&nbsp;
+<img alt="Change Sets" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/ChangeSets.png" width="240">
+&nbsp;
+<img alt="Issues" src="https://raw.github.com/thedillonb/CodeBucket/master/Screenshots/Issues.png" width="240">
 
 
 
