@@ -70,25 +70,26 @@ namespace CodeBucket.ViewControllers.Repositories
                    .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.BranchesCount)
-                    .SubscribeSafe(x => branches.Text = x.ToString())
+                    .Subscribe(x => branches.Text = x.ToString())
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Watchers)
-                    .SubscribeSafe(x => watchers.Text = x.HasValue ? x.ToString() : "-")
+                    .Subscribe(x => watchers.Text = x?.ToString() ?? "-")
                     .AddTo(d);
                 
                 this.WhenAnyValue(x => x.ViewModel.Forks)
-                    .SubscribeSafe(x => forks.Text = x.HasValue ? x.ToString() : "-")
+                    .Subscribe(x => forks.Text = x?.ToString() ?? "-")
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Repository).SelectUnit()
                     .Merge(this.WhenAnyValue(x => x.ViewModel.HasReadme).SelectUnit())
                     .Where(x => ViewModel.Repository != null)
-                    .SubscribeSafe(_ => Render())
+                    .Subscribe(_ => Render())
                     .AddTo(d);
 
                 this.WhenAnyValue(x => x.ViewModel.Issues)
-                    .SubscribeSafe(x => _split3.Button2.Text = "Issues".ToQuantity(x.GetValueOrDefault()))
+                    .Select(x => "Issues".ToQuantity(x.GetValueOrDefault()))
+                    .Subscribe(x => _split3.Button2.Text = x)
                     .AddTo(d);
 
                 actionButton
@@ -116,6 +117,18 @@ namespace CodeBucket.ViewControllers.Repositories
         }
 
         public void Render()
+        {
+            try
+            {
+                DoRender();
+            }
+            catch (Exception e)
+            {
+                RxApp.DefaultExceptionHandler.OnNext(e);
+            }
+        }
+
+        private void DoRender()
         {
             var model = ViewModel.Repository;
             var avatarHref = ViewModel.Repository.Owner?.Links?.Avatar?.Href;

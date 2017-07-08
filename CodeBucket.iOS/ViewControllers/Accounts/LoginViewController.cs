@@ -8,8 +8,6 @@ using CodeBucket.Utilities;
 using CodeBucket.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
-using SafariServices;
-using System.Collections.Generic;
 
 namespace CodeBucket.ViewControllers.Accounts
 {
@@ -59,7 +57,7 @@ namespace CodeBucket.ViewControllers.Accounts
             }
 
             //We're being redirected to our redirect URL so we must have been successful
-            if (navigationAction.Request.Url.Scheme == "codebucket")
+            if (navigationAction.Request.Url.Host == "codebucket")
             {
                 var queryParams = navigationAction
                     .Request.Url.Query.Split('&')

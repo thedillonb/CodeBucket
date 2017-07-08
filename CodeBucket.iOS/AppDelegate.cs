@@ -60,8 +60,6 @@ namespace CodeBucket
             System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
             System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            Data.Migration.Migrate();
-
             var exceptionSubject = new Subject<Exception>();
             RxApp.DefaultExceptionHandler = exceptionSubject;
             exceptionSubject.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));

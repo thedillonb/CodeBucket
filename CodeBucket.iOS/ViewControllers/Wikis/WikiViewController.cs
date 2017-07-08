@@ -50,8 +50,8 @@ namespace CodeBucket.ViewControllers.Wikis
             });
         }
 
-        private async Task HandleEditButton()
-        {
+        //private async Task HandleEditButton()
+        //{
 //            try
 //            {
 //                var page = ViewModel.CurrentWikiPage(Web.Url.AbsoluteString);
@@ -75,7 +75,7 @@ namespace CodeBucket.ViewControllers.Wikis
 //            {
 //                AlertDialogService.ShowAlert("Error", e.Message);
 //            }
-        }
+        //}
 
         public override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
