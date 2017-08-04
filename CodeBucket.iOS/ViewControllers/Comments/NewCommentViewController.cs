@@ -120,17 +120,17 @@ namespace CodeBucket.ViewControllers.Comments
             }
         }
 
-        void KeyboardWillShow(NSNotification notification)
+        void KeyboardChange(NSNotification notification)
         {
-            var nsValue = notification.UserInfo.ObjectForKey(UIKeyboard.BoundsUserInfoKey) as NSValue;
+            var nsValue = notification.UserInfo.ObjectForKey(UIKeyboard.FrameEndUserInfoKey) as NSValue;
             if (nsValue == null) return;
-            var kbdBounds = nsValue.RectangleFValue;
-            UIView.Animate(1.0f, 0, UIViewAnimationOptions.CurveEaseIn, () => _textView.Frame = ComputeComposerSize(kbdBounds), null);
-        }
 
-        void KeyboardWillHide(NSNotification notification)
-        {
-            _textView.Frame = ComputeComposerSize(new CGRect(0, 0, 0, 0));
+            var kbdBounds = nsValue.RectangleFValue;
+            var keyboard = View.Window.ConvertRectToView(kbdBounds, View);
+
+            UIView.Animate(
+                1.0f, 0, UIViewAnimationOptions.CurveEaseIn,
+                () => _textView.Frame = new CGRect(0, 0, View.Bounds.Width, keyboard.Top), null);
         }
 
         CGRect ComputeComposerSize(CGRect kbdBounds)
@@ -143,8 +143,13 @@ namespace CodeBucket.ViewControllers.Comments
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                new NSString("UIKeyboardWillShowNotification"), KeyboardChange);
+
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                new NSString("UIKeyboardWillHideNotification"), KeyboardChange);
+            
             _textView.BecomeFirstResponder();
         }
 

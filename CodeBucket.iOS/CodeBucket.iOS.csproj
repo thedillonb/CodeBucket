@@ -189,7 +189,6 @@
     <Compile Include="Views\EnhancedTableView.cs" />
     <Compile Include="ViewControllers\BaseViewController.cs" />
     <Compile Include="ViewControllers\BasicWebViewController.cs" />
-    <Compile Include="ViewControllers\ComposerViewController.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
@@ -375,19 +374,19 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.core">
-      <HintPath>..\packages\SQLitePCLRaw.core.1.1.7\lib\Xamarin.iOS10\SQLitePCLRaw.core.dll</HintPath>
+      <HintPath>..\packages\SQLitePCLRaw.core.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.core.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.lib.e_sqlite3">
-      <HintPath>..\packages\SQLitePCLRaw.lib.e_sqlite3.ios_unified.static.1.1.7\lib\Xamarin.iOS10\SQLitePCLRaw.lib.e_sqlite3.dll</HintPath>
+      <HintPath>..\packages\SQLitePCLRaw.lib.e_sqlite3.ios_unified.static.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.lib.e_sqlite3.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.provider.internal">
-      <HintPath>..\packages\SQLitePCLRaw.provider.internal.ios_unified.1.1.7\lib\Xamarin.iOS10\SQLitePCLRaw.provider.internal.dll</HintPath>
+      <HintPath>..\packages\SQLitePCLRaw.provider.internal.ios_unified.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.provider.internal.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.batteries_e_sqlite3">
-      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.7\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_e_sqlite3.dll</HintPath>
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_e_sqlite3.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.batteries_v2">
-      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.7\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -408,20 +407,20 @@
     <BundleResource Include="Images\Web\back%402x.png" />
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
-    <BundleResource Include="CodeBucketIcon.png" />
     <None Include="packages.config" />
     <BundleResource Include="Images\repository_placeholder%402x.png" />
     <BundleResource Include="Images\avatar%402x.png" />
     <BundleResource Include="Atlassian-icons.ttf" />
     <None Include="WebResources\LICENSE" />
-    <BundleResource Include="Briefcase.png" />
-    <BundleResource Include="CodeBucketRound.png" />
-    <BundleResource Include="Feedback.png" />
-    <BundleResource Include="Heart.png" />
-    <BundleResource Include="Organizations.png" />
-    <BundleResource Include="Rocket.png" />
     <BundleResource Include="Images\bitbucket-logo%402x.png" />
     <BundleResource Include="Images\stash-logo%402x.png" />
+    <BundleResource Include="Resources\Briefcase.png" />
+    <BundleResource Include="Resources\Feedback.png" />
+    <BundleResource Include="Resources\Heart.png" />
+    <BundleResource Include="Resources\Organizations.png" />
+    <BundleResource Include="Resources\Rocket.png" />
+    <BundleResource Include="Resources\CodeBucketIcon.png" />
+    <BundleResource Include="Resources\CodeBucketRound.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
